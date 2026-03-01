@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class Business extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'permit_number',
+        'business_name',
+        'business_type',
+        'business_address',
+        'owner_name',
+        'owner_contact',
+        'owner_resident_id',
+        'permit_date',
+        'expiry_date',
+        'status',
+        'issued_by',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'permit_date' => 'date',
+            'expiry_date' => 'date',
+        ];
+    }
+
+    // -------------------------------------------------------
+    // Relationships
+    // -------------------------------------------------------
+
+    public function ownerResident()
+    {
+        return $this->belongsTo(Resident::class, 'owner_resident_id');
+    }
+
+    public function issuedBy()
+    {
+        return $this->belongsTo(User::class, 'issued_by');
+    }
+
+    // -------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------
+
+    // Generate next permit number e.g. BP-2025-00001
+    public static function generatePermitNumber(): string
+    {
+        $year  = date('Y');
+        $count = self::whereYear('created_at', $year)->count() + 1;
+
+        return 'BP-' . $year . '-' . str_pad($count, 5, '0', STR_PAD_LEFT);
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->expiry_date->isPast() || $this->status === 'Expired';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'Active' && !$this->isExpired();
+    }
+
+    // Badge color per status for the blade views
+    public function getStatusBadgeAttribute(): string
+    {
+        return match($this->status) {
+            'Active'    => 'badge-green',
+            'Expired'   => 'badge-red',
+            'Suspended' => 'badge-yellow',
+            'Cancelled' => 'badge-gray',
+            default     => 'badge-gray',
+        };
+    }
+}
