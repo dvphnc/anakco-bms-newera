@@ -422,7 +422,7 @@
 
                 <div class="cert-sig-area">
                     {{-- Left: photo + thumbmark boxes --}}
-                    <div style="display:flex;gap:15px;align-items:flex-end">
+                    <div style="display:flex;gap:1px;align-items:flex-end">
                         <div style="text-align:center">
                             @if($resident?->photo_path)
                                 <img src="{{ asset('storage/'.$resident->photo_path) }}"
@@ -435,7 +435,7 @@
                             <div style="font-size:6.5pt;margin-top:2px;text-transform:uppercase;letter-spacing:0.04em;text-align:center">Applicant Photo</div>
                         </div>
                         <div style="text-align:center">
-                            <div style="width:75px;height:90px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666;line-height:1.7">
+                            <div style="width:75px;height:90px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666;line-height:1.3">
                                 APPLICANT<br>THUMBMARK
                             </div>
                             <div style="font-size:6.5pt;margin-top:2px;text-transform:uppercase;letter-spacing:0.04em;text-align:center">Applicant Thumbmark</div>
