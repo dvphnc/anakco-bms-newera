@@ -118,9 +118,11 @@ class DocumentController extends Controller
             'document_type' => 'required|string',
             'purpose'       => 'required|string|max:500',
             'fee_paid'      => 'nullable|numeric|min:0',
+            'or_number'     => 'nullable|string|max:100',
+            'released_at'   => 'nullable|date',
             'status'        => 'required|in:Pending,Processing,Released,Cancelled',
         ]);
-        if ($validated['status'] === 'Released' && $document->status !== 'Released') {
+        if ($validated['status'] === 'Released' && $document->status !== 'Released' && empty($validated['released_at'])) {
             $validated['released_at'] = now();
         }
         $document->update($validated);
