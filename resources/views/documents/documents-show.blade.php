@@ -422,7 +422,7 @@
 
                 <div class="cert-sig-area">
                     {{-- Left: photo + thumbmark boxes --}}
-                    <div style="display:flex;gap:1px;align-items:flex-end">
+                    <div style="display:flex;gap:15px;align-items:flex-end">
                         <div style="text-align:center">
                             @if($resident?->photo_path)
                                 <img src="{{ asset('storage/'.$resident->photo_path) }}"
