@@ -205,7 +205,7 @@
     margin-bottom: 2px;
 }
 .cert-barangay {
-    font-size: 15pt;
+    font-size: 17pt;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.08em;
