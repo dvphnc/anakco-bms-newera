@@ -26,8 +26,8 @@
             <i class="fas fa-users"></i>
         </div>
         <div class="stat-info">
-            <div class="stat-number">{{ number_format($residents->total()) }}</div>
-            <div class="stat-label">Total Results</div>
+            <div class="stat-number">{{ number_format(\App\Models\Resident::count()) }}</div>
+            <div class="stat-label">Total Residents</div>
         </div>
     </div>
     <div class="stat-card">
@@ -44,16 +44,16 @@
             <i class="fas fa-check-to-slot"></i>
         </div>
         <div class="stat-info">
-            <div class="stat-number">{{ number_format(\App\Models\Resident::active()->where('is_voter',true)->count()) }}</div>
+            <div class="stat-number">{{ number_format(\App\Models\Resident::where('residency_status','Active')->where('is_voter',true)->count()) }}</div>
             <div class="stat-label">Registered Voters</div>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(122,21,21,0.08);color:var(--crimson-mid)">
+        <div class="stat-icon" style="background:rgba(122,21,21,0.08);color:#9B1C1C">
             <i class="fas fa-person-cane"></i>
         </div>
         <div class="stat-info">
-            <div class="stat-number">{{ number_format(\App\Models\Resident::active()->seniors()->count()) }}</div>
+            <div class="stat-number">{{ number_format(\App\Models\Resident::where('residency_status','Active')->where('is_senior',true)->count()) }}</div>
             <div class="stat-label">Senior Citizens</div>
         </div>
     </div>
@@ -62,57 +62,48 @@
 {{-- Filters --}}
 <div class="card mb-6">
     <div class="card-body" style="padding:16px 20px">
-        <form method="GET" action="{{ route('residents.index') }}">
-            <div class="filter-bar">
-                <div class="form-group flex-1">
-                    <label class="form-label">Search</label>
-                    <div style="position:relative">
-                        <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px"></i>
-                        <input type="text" name="search" class="form-control" style="padding-left:32px"
-                               placeholder="Name, address..." value="{{ request('search') }}">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Purok</label>
-                    <select name="purok_id" class="form-control">
-                        <option value="">All Puroks</option>
-                        @foreach(\App\Models\Purok::orderBy('name')->get() as $purok)
-                            <option value="{{ $purok->id }}" {{ request('purok_id') == $purok->id ? 'selected' : '' }}>
-                                {{ $purok->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Gender</label>
-                    <select name="gender" class="form-control">
-                        <option value="">All</option>
-                        <option value="Male"   {{ request('gender') === 'Male'   ? 'selected' : '' }}>Male</option>
-                        <option value="Female" {{ request('gender') === 'Female' ? 'selected' : '' }}>Female</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-control">
-                        <option value="">All</option>
-                        <option value="Active"      {{ request('status') === 'Active'      ? 'selected' : '' }}>Active</option>
-                        <option value="Deceased"    {{ request('status') === 'Deceased'    ? 'selected' : '' }}>Deceased</option>
-                        <option value="Transferred" {{ request('status') === 'Transferred' ? 'selected' : '' }}>Transferred</option>
-                    </select>
-                </div>
-                <div class="form-group" style="justify-content:flex-end">
-                    <label class="form-label">&nbsp;</label>
-                    <div style="display:flex;gap:8px">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-filter"></i> Filter
-                        </button>
-                        <a href="{{ route('residents.index') }}" class="btn btn-secondary">
-                            <i class="fas fa-xmark"></i>
-                        </a>
-                    </div>
+        <div class="filter-bar">
+            <div class="form-group flex-1">
+                <label class="form-label">Search</label>
+                <div style="position:relative">
+                    <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px"></i>
+                    <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
+                           placeholder="Name, address, contact...">
                 </div>
             </div>
-        </form>
+            <div class="form-group">
+                <label class="form-label">Purok</label>
+                <select id="purokFilter" class="form-control">
+                    <option value="">All Puroks</option>
+                    @foreach($puroks as $purok)
+                        <option value="{{ $purok->id }}">{{ $purok->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Gender</label>
+                <select id="genderFilter" class="form-control">
+                    <option value="">All</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select id="statusFilter" class="form-control">
+                    <option value="">All</option>
+                    <option value="Active">Active</option>
+                    <option value="Deceased">Deceased</option>
+                    <option value="Transferred">Transferred</option>
+                </select>
+            </div>
+            <div class="form-group" style="justify-content:flex-end">
+                <label class="form-label">&nbsp;</label>
+                <button id="resetBtn" class="btn btn-secondary">
+                    <i class="fas fa-xmark"></i> Reset
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -120,16 +111,11 @@
 <div class="card">
     <div class="card-header">
         <span class="card-title">
-            <i class="fas fa-users"></i>
-            Resident List
-        </span>
-        <span style="font-size:12px;color:var(--text-muted)">
-            Showing {{ $residents->firstItem() }}–{{ $residents->lastItem() }} of {{ number_format($residents->total()) }}
+            <i class="fas fa-users"></i> Resident List
         </span>
     </div>
-
     <div class="table-responsive">
-        <table>
+        <table id="residentsTable" class="w-full" style="width:100%">
             <thead>
                 <tr>
                     <th>Resident</th>
@@ -142,111 +128,113 @@
                     <th style="text-align:right">Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                @forelse($residents as $resident)
-                <tr>
-                    {{-- Name + Contact --}}
-                    <td>
-                        <div style="display:flex;align-items:center;gap:10px">
-                            {{-- Avatar --}}
-                            <div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px">
-                                @if($resident->photo_path)
-                                    <img src="{{ asset('storage/'.$resident->photo_path) }}" style="width:100%;height:100%;object-fit:cover">
-                                @else
-                                    {{ strtoupper(substr($resident->first_name,0,1)) }}
-                                @endif
-                            </div>
-                            <div>
-                                <div style="font-weight:600;font-size:13.5px">{{ $resident->full_name }}</div>
-                                @if($resident->contact_number)
-                                    <div class="td-muted">{{ $resident->contact_number }}</div>
-                                @endif
-                            </div>
-                        </div>
-                    </td>
-                    <td class="td-muted">{{ $resident->purok->name ?? '—' }}</td>
-                    <td>
-                        <span class="badge {{ $resident->gender === 'Male' ? 'badge-blue' : 'badge-orange' }}">
-                            {{ $resident->gender }}
-                        </span>
-                    </td>
-                    <td>{{ $resident->age ?? '—' }}</td>
-                    <td class="td-muted">{{ $resident->civil_status }}</td>
-                    <td>
-                        <div style="display:flex;flex-wrap:wrap;gap:4px">
-                            @if($resident->is_voter)
-                                <span class="badge badge-green" style="font-size:10px">Voter</span>
-                            @endif
-                            @if($resident->is_senior)
-                                <span class="badge badge-yellow" style="font-size:10px">Senior</span>
-                            @endif
-                            @if($resident->is_pwd)
-                                <span class="badge badge-blue" style="font-size:10px">PWD</span>
-                            @endif
-                            @if($resident->is_solo_parent)
-                                <span class="badge badge-orange" style="font-size:10px">Solo Parent</span>
-                            @endif
-                            @if($resident->is_4ps)
-                                <span class="badge badge-gold" style="font-size:10px">4Ps</span>
-                            @endif
-                        </div>
-                    </td>
-                    <td>
-                        @php
-                            $cls = match($resident->residency_status) {
-                                'Active'      => 'badge-green',
-                                'Deceased'    => 'badge-gray',
-                                'Transferred' => 'badge-yellow',
-                                default       => 'badge-gray'
-                            };
-                        @endphp
-                        <span class="badge {{ $cls }}">{{ $resident->residency_status }}</span>
-                    </td>
-                    <td>
-                        <div style="display:flex;justify-content:flex-end;gap:6px">
-                            <a href="{{ route('residents.show', $resident) }}"
-                               class="btn btn-secondary btn-sm btn-icon" title="View">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('residents.edit', $resident) }}"
-                               class="btn btn-secondary btn-sm btn-icon" title="Edit">
-                                <i class="fas fa-pen"></i>
-                            </a>
-                            <form method="POST" action="{{ route('residents.destroy', $resident) }}"
-                                  onsubmit="return confirm('Delete this resident?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="8">
-                        <div class="empty-state">
-                            <i class="fas fa-users"></i>
-                            <p>No residents found. Try adjusting your filters.</p>
-                        </div>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
-
-    {{-- Pagination --}}
-    @if($residents->hasPages())
-    <nav role="navigation">
-        <div style="font-size:12px;color:var(--text-muted)">
-            Showing {{ $residents->firstItem() }} to {{ $residents->lastItem() }}
-            of {{ number_format($residents->total()) }} residents
-        </div>
-        {{ $residents->withQueryString()->links() }}
-    </nav>
-    @endif
-
 </div>
 
 @endsection
+
+@push('scripts')
+{{-- DataTables CSS --}}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+
+{{-- jQuery + DataTables JS --}}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+<style>
+/* Override DataTables default styles to match BMS theme */
+#residentsTable_wrapper .dataTables_length,
+#residentsTable_wrapper .dataTables_filter { display: none; } /* We use our own search/filter */
+#residentsTable_wrapper .dataTables_info { font-size:12px; color:var(--text-muted); padding: 12px 20px; }
+#residentsTable_wrapper .dataTables_paginate { padding: 12px 20px; }
+#residentsTable_wrapper .dataTables_paginate .paginate_button {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid var(--border) !important;
+    background: white !important;
+    color: var(--text) !important;
+    margin: 0 2px;
+}
+#residentsTable_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--navy) !important;
+    color: white !important;
+    border-color: var(--navy) !important;
+}
+#residentsTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+    background: var(--navy-pale) !important;
+    color: var(--navy) !important;
+}
+#residentsTable_wrapper .dataTables_processing {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--navy);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+</style>
+
+<script>
+$(document).ready(function () {
+    var table = $('#residentsTable').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        ajax: {
+            url: '{{ route('residents.index') }}',
+            data: function (d) {
+                d.gender    = $('#genderFilter').val();
+                d.status    = $('#statusFilter').val();
+                d.purok_id  = $('#purokFilter').val();
+                d.search    = { value: $('#searchInput').val() };
+            }
+        },
+        columns: [
+            { data: 'name_col',   name: 'first_name', orderable: true },
+            { data: 'purok_col',  name: 'purok_id',   orderable: false },
+            { data: 'gender_col', name: 'gender',     orderable: true },
+            { data: 'age_col',    name: 'birthdate',  orderable: true },
+            { data: 'civil_col',  name: 'civil_status', orderable: false },
+            { data: 'tags_col',   name: 'is_voter',   orderable: false },
+            { data: 'status_col', name: 'residency_status', orderable: true },
+            { data: 'actions',    name: 'actions',    orderable: false, searchable: false },
+        ],
+        order: [[0, 'asc']],
+        pageLength: 15,
+        language: {
+            processing: '<i class="fas fa-spinner fa-spin"></i> Loading residents...',
+            emptyTable: '<div class="empty-state"><i class="fas fa-users"></i><p>No residents found.</p></div>',
+            zeroRecords: '<div class="empty-state"><i class="fas fa-search"></i><p>No residents match your filters.</p></div>',
+        }
+    });
+
+    // Custom search input — debounced to avoid too many requests
+    let searchTimer;
+    $('#searchInput').on('keyup', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            table.ajax.reload();
+        }, 400);
+    });
+
+    // Filter dropdowns — reload with new params
+    $('#genderFilter, #statusFilter, #purokFilter').on('change', function () {
+        table.ajax.reload();
+    });
+
+    // Reset button
+    $('#resetBtn').on('click', function () {
+        $('#searchInput').val('');
+        $('#genderFilter, #statusFilter, #purokFilter').val('');
+        table.ajax.reload();
+    });
+});
+</script>
+@endpush

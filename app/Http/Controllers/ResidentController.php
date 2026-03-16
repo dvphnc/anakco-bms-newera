@@ -6,6 +6,7 @@ use App\Models\Resident;
 use App\Models\Purok;
 use App\Models\Household;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class ResidentController extends Controller
 {
@@ -14,28 +15,96 @@ class ResidentController extends Controller
     // -------------------------------------------------------
     public function index(Request $request)
     {
-        $query = Resident::with(['purok', 'household'])
-            ->when($request->search, function ($q) use ($request) {
-                $q->where('first_name', 'like', "%{$request->search}%")
-                  ->orWhere('last_name', 'like', "%{$request->search}%")
-                  ->orWhere('address', 'like', "%{$request->search}%");
-            })
-            ->when($request->gender, function ($q) use ($request) {
-                $q->where('gender', $request->gender);
-            })
-            ->when($request->status, function ($q) use ($request) {
-                $q->where('residency_status', $request->status);
-            })
-            ->when($request->purok_id, function ($q) use ($request) {
-                $q->where('purok_id', $request->purok_id);
-            })
-            ->orderBy('last_name')
-            ->orderBy('first_name');
+        if ($request->ajax()) {
+            $query = Resident::with(['purok'])
+                ->when($request->gender, fn($q) => $q->where('gender', $request->gender))
+                ->when($request->status, fn($q) => $q->where('residency_status', $request->status))
+                ->when($request->purok_id, fn($q) => $q->where('purok_id', $request->purok_id))
+                ->select('residents.*');
 
-        $residents = $query->paginate(15)->withQueryString();
-        $puroks    = Purok::orderBy('name')->get();
+            return DataTables::of($query)
+                ->addColumn('avatar', function ($r) {
+                    $initial = strtoupper(substr($r->first_name, 0, 1));
+                    if ($r->photo_path) {
+                        $img = '<img src="' . asset('storage/' . $r->photo_path) . '" style="width:100%;height:100%;object-fit:cover">';
+                    } else {
+                        $img = $initial;
+                    }
+                    return '<div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px">' . $img . '</div>';
+                })
+                ->addColumn('name_col', function ($r) {
+                    $name = '<div style="font-weight:600;font-size:13.5px">' . e($r->last_name . ', ' . $r->first_name . ($r->middle_name ? ' ' . $r->middle_name : '') . ($r->suffix ? ' ' . $r->suffix : '')) . '</div>';
+                    $contact = $r->contact_number ? '<div class="td-muted">' . e($r->contact_number) . '</div>' : '';
+                    return '<div style="display:flex;align-items:center;gap:10px">' .
+                        $this->avatarHtml($r) .
+                        '<div>' . $name . $contact . '</div></div>';
+                })
+                ->addColumn('purok_col', fn($r) => '<span class="td-muted">' . e($r->purok->name ?? '—') . '</span>')
+                ->addColumn('gender_col', function ($r) {
+                    $cls = $r->gender === 'Male' ? 'badge-blue' : 'badge-orange';
+                    return '<span class="badge ' . $cls . '">' . $r->gender . '</span>';
+                })
+                ->addColumn('age_col', fn($r) => $r->age ?? '—')
+                ->addColumn('civil_col', fn($r) => '<span class="td-muted">' . e($r->civil_status ?? '—') . '</span>')
+                ->addColumn('tags_col', function ($r) {
+                    $tags = '';
+                    if ($r->is_voter)      $tags .= '<span class="badge badge-green" style="font-size:10px">Voter</span> ';
+                    if ($r->is_senior)     $tags .= '<span class="badge badge-yellow" style="font-size:10px">Senior</span> ';
+                    if ($r->is_pwd)        $tags .= '<span class="badge badge-blue" style="font-size:10px">PWD</span> ';
+                    if ($r->is_solo_parent)$tags .= '<span class="badge badge-orange" style="font-size:10px">Solo Parent</span> ';
+                    if ($r->is_4ps)        $tags .= '<span class="badge badge-gold" style="font-size:10px">4Ps</span> ';
+                    return '<div style="display:flex;flex-wrap:wrap;gap:4px">' . $tags . '</div>';
+                })
+                ->addColumn('status_col', function ($r) {
+                    $cls = match($r->residency_status) {
+                        'Active'      => 'badge-green',
+                        'Deceased'    => 'badge-gray',
+                        'Transferred' => 'badge-yellow',
+                        default       => 'badge-gray'
+                    };
+                    return '<span class="badge ' . $cls . '">' . $r->residency_status . '</span>';
+                })
+                ->addColumn('actions', function ($r) {
+                    $show   = route('residents.show', $r);
+                    $edit   = route('residents.edit', $r);
+                    $delete = route('residents.destroy', $r);
+                    return '
+                        <div style="display:flex;justify-content:flex-end;gap:6px">
+                            <a href="' . $show . '" class="btn btn-secondary btn-sm btn-icon" title="View"><i class="fas fa-eye"></i></a>
+                            <a href="' . $edit . '" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
+                            <form method="POST" action="' . $delete . '" onsubmit="return confirm(\'Delete this resident?\')">
+                                <input type="hidden" name="_token" value="' . csrf_token() . '">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </div>';
+                })
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('search') && $request->search['value']) {
+                        $s = $request->search['value'];
+                        $query->where(function ($q) use ($s) {
+                            $q->where('first_name', 'like', "%$s%")
+                              ->orWhere('last_name', 'like', "%$s%")
+                              ->orWhere('address', 'like', "%$s%")
+                              ->orWhere('contact_number', 'like', "%$s%");
+                        });
+                    }
+                })
+                ->rawColumns(['name_col', 'avatar', 'purok_col', 'gender_col', 'civil_col', 'tags_col', 'status_col', 'actions'])
+                ->make(true);
+        }
 
-        return view('residents.residents-index', compact('residents', 'puroks'));
+        $puroks = Purok::orderBy('name')->get();
+        return view('residents.residents-index', compact('puroks'));
+    }
+
+    private function avatarHtml($r): string
+    {
+        $initial = strtoupper(substr($r->first_name, 0, 1));
+        $inner = $r->photo_path
+            ? '<img src="' . asset('storage/' . $r->photo_path) . '" style="width:100%;height:100%;object-fit:cover">'
+            : $initial;
+        return '<div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px">' . $inner . '</div>';
     }
 
     // -------------------------------------------------------
@@ -45,7 +114,6 @@ class ResidentController extends Controller
     {
         $puroks     = Purok::orderBy('name')->get();
         $households = Household::orderBy('household_number')->get();
-
         return view('residents.residents-create', compact('puroks', 'households'));
     }
 
@@ -80,24 +148,19 @@ class ResidentController extends Controller
             'photo_path'       => 'nullable|image|max:2048',
         ]);
 
-        // Handle photo upload
         if ($request->hasFile('photo_path')) {
-            $validated['photo_path'] = $request->file('photo_path')
-                ->store('residents', 'public');
+            $validated['photo_path'] = $request->file('photo_path')->store('residents', 'public');
         }
 
-        // Handle checkboxes (unchecked = not in request = false)
-        $validated['is_voter']      = $request->boolean('is_voter');
-        $validated['is_pwd']        = $request->boolean('is_pwd');
-        $validated['is_senior']     = $request->boolean('is_senior');
-        $validated['is_solo_parent']= $request->boolean('is_solo_parent');
-        $validated['is_4ps']        = $request->boolean('is_4ps');
+        $validated['is_voter']       = $request->boolean('is_voter');
+        $validated['is_pwd']         = $request->boolean('is_pwd');
+        $validated['is_senior']      = $request->boolean('is_senior');
+        $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
+        $validated['is_4ps']         = $request->boolean('is_4ps');
 
         Resident::create($validated);
 
-        return redirect()
-            ->route('residents.index')
-            ->with('success', 'Resident registered successfully.');
+        return redirect()->route('residents.index')->with('success', 'Resident registered successfully.');
     }
 
     // -------------------------------------------------------
@@ -106,7 +169,6 @@ class ResidentController extends Controller
     public function show(Resident $resident)
     {
         $resident->load(['purok', 'household', 'documents', 'blotterCases']);
-
         return view('residents.residents-show', compact('resident'));
     }
 
@@ -117,7 +179,6 @@ class ResidentController extends Controller
     {
         $puroks     = Purok::orderBy('name')->get();
         $households = Household::orderBy('household_number')->get();
-
         return view('residents.residents-edit', compact('resident', 'puroks', 'households'));
     }
 
@@ -153,21 +214,18 @@ class ResidentController extends Controller
         ]);
 
         if ($request->hasFile('photo_path')) {
-            $validated['photo_path'] = $request->file('photo_path')
-                ->store('residents', 'public');
+            $validated['photo_path'] = $request->file('photo_path')->store('residents', 'public');
         }
 
-        $validated['is_voter']      = $request->boolean('is_voter');
-        $validated['is_pwd']        = $request->boolean('is_pwd');
-        $validated['is_senior']     = $request->boolean('is_senior');
-        $validated['is_solo_parent']= $request->boolean('is_solo_parent');
-        $validated['is_4ps']        = $request->boolean('is_4ps');
+        $validated['is_voter']       = $request->boolean('is_voter');
+        $validated['is_pwd']         = $request->boolean('is_pwd');
+        $validated['is_senior']      = $request->boolean('is_senior');
+        $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
+        $validated['is_4ps']         = $request->boolean('is_4ps');
 
         $resident->update($validated);
 
-        return redirect()
-            ->route('residents.index')
-            ->with('success', 'Resident updated successfully.');
+        return redirect()->route('residents.index')->with('success', 'Resident updated successfully.');
     }
 
     // -------------------------------------------------------
@@ -176,9 +234,6 @@ class ResidentController extends Controller
     public function destroy(Resident $resident)
     {
         $resident->delete();
-
-        return redirect()
-            ->route('residents.index')
-            ->with('success', 'Resident removed successfully.');
+        return redirect()->route('residents.index')->with('success', 'Resident removed successfully.');
     }
 }
