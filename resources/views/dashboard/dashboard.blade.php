@@ -225,7 +225,7 @@
     <div class="card">
         <div class="card-header">
             <span class="card-title">
-                <i class="fas fa-file-certificate"></i>
+                <i class="fas fa-file-alt"></i>
                 Recent Documents
             </span>
             <a href="{{ route('documents.index') }}" class="btn btn-secondary btn-sm">View All</a>
