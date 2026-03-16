@@ -97,6 +97,21 @@
                     <option value="Transferred">Transferred</option>
                 </select>
             </div>
+            <div class="form-group">
+    <label class="form-label">Exact Age</label>
+    <input type="number" id="ageExact" class="form-control"
+           placeholder="e.g. 25" min="0" max="120" style="width:90px">
+</div>
+<div class="form-group">
+    <label class="form-label">Age From</label>
+    <input type="number" id="ageFrom" class="form-control"
+           placeholder="Min" min="0" max="120" style="width:80px">
+</div>
+<div class="form-group">
+    <label class="form-label">Age To</label>
+    <input type="number" id="ageTo" class="form-control"
+           placeholder="Max" min="0" max="120" style="width:80px">
+</div>
             <div class="form-group" style="justify-content:flex-end">
                 <label class="form-label">&nbsp;</label>
                 <button id="resetBtn" class="btn btn-secondary">
