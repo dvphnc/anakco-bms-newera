@@ -89,6 +89,12 @@
                        value="{{ old('fee_paid', $document->fee_paid ?? 0) }}" min="0" step="0.01">
             </div>
             <div class="form-group">
+                <label class="form-label">OR Number</label>
+                <input type="text" name="or_number" class="form-control"
+                       placeholder="e.g. OR-2026-00001"
+                       value="{{ old('or_number', $document->or_number) }}">
+            </div>
+            <div class="form-group">
                 <label class="form-label">Date Released</label>
                 <input type="date" name="released_at" class="form-control"
                        value="{{ old('released_at', $document->released_at?->format('Y-m-d')) }}">
