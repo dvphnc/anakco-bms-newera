@@ -305,8 +305,8 @@
     left: 50%;
     transform: translate(-50%, -50%) rotate(-30deg);
     opacity: 0.04;
-    width: 2px;
-    height: 280px;
+    width: 500px;
+    height: 500px;
     object-fit: contain;
     pointer-events: none;
     z-index: 0;
@@ -422,7 +422,7 @@
 
                 <div class="cert-sig-area">
                     {{-- Left: photo + thumbmark boxes --}}
-                    <div style="display:flex;gap:10px;align-items:flex-end">
+                    <div style="display:flex;gap:15px;align-items:flex-end">
                         <div style="text-align:center">
                             @if($resident?->photo_path)
                                 <img src="{{ asset('storage/'.$resident->photo_path) }}"
