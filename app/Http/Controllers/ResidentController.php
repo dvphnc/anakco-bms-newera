@@ -19,7 +19,7 @@ class ResidentController extends Controller
             $query = Resident::with(['purok'])
                 ->when($request->gender, fn($q) => $q->where('gender', $request->gender))
                 ->when($request->status, fn($q) => $q->where('residency_status', $request->status))
-->when($request->age_exact, function ($q) use ($request) {
+                ->when($request->age_exact, function ($q) use ($request) {
     $age  = (int) $request->age_exact;
     $from = now()->subYears($age + 1)->addDay()->format('Y-m-d');
     $to   = now()->subYears($age)->format('Y-m-d');
