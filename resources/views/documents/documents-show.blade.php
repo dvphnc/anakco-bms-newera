@@ -382,11 +382,12 @@
 
             {{-- Header --}}
             <div class="cert-header">
-                <img src="{{ asset('images/bne-logo.png') }}" class="cert-logo" alt="Barangay New Era Seal">
+                <img src="{{ asset('images/qc-seal.png') }}" class="cert-logo" alt="Quezon City Seal">
                 <div class="cert-titles">
-                    <div class="cert-republic">Republic of the Philippines</div>
+                    <div class="cert-republic"><em>Republic of the Philippines</em></div>
                     <div class="cert-province">City of Quezon, National Capital Region</div>
                     <div class="cert-barangay">Barangay New Era</div>
+                    <div class="cert-office" style="font-size:10pt;font-style:italic">Office of the Punong Barangay</div>
                     <div class="cert-address">New Era, Quezon City, Metro Manila</div>
                 </div>
                 <img src="{{ asset('images/bne-logo.png') }}" class="cert-logo" alt="Barangay New Era Seal">
@@ -420,16 +421,43 @@
                 </div>
 
                 <div class="cert-sig-area">
-                    <div class="cert-sig-left">
-                        <div>Community Tax Certificate No.: _______________</div>
-                        <div style="margin-top:6px">Issued at: _______________</div>
-                        <div style="margin-top:6px">Date: _______________</div>
+                    {{-- Left: photo + thumbmark boxes --}}
+                    <div style="display:flex;gap:12px;align-items:flex-end">
+                        <div style="text-align:center">
+                            @if($resident?->photo_path)
+                                <img src="{{ asset('storage/'.$resident->photo_path) }}"
+                                     style="width:70px;height:80px;object-fit:cover;border:1px solid #000;display:block">
+                            @else
+                                <div style="width:70px;height:80px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666">
+                                    APPLICANT<br>PHOTO
+                                </div>
+                            @endif
+                            <div style="font-size:7pt;margin-top:3px;text-transform:uppercase;letter-spacing:0.05em">Applicant Photo</div>
+                        </div>
+                        <div style="text-align:center">
+                            <div style="width:70px;height:80px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666">
+                                APPLICANT<br>THUMBMARK
+                            </div>
+                            <div style="font-size:7pt;margin-top:3px;text-transform:uppercase;letter-spacing:0.05em">Applicant Thumbmark</div>
+                        </div>
+                        <div style="margin-left:8px">
+                            <div style="font-size:9pt;margin-bottom:4px">Applicant's Signature:</div>
+                            <div style="border-top:1px solid #000;width:160px;margin-top:32px"></div>
+                        </div>
                     </div>
+                    {{-- Right: punong signature --}}
                     <div class="cert-sig-right">
-                        <div style="height:48px"></div>
+                        <div style="height:56px"></div>
                         <div class="cert-sig-line"></div>
                         <div class="cert-punong">{{ $officialName }}</div>
                         <div class="cert-punong-title">Punong Barangay</div>
+                    </div>
+                </div>
+                <div style="margin-top:16px;font-size:8pt;color:#555;border-top:1px solid #ccc;padding-top:8px">
+                    <div style="margin-bottom:3px">Community Tax Certificate No.: _______________ &nbsp;&nbsp; Issued at: _______________ &nbsp;&nbsp; Date: _______________</div>
+                    <div style="font-style:italic;color:#777;font-size:7.5pt">
+                        &#9679; This certification document is not valid without the official barangay dry seal and Punong Barangay signature/stamp.<br>
+                        &#9679; Officials and applicants who will submit false certification or documents shall be held liable for administrative/criminal liabilities.
                     </div>
                 </div>
 
