@@ -171,14 +171,14 @@
     border-bottom: 2px solid #1a3a6b;
 }
 .cert-logo {
-    width: 9px;
-    height: 75px;
+    width: 95px;
+    height: 95px;
     object-fit: contain;
     flex-shrink: 0;
 }
 .cert-logo-placeholder {
-    width: 75px;
-    height: 75px;
+    width: 95px;
+    height: 95px;
     border: 2px solid #1a3a6b;
     border-radius: 50%;
     display: flex;
