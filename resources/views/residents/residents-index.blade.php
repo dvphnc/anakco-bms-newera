@@ -98,19 +98,14 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Age</label>
-                <div style="display:flex;align-items:center;gap:4px">
-                    <input type="number" id="ageExact" class="form-control"
-                           placeholder="Exact" min="0" max="120" style="width:68px" title="Exact age">
-                    <span style="font-size:11px;color:var(--text-muted);padding:0 2px">or</span>
-                    <input type="number" id="ageFrom" class="form-control"
-                           placeholder="Min" min="0" max="120" style="width:60px" title="Age from">
-                    <span style="font-size:11px;color:var(--text-muted)">–</span>
-                    <input type="number" id="ageTo" class="form-control"
-                           placeholder="Max" min="0" max="120" style="width:60px" title="Age to">
-                    <button id="resetBtn" class="btn btn-secondary btn-sm" style="margin-left:6px;white-space:nowrap" title="Reset filters">
-                        <i class="fas fa-xmark"></i>
-                    </button>
-                </div>
+                <input type="number" id="ageExact" class="form-control"
+                       placeholder="e.g. 25" min="0" max="120" style="width:90px">
+            </div>
+            <div class="form-group" style="justify-content:flex-end">
+                <label class="form-label">&nbsp;</label>
+                <button id="resetBtn" class="btn btn-secondary">
+                    <i class="fas fa-xmark"></i> Reset
+                </button>
             </div>
         </div>
     </div>
@@ -199,8 +194,6 @@ $(document).ready(function () {
                 d.status    = $('#statusFilter').val();
                 d.purok_id  = $('#purokFilter').val();
                 d.age_exact = $('#ageExact').val();
-                d.age_from  = $('#ageFrom').val();
-                d.age_to    = $('#ageTo').val();
                 d.search    = { value: $('#searchInput').val() };
             }
         },
@@ -234,12 +227,7 @@ $(document).ready(function () {
         table.ajax.reload();
     });
 
-    $('#ageExact, #ageFrom, #ageTo').on('input', function () {
-        if (this.id === 'ageExact' && this.value) {
-            $('#ageFrom, #ageTo').val('');
-        } else if ((this.id === 'ageFrom' || this.id === 'ageTo') && this.value) {
-            $('#ageExact').val('');
-        }
+    $('#ageExact').on('input', function () {
         clearTimeout(searchTimer);
         searchTimer = setTimeout(() => table.ajax.reload(), 600);
     });
@@ -247,7 +235,7 @@ $(document).ready(function () {
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
         $('#genderFilter, #statusFilter, #purokFilter').val('');
-        $('#ageExact, #ageFrom, #ageTo').val('');
+        $('#ageExact').val('');
         table.ajax.reload();
     });
 });
