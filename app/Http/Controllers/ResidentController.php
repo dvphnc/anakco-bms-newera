@@ -20,9 +20,9 @@ class ResidentController extends Controller
                 ->when($request->gender, fn($q) => $q->where('gender', $request->gender))
                 ->when($request->status, fn($q) => $q->where('residency_status', $request->status))
                 ->when($request->age_exact, function ($q) use ($request) {
-    $age  = (int) $request->age_exact;
-    $from = now()->subYears($age + 1)->addDay()->format('Y-m-d');
-    $to   = now()->subYears($age)->format('Y-m-d');
+                $age  = (int) $request->age_exact;
+                $from = now()->subYears($age + 1)->addDay()->format('Y-m-d');
+                $to   = now()->subYears($age)->format('Y-m-d');
     $q->whereBetween('birthdate', [$from, $to]);
 })
 ->when(!$request->age_exact && $request->age_from, function ($q) use ($request) {
