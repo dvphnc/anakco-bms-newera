@@ -341,7 +341,7 @@
         <div class="card-body">
             @php
                 $committeeList = [
-                    ['slug' => 'peace-order',    'name' => 'Peace & Order',      'icon' => 'fa-shield-halved',       'color' => '#f85149'],
+                    ['slug' => 'peace-order',    'name' => 'Peace & Order',      'icon' => 'fa-shield',      'color' => '#f85149'],
                     ['slug' => 'health',         'name' => 'Health',             'icon' => 'fa-heart-pulse',         'color' => '#f78166'],
                     ['slug' => 'education',      'name' => 'Education',          'icon' => 'fa-graduation-cap',      'color' => '#79c0ff'],
                     ['slug' => 'infrastructure', 'name' => 'Infrastructure',     'icon' => 'fa-road',                'color' => '#e3b341'],
