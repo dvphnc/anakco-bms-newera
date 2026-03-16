@@ -235,8 +235,8 @@ data: function (d) {
     // Reset button
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
-        $('#genderFilter, #statusFilter, #purokFilter').val('');
-        table.ajax.reload();
+$('#genderFilter, #statusFilter, #purokFilter').val('');
+$('#ageExact, #ageFrom, #ageTo').val('');        table.ajax.reload();
     });
 });
 </script>
