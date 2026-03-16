@@ -61,7 +61,7 @@
 {{-- Filters --}}
 <div class="card mb-6">
     <div class="card-body" style="padding:16px 20px">
-        <div class="filter-bar" style="flex-wrap:wrap;gap:12px">
+        <div class="filter-bar" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
             <div class="form-group flex-1" style="min-width:180px">
                 <label class="form-label">Search</label>
                 <div style="position:relative">
@@ -97,19 +97,17 @@
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">Exact Age</label>
-                <input type="number" id="ageExact" class="form-control"
-                       placeholder="e.g. 25" min="0" max="120" style="width:90px">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Age From</label>
-                <input type="number" id="ageFrom" class="form-control"
-                       placeholder="Min" min="0" max="120" style="width:80px">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Age To</label>
-                <input type="number" id="ageTo" class="form-control"
-                       placeholder="Max" min="0" max="120" style="width:80px">
+                <label class="form-label">Age</label>
+                <div style="display:flex;align-items:center;gap:4px">
+                    <input type="number" id="ageExact" class="form-control"
+                           placeholder="Exact" min="0" max="120" style="width:72px" title="Exact age">
+                    <span style="font-size:11px;color:var(--text-muted);padding:0 2px">or</span>
+                    <input type="number" id="ageFrom" class="form-control"
+                           placeholder="Min" min="0" max="120" style="width:64px" title="Age from">
+                    <span style="font-size:11px;color:var(--text-muted)">–</span>
+                    <input type="number" id="ageTo" class="form-control"
+                           placeholder="Max" min="0" max="120" style="width:64px" title="Age to">
+                </div>
             </div>
             <div class="form-group" style="justify-content:flex-end">
                 <label class="form-label">&nbsp;</label>
