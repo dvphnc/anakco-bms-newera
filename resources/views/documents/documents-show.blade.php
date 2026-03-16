@@ -435,7 +435,7 @@
                             <div style="font-size:6.5pt;margin-top:2px;text-transform:uppercase;letter-spacing:0.04em;text-align:center">Applicant Photo</div>
                         </div>
                         <div style="text-align:center">
-                            <div style="width:75px;height:90px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666;line-height:1.3">
+                            <div style="width:75px;height:90px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666;line-height:1.7">
                                 APPLICANT<br>THUMBMARK
                             </div>
                             <div style="font-size:6.5pt;margin-top:2px;text-transform:uppercase;letter-spacing:0.04em;text-align:center">Applicant Thumbmark</div>
