@@ -348,7 +348,7 @@
                     ['slug' => 'environment',    'name' => 'Environment',        'icon' => 'fa-leaf',                'color' => '#3fb950'],
                     ['slug' => 'livelihood',     'name' => 'Livelihood',         'icon' => 'fa-briefcase',           'color' => '#f0883e'],
                     ['slug' => 'transport',      'name' => 'Transport & Comm.',  'icon' => 'fa-bus',                 'color' => '#58a6ff'],
-                    ['slug' => 'bdrrm',          'name' => 'BDRRM',             'icon' => 'fa-exclamation-triangle','color' => '#da3633'],
+                    ['slug' => 'bdrrm',          'name' => 'BDRRM',              'icon' => 'fa-exclamation-triangle','color' => '#da3633'],
                 ];
             @endphp
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
