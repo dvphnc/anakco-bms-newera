@@ -291,7 +291,7 @@
     color: #333;
 }
 .cert-or {
-    margin-top: 14px;
+    margin-top: 24px;
     padding-top: 10px;
     border-top: 1px dashed #999;
     font-size: 8.5pt;
@@ -304,9 +304,9 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(-30deg);
-    opacity: 0.05;
-    width: 500px;
-    height: 500px;
+    opacity: 0.04;
+    width: 280px;
+    height: 280px;
     object-fit: contain;
     pointer-events: none;
     z-index: 0;
@@ -426,16 +426,16 @@
                         <div style="text-align:center">
                             @if($resident?->photo_path)
                                 <img src="{{ asset('storage/'.$resident->photo_path) }}"
-                                     style="width:65px;height:75px;object-fit:cover;border:1px solid #000;display:block">
+                                     style="width:75px;height:90px;object-fit:cover;border:1px solid #000;display:block">
                             @else
-                                <div style="width:65px;height:75px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666;line-height:1.3">
+                                <div style="width:75px;height:90px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666;line-height:1.3">
                                     APPLICANT<br>PHOTO
                                 </div>
                             @endif
                             <div style="font-size:6.5pt;margin-top:2px;text-transform:uppercase;letter-spacing:0.04em;text-align:center">Applicant Photo</div>
                         </div>
                         <div style="text-align:center">
-                            <div style="width:65px;height:75px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666;line-height:1.3">
+                            <div style="width:75px;height:90px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666;line-height:1.3">
                                 APPLICANT<br>THUMBMARK
                             </div>
                             <div style="font-size:6.5pt;margin-top:2px;text-transform:uppercase;letter-spacing:0.04em;text-align:center">Applicant Thumbmark</div>
@@ -447,7 +447,7 @@
                     </div>
                     {{-- Right: punong signature --}}
                     <div style="text-align:center;min-width:200px">
-                        <div style="height:48px"></div>
+                        <div style="height:64px"></div>
                         <div style="border-top:1px solid #000;margin-bottom:3px"></div>
                         <div class="cert-punong">{{ $officialName }}</div>
                         <div class="cert-punong-title">Punong Barangay</div>
