@@ -243,8 +243,19 @@ data: function (d) {
     });
 
     // Filter dropdowns — reload with new params
-    $('#genderFilter, #statusFilter, #purokFilter').on('change', function () {
-        table.ajax.reload();
+$('#genderFilter, #statusFilter, #purokFilter').on('change', function () {
+    table.ajax.reload();
+});
+$('#ageExact, #ageFrom, #ageTo').on('input', function () {
+    // If exact age is filled, clear range and vice versa
+    if (this.id === 'ageExact' && this.value) {
+        $('#ageFrom, #ageTo').val('');
+    } else if ((this.id === 'ageFrom' || this.id === 'ageTo') && this.value) {
+        $('#ageExact').val('');
+    }
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => table.ajax.reload(), 600);
+});        table.ajax.reload();
     });
 
     // Reset button
