@@ -23,7 +23,7 @@ class ResidentController extends Controller
                 $age  = (int) $request->age_exact;
                 $from = now()->subYears($age + 1)->addDay()->format('Y-m-d');
                 $to   = now()->subYears($age)->format('Y-m-d');
-    $q->whereBetween('birthdate', [$from, $to]);
+                $q->whereBetween('birthdate', [$from, $to]);
 })
 ->when(!$request->age_exact && $request->age_from, function ($q) use ($request) {
     $q->where('birthdate', '<=', now()->subYears((int)$request->age_from)->format('Y-m-d'));
