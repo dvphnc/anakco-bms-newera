@@ -305,7 +305,7 @@
     left: 50%;
     transform: translate(-50%, -50%) rotate(-30deg);
     opacity: 0.04;
-    width: 280px;
+    width: 500px;
     height: 280px;
     object-fit: contain;
     pointer-events: none;
