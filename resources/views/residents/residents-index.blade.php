@@ -189,8 +189,15 @@ $(document).ready(function () {
         responsive: true,
         ajax: {
             url: '{{ route('residents.index') }}',
-            data: function (d) {
-                d.gender    = $('#genderFilter').val();
+data: function (d) {
+    d.gender     = $('#genderFilter').val();
+    d.status     = $('#statusFilter').val();
+    d.purok_id   = $('#purokFilter').val();
+    d.age_exact  = $('#ageExact').val();
+    d.age_from   = $('#ageFrom').val();
+    d.age_to     = $('#ageTo').val();
+    d.search     = { value: $('#searchInput').val() };
+}                d.gender    = $('#genderFilter').val();
                 d.status    = $('#statusFilter').val();
                 d.purok_id  = $('#purokFilter').val();
                 d.search    = { value: $('#searchInput').val() };
