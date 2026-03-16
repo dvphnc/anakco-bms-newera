@@ -304,7 +304,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(-30deg);
-    opacity: 0.08;
+    opacity: 0.05;
     width: 500px;
     height: 500px;
     object-fit: contain;
