@@ -100,20 +100,17 @@
                 <label class="form-label">Age</label>
                 <div style="display:flex;align-items:center;gap:4px">
                     <input type="number" id="ageExact" class="form-control"
-                           placeholder="Exact" min="0" max="120" style="width:72px" title="Exact age">
+                           placeholder="Exact" min="0" max="120" style="width:68px" title="Exact age">
                     <span style="font-size:11px;color:var(--text-muted);padding:0 2px">or</span>
                     <input type="number" id="ageFrom" class="form-control"
-                           placeholder="Min" min="0" max="120" style="width:64px" title="Age from">
+                           placeholder="Min" min="0" max="120" style="width:60px" title="Age from">
                     <span style="font-size:11px;color:var(--text-muted)">–</span>
                     <input type="number" id="ageTo" class="form-control"
-                           placeholder="Max" min="0" max="120" style="width:64px" title="Age to">
+                           placeholder="Max" min="0" max="120" style="width:60px" title="Age to">
+                    <button id="resetBtn" class="btn btn-secondary btn-sm" style="margin-left:6px;white-space:nowrap" title="Reset filters">
+                        <i class="fas fa-xmark"></i>
+                    </button>
                 </div>
-            </div>
-            <div class="form-group" style="justify-content:flex-end">
-                <label class="form-label">&nbsp;</label>
-                <button id="resetBtn" class="btn btn-secondary">
-                    <i class="fas fa-xmark"></i> Reset
-                </button>
             </div>
         </div>
     </div>
