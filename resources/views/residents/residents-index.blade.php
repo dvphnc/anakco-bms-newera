@@ -197,11 +197,7 @@ data: function (d) {
     d.age_from   = $('#ageFrom').val();
     d.age_to     = $('#ageTo').val();
     d.search     = { value: $('#searchInput').val() };
-}                d.gender    = $('#genderFilter').val();
-                d.status    = $('#statusFilter').val();
-                d.purok_id  = $('#purokFilter').val();
-                d.search    = { value: $('#searchInput').val() };
-            }
+}
         },
         columns: [
             { data: 'name_col',   name: 'first_name', orderable: true },
