@@ -29,20 +29,26 @@
     </div>
     <div class="card-body">
 
+        {{-- RESIDENT & TYPE --}}
         <div class="form-section-title">Resident & Type</div>
         <div class="form-grid-2 mb-6">
+
+            {{-- Resident -- shown as read-only display + hidden input --}}
             <div class="form-group">
-                <label class="form-label">Resident <span style="color:var(--crimson)">*</span></label>
-                <select name="resident_id" class="form-control" required>
-                    <option value="">Select Resident</option>
-                    @foreach($residents as $resident)
-                        <option value="{{ $resident->id }}"
-                            {{ old('resident_id', $document->resident_id) == $resident->id ? 'selected' : '' }}>
-                            {{ $resident->full_name }} — {{ $resident->purok->name ?? '' }}
-                        </option>
-                    @endforeach
-                </select>
+                <label class="form-label">Resident</label>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);font-size:13.5px">
+                    <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px;flex-shrink:0">
+                        {{ strtoupper(substr($document->resident->first_name ?? 'R', 0, 1)) }}
+                    </div>
+                    <div>
+                        <div style="font-weight:600">{{ $document->resident->full_name ?? '—' }}</div>
+                        <div class="td-muted">{{ $document->resident->purok->name ?? '' }} — {{ $document->resident->address ?? '' }}</div>
+                    </div>
+                </div>
+                {{-- Keep resident_id in form so update() validation passes --}}
+                <input type="hidden" name="resident_id" value="{{ $document->resident_id }}">
             </div>
+
             <div class="form-group">
                 <label class="form-label">Document Type <span style="color:var(--crimson)">*</span></label>
                 <select name="document_type" class="form-control" required>
@@ -50,10 +56,10 @@
                         'Barangay Clearance',
                         'Certificate of Residency',
                         'Certificate of Indigency',
+                        'Good Moral Character',
                         'Business Clearance',
-                        'Certificate of Good Moral',
-                        'Barangay ID',
-                        'First Time Job Seeker',
+                        'Certificate of Live Birth',
+                        'Other',
                     ] as $t)
                         <option value="{{ $t }}" {{ old('document_type', $document->document_type) === $t ? 'selected' : '' }}>{{ $t }}</option>
                     @endforeach
@@ -61,6 +67,7 @@
             </div>
         </div>
 
+        {{-- REQUEST DETAILS --}}
         <div class="form-section-title">Request Details</div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
@@ -78,33 +85,39 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Fee (₱)</label>
-                <input type="number" name="fee" class="form-control"
-                       value="{{ old('fee', $document->fee) }}" min="0" step="0.01">
-            </div>
-            <div class="form-group">
-                <label class="form-label">OR Number</label>
-                <input type="text" name="or_number" class="form-control"
-                       value="{{ old('or_number', $document->or_number) }}">
-            </div>
-        </div>
-
-        <div class="form-section-title">Additional Information</div>
-        <div class="form-grid-2 mb-6">
-            <div class="form-group">
-                <label class="form-label">Issued By</label>
-                <input type="text" name="issued_by" class="form-control"
-                       value="{{ old('issued_by', $document->issued_by) }}">
+                <input type="number" name="fee_paid" class="form-control"
+                       value="{{ old('fee_paid', $document->fee_paid ?? 0) }}" min="0" step="0.01">
             </div>
             <div class="form-group">
                 <label class="form-label">Date Released</label>
-                <input type="date" name="date_released" class="form-control"
-                       value="{{ old('date_released', $document->date_released?->format('Y-m-d')) }}">
+                <input type="date" name="released_at" class="form-control"
+                       value="{{ old('released_at', $document->released_at?->format('Y-m-d')) }}">
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Remarks</label>
-            <textarea name="remarks" class="form-control" rows="3">{{ old('remarks', $document->remarks) }}</textarea>
+        {{-- ISSUED BY --}}
+        <div class="form-section-title">Issued By</div>
+        <div class="form-grid-2 mb-6">
+            <div class="form-group">
+                <label class="form-label">Issuing Officer</label>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);font-size:13.5px">
+                    <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px;flex-shrink:0">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </div>
+                    <div>
+                        <div style="font-weight:600">{{ $document->issuedBy->name ?? auth()->user()->name }}</div>
+                        <div class="td-muted">{{ $document->issuedBy->role ?? auth()->user()->role }} — Issued on {{ $document->created_at->format('F d, Y') }}</div>
+                    </div>
+                </div>
+                <input type="hidden" name="issued_by" value="{{ $document->issued_by ?? auth()->id() }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Document Number</label>
+                <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);font-size:13.5px;font-family:monospace;color:var(--text-muted)">
+                    {{ $document->doc_number }}
+                </div>
+            </div>
         </div>
 
     </div>
