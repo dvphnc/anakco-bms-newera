@@ -5,102 +5,84 @@ namespace App\Http\Controllers;
 use App\Models\BlotterCase;
 use App\Models\Resident;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class BlotterController extends Controller
 {
-    // -------------------------------------------------------
-    // INDEX — List all blotter cases
-    // -------------------------------------------------------
     public function index(Request $request)
     {
-        $query = BlotterCase::with(['complainantResident', 'filedBy'])
-            ->when($request->search, function ($q) use ($request) {
-                $q->where('case_number', 'like', "%{$request->search}%")
-                  ->orWhere('complainant_name', 'like', "%{$request->search}%")
-                  ->orWhere('respondent_name', 'like', "%{$request->search}%")
-                  ->orWhere('incident_type', 'like', "%{$request->search}%");
-            })
-            ->when($request->status, function ($q) use ($request) {
-                $q->where('status', $request->status);
-            })
-            ->when($request->incident_type, function ($q) use ($request) {
-                $q->where('incident_type', $request->incident_type);
-            })
-            ->when($request->date_from, function ($q) use ($request) {
-                $q->whereDate('incident_date', '>=', $request->date_from);
-            })
-            ->when($request->date_to, function ($q) use ($request) {
-                $q->whereDate('incident_date', '<=', $request->date_to);
-            })
-            ->latest();
+        if ($request->ajax()) {
+            $query = BlotterCase::select('blotter_cases.*')
+                ->when($request->status, fn($q) => $q->where('status', $request->status))
+                ->when($request->incident_type, fn($q) => $q->where('incident_type', $request->incident_type))
+                ->when($request->date_from, fn($q) => $q->whereDate('incident_date', '>=', $request->date_from))
+                ->when($request->date_to, fn($q) => $q->whereDate('incident_date', '<=', $request->date_to));
 
-        $cases = $query->paginate(15)->withQueryString();
+            return DataTables::of($query)
+                ->addColumn('number_col', fn($c) => '<span class="td-mono">' . e($c->case_number) . '</span>')
+                ->addColumn('type_col', fn($c) => '<span class="badge badge-navy">' . e($c->incident_type) . '</span>')
+                ->addColumn('complainant_col', fn($c) => '<div style="font-weight:600;font-size:13px">' . e($c->complainant_name ?? '—') . '</div>')
+                ->addColumn('respondent_col', fn($c) => '<span class="td-muted">' . e($c->respondent_name ?? '—') . '</span>')
+                ->addColumn('date_col', fn($c) => '<span class="td-muted">' . ($c->incident_date ? \Carbon\Carbon::parse($c->incident_date)->format('M d, Y') : '—') . '</span>')
+                ->addColumn('status_col', function ($c) {
+                    $cls = match($c->status) {
+                        'Active'                       => 'badge-red',
+                        'Under Investigation'          => 'badge-yellow',
+                        'Mediated'                     => 'badge-blue',
+                        'Settled'                      => 'badge-green',
+                        'Closed'                       => 'badge-gray',
+                        'Referred to Higher Authority' => 'badge-orange',
+                        default                        => 'badge-gray'
+                    };
+                    return '<span class="badge ' . $cls . '">' . $c->status . '</span>';
+                })
+                ->addColumn('actions', function ($c) {
+                    $show   = route('blotter.show', $c);
+                    $edit   = route('blotter.edit', $c);
+                    $delete = route('blotter.destroy', $c);
+                    return '
+                        <div style="display:flex;justify-content:flex-end;gap:6px">
+                            <a href="' . $show . '" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-eye"></i></a>
+                            <a href="' . $edit . '" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-pen"></i></a>
+                            <form method="POST" action="' . $delete . '" onsubmit="return confirm(\'Delete this case?\')">
+                                <input type="hidden" name="_token" value="' . csrf_token() . '">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </div>';
+                })
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('search') && $request->search['value']) {
+                        $s = $request->search['value'];
+                        $query->where(fn($q) => $q
+                            ->where('case_number', 'like', "%$s%")
+                            ->orWhere('complainant_name', 'like', "%$s%")
+                            ->orWhere('respondent_name', 'like', "%$s%")
+                            ->orWhere('incident_type', 'like', "%$s%"));
+                    }
+                })
+                ->rawColumns(['number_col','type_col','complainant_col','respondent_col','date_col','status_col','actions'])
+                ->make(true);
+        }
 
-        $incidentTypes = [
-            'Noise Complaint',
-            'Physical Assault',
-            'Verbal Abuse',
-            'Theft',
-            'Trespassing',
-            'Domestic Dispute',
-            'Property Damage',
-            'Threat',
-            'Other',
-        ];
-
-        $statuses = [
-            'Active',
-            'Under Investigation',
-            'Mediated',
-            'Settled',
-            'Closed',
-            'Referred to Higher Authority',
-        ];
-
-        // Summary counts for the status cards
+        $incidentTypes = ['Noise Complaint','Physical Assault','Verbal Abuse','Theft','Trespassing','Domestic Dispute','Property Damage','Threat','Other'];
+        $statuses = ['Active','Under Investigation','Mediated','Settled','Closed','Referred to Higher Authority'];
         $summaryCounts = [
-            'Active'               => BlotterCase::where('status', 'Active')->count(),
-            'Under Investigation'  => BlotterCase::where('status', 'Under Investigation')->count(),
-            'Settled'              => BlotterCase::where('status', 'Settled')->count(),
-            'Closed'               => BlotterCase::where('status', 'Closed')->count(),
+            'Active'              => BlotterCase::where('status','Active')->count(),
+            'Under Investigation' => BlotterCase::where('status','Under Investigation')->count(),
+            'Settled'             => BlotterCase::where('status','Settled')->count(),
+            'Closed'              => BlotterCase::where('status','Closed')->count(),
         ];
-
-        return view('blotter.blotter-index', compact(
-            'cases',
-            'incidentTypes',
-            'statuses',
-            'summaryCounts'
-        ));
+        return view('blotter.blotter-index', compact('incidentTypes','statuses','summaryCounts'));
     }
 
-    // -------------------------------------------------------
-    // CREATE — Show file case form
-    // -------------------------------------------------------
     public function create()
     {
-        $residents = Resident::active()
-            ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->get();
-
-        $incidentTypes = [
-            'Noise Complaint',
-            'Physical Assault',
-            'Verbal Abuse',
-            'Theft',
-            'Trespassing',
-            'Domestic Dispute',
-            'Property Damage',
-            'Threat',
-            'Other',
-        ];
-
-        return view('blotter.blotter-create', compact('residents', 'incidentTypes'));
+        $residents = Resident::active()->orderBy('last_name')->orderBy('first_name')->get();
+        $incidentTypes = ['Noise Complaint','Physical Assault','Verbal Abuse','Theft','Trespassing','Domestic Dispute','Property Damage','Threat','Other'];
+        return view('blotter.blotter-create', compact('residents','incidentTypes'));
     }
 
-    // -------------------------------------------------------
-    // STORE — Save new blotter case
-    // -------------------------------------------------------
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -117,63 +99,26 @@ class BlotterController extends Controller
             'respondent_contact'      => 'nullable|string|max:20',
             'status'                  => 'required|in:Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
         ]);
-
         $validated['case_number'] = BlotterCase::generateCaseNumber();
         $validated['filed_by']    = auth()->id();
-
         BlotterCase::create($validated);
-
-        return redirect()
-            ->route('blotter.index')
-            ->with('success', 'Blotter case filed successfully.');
+        return redirect()->route('blotter.index')->with('success', 'Blotter case filed successfully.');
     }
 
-    // -------------------------------------------------------
-    // SHOW — View case details
-    // -------------------------------------------------------
     public function show(BlotterCase $blotter)
     {
-        $blotter->load(['complainantResident', 'filedBy']);
-
+        $blotter->load(['complainantResident','filedBy']);
         return view('blotter.blotter-show', compact('blotter'));
     }
 
-    // -------------------------------------------------------
-    // EDIT — Show edit form
-    // -------------------------------------------------------
     public function edit(BlotterCase $blotter)
     {
-        $residents = Resident::active()
-            ->orderBy('last_name')
-            ->get();
-
-        $incidentTypes = [
-            'Noise Complaint',
-            'Physical Assault',
-            'Verbal Abuse',
-            'Theft',
-            'Trespassing',
-            'Domestic Dispute',
-            'Property Damage',
-            'Threat',
-            'Other',
-        ];
-
-        $statuses = [
-            'Active',
-            'Under Investigation',
-            'Mediated',
-            'Settled',
-            'Closed',
-            'Referred to Higher Authority',
-        ];
-
-        return view('blotter.blotter-edit', compact('blotter', 'residents', 'incidentTypes', 'statuses'));
+        $residents = Resident::active()->orderBy('last_name')->get();
+        $incidentTypes = ['Noise Complaint','Physical Assault','Verbal Abuse','Theft','Trespassing','Domestic Dispute','Property Damage','Threat','Other'];
+        $statuses = ['Active','Under Investigation','Mediated','Settled','Closed','Referred to Higher Authority'];
+        return view('blotter.blotter-edit', compact('blotter','residents','incidentTypes','statuses'));
     }
 
-    // -------------------------------------------------------
-    // UPDATE — Save edited case
-    // -------------------------------------------------------
     public function update(Request $request, BlotterCase $blotter)
     {
         $validated = $request->validate([
@@ -186,29 +131,16 @@ class BlotterController extends Controller
             'status'            => 'required|in:Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
             'resolution_notes'  => 'nullable|string',
         ]);
-
-        // Set settled_at when status changes to Settled or Closed
-        if (in_array($validated['status'], ['Settled', 'Closed']) &&
-            !in_array($blotter->status, ['Settled', 'Closed'])) {
+        if (in_array($validated['status'], ['Settled','Closed']) && !in_array($blotter->status, ['Settled','Closed'])) {
             $validated['settled_at'] = now();
         }
-
         $blotter->update($validated);
-
-        return redirect()
-            ->route('blotter.index')
-            ->with('success', 'Blotter case updated successfully.');
+        return redirect()->route('blotter.index')->with('success', 'Blotter case updated successfully.');
     }
 
-    // -------------------------------------------------------
-    // DESTROY — Delete case
-    // -------------------------------------------------------
     public function destroy(BlotterCase $blotter)
     {
         $blotter->delete();
-
-        return redirect()
-            ->route('blotter.index')
-            ->with('success', 'Blotter case deleted successfully.');
+        return redirect()->route('blotter.index')->with('success', 'Blotter case deleted successfully.');
     }
 }
