@@ -6,7 +6,6 @@
 
 @section('content')
 
-{{-- Page Header --}}
 <div class="page-header">
     <div>
         <h1 class="page-title">Residents</h1>
@@ -62,8 +61,8 @@
 {{-- Filters --}}
 <div class="card mb-6">
     <div class="card-body" style="padding:16px 20px">
-        <div class="filter-bar">
-            <div class="form-group flex-1">
+        <div class="filter-bar" style="flex-wrap:wrap;gap:12px">
+            <div class="form-group flex-1" style="min-width:180px">
                 <label class="form-label">Search</label>
                 <div style="position:relative">
                     <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px"></i>
@@ -98,20 +97,20 @@
                 </select>
             </div>
             <div class="form-group">
-    <label class="form-label">Exact Age</label>
-    <input type="number" id="ageExact" class="form-control"
-           placeholder="e.g. 25" min="0" max="120" style="width:90px">
-</div>
-<div class="form-group">
-    <label class="form-label">Age From</label>
-    <input type="number" id="ageFrom" class="form-control"
-           placeholder="Min" min="0" max="120" style="width:80px">
-</div>
-<div class="form-group">
-    <label class="form-label">Age To</label>
-    <input type="number" id="ageTo" class="form-control"
-           placeholder="Max" min="0" max="120" style="width:80px">
-</div>
+                <label class="form-label">Exact Age</label>
+                <input type="number" id="ageExact" class="form-control"
+                       placeholder="e.g. 25" min="0" max="120" style="width:90px">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Age From</label>
+                <input type="number" id="ageFrom" class="form-control"
+                       placeholder="Min" min="0" max="120" style="width:80px">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Age To</label>
+                <input type="number" id="ageTo" class="form-control"
+                       placeholder="Max" min="0" max="120" style="width:80px">
+            </div>
             <div class="form-group" style="justify-content:flex-end">
                 <label class="form-label">&nbsp;</label>
                 <button id="resetBtn" class="btn btn-secondary">
@@ -151,19 +150,15 @@
 @endsection
 
 @push('scripts')
-{{-- DataTables CSS --}}
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-
-{{-- jQuery + DataTables JS --}}
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
 <style>
-/* Override DataTables default styles to match BMS theme */
 #residentsTable_wrapper .dataTables_length,
-#residentsTable_wrapper .dataTables_filter { display: none; } /* We use our own search/filter */
+#residentsTable_wrapper .dataTables_filter { display: none; }
 #residentsTable_wrapper .dataTables_info { font-size:12px; color:var(--text-muted); padding: 12px 20px; }
 #residentsTable_wrapper .dataTables_paginate { padding: 12px 20px; }
 #residentsTable_wrapper .dataTables_paginate .paginate_button {
@@ -204,25 +199,25 @@ $(document).ready(function () {
         responsive: true,
         ajax: {
             url: '{{ route('residents.index') }}',
-data: function (d) {
-    d.gender     = $('#genderFilter').val();
-    d.status     = $('#statusFilter').val();
-    d.purok_id   = $('#purokFilter').val();
-    d.age_exact  = $('#ageExact').val();
-    d.age_from   = $('#ageFrom').val();
-    d.age_to     = $('#ageTo').val();
-    d.search     = { value: $('#searchInput').val() };
-}
+            data: function (d) {
+                d.gender    = $('#genderFilter').val();
+                d.status    = $('#statusFilter').val();
+                d.purok_id  = $('#purokFilter').val();
+                d.age_exact = $('#ageExact').val();
+                d.age_from  = $('#ageFrom').val();
+                d.age_to    = $('#ageTo').val();
+                d.search    = { value: $('#searchInput').val() };
+            }
         },
         columns: [
-            { data: 'name_col',   name: 'first_name', orderable: true },
-            { data: 'purok_col',  name: 'purok_id',   orderable: false },
-            { data: 'gender_col', name: 'gender',     orderable: true },
-            { data: 'age_col',    name: 'birthdate',  orderable: true },
-            { data: 'civil_col',  name: 'civil_status', orderable: false },
-            { data: 'tags_col',   name: 'is_voter',   orderable: false },
+            { data: 'name_col',   name: 'first_name',       orderable: true },
+            { data: 'purok_col',  name: 'purok_id',         orderable: false },
+            { data: 'gender_col', name: 'gender',           orderable: true },
+            { data: 'age_col',    name: 'birthdate',        orderable: true },
+            { data: 'civil_col',  name: 'civil_status',     orderable: false },
+            { data: 'tags_col',   name: 'is_voter',         orderable: false },
             { data: 'status_col', name: 'residency_status', orderable: true },
-            { data: 'actions',    name: 'actions',    orderable: false, searchable: false },
+            { data: 'actions',    name: 'actions',          orderable: false, searchable: false },
         ],
         order: [[0, 'asc']],
         pageLength: 15,
@@ -233,36 +228,32 @@ data: function (d) {
         }
     });
 
-    // Custom search input — debounced to avoid too many requests
     let searchTimer;
+
     $('#searchInput').on('keyup', function () {
         clearTimeout(searchTimer);
-        searchTimer = setTimeout(() => {
-            table.ajax.reload();
-        }, 400);
+        searchTimer = setTimeout(() => table.ajax.reload(), 400);
     });
 
-    // Filter dropdowns — reload with new params
-$('#genderFilter, #statusFilter, #purokFilter').on('change', function () {
-    table.ajax.reload();
-});
-$('#ageExact, #ageFrom, #ageTo').on('input', function () {
-    // If exact age is filled, clear range and vice versa
-    if (this.id === 'ageExact' && this.value) {
-        $('#ageFrom, #ageTo').val('');
-    } else if ((this.id === 'ageFrom' || this.id === 'ageTo') && this.value) {
-        $('#ageExact').val('');
-    }
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => table.ajax.reload(), 600);
-});        table.ajax.reload();
+    $('#genderFilter, #statusFilter, #purokFilter').on('change', function () {
+        table.ajax.reload();
     });
 
-    // Reset button
+    $('#ageExact, #ageFrom, #ageTo').on('input', function () {
+        if (this.id === 'ageExact' && this.value) {
+            $('#ageFrom, #ageTo').val('');
+        } else if ((this.id === 'ageFrom' || this.id === 'ageTo') && this.value) {
+            $('#ageExact').val('');
+        }
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => table.ajax.reload(), 600);
+    });
+
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
-$('#genderFilter, #statusFilter, #purokFilter').val('');
-$('#ageExact, #ageFrom, #ageTo').val('');        table.ajax.reload();
+        $('#genderFilter, #statusFilter, #purokFilter').val('');
+        $('#ageExact, #ageFrom, #ageTo').val('');
+        table.ajax.reload();
     });
 });
 </script>
