@@ -171,7 +171,7 @@
     border-bottom: 2px solid #1a3a6b;
 }
 .cert-logo {
-    width: 75px;
+    width: 9px;
     height: 75px;
     object-fit: contain;
     flex-shrink: 0;
