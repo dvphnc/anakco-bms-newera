@@ -105,6 +105,7 @@
                         ['label'=>'Status',        'value'=>$document->status],
                         ['label'=>'Purpose',       'value'=>$document->purpose ?? '—'],
                         ['label'=>'Fee',           'value'=>($document->fee_paid ?? 0) > 0 ? '₱'.number_format($document->fee_paid,2) : 'Free'],
+                        ['label'=>'OR Number',      'value'=>$document->or_number ?? '—'],
                         ['label'=>'Issued By',     'value'=>$document->issuedBy->name ?? '—'],
                         ['label'=>'Date Requested','value'=>$document->created_at->format('F d, Y')],
                         ['label'=>'Date Released', 'value'=>$document->released_at?->format('F d, Y') ?? '—'],
@@ -171,14 +172,14 @@
     border-bottom: 2px solid #1a3a6b;
 }
 .cert-logo {
-    width: 95px;
-    height: 95px;
+    width: 75px;
+    height: 75px;
     object-fit: contain;
     flex-shrink: 0;
 }
 .cert-logo-placeholder {
-    width: 95px;
-    height: 95px;
+    width: 75px;
+    height: 75px;
     border: 2px solid #1a3a6b;
     border-radius: 50%;
     display: flex;
@@ -304,8 +305,8 @@
     left: 50%;
     transform: translate(-50%, -50%) rotate(-30deg);
     opacity: 0.04;
-    width: 500px;
-    height: 500px;
+    width: 280px;
+    height: 280px;
     object-fit: contain;
     pointer-events: none;
     z-index: 0;
@@ -461,7 +462,7 @@
                 </div>
 
                 <div class="cert-or">
-                    <span>O.R. No.: _______________</span>
+                    <span>O.R. No.: {{ $document->or_number ?? "_______________" }}</span>
                     <span>Amount Paid: ₱{{ number_format($document->fee_paid ?? 0, 2) }}</span>
                     <span>Date: {{ $issuedDate->format('m/d/Y') }}</span>
                     <span style="margin-left:auto">Prepared by: _______________</span>
