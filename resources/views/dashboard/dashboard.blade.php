@@ -32,7 +32,7 @@
 
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(227,179,65,0.12);color:#e3b341">
-            <i class="fas fa-file-certificate"></i>
+            <i class="fas fa-file-alt"></i>
         </div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($pendingDocuments) }}</div>
