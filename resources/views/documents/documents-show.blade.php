@@ -129,15 +129,14 @@
 <style>
 @media print {
     @page {
-        size: 8.5in 11in;
-        margin: 0.6in 0.8in;
+        size: letter;
+        margin: 0.5in 0.7in;
     }
-    body * { visibility: hidden; }
-    #certificate, #certificate * { visibility: visible; }
-    #certificate { position: fixed; top: 0; left: 0; width: 100%; }
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    header, nav, footer, .sidebar, .topbar, .page-header { display: none !important; }
 }
 .print-only { display: none; }
-@media print { .print-only { display: block !important; } }
 
 .cert-page {
     font-family: 'Times New Roman', Times, serif;
@@ -305,7 +304,7 @@
     left: 50%;
     transform: translate(-50%, -50%) rotate(-30deg);
     opacity: 0.04;
-    width: 500px;
+    width: 280px;
     height: 280px;
     object-fit: contain;
     pointer-events: none;
