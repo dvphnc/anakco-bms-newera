@@ -305,8 +305,8 @@
     left: 50%;
     transform: translate(-50%, -50%) rotate(-30deg);
     opacity: 0.04;
-    width: 500px;
-    height: 500px;
+    width: 280px;
+    height: 280px;
     object-fit: contain;
     pointer-events: none;
     z-index: 0;
@@ -422,8 +422,8 @@
 
                 <div class="cert-sig-area">
                     {{-- Left: photo + thumbmark boxes --}}
-                    <div style="display:flex;gap:15px;align-items:flex-end">
-                        <div style="text-align:center">
+                    <div style="display:flex;gap:10px;align-items:flex-end">
+                        <div style="display:flex;flex-direction:column;align-items:center">
                             @if($resident?->photo_path)
                                 <img src="{{ asset('storage/'.$resident->photo_path) }}"
                                      style="width:75px;height:90px;object-fit:cover;border:1px solid #000;display:block">
@@ -432,13 +432,13 @@
                                     APPLICANT<br>PHOTO
                                 </div>
                             @endif
-                            <div style="font-size:6.5pt;margin-top:2px;text-transform:uppercase;letter-spacing:0.04em;text-align:center">Applicant Photo</div>
+                            <div style="font-size:6.5pt;margin-top:3px;text-transform:uppercase;letter-spacing:0.04em;text-align:center;width:75px">Applicant Photo</div>
                         </div>
-                        <div style="text-align:center">
+                        <div style="display:flex;flex-direction:column;align-items:center">
                             <div style="width:75px;height:90px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666;line-height:1.3">
                                 APPLICANT<br>THUMBMARK
                             </div>
-                            <div style="font-size:6.5pt;margin-top:2px;text-transform:uppercase;letter-spacing:0.04em;text-align:center">Applicant Thumbmark</div>
+                            <div style="font-size:6.5pt;margin-top:3px;text-transform:uppercase;letter-spacing:0.04em;text-align:center;width:75px">Applicant Thumbmark</div>
                         </div>
                         <div style="display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:20px;margin-left:6px">
                             <div style="font-size:8.5pt;margin-bottom:28px">Applicant's Signature:</div>
