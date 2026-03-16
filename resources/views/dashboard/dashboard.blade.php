@@ -316,7 +316,8 @@
                 File Blotter Case
             </a>
             <a href="{{ route('households.create') }}" class="btn btn-secondary" style="justify-content:flex-start">
-<i class="fas fa-house" style="color:#e3b341"></i>                Add Household
+<i class="fas fa-house" style="color:#e3b341"></i>                
+            Add Household
             </a>
             <a href="{{ route('businesses.create') }}" class="btn btn-secondary" style="justify-content:flex-start">
                 <i class="fas fa-store" style="color:#f0883e"></i>
