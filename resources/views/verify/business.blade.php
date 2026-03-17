@@ -65,30 +65,19 @@
         .status-text h2 { font-size: 18px; font-weight: 700; color: #fff; }
         .status-text p  { font-size: 12px; color: rgba(255,255,255,0.8); margin-top: 2px; }
 
-        /* Seal stamp */
-        .seal-wrap {
-            display: flex;
-            justify-content: center;
-            padding: 16px 0 8px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .seal {
-            width: 100px; height: 100px;
-            border-radius: 50%;
-            border: 3px solid #0D2144;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            position: relative;
-            background: #fff;
-        }
-        .seal::before {
-            content: '';
+        /* Watermark */
+        .verify-card { position: relative; overflow: hidden; }
+        .verify-watermark {
             position: absolute;
-            top: 4px; left: 4px; right: 4px; bottom: 4px;
-            border-radius: 50%;
-            border: 1px dashed #C8861A;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-20deg);
+            width: 280px; height: 280px;
+            object-fit: contain;
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 0;
         }
-        .seal img { width: 52px; height: 52px; object-fit: contain; }
+        .details, .verify-footer, .not-found { position: relative; z-index: 1; }
 
         /* Details */
         .details { padding: 16px 24px; }
@@ -160,12 +149,13 @@
 
     {{-- Header --}}
     <div class="verify-header">
-        <img src="{{ asset('images/bne-logo.png') }}" alt="BNE Logo">
-        <div class="verify-header-text">
+        <img src="{{ asset('images/qc-seal.png') }}" alt="QC Seal" style="width:48px;height:48px;object-fit:contain;flex-shrink:0">
+        <div class="verify-header-text" style="flex:1">
             <h1>Barangay New Era</h1>
             <p>Official Business Permit Verification</p>
             <span class="permit-num-badge">{{ $permitNumber }}</span>
         </div>
+        <img src="{{ asset('images/bne-logo.png') }}" alt="BNE Logo" style="width:48px;height:48px;object-fit:contain;flex-shrink:0">
     </div>
 
     <div class="verify-card">
@@ -207,12 +197,10 @@
             </div>
         </div>
 
-        {{-- Seal --}}
-        <div class="seal-wrap">
-            <div class="seal">
-                <img src="{{ asset('images/bne-logo.png') }}" alt="Seal">
-            </div>
-        </div>
+
+
+        {{-- Watermark --}}
+        <img src="{{ asset('images/bne-logo.png') }}" class="verify-watermark" alt="">
 
         {{-- Details --}}
         <div class="details">
