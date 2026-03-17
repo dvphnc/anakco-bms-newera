@@ -47,8 +47,8 @@
 
 <div class="card mb-6">
     <div class="card-body" style="padding:16px 20px">
-        <div class="filter-bar">
-            <div class="form-group flex-1">
+        <div class="filter-bar" style="align-items:flex-end;flex-wrap:wrap;gap:12px">
+            <div class="form-group flex-1" style="min-width:180px">
                 <label class="form-label">Search</label>
                 <div style="position:relative">
                     <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px"></i>
@@ -81,7 +81,7 @@
                 <label class="form-label">Date To</label>
                 <input type="date" id="dateTo" class="form-control">
             </div>
-            <div class="form-group" style="justify-content:flex-end">
+            <div class="form-group" style="flex-shrink:0">
                 <label class="form-label">&nbsp;</label>
                 <button id="resetBtn" class="btn btn-secondary"><i class="fas fa-xmark"></i> Reset</button>
             </div>
