@@ -58,10 +58,17 @@
                 <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">
                     QR Code
                 </div>
-                {!! QrCode::size(140)->generate(
-                    url('/verify/business/' . $business->permit_number)
-                ) !!}
-                <div style="font-size:10px;color:var(--text-muted);margin-top:6px">Scan to verify permit</div>
+                <a href="{{ url('/verify/business/' . $business->permit_number) }}" target="_blank" title="Click to verify this permit">
+                    {!! QrCode::size(140)->generate(
+                        url('/verify/business/' . $business->permit_number)
+                    ) !!}
+                </a>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:6px">
+                    Scan to verify &nbsp;·&nbsp;
+                    <a href="{{ url('/verify/business/' . $business->permit_number) }}" target="_blank" style="color:var(--navy);font-weight:600">
+                        Open link <i class="fas fa-arrow-up-right-from-square" style="font-size:9px"></i>
+                    </a>
+                </div>
             </div>
 
             {{-- Permit validity bar --}}
