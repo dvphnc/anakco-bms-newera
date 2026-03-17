@@ -59,8 +59,8 @@
             <div style="width:48px;height:48px;border-radius:var(--radius);background:rgba(200,134,26,0.2);border:2px solid rgba(200,134,26,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0">
                 <i class="fas fa-location-dot" style="font-size:20px;color:var(--gold-light)"></i>
             </div>
-            <div>
-                <div style="font-size:16px;font-weight:700;color:#fff">{{ $purok->name }}</div>
+            <div style="min-width:0">
+                <div style="font-size:15px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $purok->name }}</div>
                 <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px">
                     {{ $purok->residents_count }} {{ Str::plural('resident', $purok->residents_count) }}
                 </div>
