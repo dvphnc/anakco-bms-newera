@@ -24,53 +24,62 @@ require __DIR__ . '/auth.php';
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // ---------------------------------------------------
-    // Dashboard
+    // Dashboard — all roles
     // ---------------------------------------------------
     Route::get('/', [DashboardController::class, 'index'])
         ->name('dashboard');
 
     // ---------------------------------------------------
-    // Residents
+    // Residents — Admin + Secretary only
     // ---------------------------------------------------
-    Route::resource('residents', ResidentController::class);
+    Route::resource('residents', ResidentController::class)
+        ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
-    // Households
+    // Households — Admin + Secretary only
     // ---------------------------------------------------
-    Route::resource('households', HouseholdController::class);
+    Route::resource('households', HouseholdController::class)
+        ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
-    // Puroks
+    // Puroks — Admin + Secretary only
     // ---------------------------------------------------
     Route::get('puroks', [PurokController::class, 'index'])
-        ->name('puroks.index');
+        ->name('puroks.index')
+        ->middleware('role:Admin,Secretary');
     Route::get('puroks/{purok}/edit', [PurokController::class, 'edit'])
-        ->name('puroks.edit');
+        ->name('puroks.edit')
+        ->middleware('role:Admin,Secretary');
     Route::put('puroks/{purok}', [PurokController::class, 'update'])
-        ->name('puroks.update');
+        ->name('puroks.update')
+        ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
-    // Documents
+    // Documents — Admin + Secretary only
     // ---------------------------------------------------
-    Route::resource('documents', DocumentController::class);
+    Route::resource('documents', DocumentController::class)
+        ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
-    // Blotter Cases
+    // Blotter Cases — Admin + Secretary only
     // ---------------------------------------------------
-    Route::resource('blotter', BlotterController::class);
+    Route::resource('blotter', BlotterController::class)
+        ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
-    // Business Permits
+    // Business Permits — Admin + Secretary only
     // ---------------------------------------------------
-    Route::resource('businesses', BusinessController::class);
+    Route::resource('businesses', BusinessController::class)
+        ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
-    // Officials
+    // Officials — Admin + Secretary only
     // ---------------------------------------------------
-    Route::resource('officials', OfficialController::class);
+    Route::resource('officials', OfficialController::class)
+        ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
-    // Committees — one show route + 4 store routes
+    // Committees — all roles (Admin, Secretary, Committee)
     // ---------------------------------------------------
     Route::get('committees/{slug}', [CommitteeController::class, 'show'])
         ->name('committees.show');
@@ -88,14 +97,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('committees.storeInventory');
 
     // ---------------------------------------------------
-    // Reports
+    // Reports — Admin + Secretary only
     // ---------------------------------------------------
     Route::get('reports', [ReportController::class, 'index'])
-        ->name('reports.index');
+        ->name('reports.index')
+        ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
-    // User Management
+    // User Management — Admin only
     // ---------------------------------------------------
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class)
+        ->middleware('role:Admin');
 
 });
