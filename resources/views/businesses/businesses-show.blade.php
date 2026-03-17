@@ -59,13 +59,7 @@
                     QR Code
                 </div>
                 {!! QrCode::size(140)->generate(
-                    "PERMIT: {$business->permit_number}\n" .
-                    "BUSINESS: {$business->business_name}\n" .
-                    "TYPE: {$business->business_type}\n" .
-                    "OWNER: {$business->owner_name}\n" .
-                    "STATUS: {$business->status}\n" .
-                    "VALID UNTIL: " . ($business->expiry_date ? \Carbon\Carbon::parse($business->expiry_date)->format('M d, Y') : 'N/A') . "\n" .
-                    "ISSUED BY: Barangay New Era, Quezon City"
+                    url('/verify/business/' . $business->permit_number)
                 ) !!}
                 <div style="font-size:10px;color:var(--text-muted);margin-top:6px">Scan to verify permit</div>
             </div>
@@ -355,11 +349,7 @@
                 </div>
                 <div class="permit-qr">
                     {!! QrCode::size(120)->generate(
-                        "PERMIT: {$business->permit_number}\n" .
-                        "BUSINESS: {$business->business_name}\n" .
-                        "OWNER: {$business->owner_name}\n" .
-                        "STATUS: {$business->status}\n" .
-                        "VALID UNTIL: " . ($business->expiry_date ? \Carbon\Carbon::parse($business->expiry_date)->format('M d, Y') : 'N/A')
+                        url('/verify/business/' . $business->permit_number)
                     ) !!}
                     <div class="qr-label">Scan to verify<br>this permit</div>
                 </div>
