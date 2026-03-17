@@ -11,10 +11,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-    $this->app->bind('QrCode', function () {
-        return new \SimpleSoftwareIO\QrCode\BaconQrCodeGenerator;
-    });
-}
+        //
+    }
 
     /**
      * Bootstrap any application services.
