@@ -12,11 +12,17 @@ class Purok extends Model
     protected $fillable = [
         'name',
         'description',
+        'leader_id',
     ];
 
     // -------------------------------------------------------
     // Relationships
     // -------------------------------------------------------
+
+    public function leader()
+    {
+        return $this->belongsTo(Resident::class, 'leader_id');
+    }
 
     public function households()
     {
