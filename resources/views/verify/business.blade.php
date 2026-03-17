@@ -71,7 +71,7 @@
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%) rotate(-20deg);
-            width: 280px; height: 280px;
+            width: 280px; height: 500px;
             object-fit: contain;
             opacity: 0.05;
             pointer-events: none;
