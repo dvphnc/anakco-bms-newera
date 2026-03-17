@@ -93,11 +93,10 @@
                     <th>Business Name</th>
                     <th>Type</th>
                     <th>Owner</th>
-                    <th>Address</th>
                     <th>Permit Date</th>
                     <th>Expiry Date</th>
                     <th>Status</th>
-                    <th style="text-align:right">Actions</th>
+                    <th style="text-align:right;width:110px">Actions</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -134,15 +133,14 @@ $(document).ready(function () {
             }
         },
         columns: [
-            { data: 'number_col',      name: 'permit_number' },
+            { data: 'number_col',      name: 'permit_number',   width: '130px' },
             { data: 'name_col',        name: 'business_name' },
-            { data: 'type_col',        name: 'business_type' },
-            { data: 'owner_col',       name: 'owner_name', orderable: false },
-            { data: 'address_col',     name: 'business_address', orderable: false },
-            { data: 'permit_date_col', name: 'permit_date' },
-            { data: 'expiry_col',      name: 'expiry_date' },
-            { data: 'status_col',      name: 'status' },
-            { data: 'actions',         name: 'actions', orderable: false, searchable: false },
+            { data: 'type_col',        name: 'business_type',   width: '130px' },
+            { data: 'owner_col',       name: 'owner_name',      orderable: false },
+            { data: 'permit_date_col', name: 'permit_date',     width: '110px' },
+            { data: 'expiry_col',      name: 'expiry_date',     width: '110px' },
+            { data: 'status_col',      name: 'status',          width: '100px' },
+            { data: 'actions',         name: 'actions',         orderable: false, searchable: false, width: '110px' },
         ],
         order: [[0, 'asc']],
         pageLength: 15,
