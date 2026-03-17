@@ -4,13 +4,16 @@
 
 @section('content')
 
-<div class="page-header">
+<div class="page-header no-print">
     <div>
         <h1 class="page-title">Business Profile</h1>
         <p class="page-subtitle">{{ $business->permit_number }} — {{ $business->business_name }}</p>
     </div>
     <div class="page-actions">
-        <a href="{{ route('businesses.edit', $business) }}" class="btn btn-primary">
+        <button onclick="window.print()" class="btn btn-primary">
+            <i class="fas fa-print"></i> Print Permit
+        </button>
+        <a href="{{ route('businesses.edit', $business) }}" class="btn btn-secondary">
             <i class="fas fa-pen"></i> Edit
         </a>
         <a href="{{ route('businesses.index') }}" class="btn btn-secondary">
@@ -19,11 +22,11 @@
     </div>
 </div>
 
-<div style="display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start">
+{{-- Screen View --}}
+<div class="no-print" style="display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start">
 
     {{-- LEFT --}}
     <div style="display:flex;flex-direction:column;gap:16px">
-
         <div class="card">
             <div style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:24px 20px;text-align:center">
                 <div style="width:64px;height:64px;border-radius:var(--radius);background:rgba(200,134,26,0.2);border:2px solid rgba(200,134,26,0.4);margin:0 auto 14px;display:flex;align-items:center;justify-content:center">
@@ -48,6 +51,23 @@
                     };
                 @endphp
                 <span class="badge {{ $cls }}">{{ $business->status }}</span>
+            </div>
+
+            {{-- QR Code --}}
+            <div style="padding:16px 20px;border-top:1px solid var(--border);text-align:center">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">
+                    QR Code
+                </div>
+                {!! QrCode::size(140)->generate(
+                    "PERMIT: {$business->permit_number}\n" .
+                    "BUSINESS: {$business->business_name}\n" .
+                    "TYPE: {$business->business_type}\n" .
+                    "OWNER: {$business->owner_name}\n" .
+                    "STATUS: {$business->status}\n" .
+                    "VALID UNTIL: " . ($business->expiry_date ? \Carbon\Carbon::parse($business->expiry_date)->format('M d, Y') : 'N/A') . "\n" .
+                    "ISSUED BY: Barangay New Era, Quezon City"
+                ) !!}
+                <div style="font-size:10px;color:var(--text-muted);margin-top:6px">Scan to verify permit</div>
             </div>
 
             {{-- Permit validity bar --}}
@@ -105,7 +125,6 @@
                 </form>
             </div>
         </div>
-
     </div>
 
     {{-- RIGHT --}}
@@ -138,19 +157,13 @@
                 </div>
                 @endforeach
             </div>
-
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:4px">
-                    Business Address
-                </div>
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:4px">Business Address</div>
                 <div style="font-size:13.5px;color:var(--text)">{{ $business->business_address }}</div>
             </div>
-
             @if($business->ownerResident)
             <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">
-                    Linked Resident
-                </div>
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Linked Resident</div>
                 <a href="{{ route('residents.show', $business->ownerResident) }}"
                    style="display:flex;align-items:center;gap:10px;color:var(--navy)">
                     <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px;flex-shrink:0">
@@ -163,18 +176,230 @@
                 </a>
             </div>
             @endif
-
-            @if($business->remarks)
-            <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:4px">Remarks</div>
-                <div style="font-size:13px;color:var(--text-muted);background:var(--surface2);padding:12px 14px;border-radius:var(--radius-sm);border:1px solid var(--border)">
-                    {{ $business->remarks }}
-                </div>
-            </div>
-            @endif
         </div>
     </div>
+</div>
 
+{{-- =============================================
+     PRINTABLE BUSINESS PERMIT
+============================================= --}}
+<div class="print-only" id="permit">
+<style>
+@media print {
+    @page { size: letter; margin: 0.5in 0.7in; }
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    header, nav, footer, .sidebar, .topbar, .page-header { display: none !important; }
+}
+.print-only { display: none; }
+
+.permit-page {
+    font-family: 'Times New Roman', Times, serif;
+    color: #000;
+    width: 100%;
+    max-width: 7.1in;
+    margin: 0 auto;
+}
+.permit-border {
+    border: 3px double #1a3a6b;
+    padding: 24px 36px;
+    position: relative;
+}
+.permit-border::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 5px; right: 5px; bottom: 5px;
+    border: 1px solid #c8861a;
+    pointer-events: none;
+}
+.permit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1a3a6b;
+}
+.permit-logo { width: 68px; height: 68px; object-fit: contain; flex-shrink: 0; }
+.permit-titles { text-align: center; flex: 1; padding: 0 12px; }
+.permit-titles .republic  { font-size: 10pt; font-style: italic; }
+.permit-titles .province  { font-size: 9.5pt; }
+.permit-titles .barangay  { font-size: 15pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.08em; color: #0d2144; }
+.permit-titles .office    { font-size: 9.5pt; font-style: italic; }
+.permit-titles .address   { font-size: 8.5pt; color: #444; }
+.permit-type {
+    text-align: center;
+    font-size: 16pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #0d2144;
+    text-decoration: underline;
+    margin: 14px 0 4px;
+}
+.permit-num {
+    text-align: right;
+    font-size: 8.5pt;
+    color: #555;
+    margin-bottom: 12px;
+}
+.permit-body {
+    display: flex;
+    gap: 24px;
+    margin: 12px 0;
+}
+.permit-details {
+    flex: 1;
+}
+.permit-row {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 6px 0;
+    font-size: 10.5pt;
+}
+.permit-row .lbl {
+    width: 160px;
+    font-weight: bold;
+    color: #333;
+    flex-shrink: 0;
+}
+.permit-row .val { flex: 1; }
+.permit-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+.permit-qr img { width: 120px; height: 120px; }
+.permit-qr .qr-label { font-size: 7.5pt; color: #555; text-align: center; }
+.permit-validity {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #f8f9fb;
+    border: 1px solid #1a3a6b;
+    border-radius: 4px;
+    font-size: 10pt;
+}
+.permit-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+.permit-conditions {
+    font-size: 7.5pt;
+    color: #555;
+    max-width: 4in;
+    line-height: 1.5;
+}
+.permit-sig { text-align: center; min-width: 200px; }
+.permit-sig-line { border-top: 1px solid #000; margin-bottom: 3px; }
+.permit-sig-name { font-size: 11pt; font-weight: bold; text-transform: uppercase; }
+.permit-sig-title { font-size: 9pt; color: #333; }
+.permit-watermark {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-20deg);
+    opacity: 0.05;
+    width: 400px; height: 400px;
+    object-fit: contain;
+    pointer-events: none;
+}
+.permit-content { position: relative; z-index: 1; }
+@php
+    $permitOfficialName = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
+    $permitExpiry = $business->expiry_date ? \Carbon\Carbon::parse($business->expiry_date) : null;
+    $permitDate   = $business->permit_date ? \Carbon\Carbon::parse($business->permit_date) : null;
+@endphp
+</style>
+
+@php
+    $permitOfficialName = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
+    $permitExpiry = $business->expiry_date ? \Carbon\Carbon::parse($business->expiry_date) : null;
+    $permitDate   = $business->permit_date ? \Carbon\Carbon::parse($business->permit_date) : null;
+@endphp
+
+<div class="permit-page">
+    <div class="permit-border">
+        <img src="{{ asset('images/bne-logo.png') }}" class="permit-watermark" alt="">
+        <div class="permit-content">
+
+            {{-- Header --}}
+            <div class="permit-header">
+                <img src="{{ asset('images/qc-seal.png') }}" class="permit-logo" alt="QC Seal">
+                <div class="permit-titles">
+                    <div class="republic"><em>Republic of the Philippines</em></div>
+                    <div class="province">City of Quezon, National Capital Region</div>
+                    <div class="barangay">Barangay New Era</div>
+                    <div class="office">Office of the Punong Barangay</div>
+                    <div class="address">New Era, Quezon City, Metro Manila</div>
+                </div>
+                <img src="{{ asset('images/bne-logo.png') }}" class="permit-logo" alt="BNE Seal">
+            </div>
+
+            <div class="permit-type">Barangay Business Clearance</div>
+            <div class="permit-num">Permit No.: {{ $business->permit_number }}</div>
+
+            {{-- Body: details + QR --}}
+            <div class="permit-body">
+                <div class="permit-details">
+                    <div class="permit-row"><span class="lbl">Business Name:</span><span class="val"><strong>{{ $business->business_name }}</strong></span></div>
+                    <div class="permit-row"><span class="lbl">Business Type:</span><span class="val">{{ $business->business_type }}</span></div>
+                    <div class="permit-row"><span class="lbl">Business Address:</span><span class="val">{{ $business->business_address }}</span></div>
+                    <div class="permit-row"><span class="lbl">Owner / Operator:</span><span class="val"><strong>{{ $business->owner_name }}</strong></span></div>
+                    <div class="permit-row"><span class="lbl">Contact Number:</span><span class="val">{{ $business->owner_contact ?? '—' }}</span></div>
+                    <div class="permit-row"><span class="lbl">Date Issued:</span><span class="val">{{ $permitDate?->format('F d, Y') ?? '—' }}</span></div>
+                    <div class="permit-row"><span class="lbl">Valid Until:</span><span class="val"><strong>{{ $permitExpiry?->format('F d, Y') ?? '—' }}</strong></span></div>
+                    <div class="permit-row"><span class="lbl">Status:</span><span class="val"><strong>{{ $business->status }}</strong></span></div>
+                </div>
+                <div class="permit-qr">
+                    {!! QrCode::size(120)->generate(
+                        "PERMIT: {$business->permit_number}\n" .
+                        "BUSINESS: {$business->business_name}\n" .
+                        "OWNER: {$business->owner_name}\n" .
+                        "STATUS: {$business->status}\n" .
+                        "VALID UNTIL: " . ($business->expiry_date ? \Carbon\Carbon::parse($business->expiry_date)->format('M d, Y') : 'N/A')
+                    ) !!}
+                    <div class="qr-label">Scan to verify<br>this permit</div>
+                </div>
+            </div>
+
+            {{-- Validity notice --}}
+            <div class="permit-validity">
+                This barangay business clearance is issued to the above-named establishment and is
+                <strong>valid from {{ $permitDate?->format('F d, Y') ?? '—' }} to {{ $permitExpiry?->format('F d, Y') ?? '—' }}</strong>,
+                subject to compliance with all applicable barangay ordinances and regulations.
+            </div>
+
+            {{-- Footer --}}
+            <div class="permit-footer">
+                <div class="permit-conditions">
+                    <strong>Conditions:</strong><br>
+                    &#9679; This clearance is non-transferable and valid only for the business stated above.<br>
+                    &#9679; Any change in business activity, ownership, or location requires a new clearance.<br>
+                    &#9679; This document must be posted in a conspicuous place within the business premises.<br>
+                    &#9679; Failure to comply with barangay ordinances will result in revocation of this clearance.
+                </div>
+                <div class="permit-sig">
+                    <div style="height:52px"></div>
+                    <div class="permit-sig-line"></div>
+                    <div class="permit-sig-name">{{ $permitOfficialName }}</div>
+                    <div class="permit-sig-title">Punong Barangay</div>
+                </div>
+            </div>
+
+            {{-- Bottom strip --}}
+            <div style="margin-top:14px;padding-top:10px;border-top:1px dashed #999;font-size:8pt;color:#555;display:flex;gap:32px">
+                <span>O.R. No.: _______________</span>
+                <span>Amount Paid: _______________</span>
+                <span>Date: {{ now()->format('m/d/Y') }}</span>
+                <span style="margin-left:auto">Prepared by: _______________</span>
+            </div>
+
+        </div>
+    </div>
+</div>
 </div>
 
 @endsection
