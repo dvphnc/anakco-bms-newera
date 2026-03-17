@@ -38,7 +38,13 @@
         <a href="{{ route('households.index') }}"
            class="nav-item {{ request()->routeIs('households.*') ? 'active' : '' }}">
             <i class="fas fa-house"></i>
-            <span>Households & Purok</span>
+            <span>Households</span>
+        </a>
+
+        <a href="{{ route('puroks.index') }}"
+           class="nav-item {{ request()->routeIs('puroks.*') ? 'active' : '' }}">
+            <i class="fas fa-location-dot"></i>
+            <span>Puroks</span>
         </a>
 
         <a href="{{ route('officials.index') }}"
