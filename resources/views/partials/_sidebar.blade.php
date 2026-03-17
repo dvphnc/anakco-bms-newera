@@ -19,6 +19,8 @@
     {{-- Navigation --}}
     <nav class="sidebar-nav">
 
+        @php $role = auth()->user()->role; @endphp
+
         <div class="nav-section-label">Main</div>
 
         <a href="{{ route('dashboard') }}"
@@ -27,6 +29,8 @@
             <span>Dashboard</span>
         </a>
 
+        {{-- Records — Admin + Secretary only --}}
+        @if(in_array($role, ['Admin', 'Secretary']))
         <div class="nav-section-label">Records</div>
 
         <a href="{{ route('residents.index') }}"
@@ -52,7 +56,10 @@
             <i class="fas fa-user-tie"></i>
             <span>Officials & Staff</span>
         </a>
+        @endif
 
+        {{-- Services — Admin + Secretary only --}}
+        @if(in_array($role, ['Admin', 'Secretary']))
         <div class="nav-section-label">Services</div>
 
         <a href="{{ route('documents.index') }}"
@@ -72,7 +79,9 @@
             <i class="fas fa-store"></i>
             <span>Business Permits</span>
         </a>
+        @endif
 
+        {{-- Committees — all roles --}}
         <div class="nav-section-label">Committees</div>
 
         <a href="{{ route('committees.show', 'peace-order') }}"
@@ -123,6 +132,8 @@
             <span>BDRRM</span>
         </a>
 
+        {{-- System — Admin + Secretary for Reports, Admin only for Users --}}
+        @if(in_array($role, ['Admin', 'Secretary']))
         <div class="nav-section-label">System</div>
 
         <a href="{{ route('reports.index') }}"
@@ -131,11 +142,14 @@
             <span>Reports & Analytics</span>
         </a>
 
+        @if($role === 'Admin')
         <a href="{{ route('users.index') }}"
            class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
             <i class="fas fa-user-shield"></i>
             <span>User Management</span>
         </a>
+        @endif
+        @endif
 
     </nav>
 
