@@ -12,6 +12,13 @@ use App\Http\Controllers\CommitteeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PurokController;
+use App\Http\Controllers\VerifyController;
+
+// -------------------------------------------------------
+// Public Verification Routes — no login required
+// -------------------------------------------------------
+Route::get('/verify/business/{permitNumber}', [VerifyController::class, 'business'])
+    ->name('verify.business');
 
 // -------------------------------------------------------
 // Guest Routes — handled by Breeze (keep this line)
