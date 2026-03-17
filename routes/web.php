@@ -11,6 +11,7 @@ use App\Http\Controllers\OfficialController;
 use App\Http\Controllers\CommitteeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PurokController;
 
 // -------------------------------------------------------
 // Guest Routes — handled by Breeze (keep this line)
@@ -37,6 +38,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Households
     // ---------------------------------------------------
     Route::resource('households', HouseholdController::class);
+
+    // ---------------------------------------------------
+    // Puroks
+    // ---------------------------------------------------
+    Route::get('puroks', [PurokController::class, 'index'])
+        ->name('puroks.index');
+    Route::get('puroks/{purok}/edit', [PurokController::class, 'edit'])
+        ->name('puroks.edit');
+    Route::put('puroks/{purok}', [PurokController::class, 'update'])
+        ->name('puroks.update');
 
     // ---------------------------------------------------
     // Documents
