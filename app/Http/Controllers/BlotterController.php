@@ -98,9 +98,19 @@ class BlotterController extends Controller
             'respondent_address'      => 'nullable|string|max:255',
             'respondent_contact'      => 'nullable|string|max:20',
             'status'                  => 'required|in:Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
+            'resolution_notes'        => 'nullable|string',
+            'attachment'              => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120',
         ]);
         $validated['case_number'] = BlotterCase::generateCaseNumber();
         $validated['filed_by']    = auth()->id();
+
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $validated['file_path']          = $file->store('blotter', 'public');
+            $validated['file_type']          = $file->getClientOriginalExtension();
+            $validated['file_original_name'] = $file->getClientOriginalName();
+        }
+
         BlotterCase::create($validated);
         return redirect()->route('blotter.index')->with('success', 'Blotter case filed successfully.');
     }
@@ -134,6 +144,26 @@ class BlotterController extends Controller
         if (in_array($validated['status'], ['Settled','Closed']) && !in_array($blotter->status, ['Settled','Closed'])) {
             $validated['settled_at'] = now();
         }
+
+        // Handle file removal
+        if ($request->boolean('remove_attachment') && $blotter->file_path) {
+            \Storage::disk('public')->delete($blotter->file_path);
+            $validated['file_path']          = null;
+            $validated['file_type']          = null;
+            $validated['file_original_name'] = null;
+        }
+
+        // Handle new file upload
+        if ($request->hasFile('attachment')) {
+            if ($blotter->file_path) {
+                \Storage::disk('public')->delete($blotter->file_path);
+            }
+            $file = $request->file('attachment');
+            $validated['file_path']          = $file->store('blotter', 'public');
+            $validated['file_type']          = $file->getClientOriginalExtension();
+            $validated['file_original_name'] = $file->getClientOriginalName();
+        }
+
         $blotter->update($validated);
         return redirect()->route('blotter.index')->with('success', 'Blotter case updated successfully.');
     }
