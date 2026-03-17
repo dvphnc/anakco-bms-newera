@@ -6,23 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('puroks', function (Blueprint $table) {
-            //
+            $table->unsignedBigInteger('leader_id')->nullable()->after('description');
+            $table->foreign('leader_id')->references('id')->on('residents')->nullOnDelete();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('puroks', function (Blueprint $table) {
-            //
+            $table->dropForeign(['leader_id']);
+            $table->dropColumn('leader_id');
         });
     }
 };
