@@ -79,7 +79,9 @@
                     <input type="date" id="dateFrom" class="form-control" style="width:140px">
                     <span style="font-size:11px;color:var(--text-muted);flex-shrink:0">–</span>
                     <input type="date" id="dateTo" class="form-control" style="width:140px">
-                
+                    <button id="resetBtn" class="btn btn-secondary" style="white-space:nowrap;margin-left:4px">
+            <i class="fas fa-xmark"></i> Reset
+            </button>
                 </div>
             </div>
             <div class="form-group">
