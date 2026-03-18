@@ -7,7 +7,7 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Household Profile</h1>
-        <p class="page-subtitle">{{ $household->household_number }} — {{ $household->household_head }}</p>
+        <p class="page-subtitle">{{ $household->household_number }} — {{ $household->household_head ?? "—" }}</p>
     </div>
     <div class="page-actions">
         <a href="{{ route('households.edit', $household) }}" class="btn btn-primary">
@@ -21,9 +21,8 @@
 
 <div style="display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start">
 
-    {{-- LEFT: Info card --}}
+    {{-- LEFT --}}
     <div style="display:flex;flex-direction:column;gap:16px">
-
         <div class="card">
             <div style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:24px 20px;text-align:center">
                 <div style="width:64px;height:64px;border-radius:50%;background:rgba(200,134,26,0.2);border:2px solid rgba(200,134,26,0.4);margin:0 auto 14px;display:flex;align-items:center;justify-content:center">
@@ -33,15 +32,10 @@
                     {{ $household->household_number }}
                 </div>
                 <div style="font-size:16px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:6px">
-                    {{ $household->household_head }}
+                    {{ $household->household_head ?? "—" }}
                 </div>
                 <div style="font-size:12px;color:rgba(255,255,255,0.55)">
-                    {{ $household->purok->name ?? '—' }}
-                </div>
-                <div style="margin-top:12px">
-                    <span class="badge {{ $household->status === 'Active' ? 'badge-green' : 'badge-gray' }}">
-                        {{ $household->status }}
-                    </span>
+                    {{ $household->purok->name ?? "—" }}
                 </div>
             </div>
 
@@ -55,38 +49,10 @@
                 </div>
                 <div style="padding:14px 16px;text-align:center">
                     <div style="font-size:22px;font-weight:700;color:var(--navy)">
-                        {{ $household->residents->where('is_voter',true)->count() }}
+                        {{ $household->family_size ?? 0 }}
                     </div>
-                    <div style="font-size:11px;color:var(--text-muted)">Voters</div>
+                    <div style="font-size:11px;color:var(--text-muted)">Family Size</div>
                 </div>
-            </div>
-        </div>
-
-        {{-- Utilities --}}
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title"><i class="fas fa-plug"></i> Utilities</span>
-            </div>
-            <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
-                @php
-                    $utilities = [
-                        ['label'=>'Electricity','icon'=>'fa-bolt','val'=>$household->has_electricity],
-                        ['label'=>'Water Supply','icon'=>'fa-droplet','val'=>$household->has_water],
-                        ['label'=>'Internet','icon'=>'fa-wifi','val'=>$household->has_internet],
-                        ['label'=>'4Ps Beneficiary','icon'=>'fa-hand-holding-heart','val'=>$household->is_4ps_beneficiary],
-                    ];
-                @endphp
-                @foreach($utilities as $u)
-                <div style="display:flex;align-items:center;justify-content:space-between">
-                    <span style="font-size:13px;color:var(--text-muted)">
-                        <i class="fas {{ $u['icon'] }}" style="width:16px;color:var(--gold)"></i>
-                        {{ $u['label'] }}
-                    </span>
-                    <span class="badge {{ $u['val'] ? 'badge-green' : 'badge-gray' }}">
-                        {{ $u['val'] ? 'Yes' : 'No' }}
-                    </span>
-                </div>
-                @endforeach
             </div>
         </div>
 
@@ -108,13 +74,11 @@
                 </form>
             </div>
         </div>
-
     </div>
 
     {{-- RIGHT --}}
     <div style="display:flex;flex-direction:column;gap:20px">
 
-        {{-- Details card --}}
         <div class="card">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-circle-info"></i> Household Details</span>
@@ -124,12 +88,10 @@
                     @php
                         $details = [
                             ['label'=>'Household No.',  'value'=>$household->household_number],
-                            ['label'=>'Household Head', 'value'=>$household->household_head],
+                            ['label'=>'Household Head', 'value'=>$household->household_head ?? '—'],
                             ['label'=>'Purok',          'value'=>$household->purok->name ?? '—'],
-                            ['label'=>'Status',         'value'=>$household->status],
-                            ['label'=>'Housing Type',   'value'=>$household->housing_type ?? '—'],
-                            ['label'=>'Structure Type', 'value'=>$household->structure_type ?? '—'],
-                            ['label'=>'Monthly Income', 'value'=>$household->monthly_income ? '₱'.number_format($household->monthly_income,2) : '—'],
+                            ['label'=>'Family Size',    'value'=>$household->family_size ?? '—'],
+                            ['label'=>'Voter Household','value'=>$household->is_voter_household ? 'Yes' : 'No'],
                             ['label'=>'Registered',     'value'=>$household->created_at->format('F d, Y')],
                         ];
                     @endphp
@@ -142,18 +104,10 @@
                     </div>
                     @endforeach
                 </div>
-                @if($household->address)
                 <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
                     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:4px">Address</div>
                     <div style="font-size:13.5px;color:var(--text)">{{ $household->address }}</div>
                 </div>
-                @endif
-                @if($household->notes)
-                <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:4px">Notes</div>
-                    <div style="font-size:13px;color:var(--text-muted)">{{ $household->notes }}</div>
-                </div>
-                @endif
             </div>
         </div>
 
@@ -170,7 +124,6 @@
                             <th>Name</th>
                             <th>Age</th>
                             <th>Gender</th>
-                            <th>Classifications</th>
                             <th>Status</th>
                             <th></th>
                         </tr>
@@ -189,14 +142,6 @@
                                 </span>
                             </td>
                             <td>
-                                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                                    @if($resident->is_voter)   <span class="badge badge-green" style="font-size:10px">Voter</span> @endif
-                                    @if($resident->is_senior)  <span class="badge badge-yellow" style="font-size:10px">Senior</span> @endif
-                                    @if($resident->is_pwd)     <span class="badge badge-blue" style="font-size:10px">PWD</span> @endif
-                                    @if($resident->is_4ps)     <span class="badge badge-gold" style="font-size:10px">4Ps</span> @endif
-                                </div>
-                            </td>
-                            <td>
                                 <span class="badge {{ $resident->residency_status === 'Active' ? 'badge-green' : 'badge-gray' }}">
                                     {{ $resident->residency_status }}
                                 </span>
@@ -209,7 +154,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6">
+                            <td colspan="5">
                                 <div class="empty-state" style="padding:28px">
                                     <i class="fas fa-users"></i>
                                     <p>No members linked to this household.</p>
@@ -221,6 +166,8 @@
                 </table>
             </div>
         </div>
+
+        @include('partials._activity-log', ['record' => $household])
 
     </div>
 </div>

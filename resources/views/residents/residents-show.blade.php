@@ -249,6 +249,8 @@
 
 </div>
 
+@include('partials._activity-log', ['record' => $resident])
+
 @endsection
 
 @push('scripts')
