@@ -487,6 +487,17 @@
         .gold-rule { height:1px; background:linear-gradient(90deg, var(--gold-border), transparent); margin:20px 0; }
 
         /* =============================================
+           PRINT UTILITIES
+        ============================================= */
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .sidebar, .topbar, .main-wrapper > .watermark { display: none !important; }
+            .main-content { padding: 0 !important; }
+        }
+        .print-only { display: none; }
+        
+        /* =============================================
            RESPONSIVE — MOBILE & TABLET
         ============================================= */
 
