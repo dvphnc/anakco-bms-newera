@@ -9,6 +9,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class DocumentController extends Controller
 {
+    use \App\Traits\LogsActivity;
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -95,7 +96,8 @@ class DocumentController extends Controller
         $validated['doc_number'] = Document::generateDocNumber();
         $validated['issued_by']  = auth()->id();
         if ($validated['status'] === 'Released') $validated['released_at'] = now();
-        Document::create($validated);
+        $record = Document::create($validated);
+        $this->logActivity('created', $record);
         return redirect()->route('documents.index')->with('success', 'Document issued successfully.');
     }
 
@@ -125,12 +127,15 @@ class DocumentController extends Controller
         if ($validated['status'] === 'Released' && $document->status !== 'Released' && empty($validated['released_at'])) {
             $validated['released_at'] = now();
         }
+        $oldData = $document->getOriginal();
         $document->update($validated);
+        $this->logActivity('updated', $document, $oldData, $document->fresh()->toArray());
         return redirect()->route('documents.index')->with('success', 'Document updated successfully.');
     }
 
     public function destroy(Document $document)
     {
+        $this->logActivity('deleted', $document);
         $document->delete();
         return redirect()->route('documents.index')->with('success', 'Document deleted successfully.');
     }

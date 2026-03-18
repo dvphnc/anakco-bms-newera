@@ -9,6 +9,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class BlotterController extends Controller
 {
+    use \App\Traits\LogsActivity;
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -111,7 +112,8 @@ class BlotterController extends Controller
             $validated['file_original_name'] = $file->getClientOriginalName();
         }
 
-        BlotterCase::create($validated);
+        $record = BlotterCase::create($validated);
+        $this->logActivity('created', $record);
         return redirect()->route('blotter.index')->with('success', 'Blotter case filed successfully.');
     }
 
