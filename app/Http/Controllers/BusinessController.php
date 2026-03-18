@@ -9,6 +9,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class BusinessController extends Controller
 {
+    use \App\Traits\LogsActivity;
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -102,7 +103,8 @@ class BusinessController extends Controller
         ]);
         $validated['permit_number'] = Business::generatePermitNumber();
         $validated['issued_by']     = auth()->id();
-        Business::create($validated);
+        $record = Business::create($validated);
+        $this->logActivity('created', $record);
         return redirect()->route('businesses.index')->with('success', 'Business permit issued successfully.');
     }
 
@@ -131,12 +133,15 @@ class BusinessController extends Controller
             'expiry_date'      => 'required|date|after:permit_date',
             'status'           => 'required|in:Active,Expired,Suspended,Cancelled',
         ]);
+        $oldData = $business->getOriginal();
         $business->update($validated);
+        $this->logActivity('updated', $business, $oldData, $business->fresh()->toArray());
         return redirect()->route('businesses.index')->with('success', 'Business permit updated successfully.');
     }
 
     public function destroy(Business $business)
     {
+        $this->logActivity('deleted', $business);
         $business->delete();
         return redirect()->route('businesses.index')->with('success', 'Business permit deleted successfully.');
     }

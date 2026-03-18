@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Official;
 use Illuminate\Http\Request;
+use \App\Traits\LogsActivity;
 
 class OfficialController extends Controller
 {
