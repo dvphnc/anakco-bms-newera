@@ -47,8 +47,8 @@
 
 <div class="card mb-6">
     <div class="card-body" style="padding:16px 20px">
-        <div class="filter-bar" style="align-items:flex-end;flex-wrap:wrap;gap:12px">
-            <div class="form-group flex-1" style="min-width:180px">
+        <div class="filter-bar" style="align-items:flex-end;gap:12px">
+            <div class="form-group flex-1">
                 <label class="form-label">Search</label>
                 <div style="position:relative">
                     <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px"></i>
@@ -74,14 +74,15 @@
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">Date From</label>
-                <input type="date" id="dateFrom" class="form-control">
+                <label class="form-label">Date Range</label>
+                <div style="display:flex;align-items:center;gap:6px">
+                    <input type="date" id="dateFrom" class="form-control" style="width:140px">
+                    <span style="font-size:11px;color:var(--text-muted);flex-shrink:0">–</span>
+                    <input type="date" id="dateTo" class="form-control" style="width:140px">
+                
+                </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Date To</label>
-                <input type="date" id="dateTo" class="form-control">
-            </div>
-            <div class="form-group" style="flex-shrink:0">
                 <label class="form-label">&nbsp;</label>
                 <button id="resetBtn" class="btn btn-secondary"><i class="fas fa-xmark"></i> Reset</button>
             </div>
