@@ -37,12 +37,13 @@
                 </div>
                 @php
                     $cls = match($blotter->status) {
-                        'Active'              => 'badge-red',
-                        'Under Investigation' => 'badge-yellow',
-                        'Settled'             => 'badge-green',
-                        'Closed'              => 'badge-gray',
-                        'Referred to Court'   => 'badge-orange',
-                        default               => 'badge-gray'
+                        'Active'                       => 'badge-red',
+                        'Under Investigation'          => 'badge-yellow',
+                        'Mediated'                     => 'badge-blue',
+                        'Settled'                      => 'badge-green',
+                        'Closed'                       => 'badge-gray',
+                        'Referred to Higher Authority' => 'badge-orange',
+                        default                        => 'badge-gray'
                     };
                 @endphp
                 <span class="badge {{ $cls }}">{{ $blotter->status }}</span>
@@ -52,15 +53,12 @@
                     <div>
                         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Incident Date</div>
                         <div style="font-size:13px;font-weight:500;color:var(--text)">
-                            {{ $blotter->incident_date?->format('F d, Y') ?? '—' }}
-                            @if($blotter->incident_time)
-                                at {{ \Carbon\Carbon::parse($blotter->incident_time)->format('h:i A') }}
-                            @endif
+                            {{ $blotter->incident_date ? \Carbon\Carbon::parse($blotter->incident_date)->format('F d, Y') : '—' }}
                         </div>
                     </div>
                     <div>
                         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Location</div>
-                        <div style="font-size:13px;color:var(--text-muted)">{{ $blotter->location ?? '—' }}</div>
+                        <div style="font-size:13px;color:var(--text-muted)">{{ $blotter->incident_location ?? '—' }}</div>
                     </div>
                     <div>
                         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Filed By</div>
@@ -72,15 +70,38 @@
                         <div style="font-size:13px;color:var(--text-muted)">{{ $blotter->settled_at->format('F d, Y') }}</div>
                     </div>
                     @endif
-                    @if($blotter->referred_to)
-                    <div>
-                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Referred To</div>
-                        <div style="font-size:13px;color:var(--text-muted)">{{ $blotter->referred_to }}</div>
-                    </div>
-                    @endif
                 </div>
             </div>
         </div>
+
+        {{-- Attachment --}}
+        @if($blotter->file_path)
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-paperclip"></i> Attachment</span>
+            </div>
+            <div class="card-body">
+                @php $isImage = in_array(strtolower($blotter->file_type ?? ''), ['jpg','jpeg','png','gif']); @endphp
+                @if($isImage)
+                    <img src="{{ asset('storage/'.$blotter->file_path) }}"
+                         style="width:100%;border-radius:var(--radius);border:1px solid var(--border)"
+                         alt="Attachment">
+                @endif
+                <div style="display:flex;align-items:center;gap:10px;{{ $isImage ? 'margin-top:10px' : '' }}">
+                    <i class="fas {{ $isImage ? 'fa-image' : 'fa-file-pdf' }}" style="font-size:18px;color:var(--navy)"></i>
+                    <div style="flex:1;min-width:0">
+                        <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                            {{ $blotter->file_original_name ?? 'Attached File' }}
+                        </div>
+                        <div style="font-size:11px;color:var(--text-muted)">{{ strtoupper($blotter->file_type ?? '') }}</div>
+                    </div>
+                    <a href="{{ asset('storage/'.$blotter->file_path) }}" target="_blank" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-eye"></i> View
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
 
         {{-- Quick Actions --}}
         <div class="card">
@@ -91,22 +112,21 @@
                 <a href="{{ route('blotter.edit', $blotter) }}" class="btn btn-secondary" style="justify-content:flex-start">
                     <i class="fas fa-pen" style="color:var(--navy)"></i> Edit Case
                 </a>
-
-                @if($blotter->status === 'Active' || $blotter->status === 'Under Investigation')
+                @if(in_array($blotter->status, ['Active','Under Investigation']))
                 <form method="POST" action="{{ route('blotter.update', $blotter) }}">
                     @csrf @method('PUT')
                     <input type="hidden" name="status" value="Settled">
                     <input type="hidden" name="incident_type" value="{{ $blotter->incident_type }}">
                     <input type="hidden" name="incident_date" value="{{ $blotter->incident_date?->format('Y-m-d') }}">
-                    <input type="hidden" name="narrative" value="{{ $blotter->narrative }}">
-                    <input type="hidden" name="location" value="{{ $blotter->location }}">
-                    <input type="hidden" name="settled_at" value="{{ now()->format('Y-m-d') }}">
+                    <input type="hidden" name="incident_location" value="{{ $blotter->incident_location }}">
+                    <input type="hidden" name="incident_details" value="{{ $blotter->incident_details }}">
+                    <input type="hidden" name="complainant_name" value="{{ $blotter->complainant_name }}">
+                    <input type="hidden" name="respondent_name" value="{{ $blotter->respondent_name }}">
                     <button type="submit" class="btn btn-gold" style="width:100%;justify-content:flex-start">
                         <i class="fas fa-handshake"></i> Mark as Settled
                     </button>
                 </form>
                 @endif
-
                 <form method="POST" action="{{ route('blotter.destroy', $blotter) }}"
                       onsubmit="return confirm('Delete this case?')">
                     @csrf @method('DELETE')
@@ -122,14 +142,14 @@
     {{-- RIGHT --}}
     <div style="display:flex;flex-direction:column;gap:20px">
 
-        {{-- Narrative --}}
+        {{-- Incident Details --}}
         <div class="card">
             <div class="card-header">
-                <span class="card-title"><i class="fas fa-file-lines"></i> Incident Narrative</span>
+                <span class="card-title"><i class="fas fa-file-lines"></i> Incident Details</span>
             </div>
             <div class="card-body">
                 <div style="font-size:13.5px;color:var(--text);line-height:1.8;white-space:pre-line">
-                    {{ $blotter->narrative ?? 'No narrative recorded.' }}
+                    {{ $blotter->incident_details ?? 'No details recorded.' }}
                 </div>
             </div>
         </div>
@@ -155,7 +175,7 @@
                         </a>
                     @else
                         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-                            <div style="width:40px;height:40px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-muted)">
+                            <div style="width:40px;height:40px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-muted)">
                                 <i class="fas fa-user"></i>
                             </div>
                             <div>
@@ -187,28 +207,15 @@
                     <span class="card-title"><i class="fas fa-user-slash"></i> Respondent</span>
                 </div>
                 <div class="card-body">
-                    @if($blotter->respondentResident)
-                        <a href="{{ route('residents.show', $blotter->respondentResident) }}"
-                           style="display:flex;align-items:center;gap:10px;margin-bottom:14px;color:var(--navy)">
-                            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:#fff">
-                                {{ strtoupper(substr($blotter->respondentResident->first_name, 0, 1)) }}
-                            </div>
-                            <div>
-                                <div style="font-weight:600;font-size:13px">{{ $blotter->respondentResident->full_name }}</div>
-                                <div class="td-muted">Registered Resident</div>
-                            </div>
-                        </a>
-                    @else
-                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-                            <div style="width:40px;height:40px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-muted)">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <div style="font-weight:600;font-size:13px">{{ $blotter->respondent_name ?? '—' }}</div>
-                                <div class="td-muted">External</div>
-                            </div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+                        <div style="width:40px;height:40px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-muted)">
+                            <i class="fas fa-user"></i>
                         </div>
-                    @endif
+                        <div>
+                            <div style="font-weight:600;font-size:13px">{{ $blotter->respondent_name ?? '—' }}</div>
+                            <div class="td-muted">Respondent</div>
+                        </div>
+                    </div>
                     <div style="display:flex;flex-direction:column;gap:8px">
                         @if($blotter->respondent_address)
                         <div>
@@ -227,19 +234,22 @@
             </div>
         </div>
 
-        {{-- Action Taken --}}
-        @if($blotter->action_taken)
+        {{-- Resolution --}}
+        @if($blotter->resolution_notes)
         <div class="card">
             <div class="card-header">
-                <span class="card-title"><i class="fas fa-clipboard-check"></i> Action Taken / Resolution</span>
+                <span class="card-title"><i class="fas fa-clipboard-check"></i> Resolution Notes</span>
             </div>
             <div class="card-body">
                 <div style="font-size:13.5px;color:var(--text);line-height:1.8;white-space:pre-line">
-                    {{ $blotter->action_taken }}
+                    {{ $blotter->resolution_notes }}
                 </div>
             </div>
         </div>
         @endif
+
+        {{-- Activity Log --}}
+        @include('partials._activity-log', ['record' => $blotter])
 
     </div>
 
