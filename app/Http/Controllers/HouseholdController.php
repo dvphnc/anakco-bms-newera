@@ -9,6 +9,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class HouseholdController extends Controller
 {
+    use \App\Traits\LogsActivity;
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -74,7 +75,8 @@ class HouseholdController extends Controller
         ]);
         $validated['household_number'] = $this->generateHouseholdNumber();
         $validated['is_voter_household'] = $request->boolean('is_voter_household');
-        Household::create($validated);
+        $record = Household::create($validated);
+        $this->logActivity('created', $record);
         return redirect()->route('households.index')->with('success', 'Household added successfully.');
     }
 
@@ -100,12 +102,15 @@ class HouseholdController extends Controller
             'is_voter_household' => 'boolean',
         ]);
         $validated['is_voter_household'] = $request->boolean('is_voter_household');
+        $oldData = $household->getOriginal();
         $household->update($validated);
+        $this->logActivity('updated', $household, $oldData, $household->fresh()->toArray());
         return redirect()->route('households.index')->with('success', 'Household updated successfully.');
     }
 
     public function destroy(Household $household)
     {
+        $this->logActivity('deleted', $household);
         $household->delete();
         return redirect()->route('households.index')->with('success', 'Household deleted successfully.');
     }
