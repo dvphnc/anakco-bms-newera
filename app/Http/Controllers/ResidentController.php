@@ -10,6 +10,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ResidentController extends Controller
 {
+    use \App\Traits\LogsActivity;
     // -------------------------------------------------------
     // INDEX — List all residents
     // -------------------------------------------------------
@@ -19,18 +20,8 @@ class ResidentController extends Controller
             $query = Resident::with(['purok'])
                 ->when($request->gender, fn($q) => $q->where('gender', $request->gender))
                 ->when($request->status, fn($q) => $q->where('residency_status', $request->status))
-                ->when($request->age_exact, function ($q) use ($request) {
-                $age  = (int) $request->age_exact;
-                $from = now()->subYears($age + 1)->addDay()->format('Y-m-d');
-                $to   = now()->subYears($age)->format('Y-m-d');
-                $q->whereBetween('birthdate', [$from, $to]);
-})
-->when(!$request->age_exact && $request->age_from, function ($q) use ($request) {
-    $q->where('birthdate', '<=', now()->subYears((int)$request->age_from)->format('Y-m-d'));
-})
-->when(!$request->age_exact && $request->age_to, function ($q) use ($request) {
-    $q->where('birthdate', '>=', now()->subYears((int)$request->age_to + 1)->addDay()->format('Y-m-d'));
-})                ->select('residents.*');
+                ->when($request->purok_id, fn($q) => $q->where('purok_id', $request->purok_id))
+                ->select('residents.*');
 
             return DataTables::of($query)
                 ->addColumn('avatar', function ($r) {
@@ -243,6 +234,7 @@ class ResidentController extends Controller
     // -------------------------------------------------------
     public function destroy(Resident $resident)
     {
+        $this->logActivity('deleted', $resident);
         $resident->delete();
         return redirect()->route('residents.index')->with('success', 'Resident removed successfully.');
     }
