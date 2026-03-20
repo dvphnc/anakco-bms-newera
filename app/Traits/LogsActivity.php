@@ -16,6 +16,16 @@ trait LogsActivity
             'deleted_at', 'photo_path', 'file_path', 'file_type', 'file_original_name',
         ];
 
+        $friendlyNames = [
+            'purok_id'     => 'Purok',
+            'household_id' => 'Household',
+            'resident_id'  => 'Resident',
+            'issued_by'    => 'Issued By',
+            'filed_by'     => 'Filed By',
+            'user_id'      => 'User',
+            'leader_id'    => 'Leader',
+        ];
+
         $booleanFields = [
             'is_voter', 'is_pwd', 'is_senior', 'is_solo_parent', 'is_4ps',
             'is_active', 'is_voter_household', 'is_4ps_beneficiary',
@@ -35,17 +45,22 @@ trait LogsActivity
                 }
 
                 // Normalize dates — strip time part for comparison
-                if (is_string($oldVal) && preg_match('/^\d{4}-\d{2}-\d{2}/', $oldVal)) {
+                if ($oldVal instanceof \Carbon\Carbon) {
+                    $oldVal = $oldVal->format('Y-m-d');
+                } elseif (is_string($oldVal) && preg_match('/^\d{4}-\d{2}-\d{2}/', $oldVal)) {
                     $oldVal = substr($oldVal, 0, 10);
                 }
-                if (is_string($newVal) && preg_match('/^\d{4}-\d{2}-\d{2}/', $newVal)) {
+                if ($newVal instanceof \Carbon\Carbon) {
+                    $newVal = $newVal->format('Y-m-d');
+                } elseif (is_string($newVal) && preg_match('/^\d{4}-\d{2}-\d{2}/', $newVal)) {
                     $newVal = substr($newVal, 0, 10);
                 }
 
                 // Skip if truly unchanged
                 if ((string)$oldVal === (string)$newVal) continue;
 
-                $changes[$key] = [
+                $label = $friendlyNames[$key] ?? $key;
+                $changes[$label] = [
                     'old' => $oldVal,
                     'new' => $newVal,
                 ];
