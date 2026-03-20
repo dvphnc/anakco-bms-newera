@@ -6,6 +6,7 @@ use App\Models\BlotterCase;
 use App\Models\Resident;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use App\Traits\LogsActivity;
 
 class BlotterController extends Controller
 {
