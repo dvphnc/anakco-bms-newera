@@ -9,11 +9,15 @@ trait LogsActivity
 {
     protected function logActivity(string $action, Model $model, array $oldData = [], array $newData = []): void
     {
-        $changes = [];
-
         $skipFields = [
             'password', 'remember_token', 'updated_at', 'created_at',
             'deleted_at', 'photo_path', 'file_path', 'file_type', 'file_original_name',
+        ];
+
+        $booleanFields = [
+            'is_voter', 'is_pwd', 'is_senior', 'is_solo_parent', 'is_4ps',
+            'is_active', 'is_voter_household', 'is_4ps_beneficiary',
+            'has_electricity', 'has_water', 'has_internet',
         ];
 
         $friendlyNames = [
@@ -26,11 +30,7 @@ trait LogsActivity
             'leader_id'    => 'Leader',
         ];
 
-        $booleanFields = [
-            'is_voter', 'is_pwd', 'is_senior', 'is_solo_parent', 'is_4ps',
-            'is_active', 'is_voter_household', 'is_4ps_beneficiary',
-            'has_electricity', 'has_water', 'has_internet',
-        ];
+        $changes = [];
 
         if ($action === 'updated' && !empty($oldData) && !empty($newData)) {
             foreach ($newData as $key => $newVal) {
@@ -44,17 +44,9 @@ trait LogsActivity
                     $newVal = $newVal ? 'Yes' : 'No';
                 }
 
-                // Normalize dates — strip time part for comparison
-                if ($oldVal instanceof \Carbon\Carbon) {
-                    $oldVal = $oldVal->format('Y-m-d');
-                } elseif (is_string($oldVal) && preg_match('/^\d{4}-\d{2}-\d{2}/', $oldVal)) {
-                    $oldVal = substr($oldVal, 0, 10);
-                }
-                if ($newVal instanceof \Carbon\Carbon) {
-                    $newVal = $newVal->format('Y-m-d');
-                } elseif (is_string($newVal) && preg_match('/^\d{4}-\d{2}-\d{2}/', $newVal)) {
-                    $newVal = substr($newVal, 0, 10);
-                }
+                // Normalize dates — extract just Y-m-d from any format
+                $oldVal = $this->normalizeValue($oldVal);
+                $newVal = $this->normalizeValue($newVal);
 
                 // Skip if truly unchanged
                 if ((string)$oldVal === (string)$newVal) continue;
@@ -67,9 +59,25 @@ trait LogsActivity
             }
         }
 
-        // Only log if there are actual changes (for updates)
+        // Skip no-op updates
         if ($action === 'updated' && empty($changes)) return;
 
         ActivityLog::log($action, $model, $changes);
+    }
+
+    private function normalizeValue($val): string
+    {
+        if (is_null($val)) return '';
+        if (is_array($val)) return '[file]';
+        if (is_bool($val)) return $val ? 'Yes' : 'No';
+
+        $str = (string) $val;
+
+        // Strip time from datetime strings: 2022-09-20 00:00:00 or 2022-09-20T00:00:00...
+        if (preg_match('/^(\d{4}-\d{2}-\d{2})/', $str, $m)) {
+            return $m[1];
+        }
+
+        return $str;
     }
 }
