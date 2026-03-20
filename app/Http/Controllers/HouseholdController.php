@@ -6,6 +6,7 @@ use App\Models\Household;
 use App\Models\Purok;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use App\Traits\LogsActivity;
 
 class HouseholdController extends Controller
 {
