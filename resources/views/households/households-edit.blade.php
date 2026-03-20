@@ -30,11 +30,12 @@
     <div class="card-body">
 
         <div class="form-section-title">Basic Details</div>
-        <div class="form-grid-3 mb-6">
+        <div class="form-grid-2 mb-6">
             <div class="form-group">
-                <label class="form-label">Household Head <span style="color:var(--crimson)">*</span></label>
+                <label class="form-label">Household Head</label>
                 <input type="text" name="household_head" class="form-control"
-                       value="{{ old('household_head', $household->household_head) }}" required>
+                       value="{{ old('household_head', $household->household_head) }}"
+                       placeholder="Full name of household head">
             </div>
             <div class="form-group">
                 <label class="form-label">Purok <span style="color:var(--crimson)">*</span></label>
@@ -47,14 +48,6 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
-                <label class="form-label">Status</label>
-                <select name="status" class="form-control">
-                    @foreach(['Active','Inactive'] as $s)
-                        <option value="{{ $s }}" {{ old('status', $household->status) === $s ? 'selected' : '' }}>{{ $s }}</option>
-                    @endforeach
-                </select>
-            </div>
         </div>
 
         <div class="form-group mb-6">
@@ -63,56 +56,24 @@
                    value="{{ old('address', $household->address) }}" required>
         </div>
 
-        <div class="form-section-title">Housing Information</div>
-        <div class="form-grid-3 mb-6">
+        <div class="form-grid-2 mb-6">
             <div class="form-group">
-                <label class="form-label">Housing Type</label>
-                <select name="housing_type" class="form-control">
-                    <option value="">Select Type</option>
-                    @foreach(['Owned','Rented','Shared','Informal Settler'] as $t)
-                        <option value="{{ $t }}" {{ old('housing_type', $household->housing_type) === $t ? 'selected' : '' }}>{{ $t }}</option>
-                    @endforeach
-                </select>
+                <label class="form-label">Family Size <span style="color:var(--crimson)">*</span></label>
+                <input type="number" name="family_size" class="form-control"
+                       value="{{ old('family_size', $household->family_size) }}"
+                       min="1" max="50" required
+                       placeholder="Number of family members">
             </div>
             <div class="form-group">
-                <label class="form-label">Structure Type</label>
-                <select name="structure_type" class="form-control">
-                    <option value="">Select Type</option>
-                    @foreach(['Concrete','Semi-Concrete','Wood','Light Materials'] as $t)
-                        <option value="{{ $t }}" {{ old('structure_type', $household->structure_type) === $t ? 'selected' : '' }}>{{ $t }}</option>
-                    @endforeach
-                </select>
+                <label class="form-label">Voter Household</label>
+                <div style="display:flex;align-items:center;height:40px">
+                    <label class="form-check">
+                        <input type="checkbox" name="is_voter_household" value="1"
+                               {{ old('is_voter_household', $household->is_voter_household) ? 'checked' : '' }}>
+                        <span>This household has registered voters</span>
+                    </label>
+                </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Monthly Income (approx.)</label>
-                <input type="number" name="monthly_income" class="form-control"
-                       value="{{ old('monthly_income', $household->monthly_income) }}" min="0" step="0.01">
-            </div>
-        </div>
-
-        <div class="form-section-title">Utilities</div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
-            <label class="form-check">
-                <input type="checkbox" name="has_electricity" value="1" {{ old('has_electricity', $household->has_electricity) ? 'checked' : '' }}>
-                <span>Electricity</span>
-            </label>
-            <label class="form-check">
-                <input type="checkbox" name="has_water" value="1" {{ old('has_water', $household->has_water) ? 'checked' : '' }}>
-                <span>Water Supply</span>
-            </label>
-            <label class="form-check">
-                <input type="checkbox" name="has_internet" value="1" {{ old('has_internet', $household->has_internet) ? 'checked' : '' }}>
-                <span>Internet</span>
-            </label>
-            <label class="form-check">
-                <input type="checkbox" name="is_4ps_beneficiary" value="1" {{ old('is_4ps_beneficiary', $household->is_4ps_beneficiary) ? 'checked' : '' }}>
-                <span>4Ps Beneficiary</span>
-            </label>
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Notes / Remarks</label>
-            <textarea name="notes" class="form-control" rows="3">{{ old('notes', $household->notes) }}</textarea>
         </div>
 
     </div>
