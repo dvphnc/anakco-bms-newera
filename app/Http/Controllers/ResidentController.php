@@ -161,7 +161,7 @@ class ResidentController extends Controller
         $validated['is_4ps']         = $request->boolean('is_4ps');
 
         $record = Resident::create($validated);
-$this->logActivity('created', $record);
+        $this->logActivity('created', $record);
 
         return redirect()->route('residents.index')->with('success', 'Resident registered successfully.');
     }
@@ -226,7 +226,9 @@ $this->logActivity('created', $record);
         $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
         $validated['is_4ps']         = $request->boolean('is_4ps');
 
-        $resident->update($validated);
+        $oldData = $resident->getOriginal();
+$resident->update($validated);
+$this->logActivity('updated', $resident, $oldData, $resident->fresh()->toArray());
 
         return redirect()->route('residents.index')->with('success', 'Resident updated successfully.');
     }
