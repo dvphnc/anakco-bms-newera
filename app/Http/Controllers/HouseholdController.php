@@ -11,6 +11,7 @@ use Yajra\DataTables\Facades\DataTables;
 class HouseholdController extends Controller
 {
     use LogsActivity;
+    public function index(Request $request)
     {
         if ($request->ajax()) {
             $query = Household::with(['purok'])
