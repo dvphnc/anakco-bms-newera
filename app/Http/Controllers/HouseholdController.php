@@ -1,8 +1,3 @@
-<?php
-
-namespace App\Http\Controllers;
-
-use App\Models\Household;
 use App\Traits\LogsActivity;
 use App\Models\Purok;
 use Illuminate\Http\Request;
