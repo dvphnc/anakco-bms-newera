@@ -227,8 +227,8 @@ class ResidentController extends Controller
         $validated['is_4ps']         = $request->boolean('is_4ps');
 
         $oldData = $resident->getOriginal();
-$resident->update($validated);
-$this->logActivity('updated', $resident, $oldData, $resident->fresh()->toArray());
+        $resident->update($validated);
+        $this->logActivity('updated', $resident, $oldData, $resident->fresh()->toArray());
 
         return redirect()->route('residents.index')->with('success', 'Resident updated successfully.');
     }
