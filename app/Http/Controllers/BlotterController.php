@@ -168,8 +168,8 @@ class BlotterController extends Controller
         }
 
         $oldData = $blotter->getOriginal();
-$blotter->update($validated);
-$this->logActivity('updated', $blotter, $oldData, $blotter->fresh()->toArray());
+        $blotter->update($validated);
+        $this->logActivity('updated', $blotter, $oldData, $blotter->fresh()->toArray());
         return redirect()->route('blotter.index')->with('success', 'Blotter case updated successfully.');
     }
 
