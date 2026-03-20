@@ -476,7 +476,6 @@
 
 {{-- Activity Log (screen only) --}}
 <div class="no-print">
-@include('partials._activity-log', ['record' => $document])
 </div>
 
 @endsection

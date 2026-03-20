@@ -249,7 +249,6 @@
 
 </div>
 
-@include('partials._activity-log', ['record' => $resident])
 
 @endsection
 

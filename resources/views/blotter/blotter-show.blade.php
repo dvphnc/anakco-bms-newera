@@ -249,7 +249,6 @@
         @endif
 
         {{-- Activity Log --}}
-        @include('partials._activity-log', ['record' => $blotter])
 
     </div>
 
