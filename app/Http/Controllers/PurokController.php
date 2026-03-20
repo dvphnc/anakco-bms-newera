@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Purok;
 use App\Models\Resident;
+use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
 
 class PurokController extends Controller
 {
+    use LogsActivity;
     public function index()
     {
         $puroks = Purok::with(['leader', 'residents'])
@@ -37,7 +39,9 @@ class PurokController extends Controller
             'leader_id'   => 'nullable|exists:residents,id',
         ]);
 
+        $oldData = $purok->getOriginal();
         $purok->update($validated);
+        $this->logActivity('updated', $purok, $oldData, $purok->fresh()->toArray());
 
         return redirect()
             ->route('puroks.index')
