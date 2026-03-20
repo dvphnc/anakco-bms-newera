@@ -175,7 +175,8 @@ class BlotterController extends Controller
 
     public function destroy(BlotterCase $blotter)
     {
-        $blotter->delete();
+        $this->logActivity('deleted', $blotter);
+$blotter->delete();
         return redirect()->route('blotter.index')->with('success', 'Blotter case deleted successfully.');
     }
 }
