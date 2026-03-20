@@ -142,6 +142,12 @@
             <span>Reports & Analytics</span>
         </a>
 
+        <a href="{{ route('activity-log.index') }}"
+           class="nav-item {{ request()->routeIs('activity-log.*') ? 'active' : '' }}">
+            <i class="fas fa-clock-rotate-left"></i>
+            <span>Activity Log</span>
+        </a>
+
         @if($role === 'Admin')
         <a href="{{ route('users.index') }}"
            class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
