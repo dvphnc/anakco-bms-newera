@@ -10,7 +10,7 @@ use App\Traits\LogsActivity;
 
 class BlotterController extends Controller
 {
-    use \App\Traits\LogsActivity;
+    use LogsActivity;
     public function index(Request $request)
     {
         if ($request->ajax()) {
