@@ -9,7 +9,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class HouseholdController extends Controller
 {
-    use \App\Traits\LogsActivity;
+    use LogsActivity;
     public function index(Request $request)
     {
         if ($request->ajax()) {
