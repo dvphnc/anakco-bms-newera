@@ -1,13 +1,16 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Household;
 use App\Traits\LogsActivity;
 use App\Models\Purok;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
-use App\Traits\LogsActivity;
 
 class HouseholdController extends Controller
 {
     use LogsActivity;
-    public function index(Request $request)
     {
         if ($request->ajax()) {
             $query = Household::with(['purok'])
