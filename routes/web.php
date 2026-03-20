@@ -12,6 +12,7 @@ use App\Http\Controllers\CommitteeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PurokController;
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\VerifyController;
 
 // -------------------------------------------------------
@@ -115,5 +116,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     Route::resource('users', UserController::class)
         ->middleware('role:Admin');
+
+    // ---------------------------------------------------
+    // Activity Log — Admin + Secretary
+    // ---------------------------------------------------
+    Route::get('activity-log', [ActivityLogController::class, 'index'])
+        ->name('activity-log.index')
+        ->middleware('role:Admin,Secretary');
 
 });
