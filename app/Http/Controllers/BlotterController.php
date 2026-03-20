@@ -167,7 +167,9 @@ class BlotterController extends Controller
             $validated['file_original_name'] = $file->getClientOriginalName();
         }
 
-        $blotter->update($validated);
+        $oldData = $blotter->getOriginal();
+$blotter->update($validated);
+$this->logActivity('updated', $blotter, $oldData, $blotter->fresh()->toArray());
         return redirect()->route('blotter.index')->with('success', 'Blotter case updated successfully.');
     }
 
