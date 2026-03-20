@@ -11,7 +11,7 @@ use App\Traits\LogsActivity;
 
 class ResidentController extends Controller
 {
-    use \App\Traits\LogsActivity;
+    use LogsActivity;
     // -------------------------------------------------------
     // INDEX — List all residents
     // -------------------------------------------------------
