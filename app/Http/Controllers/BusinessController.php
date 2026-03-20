@@ -6,10 +6,11 @@ use App\Models\Business;
 use App\Models\Resident;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use LogsActivity;
 
 class BusinessController extends Controller
 {
-    use \App\Traits\LogsActivity;
+    use LogsActivity;
     public function index(Request $request)
     {
         if ($request->ajax()) {
