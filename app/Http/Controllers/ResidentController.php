@@ -160,7 +160,8 @@ class ResidentController extends Controller
         $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
         $validated['is_4ps']         = $request->boolean('is_4ps');
 
-        Resident::create($validated);
+        $record = Resident::create($validated);
+$this->logActivity('created', $record);
 
         return redirect()->route('residents.index')->with('success', 'Resident registered successfully.');
     }
