@@ -20,6 +20,7 @@ $moduleMap = [
     'App\Models\Business'    => ['label' => 'Businesses',  'icon' => 'fa-store',           'color' => '#f97316'],
     'App\Models\Official'    => ['label' => 'Officials',   'icon' => 'fa-user-tie',        'color' => '#7c3aed'],
     'App\Models\User'        => ['label' => 'Users',       'icon' => 'fa-user-shield',     'color' => '#9333ea'],
+    'App\Models\Purok'       => ['label' => 'Puroks',      'icon' => 'fa-location-dot',    'color' => '#0891b2'],
 ];
 
 $skipFields = ['created_at', 'updated_at', 'remember_token', 'password', 'deleted_at'];
@@ -58,6 +59,7 @@ function formatValue($val) {
             'App\Models\Business'    => 'businesses',
             'App\Models\Official'    => 'officials',
             'App\Models\User'        => 'users',
+            'App\Models\Purok'       => 'puroks',
             default => 'general'
         };
         $active = request('module') === $slug;
@@ -86,7 +88,7 @@ function formatValue($val) {
                     <label class="form-label">Module</label>
                     <select name="module" class="form-control" onchange="this.form.submit()">
                         <option value="">All Modules</option>
-                        @foreach(['residents','households','documents','blotter','businesses','officials','users'] as $m)
+                        @foreach(['residents','households','documents','blotter','businesses','officials','users','puroks'] as \$m)
                         <option value="{{ $m }}" {{ request('module') === $m ? 'selected' : '' }}>{{ ucfirst($m) }}</option>
                         @endforeach
                     </select>
