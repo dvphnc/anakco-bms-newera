@@ -6,7 +6,7 @@ use App\Models\Business;
 use App\Models\Resident;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
-use LogsActivity;
+use App\Traits\LogsActivity;
 
 class BusinessController extends Controller
 {
