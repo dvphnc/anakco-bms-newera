@@ -175,18 +175,22 @@ $routeMap = [
                 @php
                     $oldVal = $change['old'] ?? null;
                     $newVal = $change['new'] ?? null;
-                    // Format timestamps
-                    if (is_string($oldVal) && preg_match('/^\d{4}-\d{2}-\d{2}T/', $oldVal)) {
-                        try { $oldVal = \Carbon\Carbon::parse($oldVal)->format('M d, Y'); } catch (\Exception $e) {}
-                    }
-                    if (is_string($newVal) && preg_match('/^\d{4}-\d{2}-\d{2}T/', $newVal)) {
-                        try { $newVal = \Carbon\Carbon::parse($newVal)->format('M d, Y'); } catch (\Exception $e) {}
-                    }
-                    $oldVal = is_array($oldVal) ? '[file]' : \Illuminate\Support\Str::limit((string)($oldVal ?? '—'), 22);
-                    $newVal = is_array($newVal) ? '[file]' : \Illuminate\Support\Str::limit((string)($newVal ?? '—'), 22);
+                    // Format any date string
+                    $formatDate = function($v) {
+                        if (is_null($v) || $v === '') return '—';
+                        if (is_array($v)) return '[file]';
+                        if (is_string($v) && preg_match('/^\d{4}-\d{2}-\d{2}/', $v)) {
+                            try { return \Carbon\Carbon::parse($v)->format('M d, Y'); } catch (\Exception $e) {}
+                        }
+                        return \Illuminate\Support\Str::limit((string)$v, 24);
+                    };
+                    $oldVal = $formatDate($oldVal);
+                    $newVal = $formatDate($newVal);
+                    // Field label formatting
+                    $fieldLabel = ucwords(str_replace('_', ' ', $field));
                 @endphp
                 <div style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:11.5px">
-                    <span style="font-weight:600;color:var(--text-muted)">{{ ucwords(str_replace('_',' ',$field)) }}:</span>
+                    <span style="font-weight:600;color:var(--text-muted)">{{ $fieldLabel }}:</span>
                     <span style="color:var(--text-subtle);text-decoration:line-through">{{ $oldVal }}</span>
                     <i class="fas fa-arrow-right" style="font-size:8px;color:var(--text-subtle)"></i>
                     <span style="color:var(--navy);font-weight:500">{{ $newVal }}</span>
@@ -239,4 +243,4 @@ $routeMap = [
 <script>
 setTimeout(() => location.reload(), 30000);
 </script>
-@endpush 
+@endpush
