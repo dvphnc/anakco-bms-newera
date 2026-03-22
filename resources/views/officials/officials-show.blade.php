@@ -315,35 +315,40 @@
     <div class="id-number-row">{{ $idNumber }}</div>
 
     {{-- Photo + Barcode --}}
-    <div class="id-photo-section" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 10px 5px;">
-        <div class="id-photo-frame">
+    @php
+        $svgBars = '';
+        $y = 0;
+        foreach (str_split($idNumber) as $char) {
+            $ascii = ord($char);
+            $pattern = str_pad(decbin($ascii), 8, '0', STR_PAD_LEFT);
+            foreach (str_split($pattern) as $bit) {
+                $h = $bit === '1' ? 3 : 1.5;
+                $svgBars .= '<rect x="0" y="' . $y . '" width="22" height="' . $h . '" fill="' . ($bit === '1' ? '#0D2144' : '#fff') . '"/>';
+                $y += $h;
+            }
+            $y += 2;
+        }
+        $bcHeight = $y;
+    @endphp
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px 6px;position:relative;">
+        {{-- Big watermark behind photo --}}
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:1.4in;height:1.4in;z-index:0;opacity:0.08;display:flex;align-items:center;justify-content:center;">
+            <img src="{{ asset('images/bne-logo.png') }}" style="width:100%;height:100%;object-fit:contain;" alt="">
+        </div>
+        {{-- Photo --}}
+        <div class="id-photo-frame" style="position:relative;z-index:1;">
             @if($official->photo_path)
                 <img src="{{ asset('storage/'.$official->photo_path) }}" alt="Photo">
             @else
                 {{ strtoupper(substr($official->full_name, 0, 1)) }}
             @endif
         </div>
-        {{-- Vertical barcode --}}
-        @php
-            $svgBars = '';
-            $y = 0;
-            foreach (str_split($idNumber) as $char) {
-                $ascii = ord($char);
-                $pattern = str_pad(decbin($ascii), 8, '0', STR_PAD_LEFT);
-                foreach (str_split($pattern) as $bit) {
-                    $h = $bit === '1' ? 2 : 1;
-                    $svgBars .= '<rect x="0" y="' . $y . '" width="14" height="' . $h . '" fill="' . ($bit === '1' ? '#111' : '#fff') . '"/>';
-                    $y += $h;
-                }
-                $y += 1;
-            }
-            $totalHeight = $y;
-        @endphp
-        <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
-            <svg width="14" height="{{ $totalHeight }}" xmlns="http://www.w3.org/2000/svg" style="max-height:1.1in">
+        {{-- Vertical Barcode --}}
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;z-index:1;">
+            <svg width="22" height="{{ $bcHeight }}" xmlns="http://www.w3.org/2000/svg" style="max-height:1.15in;display:block;">
                 {!! $svgBars !!}
             </svg>
-            <div style="font-family:'Courier New',monospace;font-size:3.5pt;color:#555;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:0.04em">{{ $idNumber }}</div>
+            <div style="font-family:'Courier New',monospace;font-size:4pt;color:#0D2144;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:0.05em;font-weight:700;">{{ $idNumber }}</div>
         </div>
     </div>
 
