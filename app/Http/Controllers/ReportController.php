@@ -2,111 +2,150 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Resident;
 use App\Models\Household;
 use App\Models\Document;
 use App\Models\BlotterCase;
 use App\Models\Business;
-use App\Models\Purok;
+use App\Models\Official;
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
     public function index()
     {
-        // --- Resident Population Stats ---
-        $totalActive      = Resident::active()->count();
-        $totalDeceased    = Resident::where('residency_status', 'Deceased')->count();
-        $totalTransferred = Resident::where('residency_status', 'Transferred')->count();
-        $totalMale        = Resident::active()->where('gender', 'Male')->count();
-        $totalFemale      = Resident::active()->where('gender', 'Female')->count();
-        $totalVoters      = Resident::active()->voters()->count();
-        $totalSeniors     = Resident::active()->seniors()->count();
-        $totalPwd         = Resident::active()->pwd()->count();
-        $totalSoloParent  = Resident::active()->where('is_solo_parent', true)->count();
-        $total4ps         = Resident::active()->where('is_4ps', true)->count();
+        return view('reports.generate');
+    }
 
-        // --- Age Groups ---
-        $ageGroups = [
-            '0 - 12'  => Resident::active()->whereRaw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) BETWEEN 0 AND 12')->count(),
-            '13 - 17' => Resident::active()->whereRaw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) BETWEEN 13 AND 17')->count(),
-            '18 - 59' => Resident::active()->whereRaw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) BETWEEN 18 AND 59')->count(),
-            '60+'     => Resident::active()->whereRaw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) >= 60')->count(),
-        ];
+    public function generate(Request $request)
+    {
+        $request->validate([
+            'report_type'   => 'required|in:monthly,quarterly,annual',
+            'report_module' => 'required|in:summary,residents,documents,blotter,businesses',
+            'year'          => 'required|integer|min:2020|max:2030',
+            'month'         => 'nullable|integer|min:1|max:12',
+            'quarter'       => 'nullable|integer|min:1|max:4',
+        ]);
 
-        // --- Residents per Purok ---
-        $residentsByPurok = Purok::withCount(['residents' => function ($q) {
-            $q->where('residency_status', 'Active');
-        }])->orderBy('name')->get();
+        $type   = $request->report_type;
+        $module = $request->report_module;
+        $year   = $request->year;
+        $month  = $request->month;
+        $quarter= $request->quarter;
 
-        // --- Households ---
-        $totalHouseholds = Household::count();
+        // Determine date range
+        [$startDate, $endDate, $periodLabel] = $this->getDateRange($type, $year, $month, $quarter);
 
-        // --- Documents ---
-        $totalDocuments   = Document::count();
-        $pendingDocuments = Document::where('status', 'Pending')->count();
-        $releasedDocuments= Document::where('status', 'Released')->count();
+        // Gather data
+        $data         = $this->gatherData($module, $startDate, $endDate);
+        $generatedAt  = now()->format('F d, Y \a\t h:i A');
+        $generatedBy  = auth()->user()->name;
+        $officialName = Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
 
-        // Documents by type
-        $documentsByType = Document::selectRaw('document_type, COUNT(*) as total')
-            ->groupBy('document_type')
-            ->orderByDesc('total')
-            ->pluck('total', 'document_type')
-            ->toArray();
+        $pdf = Pdf::loadView('reports.pdf', compact(
+            'type','module','year','periodLabel',
+            'startDate','endDate','data',
+            'generatedAt','generatedBy','officialName'
+        ))->setPaper('a4','portrait');
 
-        // Monthly documents (current year)
-        $monthlyDocuments = Document::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
-            ->whereYear('created_at', date('Y'))
-            ->groupBy('month')
-            ->pluck('total', 'month')
-            ->toArray();
+        $filename = strtolower("{$type}_{$module}_report_{$year}") .
+            ($type === 'monthly' ? "_{$month}" : ($type === 'quarterly' ? "_q{$quarter}" : '')) .
+            '.pdf';
 
-        $monthlyData = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $monthlyData[$i] = $monthlyDocuments[$i] ?? 0;
+        return $pdf->download($filename);
+    }
+
+    private function getDateRange(string $type, int $year, ?int $month, ?int $quarter): array
+    {
+        switch ($type) {
+            case 'monthly':
+                $start = Carbon::create($year, $month, 1)->startOfMonth();
+                $end   = $start->copy()->endOfMonth();
+                $label = $start->format('F Y');
+                break;
+            case 'quarterly':
+                $startMonth = (($quarter - 1) * 3) + 1;
+                $start      = Carbon::create($year, $startMonth, 1)->startOfMonth();
+                $end        = $start->copy()->addMonths(2)->endOfMonth();
+                $label      = "Q{$quarter} " . $start->format('M') . '–' . $end->format('M Y');
+                break;
+            case 'annual':
+            default:
+                $start = Carbon::create($year, 1, 1)->startOfYear();
+                $end   = $start->copy()->endOfYear();
+                $label = "Year {$year}";
+                break;
         }
+        return [$start, $end, $label];
+    }
 
-        // --- Blotter ---
-        $totalBlotter  = BlotterCase::count();
-        $activeBlotter = BlotterCase::where('status', 'Active')->count();
-        $settledBlotter= BlotterCase::whereIn('status', ['Settled', 'Closed'])->count();
+    private function gatherData(string $module, Carbon $start, Carbon $end): array
+    {
+        switch ($module) {
+            case 'summary':
+                return [
+                    'total_residents'    => Resident::count(),
+                    'new_residents'      => Resident::whereBetween('created_at', [$start, $end])->count(),
+                    'active_residents'   => Resident::where('residency_status','Active')->count(),
+                    'total_households'   => Household::count(),
+                    'new_households'     => Household::whereBetween('created_at', [$start, $end])->count(),
+                    'documents_issued'   => Document::whereBetween('created_at', [$start, $end])->count(),
+                    'documents_released' => Document::whereBetween('released_at', [$start, $end])->count(),
+                    'blotter_filed'      => BlotterCase::whereBetween('created_at', [$start, $end])->count(),
+                    'blotter_settled'    => BlotterCase::whereBetween('settled_at', [$start, $end])->count(),
+                    'businesses_active'  => Business::where('status','Active')->count(),
+                    'businesses_new'     => Business::whereBetween('created_at', [$start, $end])->count(),
+                    'voters'             => Resident::where('is_voter',true)->count(),
+                    'seniors'            => Resident::where('is_senior',true)->count(),
+                    'pwd'                => Resident::where('is_pwd',true)->count(),
+                    'total_male'         => Resident::where('gender','Male')->count(),
+                    'total_female'       => Resident::where('gender','Female')->count(),
+                    'docs_by_type'       => Document::whereBetween('created_at', [$start, $end])
+                                            ->selectRaw('document_type, count(*) as total')
+                                            ->groupBy('document_type')->pluck('total','document_type'),
+                    'blotter_by_type'    => BlotterCase::whereBetween('created_at', [$start, $end])
+                                            ->selectRaw('incident_type, count(*) as total')
+                                            ->groupBy('incident_type')->pluck('total','incident_type'),
+                ];
 
-        $blotterByType = BlotterCase::selectRaw('incident_type, COUNT(*) as total')
-            ->groupBy('incident_type')
-            ->orderByDesc('total')
-            ->pluck('total', 'incident_type')
-            ->toArray();
+            case 'residents':
+                return [
+                    'records'    => Resident::with('purok')->whereBetween('created_at', [$start, $end])->orderBy('last_name')->get(),
+                    'total'      => Resident::whereBetween('created_at', [$start, $end])->count(),
+                    'male'       => Resident::whereBetween('created_at', [$start, $end])->where('gender','Male')->count(),
+                    'female'     => Resident::whereBetween('created_at', [$start, $end])->where('gender','Female')->count(),
+                ];
 
-        // --- Businesses ---
-        $totalBusinesses  = Business::count();
-        $activeBusinesses = Business::where('status', 'Active')->count();
-        $expiredBusinesses= Business::where('status', 'Expired')->count();
+            case 'documents':
+                return [
+                    'records'    => Document::with(['resident','issuedBy'])->whereBetween('created_at', [$start, $end])->orderBy('created_at','desc')->get(),
+                    'total'      => Document::whereBetween('created_at', [$start, $end])->count(),
+                    'released'   => Document::whereBetween('created_at', [$start, $end])->where('status','Released')->count(),
+                    'pending'    => Document::whereBetween('created_at', [$start, $end])->where('status','Pending')->count(),
+                    'by_type'    => Document::whereBetween('created_at', [$start, $end])->selectRaw('document_type, count(*) as total')->groupBy('document_type')->pluck('total','document_type'),
+                ];
 
-        return view('reports.reports-index', compact(
-            'totalActive',
-            'totalDeceased',
-            'totalTransferred',
-            'totalMale',
-            'totalFemale',
-            'totalVoters',
-            'totalSeniors',
-            'totalPwd',
-            'totalSoloParent',
-            'total4ps',
-            'ageGroups',
-            'residentsByPurok',
-            'totalHouseholds',
-            'totalDocuments',
-            'pendingDocuments',
-            'releasedDocuments',
-            'documentsByType',
-            'monthlyData',
-            'totalBlotter',
-            'activeBlotter',
-            'settledBlotter',
-            'blotterByType',
-            'totalBusinesses',
-            'activeBusinesses',
-            'expiredBusinesses'
-        ));
+            case 'blotter':
+                return [
+                    'records'    => BlotterCase::with('filedBy')->whereBetween('created_at', [$start, $end])->orderBy('incident_date','desc')->get(),
+                    'total'      => BlotterCase::whereBetween('created_at', [$start, $end])->count(),
+                    'active'     => BlotterCase::whereBetween('created_at', [$start, $end])->where('status','Active')->count(),
+                    'settled'    => BlotterCase::whereBetween('created_at', [$start, $end])->whereIn('status',['Settled','Closed'])->count(),
+                    'by_type'    => BlotterCase::whereBetween('created_at', [$start, $end])->selectRaw('incident_type, count(*) as total')->groupBy('incident_type')->pluck('total','incident_type'),
+                ];
+
+            case 'businesses':
+                return [
+                    'records'    => Business::whereBetween('created_at', [$start, $end])->orderBy('business_name')->get(),
+                    'total'      => Business::whereBetween('created_at', [$start, $end])->count(),
+                    'active'     => Business::whereBetween('created_at', [$start, $end])->where('status','Active')->count(),
+                    'expired'    => Business::whereBetween('created_at', [$start, $end])->where('status','Expired')->count(),
+                ];
+
+            default:
+                return [];
+        }
     }
 }
