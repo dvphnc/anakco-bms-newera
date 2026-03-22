@@ -8,6 +8,12 @@
         <p class="page-subtitle">Registered businesses in Barangay New Era</p>
     </div>
     <div class="page-actions">
+        <a href="{{ route('export.pdf', 'residents') }}" class="btn btn-secondary" title="Export PDF">
+    <i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF
+</a>
+<a href="{{ route('export.excel', 'residents') }}" class="btn btn-secondary" title="Export Excel">
+    <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
+</a>
         <a href="{{ route('businesses.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Issue Permit
         </a>
