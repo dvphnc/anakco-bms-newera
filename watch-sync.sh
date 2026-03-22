@@ -35,24 +35,45 @@ LAST_LOG_SIZE=0
 [ -f "$LOG_FILE" ] && LAST_LOG_SIZE=$(wc -c < "$LOG_FILE")
 
 # -------------------------------------------------------
-# HELPERS — Detect module, layer, prefix, milestone
+# HELPERS
 # -------------------------------------------------------
 get_module() {
     case "$1" in
-        *Resident*|*resident*)     echo "residents" ;;
-        *Household*|*household*)   echo "households" ;;
-        *Document*|*document*)     echo "documents" ;;
-        *Blotter*|*blotter*)       echo "blotter" ;;
-        *Business*|*business*)     echo "businesses" ;;
-        *Official*|*official*)     echo "officials" ;;
-        *Committee*|*committee*)   echo "committees" ;;
-        *Report*|*report*)         echo "reports" ;;
-        *User*|*user*)             echo "users" ;;
-        *Dashboard*|*dashboard*)   echo "dashboard" ;;
-        *[Mm]igration*|*[Ss]eeder*|*[Ff]actory*|*[Mm]odel*) echo "database" ;;
-        *layout*|*sidebar*|*topbar*|*app.blade*) echo "layout" ;;
-        *routes*|*web.php*)        echo "routes" ;;
-        *)                         echo "general" ;;
+        *Resident*|*resident*)     echo "Residents" ;;
+        *Household*|*household*)   echo "Households" ;;
+        *Document*|*document*)     echo "Documents" ;;
+        *Blotter*|*blotter*)       echo "Blotter" ;;
+        *Business*|*business*)     echo "Businesses" ;;
+        *Official*|*official*)     echo "Officials" ;;
+        *Committee*|*committee*)   echo "Committees" ;;
+        *Report*|*report*)         echo "Reports" ;;
+        *User*|*user*)             echo "Users" ;;
+        *Dashboard*|*dashboard*)   echo "Dashboard" ;;
+        *Purok*|*purok*)           echo "Puroks" ;;
+        *Activity*|*activity*)     echo "Activity Log" ;;
+        *[Mm]igration*|*[Ss]eeder*|*[Ff]actory*) echo "Database" ;;
+        *[Mm]odel*)                echo "Models" ;;
+        *layout*|*sidebar*|*topbar*|*app.blade*) echo "Layout" ;;
+        *routes*|*web.php*)        echo "Routes" ;;
+        *verify*)                  echo "Verification" ;;
+        *)                         echo "General" ;;
+    esac
+}
+
+get_module_slug() {
+    case "$1" in
+        Residents)    echo "residents" ;;
+        Households)   echo "households" ;;
+        Documents)    echo "documents" ;;
+        Blotter)      echo "blotter" ;;
+        Businesses)   echo "businesses" ;;
+        Officials)    echo "officials" ;;
+        Committees)   echo "committees" ;;
+        Reports)      echo "reports" ;;
+        Users)        echo "users" ;;
+        Dashboard)    echo "dashboard" ;;
+        Puroks)       echo "puroks" ;;
+        *)            echo "" ;;
     esac
 }
 
@@ -61,35 +82,10 @@ get_layer() {
         *Controller*)              echo "backend" ;;
         *.blade.php*)              echo "frontend" ;;
         *[Mm]igration*|*[Ss]eeder*|*[Ff]actory*|*[Mm]odel*) echo "database" ;;
-        *routes*|*web.php*)        echo "backend" ;;
+        *routes*|*web.php*|*Middleware*) echo "backend" ;;
         *.css*|*.js*)              echo "frontend" ;;
+        *Trait*)                   echo "backend" ;;
         *)                         echo "backend" ;;
-    esac
-}
-
-get_prefix() {
-    case "$1" in
-        backend)  echo "BACKEND" ;;
-        frontend) echo "FRONTEND" ;;
-        database) echo "DATABASE" ;;
-        *)        echo "UPDATE" ;;
-    esac
-}
-
-get_layer_label() {
-    case "$1" in
-        backend)  echo "layer: backend" ;;
-        frontend) echo "layer: frontend" ;;
-        database) echo "layer: database" ;;
-        *)        echo "type: enhancement" ;;
-    esac
-}
-
-get_module_label() {
-    case "$1" in
-        residents|households|documents|blotter|businesses|officials|committees|reports|users|dashboard)
-            echo "module: $1" ;;
-        *) echo "" ;;
     esac
 }
 
@@ -103,23 +99,147 @@ get_milestone() {
     esac
 }
 
-get_file_description() {
-    case "$1" in
-        *Controller*)   echo "Controller updated — CRUD methods, queries, or business logic changed" ;;
-        *.blade.php*)   echo "Blade view updated — UI, layout, or template changes" ;;
-        *[Mm]igration*) echo "Migration updated — database schema changes" ;;
-        *[Mm]odel*)     echo "Model updated — relationships, scopes, or fillable fields changed" ;;
-        *[Ss]eeder*)    echo "Seeder updated — database seed data changed" ;;
-        *[Ff]actory*)   echo "Factory updated — fake data generation changed" ;;
-        *routes*)       echo "Routes updated — URL definitions or middleware changed" ;;
-        *.css*)         echo "Stylesheet updated — design or layout styles changed" ;;
-        *.js*)          echo "JavaScript updated — frontend behavior changed" ;;
-        *)              echo "File updated" ;;
-    esac
+# -------------------------------------------------------
+# SMART TITLE GENERATOR
+# Analyzes changed files and produces a specific title
+# -------------------------------------------------------
+
+get_file_basename() {
+    echo "$1" | grep -oE '[A-Za-z0-9_-]+\.(php|js|css|sh|json)' | tail -1
+}
+
+get_file_role() {
+    local f="$1"
+    if echo "$f" | grep -qi "Controller"; then
+        local basename=$(get_file_basename "$f")
+        echo "updated $basename"
+    elif echo "$f" | grep -qi "blade"; then
+        local basename=$(get_file_basename "$f")
+        if echo "$f" | grep -qi "\-index"; then
+            echo "updated $basename (index/list page)"
+        elif echo "$f" | grep -qi "\-create"; then
+            echo "updated $basename (create form)"
+        elif echo "$f" | grep -qi "\-edit"; then
+            echo "updated $basename (edit form)"
+        elif echo "$f" | grep -qi "\-show"; then
+            echo "updated $basename (detail page)"
+        else
+            echo "updated $basename"
+        fi
+    elif echo "$f" | grep -qi "[0-9]_create\|[0-9]_add\|[0-9]_update\|migration"; then
+        local basename=$(get_file_basename "$f")
+        echo "migration: $basename"
+    elif echo "$f" | grep -qi "Model\|/Models/"; then
+        local basename=$(get_file_basename "$f")
+        echo "updated model $basename"
+    elif echo "$f" | grep -qi "Seeder"; then
+        local basename=$(get_file_basename "$f")
+        echo "updated seeder $basename"
+    elif echo "$f" | grep -qi "Factory"; then
+        local basename=$(get_file_basename "$f")
+        echo "updated factory $basename"
+    elif echo "$f" | grep -qi "routes\|web\.php"; then
+        echo "updated web.php (route definitions)"
+    elif echo "$f" | grep -qi "Trait\|Middleware"; then
+        local basename=$(get_file_basename "$f")
+        echo "updated $basename"
+    elif echo "$f" | grep -qi "\.sh$"; then
+        local basename=$(get_file_basename "$f")
+        echo "updated script $basename"
+    else
+        local basename=$(get_file_basename "$f")
+        echo "updated $basename"
+    fi
+}
+
+generate_smart_title() {
+    local changed_files="$1"
+    local manual_msg="$2"
+
+    if [ -n "$manual_msg" ]; then
+        echo "$manual_msg"
+        return
+    fi
+
+    local file_count=$(echo "$changed_files" | grep -c .)
+    local first_file=$(echo "$changed_files" | head -1)
+    local second_file=$(echo "$changed_files" | sed -n "2p")
+
+    local module=$(get_module "$first_file")
+    local file_role=$(get_file_role "$first_file")
+
+    # Single file — most specific
+    if [ "$file_count" -eq 1 ]; then
+        echo "$module — $file_role"
+        return
+    fi
+
+    # Two files
+    if [ "$file_count" -eq 2 ]; then
+        local role2=$(get_file_role "$second_file")
+        local mod2=$(get_module "$second_file")
+        if [ "$module" = "$mod2" ]; then
+            echo "$module — $file_role + $role2"
+        else
+            echo "$module & $mod2 — $file_role + $role2"
+        fi
+        return
+    fi
+
+    # 3+ files — summarize by module and type
+    local modules=()
+    local has_controller=0; local has_view=0; local has_migration=0
+    local has_model=0; local has_routes=0; local has_trait=0
+
+    while IFS= read -r f; do
+        [ -z "$f" ] && continue
+        local mod=$(get_module "$f")
+        local already=0
+        for m in "${modules[@]}"; do [ "$m" = "$mod" ] && already=1; done
+        [ $already -eq 0 ] && modules+=("$mod")
+        echo "$f" | grep -qi "Controller"  && has_controller=1
+        echo "$f" | grep -qi "blade"       && has_view=1
+        echo "$f" | grep -qi "migration"   && has_migration=1
+        echo "$f" | grep -qi "Model"     && has_model=1
+        echo "$f" | grep -qi "routes\|web\.php" && has_routes=1
+        echo "$f" | grep -qi "Trait\|Middleware" && has_trait=1
+    done <<< "$changed_files"
+
+    local mod_str=""
+    if [ ${#modules[@]} -eq 1 ]; then
+        mod_str="${modules[0]}"
+    elif [ ${#modules[@]} -eq 2 ]; then
+        mod_str="${modules[0]} & ${modules[1]}"
+    else
+        mod_str="${modules[0]}, ${modules[1]} +${#modules[@]} modules"
+    fi
+
+    local change_desc=""
+    if [ $has_migration -eq 1 ] && [ $has_controller -eq 1 ] && [ $has_view -eq 1 ]; then
+        change_desc="full-stack update ($file_count files)"
+    elif [ $has_migration -eq 1 ] && [ $has_model -eq 1 ]; then
+        change_desc="schema & model update"
+    elif [ $has_controller -eq 1 ] && [ $has_view -eq 1 ]; then
+        change_desc="controller & view update ($file_count files)"
+    elif [ $has_controller -eq 1 ]; then
+        change_desc="controller updates ($file_count files)"
+    elif [ $has_view -eq 1 ]; then
+        change_desc="view updates ($file_count files)"
+    elif [ $has_migration -eq 1 ]; then
+        change_desc="database migrations ($file_count files)"
+    elif [ $has_routes -eq 1 ]; then
+        change_desc="route & config update"
+    elif [ $has_trait -eq 1 ]; then
+        change_desc="trait/middleware update"
+    else
+        change_desc="update ($file_count files)"
+    fi
+
+    echo "$mod_str — $change_desc"
 }
 
 # -------------------------------------------------------
-# FUNCTION 1 — Auto-create changelog issue (like originals)
+# FUNCTION 1 — Auto-create changelog issue
 # -------------------------------------------------------
 create_changelog_issue() {
     local changed_files="$1"
@@ -128,32 +248,44 @@ create_changelog_issue() {
 
     local first_file=$(echo "$changed_files" | head -1)
     local module=$(get_module "$first_file")
+    local module_slug=$(get_module_slug "$module")
     local layer=$(get_layer "$first_file")
-    local prefix=$(get_prefix "$layer")
-    local layer_label=$(get_layer_label "$layer")
-    local module_label=$(get_module_label "$module")
     local milestone=$(get_milestone "$layer")
     local file_count=$(echo "$changed_files" | grep -c .)
 
-    # Build file details table
-    local file_table="| File | Type | Description |\n|---|---|---|\n"
+    # Smart title
+    local smart_title=$(generate_smart_title "$changed_files" "")
+    local prefix=""
+    [ "$layer" = "backend" ]  && prefix="BACKEND"
+    [ "$layer" = "frontend" ] && prefix="FRONTEND"
+    [ "$layer" = "database" ] && prefix="DATABASE"
+
+    # Build file table
+    local file_table="| File | Layer | Notes |\n|---|---|---|\n"
     while IFS= read -r f; do
         [ -z "$f" ] && continue
-        local ftype=$(get_layer "$f")
-        local fdesc=$(get_file_description "$f")
-        file_table="$file_table| \`$f\` | $ftype | $fdesc |\n"
+        local flay=$(get_layer "$f")
+        local fnote=""
+        echo "$f" | grep -qi "Controller" && fnote="Business logic / CRUD"
+        echo "$f" | grep -qi "blade"      && fnote="UI template"
+        echo "$f" | grep -qi "migration"  && fnote="Schema change"
+        echo "$f" | grep -qi "Model"      && fnote="Eloquent model"
+        echo "$f" | grep -qi "routes"     && fnote="Route definitions"
+        echo "$f" | grep -qi "Seeder"     && fnote="Seed data"
+        echo "$f" | grep -qi "Trait"      && fnote="Shared trait"
+        [ -z "$fnote" ] && fnote="—"
+        file_table="$file_table| \`$f\` | $flay | $fnote |\n"
     done <<< "$changed_files"
 
-    # Build labels string
-    local labels="type: enhancement,$layer_label,status: in-progress"
-    [ -n "$module_label" ] && labels="$labels,$module_label"
+    # Labels
+    local labels="type: enhancement,layer: $layer,status: in-progress"
+    [ -n "$module_slug" ] && labels="$labels,module: $module_slug"
 
-    local title="[$prefix] $commit_msg"
+    local title="[$prefix] $smart_title"
 
-    local body="## 📝 Change Log
+    local body="## 📋 Change Log
 
 **Date:** $timestamp
-**Branch:** \`$BRANCH\`
 **Module:** $module
 **Layer:** $layer
 **Files Changed:** $file_count
@@ -162,25 +294,25 @@ create_changelog_issue() {
 
 $(echo -e "$file_table")
 
-## 🔍 Commit Message
+## 💬 Commit Message
 \`\`\`
 $commit_msg
 \`\`\`
 
 ## ✅ Acceptance Criteria
-- [ ] Changes tested locally at http://localhost
+- [ ] Changes tested locally at http://anakco_bms.test
 - [ ] No new errors in \`storage/logs/laravel.log\`
 - [ ] UI renders correctly if frontend changes
 - [ ] Database migrations run cleanly if schema changes
 
 ## 🔗 Related
-Check the existing issues for this module: \`module: $module\`
+Check existing issues: \`module: $module_slug\`
 
 ---
-*This issue was automatically created by the BMS watch-sync script when files were changed.*"
+*Auto-created by BMS watch-sync when files were changed.*"
 
     local issue_url
-    if [ -n "$module_label" ]; then
+    if [ -n "$module_slug" ]; then
         issue_url=$(gh issue create \
             --repo "$REPO" \
             --title "$title" \
@@ -195,7 +327,7 @@ Check the existing issues for this module: \`module: $module\`
             --body "$body" 2>/dev/null)
     fi
 
-    [ -n "$issue_url" ] && echo -e "${CYAN}[$(date '+%H:%M:%S')]${NC} 📋 Issue created → $issue_url"
+    [ -n "$issue_url" ] && echo -e "${CYAN}[$(date '+%H:%M:%S')]${NC} 📌 Issue created → $issue_url"
 }
 
 # -------------------------------------------------------
@@ -208,7 +340,6 @@ check_and_close_issues() {
     if [ -n "$issue_numbers" ]; then
         while IFS= read -r issue_num; do
             [ -z "$issue_num" ] && continue
-            # Also update the issue label to status: done
             gh issue edit "$issue_num" \
                 --repo "$REPO" \
                 --remove-label "status: in-progress,status: needs-review,status: blocked" \
@@ -220,8 +351,8 @@ check_and_close_issues() {
 
 > $commit_msg
 
-Issue has been marked as **status: done**." 2>/dev/null && \
-            echo -e "${GREEN}[$(date '+%H:%M:%S')]${NC} ✅ Auto-closed issue #$issue_num → status: done"
+Issue marked as **status: done**." 2>/dev/null && \
+            echo -e "${GREEN}[$(date '+%H:%M:%S')]${NC} ✅ Auto-closed issue #$issue_num"
         done <<< "$issue_numbers"
     fi
 }
@@ -246,37 +377,50 @@ check_laravel_log() {
     local error_short=$(echo "$error_line" | cut -c1-150)
     local error_file=$(echo "$new_content" | grep -oE 'at .*\.php:[0-9]+' | head -1)
     local module=$(get_module "$error_file")
+    local module_slug=$(get_module_slug "$module")
     local timestamp=$(date '+%B %d, %Y at %H:%M')
-    local module_label=$(get_module_label "$module")
-    local labels="type: bug,priority: high,status: needs-review"
-    [ -n "$module_label" ] && labels="$labels,$module_label"
 
-    # Detect error type for title
     local error_type="Runtime Error"
-    echo "$error_line" | grep -qi "SQLSTATE"     && error_type="SQL Error"
+    echo "$error_line" | grep -qi "SQLSTATE"      && error_type="SQL Error"
     echo "$error_line" | grep -qi "ErrorException" && error_type="PHP Exception"
-    echo "$error_line" | grep -qi "CRITICAL"      && error_type="Critical Error"
+    echo "$error_line" | grep -qi "CRITICAL"       && error_type="Critical Error"
+    echo "$error_line" | grep -qi "ViewException"  && error_type="Blade View Error"
+    echo "$error_line" | grep -qi "ModelNotFound"  && error_type="Model Not Found"
 
-    local title="[BUG] $error_type detected in $module — $(date '+%b %d %H:%M')"
+    # Extract file and line number from error
+    local error_location=$(echo "$new_content" | grep -oE '[A-Za-z0-9/_-]+\.php:[0-9]+' | head -1)
+    local error_basename=$(echo "$error_location" | grep -oE '[A-Za-z0-9_-]+\.php:[0-9]+' | head -1)
+    [ -z "$error_basename" ] && error_basename="unknown location"
+
+    # Extract the actual error message (clean it up)
+    local error_msg=$(echo "$error_line" |         sed "s/\[.*\] //g" |         sed "s/production\.ERROR://g" |         sed "s/local\.ERROR://g" |         sed "s/^ *//g" |         cut -c1-70)
+
+    local title="[BUG] $error_type at $error_basename — $error_msg"
+
+    local labels="type: bug,priority: high,status: needs-review"
+    [ -n "$module_slug" ] && labels="$labels,module: $module_slug"
 
     local body="## 🐛 Bug Report
 
 **Date:** $timestamp
 **Module:** $module
 **Error Type:** $error_type
+**File:** \`$error_basename\`
 **Detected by:** Auto watch-sync (Laravel log monitor)
 
 ## ❌ Error Message
 \`\`\`
-$error_short
+$error_msg
 \`\`\`
 
-## 📍 Location
-\`$error_file\`
-
-## 📋 Log Excerpt
+## 📍 Exact Location
 \`\`\`
-$(echo "$new_content" | head -30)
+$error_location
+\`\`\`
+
+## 📄 Log Excerpt
+\`\`\`
+$(echo "$new_content" | head -25)
 \`\`\`
 
 ## 🔍 Root Cause
@@ -285,26 +429,19 @@ $(echo "$new_content" | head -30)
 ## ✅ Fix Applied
 <!-- Describe the fix here -->
 
-## 🔧 Steps to Reproduce
-1. Go to the $module module
+## 📋 Steps to Reproduce
+1. Go to the **$module** module
 2. Check \`storage/logs/laravel.log\` for the full stack trace
 3. Reproduce the action that caused the error
 
-## 📁 File to Check
-\`$error_file\`
+---
+**To close:** commit your fix with \`fixes #ISSUE_NUMBER\` — this auto-closes the issue.
 
 ---
-**To close this issue**, commit your fix with:
-\`\`\`
-fixes #ISSUE_NUMBER description of fix
-\`\`\`
-This will automatically close the issue and mark it as **status: done**.
-
----
-*Auto-created by BMS watch-sync when a Laravel error was detected in the log.*"
+*Auto-created by BMS watch-sync when a Laravel error was detected.*"
 
     local issue_url
-    if [ -n "$module_label" ]; then
+    if [ -n "$module_slug" ]; then
         issue_url=$(gh issue create \
             --repo "$REPO" \
             --title "$title" \
@@ -327,9 +464,8 @@ This will automatically close the issue and mark it as **status: done**.
 # -------------------------------------------------------
 echo -e "${GREEN}✅ Watching for changes...${NC}"
 echo ""
-echo -e "${BLUE}💡 TIP — To auto-close an issue when fixing:${NC}"
-echo -e "   Add 'fixes #12' anywhere in your commit message"
-echo -e "   Example: ${YELLOW}BMS_COMMIT='fixes #12 fixed residents search' bash watch-sync.sh${NC}"
+echo -e "${BLUE}💡 TIP — Custom commit message:${NC}"
+echo -e "   ${YELLOW}BMS_COMMIT='fixes #12 added export feature' bash watch-sync.sh${NC}"
 echo ""
 
 while true; do
@@ -344,28 +480,23 @@ while true; do
         echo -e "${YELLOW}[$(date '+%H:%M:%S')]${NC} Changes detected! Syncing..."
 
         git add -A
-
         CHANGED_FILES=$(git diff --cached --name-only)
-        CHANGED_SHORT=$(echo "$CHANGED_FILES" | head -5 | tr '\n' ', ' | sed 's/,$//')
-        EXTRA=$(echo "$CHANGED_FILES" | grep -c .)
 
+        # Determine commit message
         if [ -n "$BMS_COMMIT" ]; then
             COMMIT_MSG="$BMS_COMMIT"
             unset BMS_COMMIT
-        elif [ "$EXTRA" -gt 5 ]; then
-            COMMIT_MSG="auto: update $CHANGED_SHORT and $((EXTRA - 5)) more"
         else
-            COMMIT_MSG="auto: update $CHANGED_SHORT"
+            SMART=$(generate_smart_title "$CHANGED_FILES" "")
+            COMMIT_MSG="auto: $SMART"
         fi
 
         git commit -m "$COMMIT_MSG" --quiet
 
         if git push origin "$BRANCH" --quiet 2>/dev/null; then
             echo -e "${GREEN}[$(date '+%H:%M:%S')]${NC} ✅ Pushed: $COMMIT_MSG"
-
             check_and_close_issues "$COMMIT_MSG"
             create_changelog_issue "$CHANGED_FILES" "$COMMIT_MSG"
-
         else
             echo -e "${RED}[$(date '+%H:%M:%S')]${NC} ❌ Push failed! Retrying..."
             sleep 3
