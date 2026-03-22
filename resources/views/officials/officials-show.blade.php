@@ -54,12 +54,6 @@
                 <div style="font-size:10px;color:var(--text-subtle);margin-top:5px;text-align:center">{{ $tPct }}% of term served</div>
             </div>
             @endif
-            @if($official->contact_number)
-            <div style="padding:12px 16px;border-top:1px solid var(--border)">
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:3px">Contact</div>
-                <div style="font-size:13px;color:var(--text)">{{ $official->contact_number }}</div>
-            </div>
-            @endif
         </div>
         <div class="card">
             <div class="card-header"><span class="card-title"><i class="fas fa-bolt"></i> Actions</span></div>
@@ -102,275 +96,318 @@
     </div>
 </div>
 
-{{-- =============================================
-     PRINTABLE ID CARD — CR80 Landscape (3.375in x 2.125in)
-     Front + Back on same print
-============================================= --}}
+{{-- ID CARD PRINT --}}
 <div class="print-only" id="id-card">
 @php
-    $punong    = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
-    $secretary = \App\Models\Official::where('position','Barangay Secretary')->where('is_active',true)->first()?->full_name ?? 'BARANGAY SECRETARY';
-    $termStart = $official->term_start ? \Carbon\Carbon::parse($official->term_start)->format('F d, Y') : '—';
-    $termEnd   = $official->term_end   ? \Carbon\Carbon::parse($official->term_end)->format('F d, Y')   : '—';
+    $punong   = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
     $termShort = ($official->term_start ? \Carbon\Carbon::parse($official->term_start)->format('Y') : '—') . ' – ' . ($official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('Y') : '—');
-    $idNumber  = 'BNE-' . str_pad($official->id, 4, '0', STR_PAD_LEFT) . '-' . date('Y');
+    $idNumber = 'BNE-' . str_pad($official->id, 4, '0', STR_PAD_LEFT) . '-' . date('Y');
+    $validUntil = $official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('M d, Y') : '—';
 @endphp
 <style>
 @media print {
-    @page { size: 3.375in 5in; margin: 0.1in; }
+    @page { size: 3.5in 4.8in; margin: 0.1in; }
     .no-print  { display: none !important; }
     .print-only { display: block !important; }
     .sidebar, .topbar, .watermark, .page-header { display: none !important; }
 }
 .print-only { display: none; }
-* { box-sizing: border-box; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-.id-page {
-    width: 3.175in;
-    font-family: Arial, sans-serif;
-    color: #000;
-}
+.id-page { width: 3.3in; font-family: Arial, sans-serif; }
 
-/* ============ FRONT CARD ============ */
+/* ===== FRONT ===== */
 .id-front {
-    width: 3.175in;
-    height: 2in;
-    border: 1px solid #aaa;
-    border-radius: 6px;
+    width: 3.3in;
+    height: 2.1in;
+    border-radius: 8px;
     overflow: hidden;
     position: relative;
-    background: #fff;
-    margin-bottom: 0.15in;
-    page-break-inside: avoid;
+    margin-bottom: 0.12in;
+    /* Realistic card - subtle shadow effect via border */
+    border: 0.5px solid rgba(0,0,0,0.15);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+    /* Main background - deep navy gradient */
+    background: linear-gradient(160deg, #0A1D3E 0%, #0D2144 40%, #122A56 70%, #0A1D3E 100%);
 }
 
-/* Top stripe — navy with gold accent */
-.front-top {
-    background: #0D2144;
-    height: 0.52in;
+/* Diagonal geometric accent shapes */
+.front-geo-1 {
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 100px; height: 100px;
+    background: rgba(200,134,26,0.12);
+    border-radius: 50%;
+}
+.front-geo-2 {
+    position: absolute;
+    bottom: -30px; left: -15px;
+    width: 80px; height: 80px;
+    background: rgba(200,134,26,0.07);
+    border-radius: 50%;
+}
+.front-geo-3 {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 18px,
+        rgba(255,255,255,0.012) 18px,
+        rgba(255,255,255,0.012) 19px
+    );
+}
+
+/* Gold top accent bar */
+.front-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #8B5E0A, #C8861A, #F0C060, #E5A020, #C8861A, #8B5E0A);
+}
+
+/* Header */
+.front-header {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
-    padding: 0 8px;
+    padding: 8px 10px 6px;
     gap: 7px;
-    position: relative;
+    border-bottom: 1px solid rgba(200,134,26,0.2);
 }
-.front-top::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2.5px;
-    background: linear-gradient(90deg, #C8861A 0%, #F0C060 50%, #C8861A 100%);
-}
-.front-top img { height: 34px; width: 34px; object-fit: contain; flex-shrink: 0; }
-.front-top-text { flex: 1; text-align: center; }
-.front-top-text .republic { font-size: 5pt; color: rgba(255,255,255,0.65); font-style: italic; }
-.front-top-text .brgy     { font-size: 9pt; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.1; }
-.front-top-text .city     { font-size: 5.5pt; color: rgba(229,160,32,0.9); }
+.front-header img { height: 30px; width: 30px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); }
+.fh-text { flex: 1; text-align: center; }
+.fh-text .rep  { font-size: 5pt; color: rgba(255,255,255,0.5); font-style: italic; }
+.fh-text .brgy { font-size: 8.5pt; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+.fh-text .city { font-size: 5pt; color: rgba(200,134,26,0.85); }
 
-/* Gold ribbon */
-.front-ribbon {
-    background: linear-gradient(135deg, #B8720A, #C8861A, #E5A020, #C8861A, #B8720A);
+/* Badge */
+.front-badge {
+    position: relative;
+    z-index: 2;
     text-align: center;
     padding: 2px 0;
-    font-size: 6pt;
+    background: linear-gradient(135deg, rgba(200,134,26,0.25), rgba(200,134,26,0.15));
+    border-top: 1px solid rgba(200,134,26,0.3);
+    border-bottom: 1px solid rgba(200,134,26,0.3);
+    font-size: 5.5pt;
     font-weight: 800;
-    color: #fff;
+    color: #F0C060;
     text-transform: uppercase;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.18em;
 }
 
 /* Body */
 .front-body {
+    position: relative;
+    z-index: 2;
     display: flex;
-    padding: 7px 8px 6px;
-    gap: 8px;
-    height: calc(2in - 0.52in - 0.2in - 0.28in);
+    padding: 8px 10px 30px;
+    gap: 9px;
 }
 
 /* Photo */
+.front-photo-wrap { flex-shrink: 0; }
 .front-photo {
-    width: 62px;
-    height: 75px;
-    border-radius: 3px;
+    width: 58px; height: 70px;
+    border-radius: 4px;
     overflow: hidden;
-    border: 2px solid #0D2144;
-    flex-shrink: 0;
-    background: linear-gradient(135deg, #C8861A, #E5A020);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: 900;
-    color: #fff;
-    position: relative;
+    border: 2px solid rgba(200,134,26,0.6);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
+    background: linear-gradient(135deg, #1a3a6b, #0D2144);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 900; color: #C8861A;
 }
 .front-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.front-photo-label {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: rgba(13,33,68,0.85);
-    font-size: 4.5pt;
-    color: #fff;
-    text-align: center;
-    padding: 1px 0;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
 
 /* Info */
 .front-info { flex: 1; min-width: 0; }
-.front-name     { font-size: 8.5pt; font-weight: 900; color: #0D2144; text-transform: uppercase; line-height: 1.15; margin-bottom: 1px; }
-.front-position { font-size: 7pt; font-weight: 700; color: #C8861A; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
-.front-divider  { border: none; border-top: 1px solid #e5e7eb; margin: 3px 0; }
+.fi-name     { font-size: 8pt; font-weight: 900; color: #fff; text-transform: uppercase; line-height: 1.15; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+.fi-position { font-size: 6.5pt; font-weight: 700; color: #F0C060; text-transform: uppercase; letter-spacing: 0.05em; margin: 2px 0 5px; }
+.fi-divider  { border: none; border-top: 1px solid rgba(200,134,26,0.25); margin-bottom: 5px; }
 
-.f-row { display: flex; gap: 4px; margin-bottom: 3px; }
-.f-lbl { font-size: 5pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; min-width: 40px; padding-top: 0.5px; }
-.f-val { font-size: 6.5pt; color: #1f2937; font-weight: 600; flex: 1; line-height: 1.2; }
+.fi-row { display: flex; gap: 4px; margin-bottom: 3.5px; align-items: flex-start; }
+.fi-lbl { font-size: 4.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.4); min-width: 38px; padding-top: 0.5px; }
+.fi-val { font-size: 6pt; color: rgba(255,255,255,0.85); font-weight: 600; flex: 1; line-height: 1.2; }
+.fi-val.active { color: #6EE7A0; }
 
-/* Bottom strip */
+/* Bottom bar */
 .front-bottom {
-    background: #0D2144;
-    height: 0.28in;
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 0.26in;
+    background: rgba(0,0,0,0.35);
+    border-top: 1px solid rgba(200,134,26,0.2);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 8px;
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
+    padding: 0 10px;
+    z-index: 2;
+    backdrop-filter: blur(2px);
 }
-.front-bottom .idnum { font-family: 'Courier New', monospace; font-size: 6.5pt; color: rgba(255,255,255,0.85); letter-spacing: 0.08em; }
-.front-bottom .valid { font-size: 5.5pt; color: rgba(229,160,32,0.9); text-align: right; }
-.front-bottom .valid span { display: block; font-size: 4.5pt; color: rgba(255,255,255,0.4); text-transform: uppercase; }
+.fb-idnum { font-family: 'Courier New', monospace; font-size: 6pt; color: rgba(200,134,26,0.9); letter-spacing: 0.1em; }
+.fb-valid { text-align: right; }
+.fb-valid .v-lbl  { font-size: 4pt; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.06em; display: block; }
+.fb-valid .v-date { font-size: 6pt; color: rgba(200,134,26,0.85); font-weight: 700; }
 
-/* Diagonal watermark */
-.wm {
+/* Watermark */
+.front-wm {
     position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%) rotate(-20deg);
-    width: 1.2in; height: 1.2in;
-    opacity: 0.04;
+    bottom: 10px; right: 8px;
+    width: 55px; height: 55px;
+    opacity: 0.06;
     object-fit: contain;
-    pointer-events: none;
+    z-index: 1;
 }
 
-/* ============ BACK CARD ============ */
+/* ===== BACK ===== */
 .id-back {
-    width: 3.175in;
-    height: 2in;
-    border: 1px solid #aaa;
-    border-radius: 6px;
+    width: 3.3in;
+    height: 2.1in;
+    border-radius: 8px;
     overflow: hidden;
+    border: 0.5px solid rgba(0,0,0,0.12);
+    background: linear-gradient(160deg, #0A1D3E 0%, #0D2144 50%, #0A1D3E 100%);
     position: relative;
-    background: #fff;
-    page-break-inside: avoid;
 }
 
-.back-top {
-    background: #0D2144;
-    height: 0.32in;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+/* Stripe pattern */
+.back-stripe {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 24px,
+        rgba(255,255,255,0.015) 24px,
+        rgba(255,255,255,0.015) 25px
+    );
 }
-.back-top::after {
-    content: '';
+
+/* Magnetic stripe */
+.back-mag {
+    background: linear-gradient(180deg, #111 0%, #1a1a1a 40%, #222 100%);
+    height: 0.28in;
+    margin-top: 0.22in;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Content area */
+.back-content {
+    position: relative;
+    z-index: 2;
+    padding: 7px 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.back-left { flex: 1; }
+.back-note {
+    font-size: 5pt;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.55;
+    margin-bottom: 7px;
+}
+.back-sig {
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 3px;
+    height: 0.38in;
+    background: rgba(255,255,255,0.04);
+    padding: 3px 6px;
+}
+.back-sig .s-lbl { font-size: 4pt; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.06em; }
+.back-sig .s-line { border-top: 1px solid rgba(255,255,255,0.15); margin-top: 16px; }
+
+.back-right { min-width: 0.95in; text-align: center; }
+.back-punong-lbl { font-size: 4.5pt; color: rgba(200,134,26,0.7); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+.back-punong-sig-line { border-top: 1px solid rgba(255,255,255,0.3); width: 80%; margin: 20px auto 2px; }
+.back-punong-name  { font-size: 5.5pt; font-weight: 800; color: #fff; text-transform: uppercase; }
+.back-punong-title { font-size: 4.5pt; color: rgba(200,134,26,0.8); }
+
+/* Bottom footer */
+.back-footer {
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #C8861A, #F0C060, #C8861A);
-}
-.back-top-text { font-size: 7pt; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.12em; }
-
-.back-body { padding: 7px 10px; display: flex; gap: 10px; }
-
-.back-sig-col { flex: 1; }
-.back-note { font-size: 5.5pt; color: #555; line-height: 1.5; margin-bottom: 6px; }
-.back-sig-box { border: 1px solid #ccc; border-radius: 3px; height: 0.45in; margin-bottom: 4px; padding: 3px 5px; }
-.back-sig-box .sig-lbl { font-size: 4.5pt; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; }
-.back-sig-box .sig-line { border-top: 1px solid #ccc; margin-top: 18px; }
-
-.back-official-col { text-align: center; min-width: 1in; }
-.back-official-photo {
-    width: 46px; height: 52px;
-    border: 1.5px solid #0D2144;
-    border-radius: 3px;
-    margin: 0 auto 3px;
-    background: #f5f7fa;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 5pt; color: #aaa; text-align: center; line-height: 1.3;
-}
-.back-punong-sig { border-top: 1px solid #333; width: 80%; margin: 12px auto 2px; }
-.back-punong-name { font-size: 6pt; font-weight: 800; color: #0D2144; text-transform: uppercase; }
-.back-punong-title { font-size: 5pt; color: #666; }
-
-.back-footer {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: #f5f7fa;
-    border-top: 1px solid #e5e7eb;
-    padding: 3px 8px;
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(200,134,26,0.15);
+    padding: 3px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 2;
 }
-.back-footer .contact { font-size: 5pt; color: #666; }
-.back-footer .logo { width: 18px; height: 18px; object-fit: contain; opacity: 0.5; }
-.back-footer .notice { font-size: 4.5pt; color: #aaa; text-align: right; }
+.bf-left  { font-size: 4.5pt; color: rgba(255,255,255,0.35); }
+.bf-logo  { width: 16px; height: 16px; object-fit: contain; opacity: 0.35; }
+.bf-right { font-size: 4pt; color: rgba(200,134,26,0.5); text-align: right; text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* Gold accent bottom */
+.back-accent-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2.5px;
+    background: linear-gradient(90deg, #8B5E0A, #C8861A, #F0C060, #C8861A, #8B5E0A);
+}
 </style>
 
 <div class="id-page">
 
     {{-- FRONT --}}
     <div class="id-front">
-        <img src="{{ asset('images/bne-logo.png') }}" class="wm" alt="">
+        <div class="front-accent"></div>
+        <div class="front-geo-1"></div>
+        <div class="front-geo-2"></div>
+        <div class="front-geo-3"></div>
+        <img src="{{ asset('images/bne-logo.png') }}" class="front-wm" alt="">
 
-        <div class="front-top">
+        <div class="front-header">
             <img src="{{ asset('images/qc-seal.png') }}" alt="QC">
-            <div class="front-top-text">
-                <div class="republic"><em>Republic of the Philippines</em></div>
+            <div class="fh-text">
+                <div class="rep"><em>Republic of the Philippines</em></div>
                 <div class="brgy">Barangay New Era</div>
                 <div class="city">New Era, Quezon City, Metro Manila</div>
             </div>
             <img src="{{ asset('images/bne-logo.png') }}" alt="BNE">
         </div>
 
-        <div class="front-ribbon">Official Identification Card</div>
+        <div class="front-badge">✦ &nbsp; Official Identification Card &nbsp; ✦</div>
 
         <div class="front-body">
-            <div>
+            <div class="front-photo-wrap">
                 <div class="front-photo">
                     @if($official->photo_path)
                         <img src="{{ asset('storage/'.$official->photo_path) }}" alt="Photo">
                     @else
                         {{ strtoupper(substr($official->full_name, 0, 1)) }}
                     @endif
-                    <div class="front-photo-label">Photo</div>
                 </div>
             </div>
-
             <div class="front-info">
-                <div class="front-name">{{ $official->full_name }}</div>
-                <div class="front-position">{{ $official->position }}</div>
-                <hr class="front-divider">
+                <div class="fi-name">{{ $official->full_name }}</div>
+                <div class="fi-position">{{ $official->position }}</div>
+                <div class="fi-divider"></div>
                 @if($official->committee)
-                <div class="f-row">
-                    <span class="f-lbl">Committee</span>
-                    <span class="f-val">{{ $official->committee }}</span>
+                <div class="fi-row">
+                    <span class="fi-lbl">Committee</span>
+                    <span class="fi-val">{{ $official->committee }}</span>
                 </div>
                 @endif
-                <div class="f-row">
-                    <span class="f-lbl">Term</span>
-                    <span class="f-val">{{ $termShort }}</span>
+                <div class="fi-row">
+                    <span class="fi-lbl">Term</span>
+                    <span class="fi-val">{{ $termShort }}</span>
                 </div>
                 @if($official->contact_number)
-                <div class="f-row">
-                    <span class="f-lbl">Contact</span>
-                    <span class="f-val">{{ $official->contact_number }}</span>
+                <div class="fi-row">
+                    <span class="fi-lbl">Contact</span>
+                    <span class="fi-val">{{ $official->contact_number }}</span>
                 </div>
                 @endif
-                <div class="f-row">
-                    <span class="f-lbl">Status</span>
-                    <span class="f-val" style="color:{{ $official->is_active ? '#16a34a' : '#6b7280' }};font-weight:800">
+                <div class="fi-row">
+                    <span class="fi-lbl">Status</span>
+                    <span class="fi-val {{ $official->is_active ? 'active' : '' }}">
                         {{ $official->is_active ? '● ACTIVE' : '○ INACTIVE' }}
                     </span>
                 </div>
@@ -378,59 +415,46 @@
         </div>
 
         <div class="front-bottom">
-            <div class="idnum">{{ $idNumber }}</div>
-            <div class="valid">
-                <span>Valid Until</span>
-                {{ $official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('M d, Y') : '—' }}
+            <div class="fb-idnum">{{ $idNumber }}</div>
+            <div class="fb-valid">
+                <span class="v-lbl">Valid Until</span>
+                <span class="v-date">{{ $validUntil }}</span>
             </div>
         </div>
     </div>
 
     {{-- BACK --}}
     <div class="id-back">
-        <div class="back-top">
-            <div class="back-top-text">Barangay New Era — Official ID</div>
-        </div>
+        <div class="back-accent-bottom"></div>
+        <div class="back-stripe"></div>
+        <div class="back-mag"></div>
 
-        <div class="back-body">
-            <div class="back-sig-col">
+        <div class="back-content">
+            <div class="back-left">
                 <div class="back-note">
-                    This card is the property of Barangay New Era, Quezon City.
-                    If found, please return to the nearest barangay hall or call the barangay hotline.
-                    This card is non-transferable and valid only during the term indicated.
+                    This card is the official property of Barangay New Era, Quezon City.
+                    It is non-transferable and valid only during the indicated term.
+                    If found, please return to the nearest Barangay Hall.
                 </div>
-                <div class="back-sig-box">
-                    <div class="sig-lbl">Bearer's Signature</div>
-                    <div class="sig-line"></div>
-                </div>
-                <div style="font-size:5pt;color:#aaa;text-align:center">Sign above your printed name</div>
-                <div style="margin-top:6px;font-size:5pt;color:#555">
-                    <strong>In case of emergency, contact:</strong><br>
-                    Barangay New Era Hall<br>
-                    New Era, Quezon City
+                <div class="back-sig">
+                    <div class="s-lbl">Bearer's Signature</div>
+                    <div class="s-line"></div>
                 </div>
             </div>
 
-            <div class="back-official-col">
-                <div style="font-size:5pt;color:#aaa;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px">Issued By</div>
-                <div class="back-official-photo">OFFICIAL<br>PHOTO</div>
-                <div style="height:16px"></div>
-                <div class="back-punong-sig"></div>
+            <div class="back-right">
+                <div class="back-punong-lbl">Issued By</div>
+                <div style="height:20px"></div>
+                <div class="back-punong-sig-line"></div>
                 <div class="back-punong-name">{{ $punong }}</div>
                 <div class="back-punong-title">Punong Barangay</div>
             </div>
         </div>
 
         <div class="back-footer">
-            <div class="contact">
-                <strong>Barangay New Era</strong><br>
-                New Era, Quezon City | District VI
-            </div>
-            <img src="{{ asset('images/bne-logo.png') }}" class="logo" alt="">
-            <div class="notice">
-                NOT TRANSFERABLE<br>
-                GOVERNMENT ISSUED ID
-            </div>
+            <div class="bf-left">Barangay New Era · District VI, Quezon City</div>
+            <img src="{{ asset('images/bne-logo.png') }}" class="bf-logo" alt="">
+            <div class="bf-right">Not Transferable<br>Gov't Issued ID</div>
         </div>
     </div>
 
