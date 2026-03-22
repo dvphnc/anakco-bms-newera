@@ -129,6 +129,24 @@
     border: 1px solid #ccc;
 }
 
+/* WATERMARK */
+.id-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 2in;
+    height: 2in;
+    object-fit: contain;
+    opacity: 0.07;
+    pointer-events: none;
+    z-index: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+.id-card-wrap { position: relative; }
+.id-card-wrap > *:not(.id-watermark) { position: relative; z-index: 1; }
+
 /* TOP HEADER — navy */
 .id-top {
     background: #0D2144;
@@ -256,6 +274,22 @@
     margin-top: 1px;
 }
 
+/* BARCODE */
+.id-barcode {
+    background: #fff;
+    padding: 4px 10px 2px;
+    text-align: center;
+    border-top: 1px solid #e5e7eb;
+}
+.id-barcode svg { display: block; margin: 0 auto; }
+.id-barcode .bc-text {
+    font-family: 'Courier New', monospace;
+    font-size: 5pt;
+    color: #555;
+    letter-spacing: 0.08em;
+    margin-top: 1px;
+}
+
 /* VALIDITY FOOTER */
 .id-footer {
     background: #0D2144;
@@ -272,6 +306,9 @@
 </style>
 
 <div class="id-card-wrap">
+
+    {{-- Watermark --}}
+    <img src="{{ asset('images/bne-logo.png') }}" class="id-watermark" alt="">
 
     {{-- Top Header --}}
     <div class="id-top">
@@ -331,6 +368,41 @@
             <div class="id-det-val">{{ $official->contact_number }}</div>
         </div>
         @endif
+    </div>
+
+    {{-- Barcode --}}
+    <div class="id-barcode">
+        @php
+            $barcodeValue = $idNumber;
+            $bars = '';
+            $widths = [3,2,1,2,3,1,2,1,3,2,1,2,3,1,2,3,1,2,1,3,2,1,3,2,1,2,3,2,1,3];
+            foreach (str_split($barcodeValue) as $i => $char) {
+                $w = $widths[$i % count($widths)];
+                $isBlack = ($i % 2 === 0);
+                $bars .= '<rect x="' . ($i * 3.2) . '" y="0" width="' . $w . '" height="28" fill="' . ($isBlack ? '#000' : '#fff') . '"/>';
+            }
+            // Generate proper barcode bars from ASCII values
+            $barcodeStr = $barcodeValue;
+            $svgBars = '';
+            $x = 0;
+            $colors = ['#111','#fff','#111','#fff','#111'];
+            foreach (str_split($barcodeStr) as $char) {
+                $ascii = ord($char);
+                $pattern = str_pad(decbin($ascii), 8, '0', STR_PAD_LEFT);
+                foreach (str_split($pattern) as $bit) {
+                    $w = $bit === '1' ? 2 : 1;
+                    $svgBars .= '<rect x="' . $x . '" y="0" width="' . $w . '" height="30" fill="' . ($bit === '1' ? '#000' : '#fff') . '"/>';
+                    $x += $w;
+                }
+                $x += 1; // gap between chars
+            }
+            $totalWidth = $x;
+        @endphp
+        <svg width="{{ $totalWidth }}" height="30" xmlns="http://www.w3.org/2000/svg"
+             style="max-width:100%">
+            {!! $svgBars !!}
+        </svg>
+        <div class="bc-text">{{ $idNumber }}</div>
     </div>
 
     {{-- Position Bar --}}
