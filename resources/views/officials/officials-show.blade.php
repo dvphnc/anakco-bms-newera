@@ -187,7 +187,7 @@
 
 /* MIDDLE SECTION — photo + barcode + watermark */
 .idc-middle {
-    flex: 0 0 1.35in;
+    flex: 0 0 1.25in;
     position: relative;
     display: flex;
     align-items: center;
@@ -300,14 +300,14 @@
 .idc-footer {
     flex-shrink: 0;
     background: #0D2144;
-    padding: 2px 8px;
+    padding: 3px 8px 4px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     -webkit-print-color-adjust: exact;
 }
-.idc-foot-lbl  { font-size: 4pt; color: rgba(255,255,255,0.4); text-transform: uppercase; display: block; }
-.idc-foot-val  { font-size: 5pt; color: #E5A020; font-weight: 700; display: block; }
+.idc-foot-lbl  { font-size: 4pt; color: rgba(255,255,255,0.4); text-transform: uppercase; display: block; margin-bottom:1px; }
+.idc-foot-val  { font-size: 5.5pt; color: #E5A020; font-weight: 700; display: block; }
 </style>
 
 <div class="idc">
@@ -331,7 +331,8 @@
 
     {{-- Photo + Watermark + Barcode --}}
     <div class="idc-middle">
-        <img src="{{ asset('images/bne-logo.png') }}" class="idc-wm" alt="">
+        <img src="{{ asset('images/bne-logo.png') }}" class="idc-wm" alt=""
+             style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:1.3in;height:1.3in;opacity:0.1;object-fit:contain;pointer-events:none;z-index:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;">
 
         <div class="idc-photo">
             @if($official->photo_path)
