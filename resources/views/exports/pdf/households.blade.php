@@ -4,65 +4,98 @@
 <meta charset="UTF-8">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #000; }
-.header { display:flex; align-items:center; justify-content:space-between; padding-bottom:8px; border-bottom:2px solid #0D2144; margin-bottom:10px; }
-.header img { width:48px; height:48px; }
-.header-titles { text-align:center; flex:1; padding:0 10px; }
-.header-titles .brgy { font-size:13pt; font-weight:bold; text-transform:uppercase; color:#0D2144; }
-.header-titles .sub  { font-size:8pt; color:#444; }
-.report-title { text-align:center; font-size:11pt; font-weight:bold; text-transform:uppercase; letter-spacing:0.1em; color:#0D2144; margin:8px 0 4px; text-decoration:underline; }
-.meta { font-size:7.5pt; color:#555; margin-bottom:8px; display:flex; justify-content:space-between; }
+body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #111; }
+.header { text-align:center; padding-bottom:10px; border-bottom:3px solid #0D2144; margin-bottom:12px; position:relative; }
+.header .logo-left { position:absolute; left:0; top:0; width:55px; height:55px; }
+.header .logo-right { position:absolute; right:0; top:0; width:55px; height:55px; }
+.header .titles { padding:0 70px; }
+.header .republic { font-size:8pt; font-style:italic; color:#444; }
+.header .brgy { font-size:14pt; font-weight:bold; text-transform:uppercase; color:#0D2144; letter-spacing:0.05em; }
+.header .office { font-size:8pt; color:#555; font-style:italic; }
+.header .address { font-size:7.5pt; color:#777; }
+.report-title { text-align:center; font-size:12pt; font-weight:bold; text-transform:uppercase; letter-spacing:0.1em; color:#0D2144; margin:10px 0 3px; text-decoration:underline; }
+.report-sub { text-align:center; font-size:7.5pt; color:#666; margin-bottom:10px; }
+.meta-bar { background:#f0f4f8; border:1px solid #dde2ea; border-radius:4px; padding:5px 10px; margin-bottom:10px; display:flex; justify-content:space-between; font-size:7.5pt; color:#444; }
 table { width:100%; border-collapse:collapse; font-size:7.5pt; }
-thead th { background:#0D2144; color:#fff; padding:5px 6px; text-align:left; font-size:7pt; text-transform:uppercase; letter-spacing:0.04em; }
+thead tr th { background:#0D2144; color:#fff; padding:6px 7px; text-align:left; font-size:7pt; text-transform:uppercase; letter-spacing:0.05em; border:1px solid #0a1a36; }
+tbody tr:nth-child(odd) { background:#fff; }
 tbody tr:nth-child(even) { background:#f5f7fa; }
-tbody td { padding:4px 6px; border-bottom:1px solid #e5e7eb; vertical-align:top; }
-.footer { margin-top:12px; padding-top:8px; border-top:1px solid #ccc; display:flex; justify-content:space-between; font-size:7pt; color:#666; }
-.badge { display:inline-block; padding:1px 6px; border-radius:99px; font-size:6.5pt; font-weight:bold; }
+tbody td { padding:5px 7px; border-bottom:1px solid #e5e7eb; border-right:1px solid #f0f0f0; vertical-align:middle; }
+tbody td:last-child { border-right:none; }
+.badge { display:inline-block; padding:1px 5px; border-radius:99px; font-size:6.5pt; font-weight:bold; margin:1px; }
 .badge-green  { background:#dcfce7; color:#166534; }
 .badge-red    { background:#fee2e2; color:#991b1b; }
 .badge-yellow { background:#fef9c3; color:#854d0e; }
 .badge-gray   { background:#f3f4f6; color:#6b7280; }
 .badge-blue   { background:#dbeafe; color:#1e40af; }
 .badge-orange { background:#ffedd5; color:#9a3412; }
+.badge-gold   { background:#fef3dc; color:#92600a; }
+.footer { margin-top:14px; padding-top:8px; border-top:2px solid #0D2144; display:flex; justify-content:space-between; align-items:center; font-size:7pt; color:#555; }
+.sig-line { text-align:center; min-width:160px; }
+.sig-line .line { border-top:1px solid #333; margin-bottom:3px; width:100%; }
+.sig-line .name { font-weight:bold; font-size:7.5pt; text-transform:uppercase; }
+.sig-line .title { font-size:7pt; color:#666; }
 </style>
 </head>
 <body>
 <div class="header">
-    <img src="{{ public_path('images/qc-seal.png') }}">
-    <div class="header-titles">
-        <div style="font-size:8pt;font-style:italic">Republic of the Philippines — City of Quezon, NCR</div>
+    <img class="logo-left"  src="{{ public_path('images/qc-seal.png') }}" alt="QC">
+    <img class="logo-right" src="{{ public_path('images/bne-logo.png') }}" alt="BNE">
+    <div class="titles">
+        <div class="republic"><em>Republic of the Philippines</em></div>
+        <div style="font-size:8pt;color:#555">City of Quezon, National Capital Region</div>
         <div class="brgy">Barangay New Era</div>
-        <div class="sub">Office of the Punong Barangay — New Era, Quezon City</div>
+        <div class="office">Office of the Punong Barangay</div>
+        <div class="address">New Era, Quezon City, Metro Manila</div>
     </div>
-    <img src="{{ public_path('images/bne-logo.png') }}">
 </div>
 <div class="report-title">Households Master List</div>
-<div class="meta">
+<div class="report-sub">As of {{ now()->format('F d, Y') }}</div>
+<div class="meta-bar">
     <span>Total Records: <strong>{{ $data->count() }}</strong></span>
-    <span>Generated by: <strong>{{ $generatedBy }}</strong> | {{ $generatedAt }}</span>
+    <span>Generated by: <strong>{{ $generatedBy }}</strong> &nbsp;|&nbsp; {{ $generatedAt }}</span>
 </div>
 <table>
     <thead>
-        <tr><th>#</th><th>Household No.</th><th>Household Head</th><th>Purok</th><th>Address</th><th>Family Size</th><th>Members</th><th>Voter HH</th><th>Registered</th></tr>
+        <tr>
+            <th style="width:25px">#</th>
+            <th>Household No.</th>
+            <th>Household Head</th>
+            <th>Purok</th>
+            <th>Address</th>
+            <th>Family Size</th>
+            <th>Members</th>
+            <th>Voter HH</th>
+            <th>Registered</th>
+        </tr>
     </thead>
     <tbody>
         @foreach($data as $i => $h)
         <tr>
-            <td>{{ $i+1 }}</td>
+            <td style="text-align:center;color:#888">{{ $i+1 }}</td>
             <td><strong>{{ $h->household_number }}</strong></td>
             <td>{{ $h->household_head ?? '—' }}</td>
             <td>{{ $h->purok->name ?? '—' }}</td>
             <td>{{ $h->address }}</td>
-            <td>{{ $h->family_size ?? '—' }}</td>
-            <td>{{ $h->residents->count() }}</td>
-            <td>{{ $h->is_voter_household ? 'Yes' : 'No' }}</td>
+            <td style="text-align:center">{{ $h->family_size ?? '—' }}</td>
+            <td style="text-align:center">{{ $h->residents->count() }}</td>
+            <td><span class="badge {{ $h->is_voter_household ? 'badge-green' : 'badge-gray' }}">{{ $h->is_voter_household ? 'Yes' : 'No' }}</span></td>
             <td>{{ $h->created_at->format('M d, Y') }}</td>
         </tr>
         @endforeach
     </tbody>
 </table>
 <div class="footer">
-    <span>Barangay New Era Management System — Confidential</span>
-    <span>Certified by: {{ $officialName }}, Punong Barangay</span>
+    <div style="font-size:7pt;color:#888">
+        <em>This document is confidential. For official use only.</em><br>
+        Barangay New Era Management System
+    </div>
+    <div class="sig-line">
+        <div style="height:28px"></div>
+        <div class="line"></div>
+        <div class="name">{{ $officialName }}</div>
+        <div class="title">Punong Barangay</div>
+    </div>
 </div>
-</body></html>
+</body>
+</html>
