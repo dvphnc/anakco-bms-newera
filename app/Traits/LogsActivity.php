@@ -30,6 +30,15 @@ trait LogsActivity
             'leader_id'    => 'Leader',
         ];
 
+        // FK fields that should resolve to names
+        $resolveFk = [
+            'leader_id'    => fn($id) => \App\Models\Resident::find($id)?->full_name ?? "ID: $id",
+            'purok_id'     => fn($id) => \App\Models\Purok::find($id)?->name ?? "ID: $id",
+            'household_id' => fn($id) => \App\Models\Household::find($id)?->household_number ?? "ID: $id",
+            'issued_by'    => fn($id) => \App\Models\User::find($id)?->name ?? "ID: $id",
+            'filed_by'     => fn($id) => \App\Models\User::find($id)?->name ?? "ID: $id",
+        ];
+
         $changes = [];
 
         if ($action === 'updated' && !empty($oldData) && !empty($newData)) {
@@ -37,6 +46,16 @@ trait LogsActivity
                 if (in_array($key, $skipFields)) continue;
 
                 $oldVal = $oldData[$key] ?? null;
+
+                // Resolve FK values to human-readable names
+                if (isset($resolveFk[$key])) {
+                    $oldVal = $oldVal ? ($resolveFk[$key])($oldVal) : '—';
+                    $newVal = $newVal ? ($resolveFk[$key])($newVal) : '—';
+                    if ((string)$oldVal === (string)$newVal) continue;
+                    $label = $friendlyNames[$key] ?? $key;
+                    $changes[$label] = ['old' => $oldVal, 'new' => $newVal];
+                    continue;
+                }
 
                 // Normalize booleans
                 if (in_array($key, $booleanFields)) {
