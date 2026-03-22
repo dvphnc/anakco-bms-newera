@@ -357,10 +357,10 @@
             @endif
         </div>
 
-        <div style="display:flex;flex-direction:row;align-items:center;position:relative;z-index:1;background:#fff;border:1.5px solid #0D2144;border-radius:3px;padding:3px 2px 3px 3px;">
+        <div style="display:flex;flex-direction:row;align-items:center;position:relative;z-index:1;">
             <svg width="22" height="{{ $bcHeight }}" xmlns="http://www.w3.org/2000/svg"
-                 style="display:block;background:#C8D8E8;max-height:1.05in;border-radius:2px;">
-                <rect x="0" y="0" width="22" height="{{ $bcHeight }}" fill="#C8D8E8"/>
+                 style="display:block;max-height:1.05in;">
+                <rect x="0" y="0" width="22" height="{{ $bcHeight }}" fill="#fff"/>
                 {!! $svgBars !!}
             </svg>
             <div style="font-family:'Courier New',monospace;font-size:3.8pt;color:#0D2144;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:0.06em;font-weight:800;margin-left:3px;padding:2px 0;">{{ $idNumber }}</div>
