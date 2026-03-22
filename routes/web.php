@@ -104,6 +104,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('committees/{slug}/inventory', [CommitteeController::class, 'storeInventory'])
         ->name('committees.storeInventory');
+    Route::post('committees/{slug}/specific', [CommitteeController::class, 'storeSpecific'])
+        ->name('committees.storeSpecific');
 
     // ---------------------------------------------------
     // Reports — Admin + Secretary only
