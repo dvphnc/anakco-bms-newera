@@ -14,6 +14,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PurokController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\VerifyController;
 
 // -------------------------------------------------------
@@ -139,5 +141,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('export/analytics/{format}', [ExportController::class, 'analytics'])
         ->name('export.analytics')
         ->middleware('role:Admin,Secretary');
+
+    // Report Generation
+    Route::get('reports/generate', [ReportController::class, 'index'])->name('reports.generate');
+    Route::post('reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
+
+    // Database Backup
+    Route::get('backup', [BackupController::class, 'index'])->name('backup.index')->middleware('role:Admin');
+    Route::post('backup/create', [BackupController::class, 'create'])->name('backup.create')->middleware('role:Admin');
+    Route::get('backup/download/{filename}', [BackupController::class, 'download'])->name('backup.download')->middleware('role:Admin');
+    Route::post('backup/restore', [BackupController::class, 'restore'])->name('backup.restore')->middleware('role:Admin');
+    Route::post('backup/upload', [BackupController::class, 'upload'])->name('backup.upload')->middleware('role:Admin');
+    Route::delete('backup/{filename}', [BackupController::class, 'delete'])->name('backup.delete')->middleware('role:Admin');
 
 });
