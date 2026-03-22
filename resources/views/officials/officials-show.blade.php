@@ -99,14 +99,14 @@
 {{-- ID CARD PRINT --}}
 <div class="print-only" id="id-card">
 @php
-    $punong   = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
+    $punong    = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
     $termShort = ($official->term_start ? \Carbon\Carbon::parse($official->term_start)->format('Y') : '—') . ' – ' . ($official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('Y') : '—');
-    $idNumber = 'BNE-' . str_pad($official->id, 4, '0', STR_PAD_LEFT) . '-' . date('Y');
+    $idNumber  = 'BNE-' . str_pad($official->id, 4, '0', STR_PAD_LEFT) . '-' . date('Y');
     $validUntil = $official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('M d, Y') : '—';
 @endphp
 <style>
 @media print {
-    @page { size: 3.5in 4.8in; margin: 0.1in; }
+    @page { size: 2.5in 3.5in; margin: 0; }
     .no-print  { display: none !important; }
     .print-only { display: block !important; }
     .sidebar, .topbar, .watermark, .page-header { display: none !important; }
@@ -119,347 +119,237 @@
 .print-only { display: none; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.id-page { width: 3.3in; font-family: Arial, sans-serif; }
-
-/* ===== FRONT ===== */
-.id-front {
-    width: 3.3in;
-    height: 2.1in;
-    border-radius: 8px;
+.id-card-wrap {
+    width: 2.5in;
+    height: 3.5in;
+    font-family: Arial, sans-serif;
     overflow: hidden;
-    position: relative;
-    margin-bottom: 0.12in;
-    /* Realistic card - subtle shadow effect via border */
-    border: 0.5px solid rgba(0,0,0,0.15);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
-    /* Main background - deep navy gradient */
-    background: linear-gradient(160deg, #0A1D3E 0%, #0D2144 40%, #122A56 70%, #0A1D3E 100%);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
 }
 
-/* Diagonal geometric accent shapes */
-.front-geo-1 {
-    position: absolute;
-    top: -20px; right: -20px;
-    width: 100px; height: 100px;
-    background: rgba(200,134,26,0.12);
-    border-radius: 50%;
-}
-.front-geo-2 {
-    position: absolute;
-    bottom: -30px; left: -15px;
-    width: 80px; height: 80px;
-    background: rgba(200,134,26,0.07);
-    border-radius: 50%;
-}
-.front-geo-3 {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 100%;
-    background: repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 18px,
-        rgba(255,255,255,0.012) 18px,
-        rgba(255,255,255,0.012) 19px
-    );
-}
-
-/* Gold top accent bar */
-.front-accent {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #8B5E0A, #C8861A, #F0C060, #E5A020, #C8861A, #8B5E0A);
-}
-
-/* Header */
-.front-header {
-    position: relative;
-    z-index: 2;
+/* TOP HEADER — navy */
+.id-top {
+    background: #0D2144;
+    padding: 6px 8px 5px;
     display: flex;
     align-items: center;
-    padding: 8px 10px 6px;
-    gap: 7px;
-    border-bottom: 1px solid rgba(200,134,26,0.2);
+    gap: 6px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
-.front-header img { height: 30px; width: 30px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); }
-.fh-text { flex: 1; text-align: center; }
-.fh-text .rep  { font-size: 5pt; color: rgba(255,255,255,0.5); font-style: italic; }
-.fh-text .brgy { font-size: 8.5pt; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
-.fh-text .city { font-size: 5pt; color: rgba(200,134,26,0.85); }
+.id-top img { width: 32px; height: 32px; object-fit: contain; }
+.id-top-text { flex: 1; text-align: center; }
+.id-top-text .rep  { font-size: 5pt; color: rgba(255,255,255,0.65); font-style: italic; }
+.id-top-text .brgy { font-size: 8pt; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.03em; }
+.id-top-text .city { font-size: 5pt; color: #E5A020; }
 
-/* Badge */
-.front-badge {
-    position: relative;
-    z-index: 2;
+/* GOLD STRIPE */
+.id-gold-stripe {
+    background: #C8861A;
+    text-align: center;
+    padding: 2.5px 0;
+    font-size: 6pt;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* ID NUMBER row */
+.id-number-row {
+    background: #0D2144;
     text-align: center;
     padding: 2px 0;
-    background: linear-gradient(135deg, rgba(200,134,26,0.25), rgba(200,134,26,0.15));
-    border-top: 1px solid rgba(200,134,26,0.3);
-    border-bottom: 1px solid rgba(200,134,26,0.3);
-    font-size: 5.5pt;
-    font-weight: 800;
-    color: #F0C060;
+    font-family: 'Courier New', monospace;
+    font-size: 7pt;
+    font-weight: 700;
+    color: #E5A020;
+    letter-spacing: 0.1em;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* PHOTO SECTION */
+.id-photo-section {
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0 5px;
+    flex: 0 0 auto;
+}
+.id-photo-frame {
+    width: 1in;
+    height: 1.1in;
+    border: 3px solid #0D2144;
+    overflow: hidden;
+    background: #e8edf5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 900;
+    color: #C8861A;
+}
+.id-photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* NAME SECTION */
+.id-name-section {
+    background: #fff;
+    text-align: center;
+    padding: 5px 8px 2px;
+    flex: 0 0 auto;
+}
+.id-hon    { font-size: 7pt; font-weight: 700; color: #0D2144; text-transform: uppercase; letter-spacing: 0.05em; }
+.id-name   { font-size: 13pt; font-weight: 900; color: #0D2144; text-transform: uppercase; line-height: 1.1; }
+
+/* SIGNATURE */
+.id-sig-section {
+    background: #fff;
+    padding: 4px 16px 2px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.id-sig-line  { border-top: 1.5px solid #333; width: 80%; margin: 0 auto 2px; }
+.id-sig-label { text-align: center; font-size: 5.5pt; color: #555; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* DETAILS ROW */
+.id-details {
+    background: #fff;
+    padding: 3px 10px 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e5e7eb;
+}
+.id-det-item { text-align: center; }
+.id-det-lbl  { font-size: 4.5pt; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; }
+.id-det-val  { font-size: 6pt; font-weight: 700; color: #0D2144; }
+
+/* POSITION BAR — gold bottom */
+.id-position-bar {
+    background: #C8861A;
+    text-align: center;
+    padding: 5px 8px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    margin-top: auto;
+}
+.id-position-bar .pos-text {
+    font-size: 9pt;
+    font-weight: 900;
+    color: #fff;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.06em;
 }
-
-/* Body */
-.front-body {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    padding: 8px 10px 30px;
-    gap: 9px;
-}
-
-/* Photo */
-.front-photo-wrap { flex-shrink: 0; }
-.front-photo {
-    width: 58px; height: 70px;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 2px solid rgba(200,134,26,0.6);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
-    background: linear-gradient(135deg, #1a3a6b, #0D2144);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; font-weight: 900; color: #C8861A;
-}
-.front-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-/* Info */
-.front-info { flex: 1; min-width: 0; }
-.fi-name     { font-size: 8pt; font-weight: 900; color: #fff; text-transform: uppercase; line-height: 1.15; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
-.fi-position { font-size: 6.5pt; font-weight: 700; color: #F0C060; text-transform: uppercase; letter-spacing: 0.05em; margin: 2px 0 5px; }
-.fi-divider  { border: none; border-top: 1px solid rgba(200,134,26,0.25); margin-bottom: 5px; }
-
-.fi-row { display: flex; gap: 4px; margin-bottom: 3.5px; align-items: flex-start; }
-.fi-lbl { font-size: 4.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.4); min-width: 38px; padding-top: 0.5px; }
-.fi-val { font-size: 6pt; color: rgba(255,255,255,0.85); font-weight: 600; flex: 1; line-height: 1.2; }
-.fi-val.active { color: #6EE7A0; }
-
-/* Bottom bar */
-.front-bottom {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 0.26in;
-    background: rgba(0,0,0,0.35);
-    border-top: 1px solid rgba(200,134,26,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 10px;
-    z-index: 2;
-    backdrop-filter: blur(2px);
-}
-.fb-idnum { font-family: 'Courier New', monospace; font-size: 6pt; color: rgba(200,134,26,0.9); letter-spacing: 0.1em; }
-.fb-valid { text-align: right; }
-.fb-valid .v-lbl  { font-size: 4pt; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.06em; display: block; }
-.fb-valid .v-date { font-size: 6pt; color: rgba(200,134,26,0.85); font-weight: 700; }
-
-/* Watermark */
-.front-wm {
-    position: absolute;
-    bottom: 10px; right: 8px;
-    width: 55px; height: 55px;
-    opacity: 0.06;
-    object-fit: contain;
-    z-index: 1;
-}
-
-/* ===== BACK ===== */
-.id-back {
-    width: 3.3in;
-    height: 2.1in;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 0.5px solid rgba(0,0,0,0.12);
-    background: linear-gradient(160deg, #0A1D3E 0%, #0D2144 50%, #0A1D3E 100%);
-    position: relative;
-}
-
-/* Stripe pattern */
-.back-stripe {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 24px,
-        rgba(255,255,255,0.015) 24px,
-        rgba(255,255,255,0.015) 25px
-    );
-}
-
-/* Magnetic stripe */
-.back-mag {
-    background: linear-gradient(180deg, #111 0%, #1a1a1a 40%, #222 100%);
-    height: 0.28in;
-    margin-top: 0.22in;
-    position: relative;
-    z-index: 2;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-}
-
-/* Content area */
-.back-content {
-    position: relative;
-    z-index: 2;
-    padding: 7px 10px;
-    display: flex;
-    gap: 10px;
-}
-
-.back-left { flex: 1; }
-.back-note {
+.id-position-bar .pos-sub {
     font-size: 5pt;
-    color: rgba(255,255,255,0.45);
-    line-height: 1.55;
-    margin-bottom: 7px;
+    color: rgba(255,255,255,0.75);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 1px;
 }
-.back-sig {
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 3px;
-    height: 0.38in;
-    background: rgba(255,255,255,0.04);
-    padding: 3px 6px;
-}
-.back-sig .s-lbl { font-size: 4pt; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.06em; }
-.back-sig .s-line { border-top: 1px solid rgba(255,255,255,0.15); margin-top: 16px; }
 
-.back-right { min-width: 0.95in; text-align: center; }
-.back-punong-lbl { font-size: 4.5pt; color: rgba(200,134,26,0.7); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
-.back-punong-sig-line { border-top: 1px solid rgba(255,255,255,0.3); width: 80%; margin: 20px auto 2px; }
-.back-punong-name  { font-size: 5.5pt; font-weight: 800; color: #fff; text-transform: uppercase; }
-.back-punong-title { font-size: 4.5pt; color: rgba(200,134,26,0.8); }
-
-/* Bottom footer */
-.back-footer {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: rgba(0,0,0,0.3);
-    border-top: 1px solid rgba(200,134,26,0.15);
-    padding: 3px 10px;
+/* VALIDITY FOOTER */
+.id-footer {
+    background: #0D2144;
+    padding: 2px 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 2;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
-.bf-left  { font-size: 4.5pt; color: rgba(255,255,255,0.35); }
-.bf-logo  { width: 16px; height: 16px; object-fit: contain; opacity: 0.35; }
-.bf-right { font-size: 4pt; color: rgba(200,134,26,0.5); text-align: right; text-transform: uppercase; letter-spacing: 0.04em; }
-
-/* Gold accent bottom */
-.back-accent-bottom {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2.5px;
-    background: linear-gradient(90deg, #8B5E0A, #C8861A, #F0C060, #C8861A, #8B5E0A);
-}
+.id-footer .f-lbl  { font-size: 4pt; color: rgba(255,255,255,0.45); text-transform: uppercase; display: block; }
+.id-footer .f-val  { font-size: 5.5pt; color: #E5A020; font-weight: 700; }
+.id-footer .f-right { text-align: right; }
 </style>
 
-<div class="id-page">
+<div class="id-card-wrap">
 
-    {{-- FRONT --}}
-    <div class="id-front">
-        <div class="front-accent"></div>
-        <div class="front-geo-1"></div>
-        <div class="front-geo-2"></div>
-        <div class="front-geo-3"></div>
-        <img src="{{ asset('images/bne-logo.png') }}" class="front-wm" alt="">
-
-        <div class="front-header">
-            <img src="{{ asset('images/qc-seal.png') }}" alt="QC">
-            <div class="fh-text">
-                <div class="rep"><em>Republic of the Philippines</em></div>
-                <div class="brgy">Barangay New Era</div>
-                <div class="city">New Era, Quezon City, Metro Manila</div>
-            </div>
-            <img src="{{ asset('images/bne-logo.png') }}" alt="BNE">
+    {{-- Top Header --}}
+    <div class="id-top">
+        <img src="{{ asset('images/qc-seal.png') }}" alt="QC">
+        <div class="id-top-text">
+            <div class="rep"><em>Republic of the Philippines</em></div>
+            <div class="brgy">Barangay New Era</div>
+            <div class="city">New Era, Quezon City, Metro Manila</div>
         </div>
+        <img src="{{ asset('images/bne-logo.png') }}" alt="BNE">
+    </div>
 
-        <div class="front-badge">✦ &nbsp; Official Identification Card &nbsp; ✦</div>
+    {{-- Gold type stripe --}}
+    <div class="id-gold-stripe">Barangay Official ID</div>
 
-        <div class="front-body">
-            <div class="front-photo-wrap">
-                <div class="front-photo">
-                    @if($official->photo_path)
-                        <img src="{{ asset('storage/'.$official->photo_path) }}" alt="Photo">
-                    @else
-                        {{ strtoupper(substr($official->full_name, 0, 1)) }}
-                    @endif
-                </div>
-            </div>
-            <div class="front-info">
-                <div class="fi-name">{{ $official->full_name }}</div>
-                <div class="fi-position">{{ $official->position }}</div>
-                <div class="fi-divider"></div>
-                @if($official->committee)
-                <div class="fi-row">
-                    <span class="fi-lbl">Committee</span>
-                    <span class="fi-val">{{ $official->committee }}</span>
-                </div>
-                @endif
-                <div class="fi-row">
-                    <span class="fi-lbl">Term</span>
-                    <span class="fi-val">{{ $termShort }}</span>
-                </div>
-                @if($official->contact_number)
-                <div class="fi-row">
-                    <span class="fi-lbl">Contact</span>
-                    <span class="fi-val">{{ $official->contact_number }}</span>
-                </div>
-                @endif
-                <div class="fi-row">
-                    <span class="fi-lbl">Status</span>
-                    <span class="fi-val {{ $official->is_active ? 'active' : '' }}">
-                        {{ $official->is_active ? '● ACTIVE' : '○ INACTIVE' }}
-                    </span>
-                </div>
-            </div>
-        </div>
+    {{-- ID Number --}}
+    <div class="id-number-row">{{ $idNumber }}</div>
 
-        <div class="front-bottom">
-            <div class="fb-idnum">{{ $idNumber }}</div>
-            <div class="fb-valid">
-                <span class="v-lbl">Valid Until</span>
-                <span class="v-date">{{ $validUntil }}</span>
-            </div>
+    {{-- Photo --}}
+    <div class="id-photo-section">
+        <div class="id-photo-frame">
+            @if($official->photo_path)
+                <img src="{{ asset('storage/'.$official->photo_path) }}" alt="Photo">
+            @else
+                {{ strtoupper(substr($official->full_name, 0, 1)) }}
+            @endif
         </div>
     </div>
 
-    {{-- BACK --}}
-    <div class="id-back">
-        <div class="back-accent-bottom"></div>
-        <div class="back-stripe"></div>
-        <div class="back-mag"></div>
+    {{-- Name --}}
+    <div class="id-name-section">
+        <div class="id-hon">Hon.</div>
+        <div class="id-name">{{ $official->full_name }}</div>
+    </div>
 
-        <div class="back-content">
-            <div class="back-left">
-                <div class="back-note">
-                    This card is the official property of Barangay New Era, Quezon City.
-                    It is non-transferable and valid only during the indicated term.
-                    If found, please return to the nearest Barangay Hall.
-                </div>
-                <div class="back-sig">
-                    <div class="s-lbl">Bearer's Signature</div>
-                    <div class="s-line"></div>
-                </div>
-            </div>
+    {{-- Signature --}}
+    <div class="id-sig-section">
+        <div class="id-sig-line"></div>
+        <div class="id-sig-label">Cardholder Signature</div>
+    </div>
 
-            <div class="back-right">
-                <div class="back-punong-lbl">Issued By</div>
-                <div style="height:20px"></div>
-                <div class="back-punong-sig-line"></div>
-                <div class="back-punong-name">{{ $punong }}</div>
-                <div class="back-punong-title">Punong Barangay</div>
-            </div>
+    {{-- Details --}}
+    <div class="id-details">
+        <div class="id-det-item">
+            <div class="id-det-lbl">Term</div>
+            <div class="id-det-val">{{ $termShort }}</div>
         </div>
+        @if($official->committee)
+        <div class="id-det-item">
+            <div class="id-det-lbl">Committee</div>
+            <div class="id-det-val" style="font-size:5.5pt">{{ $official->committee }}</div>
+        </div>
+        @endif
+        @if($official->contact_number)
+        <div class="id-det-item">
+            <div class="id-det-lbl">Contact</div>
+            <div class="id-det-val">{{ $official->contact_number }}</div>
+        </div>
+        @endif
+    </div>
 
-        <div class="back-footer">
-            <div class="bf-left">Barangay New Era · District VI, Quezon City</div>
-            <img src="{{ asset('images/bne-logo.png') }}" class="bf-logo" alt="">
-            <div class="bf-right">Not Transferable<br>Gov't Issued ID</div>
+    {{-- Position Bar --}}
+    <div class="id-position-bar">
+        <div class="pos-text">{{ $official->position }}</div>
+        <div class="pos-sub">Barangay New Era · Quezon City</div>
+    </div>
+
+    {{-- Footer --}}
+    <div class="id-footer">
+        <div>
+            <span class="f-lbl">Valid Until</span>
+            <span class="f-val">{{ $validUntil }}</span>
+        </div>
+        <div class="f-right">
+            <span class="f-lbl">Status</span>
+            <span class="f-val" style="color:{{ $official->is_active ? '#6EE7A0' : 'rgba(255,255,255,0.4)' }}">
+                {{ $official->is_active ? '● ACTIVE' : '○ INACTIVE' }}
+            </span>
         </div>
     </div>
 
