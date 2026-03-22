@@ -134,5 +134,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('export/pdf/{module}', [ExportController::class, 'pdf'])
         ->name('export.pdf')
         ->middleware('role:Admin,Secretary');
+    Route::get('export/analytics/{format}', [ExportController::class, 'analytics'])
+        ->name('export.analytics')
+        ->middleware('role:Admin,Secretary');
 
 });
