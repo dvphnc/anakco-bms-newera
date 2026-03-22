@@ -99,306 +99,303 @@
 {{-- ID CARD PRINT --}}
 <div class="print-only" id="id-card">
 @php
-    $punong    = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
-    $termShort = ($official->term_start ? \Carbon\Carbon::parse($official->term_start)->format('Y') : '—') . ' – ' . ($official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('Y') : '—');
-    $idNumber  = 'BNE-' . str_pad($official->id, 4, '0', STR_PAD_LEFT) . '-' . date('Y');
+    $punong     = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
+    $termShort  = ($official->term_start ? \Carbon\Carbon::parse($official->term_start)->format('Y') : '—') . ' – ' . ($official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('Y') : '—');
+    $idNumber   = 'BNE-' . str_pad($official->id, 4, '0', STR_PAD_LEFT) . '-' . date('Y');
     $validUntil = $official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('M d, Y') : '—';
+
+    // Generate vertical barcode SVG from ID number
+    $svgBars = '';
+    $y = 0;
+    foreach (str_split($idNumber) as $char) {
+        $ascii = ord($char);
+        $pattern = str_pad(decbin($ascii), 8, '0', STR_PAD_LEFT);
+        foreach (str_split($pattern) as $bit) {
+            $h = $bit === '1' ? 2.5 : 1.2;
+            $svgBars .= '<rect x="0" y="' . $y . '" width="18" height="' . $h . '" fill="' . ($bit === '1' ? '#0D2144' : '#fff') . '"/>';
+            $y += $h;
+        }
+        $y += 1.5;
+    }
+    $bcHeight = $y;
 @endphp
 <style>
 @media print {
     @page { size: 2.5in 3.5in; margin: 0; }
-    .no-print  { display: none !important; }
+    .no-print   { display: none !important; }
     .print-only { display: block !important; }
     .sidebar, .topbar, .watermark, .page-header { display: none !important; }
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color-adjust: exact !important;
-    }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 }
 .print-only { display: none; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.id-card-wrap {
+.idc {
     width: 2.5in;
     height: 3.5in;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
-    border: 1px solid #ccc;
-}
-
-/* WATERMARK */
-.id-watermark {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 2.2in;
-    height: 2.2in;
-    object-fit: contain;
-    opacity: 0.09;
-    pointer-events: none;
-    z-index: 0;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-}
-.id-card-wrap {
-    position: relative;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    border: 1px solid #bbb;
     background: #fff;
 }
-.id-card-wrap > *:not(.id-watermark) { position: relative; z-index: 1; }
 
-/* TOP HEADER — navy */
-.id-top {
+/* NAVY HEADER */
+.idc-header {
     background: #0D2144;
-    padding: 6px 8px 5px;
+    padding: 5px 8px 4px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
+    flex-shrink: 0;
     -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
 }
-.id-top img { width: 32px; height: 32px; object-fit: contain; }
-.id-top-text { flex: 1; text-align: center; }
-.id-top-text .rep  { font-size: 5pt; color: rgba(255,255,255,0.65); font-style: italic; }
-.id-top-text .brgy { font-size: 8pt; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.03em; }
-.id-top-text .city { font-size: 5pt; color: #E5A020; }
+.idc-header img { width: 28px; height: 28px; object-fit: contain; }
+.idc-header-txt { flex: 1; text-align: center; }
+.idc-header-txt .r { font-size: 4.5pt; color: rgba(255,255,255,0.55); font-style: italic; }
+.idc-header-txt .b { font-size: 7.5pt; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.03em; }
+.idc-header-txt .c { font-size: 4.5pt; color: #E5A020; }
 
 /* GOLD STRIPE */
-.id-gold-stripe {
+.idc-gold {
     background: #C8861A;
     text-align: center;
-    padding: 2.5px 0;
-    font-size: 6pt;
+    padding: 2px 0;
+    font-size: 5.5pt;
     font-weight: 900;
     color: #fff;
     text-transform: uppercase;
     letter-spacing: 0.15em;
+    flex-shrink: 0;
     -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
 }
 
-/* ID NUMBER row */
-.id-number-row {
+/* ID NUMBER */
+.idc-idnum {
     background: #0D2144;
     text-align: center;
-    padding: 2px 0;
+    padding: 1.5px 0;
     font-family: 'Courier New', monospace;
-    font-size: 7pt;
+    font-size: 6.5pt;
     font-weight: 700;
     color: #E5A020;
     letter-spacing: 0.1em;
+    flex-shrink: 0;
     -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
 }
 
-/* PHOTO SECTION */
-.id-photo-section {
+/* MIDDLE SECTION — photo + barcode + watermark */
+.idc-middle {
+    flex: 0 0 1.35in;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 10px;
     background: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px 0 5px;
-    flex: 0 0 auto;
-}
-.id-photo-frame {
-    width: 1in;
-    height: 1.1in;
-    border: 3px solid #0D2144;
     overflow: hidden;
-    background: #e8edf5;
+}
+
+/* Big watermark behind everything */
+.idc-wm {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.3in; height: 1.3in;
+    opacity: 0.1;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 0;
+    -webkit-print-color-adjust: exact !important;
+}
+
+.idc-photo {
+    width: 0.9in;
+    height: 1.05in;
+    border: 2.5px solid #0D2144;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #dce4f0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 36px;
+    font-size: 28px;
     font-weight: 900;
     color: #C8861A;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
 }
-.id-photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.idc-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* NAME SECTION */
-.id-name-section {
-    background: #fff;
-    text-align: center;
-    padding: 5px 8px 2px;
-    flex: 0 0 auto;
-}
-.id-hon    { font-size: 7pt; font-weight: 700; color: #0D2144; text-transform: uppercase; letter-spacing: 0.05em; }
-.id-name   { font-size: 13pt; font-weight: 900; color: #0D2144; text-transform: uppercase; line-height: 1.1; }
-
-/* SIGNATURE */
-.id-sig-section {
-    background: #fff;
-    padding: 4px 16px 2px;
-    flex: 1;
+.idc-barcode {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-}
-.id-sig-line  { border-top: 1.5px solid #333; width: 80%; margin: 0 auto 2px; }
-.id-sig-label { text-align: center; font-size: 5.5pt; color: #555; text-transform: uppercase; letter-spacing: 0.08em; }
-
-/* DETAILS ROW */
-.id-details {
-    background: #fff;
-    padding: 3px 10px 4px;
-    display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 2px;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+}
+.idc-barcode svg { display: block; }
+.idc-barcode-txt {
+    font-family: 'Courier New', monospace;
+    font-size: 3.5pt;
+    color: #0D2144;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+/* NAME SECTION */
+.idc-name {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 4px 8px 3px;
+    background: #fff;
     border-top: 1px solid #e5e7eb;
 }
-.id-det-item { text-align: center; }
-.id-det-lbl  { font-size: 4.5pt; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; }
-.id-det-val  { font-size: 6pt; font-weight: 700; color: #0D2144; }
+.idc-hon  { font-size: 6.5pt; font-weight: 700; color: #0D2144; text-transform: uppercase; }
+.idc-nm   { font-size: 11pt; font-weight: 900; color: #0D2144; text-transform: uppercase; line-height: 1.1; }
 
-/* POSITION BAR — gold bottom */
-.id-position-bar {
+/* SIGNATURE */
+.idc-sig {
+    flex-shrink: 0;
+    padding: 3px 16px 2px;
+    background: #fff;
+}
+.idc-sig-line  { border-top: 1px solid #333; width: 80%; margin: 0 auto 2px; }
+.idc-sig-label { text-align: center; font-size: 5pt; color: #777; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* DETAILS ROW */
+.idc-details {
+    flex-shrink: 0;
+    padding: 3px 8px;
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-around;
+}
+.idc-det { text-align: center; }
+.idc-det-lbl { font-size: 4pt; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; display: block; }
+.idc-det-val { font-size: 5.5pt; font-weight: 700; color: #0D2144; display: block; }
+
+/* POSITION BAR */
+.idc-pos {
+    flex-shrink: 0;
     background: #C8861A;
     text-align: center;
-    padding: 5px 8px;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    padding: 4px 8px;
     margin-top: auto;
+    -webkit-print-color-adjust: exact;
 }
-.id-position-bar .pos-text {
-    font-size: 9pt;
-    font-weight: 900;
-    color: #fff;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-}
-.id-position-bar .pos-sub {
-    font-size: 5pt;
-    color: rgba(255,255,255,0.75);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-top: 1px;
-}
+.idc-pos-txt { font-size: 8.5pt; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.05em; }
+.idc-pos-sub { font-size: 4.5pt; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.08em; }
 
-/* VALIDITY FOOTER */
-.id-footer {
+/* FOOTER */
+.idc-footer {
+    flex-shrink: 0;
     background: #0D2144;
     padding: 2px 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
 }
-.id-footer .f-lbl  { font-size: 4pt; color: rgba(255,255,255,0.45); text-transform: uppercase; display: block; }
-.id-footer .f-val  { font-size: 5.5pt; color: #E5A020; font-weight: 700; }
-.id-footer .f-right { text-align: right; }
+.idc-foot-lbl  { font-size: 4pt; color: rgba(255,255,255,0.4); text-transform: uppercase; display: block; }
+.idc-foot-val  { font-size: 5pt; color: #E5A020; font-weight: 700; display: block; }
 </style>
 
-<div class="id-card-wrap">
+<div class="idc">
 
-    {{-- Watermark --}}
-    <img src="{{ asset('images/bne-logo.png') }}" class="id-watermark" alt="">
-
-    {{-- Top Header --}}
-    <div class="id-top">
+    {{-- Header --}}
+    <div class="idc-header">
         <img src="{{ asset('images/qc-seal.png') }}" alt="QC">
-        <div class="id-top-text">
-            <div class="rep"><em>Republic of the Philippines</em></div>
-            <div class="brgy">Barangay New Era</div>
-            <div class="city">New Era, Quezon City, Metro Manila</div>
+        <div class="idc-header-txt">
+            <div class="r"><em>Republic of the Philippines</em></div>
+            <div class="b">Barangay New Era</div>
+            <div class="c">New Era, Quezon City, Metro Manila</div>
         </div>
         <img src="{{ asset('images/bne-logo.png') }}" alt="BNE">
     </div>
 
-    {{-- Gold type stripe --}}
-    <div class="id-gold-stripe">Barangay Official ID</div>
+    {{-- Gold stripe --}}
+    <div class="idc-gold">✦ &nbsp; Barangay Official ID &nbsp; ✦</div>
 
     {{-- ID Number --}}
-    <div class="id-number-row">{{ $idNumber }}</div>
+    <div class="idc-idnum">{{ $idNumber }}</div>
 
-    {{-- Photo + Barcode --}}
-    @php
-        $svgBars = '';
-        $y = 0;
-        foreach (str_split($idNumber) as $char) {
-            $ascii = ord($char);
-            $pattern = str_pad(decbin($ascii), 8, '0', STR_PAD_LEFT);
-            foreach (str_split($pattern) as $bit) {
-                $h = $bit === '1' ? 3 : 1.5;
-                $svgBars .= '<rect x="0" y="' . $y . '" width="22" height="' . $h . '" fill="' . ($bit === '1' ? '#0D2144' : '#fff') . '"/>';
-                $y += $h;
-            }
-            $y += 2;
-        }
-        $bcHeight = $y;
-    @endphp
-    <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px 6px;position:relative;">
-        {{-- Big watermark behind photo --}}
-        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:1.4in;height:1.4in;z-index:0;opacity:0.08;display:flex;align-items:center;justify-content:center;">
-            <img src="{{ asset('images/bne-logo.png') }}" style="width:100%;height:100%;object-fit:contain;" alt="">
-        </div>
-        {{-- Photo --}}
-        <div class="id-photo-frame" style="position:relative;z-index:1;">
+    {{-- Photo + Watermark + Barcode --}}
+    <div class="idc-middle">
+        <img src="{{ asset('images/bne-logo.png') }}" class="idc-wm" alt="">
+
+        <div class="idc-photo">
             @if($official->photo_path)
                 <img src="{{ asset('storage/'.$official->photo_path) }}" alt="Photo">
             @else
                 {{ strtoupper(substr($official->full_name, 0, 1)) }}
             @endif
         </div>
-        {{-- Vertical Barcode --}}
-        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;z-index:1;">
-            <svg width="22" height="{{ $bcHeight }}" xmlns="http://www.w3.org/2000/svg" style="max-height:1.15in;display:block;">
+
+        <div class="idc-barcode">
+            <svg width="18" height="{{ $bcHeight }}" xmlns="http://www.w3.org/2000/svg" style="max-height:1in">
                 {!! $svgBars !!}
             </svg>
-            <div style="font-family:'Courier New',monospace;font-size:4pt;color:#0D2144;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:0.05em;font-weight:700;">{{ $idNumber }}</div>
+            <div class="idc-barcode-txt">{{ $idNumber }}</div>
         </div>
     </div>
 
     {{-- Name --}}
-    <div class="id-name-section">
-        <div class="id-hon">Hon.</div>
-        <div class="id-name">{{ $official->full_name }}</div>
+    <div class="idc-name">
+        <div class="idc-hon">Hon.</div>
+        <div class="idc-nm">{{ $official->full_name }}</div>
     </div>
 
     {{-- Signature --}}
-    <div class="id-sig-section">
-        <div class="id-sig-line"></div>
-        <div class="id-sig-label">Cardholder Signature</div>
+    <div class="idc-sig">
+        <div class="idc-sig-line"></div>
+        <div class="idc-sig-label">Cardholder Signature</div>
     </div>
 
     {{-- Details --}}
-    <div class="id-details">
-        <div class="id-det-item">
-            <div class="id-det-lbl">Term</div>
-            <div class="id-det-val">{{ $termShort }}</div>
+    <div class="idc-details">
+        <div class="idc-det">
+            <span class="idc-det-lbl">Term</span>
+            <span class="idc-det-val">{{ $termShort }}</span>
         </div>
         @if($official->committee)
-        <div class="id-det-item">
-            <div class="id-det-lbl">Committee</div>
-            <div class="id-det-val" style="font-size:5.5pt">{{ $official->committee }}</div>
+        <div class="idc-det">
+            <span class="idc-det-lbl">Committee</span>
+            <span class="idc-det-val" style="font-size:5pt">{{ $official->committee }}</span>
         </div>
         @endif
         @if($official->contact_number)
-        <div class="id-det-item">
-            <div class="id-det-lbl">Contact</div>
-            <div class="id-det-val">{{ $official->contact_number }}</div>
+        <div class="idc-det">
+            <span class="idc-det-lbl">Contact</span>
+            <span class="idc-det-val">{{ $official->contact_number }}</span>
         </div>
         @endif
     </div>
 
     {{-- Position Bar --}}
-    <div class="id-position-bar">
-        <div class="pos-text">{{ $official->position }}</div>
-        <div class="pos-sub">Barangay New Era · Quezon City</div>
+    <div class="idc-pos">
+        <div class="idc-pos-txt">{{ $official->position }}</div>
+        <div class="idc-pos-sub">Barangay New Era · Quezon City</div>
     </div>
 
     {{-- Footer --}}
-    <div class="id-footer">
+    <div class="idc-footer">
         <div>
-            <span class="f-lbl">Valid Until</span>
-            <span class="f-val">{{ $validUntil }}</span>
+            <span class="idc-foot-lbl">Valid Until</span>
+            <span class="idc-foot-val">{{ $validUntil }}</span>
         </div>
-        <div class="f-right">
-            <span class="f-lbl">Status</span>
-            <span class="f-val" style="color:{{ $official->is_active ? '#6EE7A0' : 'rgba(255,255,255,0.4)' }}">
+        <div style="text-align:right">
+            <span class="idc-foot-lbl">Status</span>
+            <span class="idc-foot-val" style="color:{{ $official->is_active ? '#6EE7A0' : 'rgba(255,255,255,0.4)' }}">
                 {{ $official->is_active ? '● ACTIVE' : '○ INACTIVE' }}
             </span>
         </div>
