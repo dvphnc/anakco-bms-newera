@@ -253,7 +253,7 @@
 @endphp
 <style>
 @media print {
-    @page { size: letter; margin: 0.6in 0.8in; }
+    @page { size: letter; margin: 0.4in 0.6in; }
     .no-print { display: none !important; }
     .print-only { display: block !important; }
     .sidebar, .topbar, .watermark { display: none !important; }
@@ -263,7 +263,7 @@
 .rpt-page {
     font-family: 'Times New Roman', Times, serif;
     color: #000;
-    font-size: 11pt;
+    font-size: 10.5pt;
     line-height: 1.6;
     width: 100%;
     max-width: 6.9in;
@@ -271,7 +271,7 @@
 }
 .rpt-border {
     border: 2px solid #1a3a6b;
-    padding: 28px 36px;
+    padding: 18px 28px;
     position: relative;
 }
 .rpt-border::before {
@@ -285,11 +285,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-bottom: 12px;
+    padding-bottom: 8px;
     border-bottom: 2px solid #1a3a6b;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
 }
-.rpt-logo { width: 65px; height: 65px; object-fit: contain; flex-shrink: 0; }
+.rpt-logo { width: 58px; height: 58px; object-fit: contain; flex-shrink: 0; }
 .rpt-titles { text-align: center; flex: 1; padding: 0 12px; }
 .rpt-titles .rep  { font-size: 9.5pt; font-style: italic; }
 .rpt-titles .prov { font-size: 9pt; }
@@ -305,13 +305,13 @@
     letter-spacing: 0.1em;
     color: #0d2144;
     text-decoration: underline;
-    margin: 12px 0 4px;
+    margin: 8px 0 2px;
 }
 .rpt-case-num {
     text-align: center;
     font-size: 10pt;
     color: #555;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
 .rpt-section-title {
@@ -322,7 +322,7 @@
     background: #0d2144;
     color: #fff;
     padding: 4px 10px;
-    margin: 14px 0 8px;
+    margin: 10px 0 6px;
 }
 
 .rpt-grid {
@@ -333,7 +333,7 @@
     margin-bottom: 2px;
 }
 .rpt-field {
-    padding: 6px 10px;
+    padding: 4px 8px;
     border-bottom: 1px solid #e0e0e0;
     border-right: 1px solid #e0e0e0;
 }
@@ -343,7 +343,7 @@
 
 .rpt-fullwidth {
     border: 1px solid #ccc;
-    padding: 8px 10px;
+    padding: 5px 8px;
     margin-bottom: 2px;
 }
 .rpt-fullwidth .lbl { font-size: 8.5pt; font-weight: bold; color: #555; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; }
@@ -352,7 +352,7 @@
 .rpt-sig-area {
     display: flex;
     justify-content: space-between;
-    margin-top: 36px;
+    margin-top: 20px;
     gap: 20px;
 }
 .rpt-sig-box { text-align: center; flex: 1; }
@@ -484,25 +484,25 @@
     {{-- Signatures --}}
     <div class="rpt-sig-area">
         <div class="rpt-sig-box">
-            <div style="height:50px"></div>
+            <div style="height:36px"></div>
             <div class="rpt-sig-line"></div>
             <div class="rpt-sig-name">{{ $blotter->complainant_name ?? '—' }}</div>
             <div class="rpt-sig-title">Complainant</div>
         </div>
         <div class="rpt-sig-box">
-            <div style="height:50px"></div>
+            <div style="height:36px"></div>
             <div class="rpt-sig-line"></div>
             <div class="rpt-sig-name">{{ $blotter->respondent_name ?? '—' }}</div>
             <div class="rpt-sig-title">Respondent</div>
         </div>
         <div class="rpt-sig-box">
-            <div style="height:50px"></div>
+            <div style="height:36px"></div>
             <div class="rpt-sig-line"></div>
             <div class="rpt-sig-name">{{ $secretaryName }}</div>
             <div class="rpt-sig-title">Barangay Secretary</div>
         </div>
         <div class="rpt-sig-box">
-            <div style="height:50px"></div>
+            <div style="height:36px"></div>
             <div class="rpt-sig-line"></div>
             <div class="rpt-sig-name">{{ $officialName }}</div>
             <div class="rpt-sig-title">Punong Barangay</div>
