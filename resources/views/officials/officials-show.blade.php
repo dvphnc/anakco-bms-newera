@@ -230,26 +230,7 @@
 }
 .idc-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.idc-barcode {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    position: relative;
-    z-index: 1;
-    flex-shrink: 0;
-}
-.idc-barcode svg { display: block; }
-.idc-barcode-txt {
-    font-family: 'Courier New', monospace;
-    font-size: 3.5pt;
-    color: #0D2144;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    letter-spacing: 0.04em;
-    font-weight: 700;
-    margin-top: 2px;
-}
+.idc-barcode-unused { display: none; }
 
 /* NAME SECTION */
 .idc-name {
@@ -332,7 +313,7 @@
     {{-- Photo + Watermark + Barcode --}}
     <div class="idc-middle">
         <img src="{{ asset('images/bne-logo.png') }}" class="idc-wm" alt=""
-             style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:1.3in;height:1.3in;opacity:0.1;object-fit:contain;pointer-events:none;z-index:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;">
+             style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:1.8in;height:1.8in;opacity:0.1;object-fit:contain;pointer-events:none;z-index:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;">
 
         <div class="idc-photo">
             @if($official->photo_path)
@@ -342,11 +323,11 @@
             @endif
         </div>
 
-        <div class="idc-barcode">
-            <svg width="18" height="{{ $bcHeight }}" xmlns="http://www.w3.org/2000/svg" style="max-height:1in">
+        <div style="display:flex;flex-direction:row;align-items:stretch;height:1.05in;position:relative;z-index:1;">
+            <svg width="18" height="{{ $bcHeight }}" xmlns="http://www.w3.org/2000/svg" style="height:100%;width:auto;max-width:18px;display:block;">
                 {!! $svgBars !!}
             </svg>
-            <div class="idc-barcode-txt">{{ $idNumber }}</div>
+            <div style="font-family:'Courier New',monospace;font-size:3.5pt;color:#0D2144;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:0.04em;font-weight:700;margin-left:2px;display:flex;align-items:center;">{{ $idNumber }}</div>
         </div>
     </div>
 
