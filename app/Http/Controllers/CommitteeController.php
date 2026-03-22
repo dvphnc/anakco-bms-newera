@@ -2,281 +2,371 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\CommitteeRecord;
 use App\Models\CommitteeActivity;
 use App\Models\CommitteeAttendance;
 use App\Models\CommitteeInventory;
-use Illuminate\Http\Request;
+use App\Models\BpsoMember;
+use App\Models\PatrolLog;
+use App\Models\HealthRecord;
+use App\Models\Scholar;
+use App\Models\InfraProject;
+use App\Models\EnvironmentProgram;
+use App\Models\LivelihoodBeneficiary;
+use App\Models\TodaVehicle;
+use App\Models\EmergencyLog;
+use App\Models\EvacuationCenter;
 
 class CommitteeController extends Controller
 {
-    // -------------------------------------------------------
-    // Committee config — name, chair, icon, color per slug
-    // -------------------------------------------------------
-    private function getCommitteeConfig(string $slug): array
-    {
-        $committees = [
-            'peace-order' => [
-                'slug'  => 'peace-order',
-                'name'  => 'Committee on Peace and Order',
-                'chair' => 'Kap Robert',
-                'icon'  => 'fa-shield-halved',
-                'color' => '#f85149',
-            ],
-            'health' => [
-                'slug'  => 'health',
-                'name'  => 'Committee on Health',
-                'chair' => 'Kgd Doc Twinkle',
-                'icon'  => 'fa-heart-pulse',
-                'color' => '#f78166',
-            ],
-            'education' => [
-                'slug'  => 'education',
-                'name'  => 'Committee on Education',
-                'chair' => 'Kgd Fred Sicat',
-                'icon'  => 'fa-graduation-cap',
-                'color' => '#79c0ff',
-            ],
-            'infrastructure' => [
-                'slug'  => 'infrastructure',
-                'name'  => 'Committee on Infrastructure',
-                'chair' => 'Kgd Euler',
-                'icon'  => 'fa-road',
-                'color' => '#e3b341',
-            ],
-            'environment' => [
-                'slug'  => 'environment',
-                'name'  => 'Committee on Environment',
-                'chair' => 'Kgd Medel',
-                'icon'  => 'fa-leaf',
-                'color' => '#3fb950',
-            ],
-            'livelihood' => [
-                'slug'  => 'livelihood',
-                'name'  => 'Committee on Livelihood',
-                'chair' => 'Kgd Fred',
-                'icon'  => 'fa-briefcase',
-                'color' => '#f0883e',
-            ],
-            'transport' => [
-                'slug'  => 'transport',
-                'name'  => 'Committee on Transport and Communication',
-                'chair' => 'Kgd Bem',
-                'icon'  => 'fa-bus',
-                'color' => '#58a6ff',
-            ],
-            'bdrrm' => [
-                'slug'  => 'bdrrm',
-                'name'  => 'Barangay Disaster Risk Reduction & Management',
-                'chair' => 'Kgd Joel',
-                'icon'  => 'fa-triangle-exclamation',
-                'color' => '#da3633',
-            ],
-        ];
+    private array $committees = [
+        'peace-order' => [
+            'name'  => 'Peace & Order',
+            'slug'  => 'peace-order',
+            'icon'  => 'fa-shield-halved',
+            'color' => '#1d4ed8',
+            'chair' => '',
+        ],
+        'health' => [
+            'name'  => 'Health',
+            'slug'  => 'health',
+            'icon'  => 'fa-heartbeat',
+            'color' => '#dc2626',
+            'chair' => '',
+        ],
+        'education' => [
+            'name'  => 'Education',
+            'slug'  => 'education',
+            'icon'  => 'fa-graduation-cap',
+            'color' => '#7c3aed',
+            'chair' => '',
+        ],
+        'infrastructure' => [
+            'name'  => 'Infrastructure',
+            'slug'  => 'infrastructure',
+            'icon'  => 'fa-road',
+            'color' => '#d97706',
+            'chair' => '',
+        ],
+        'environment' => [
+            'name'  => 'Environment',
+            'slug'  => 'environment',
+            'icon'  => 'fa-leaf',
+            'color' => '#16a34a',
+            'chair' => '',
+        ],
+        'livelihood' => [
+            'name'  => 'Livelihood',
+            'slug'  => 'livelihood',
+            'icon'  => 'fa-briefcase',
+            'color' => '#0891b2',
+            'chair' => '',
+        ],
+        'transport' => [
+            'name'  => 'Transport & Comm.',
+            'slug'  => 'transport',
+            'icon'  => 'fa-bus',
+            'color' => '#ea580c',
+            'chair' => '',
+        ],
+        'bdrrm' => [
+            'name'  => 'BDRRM',
+            'slug'  => 'bdrrm',
+            'icon'  => 'fa-exclamation-triangle',
+            'color' => '#b91c1c',
+            'chair' => '',
+        ],
+    ];
 
-        abort_unless(array_key_exists($slug, $committees), 404, 'Committee not found.');
-
-        return $committees[$slug];
-    }
-
-    // -------------------------------------------------------
-    // SHOW — View a committee page (tabbed)
-    // -------------------------------------------------------
     public function show(string $slug)
     {
-        $committee = $this->getCommitteeConfig($slug);
+        $committee = $this->committees[$slug] ?? abort(404);
 
-        // Load all data for this committee
-        $photos = CommitteeRecord::forCommittee($slug)
-            ->photos()
-            ->latest()
-            ->get();
+        // Set chairperson from officials table
+        $chair = \App\Models\Official::where('committee', $committee['name'])
+            ->where('is_active', true)->first();
+        $committee['chair'] = $chair?->full_name ?? 'Not Assigned';
 
-        $reports = CommitteeRecord::forCommittee($slug)
-            ->reports()
-            ->latest()
-            ->get();
+        // Generic tabs data
+        $photos      = CommitteeRecord::where('committee_slug', $slug)->where('record_type', 'Photo')->latest()->get();
+        $reports     = CommitteeRecord::where('committee_slug', $slug)->where('record_type', 'Report')->latest()->get();
+        $resolutions = CommitteeRecord::where('committee_slug', $slug)->where('record_type', 'Resolution')->latest()->get();
+        $otherRecords= CommitteeRecord::where('committee_slug', $slug)->whereNotIn('record_type', ['Photo','Report','Resolution'])->latest()->get();
+        $activities  = CommitteeActivity::where('committee_slug', $slug)->where('activity_type', 'Activity')->latest()->get();
+        $accomplishments = CommitteeActivity::where('committee_slug', $slug)->where('activity_type', 'Accomplishment')->latest()->get();
+        $attendances = CommitteeAttendance::where('committee_slug', $slug)->latest()->get();
+        $inventory   = CommitteeInventory::where('committee_slug', $slug)->latest()->get();
 
-        $resolutions = CommitteeRecord::forCommittee($slug)
-            ->resolutions()
-            ->latest()
-            ->get();
+        // Committee-specific data
+        $specificData = $this->getSpecificData($slug);
 
-        $otherRecords = CommitteeRecord::forCommittee($slug)
-            ->whereNotIn('record_type', ['Photo', 'Report', 'Resolution'])
-            ->latest()
-            ->get();
-
-        $activities = CommitteeActivity::forCommittee($slug)
-            ->activities()
-            ->latest()
-            ->get();
-
-        $accomplishments = CommitteeActivity::forCommittee($slug)
-            ->accomplishments()
-            ->latest()
-            ->get();
-
-        $attendances = CommitteeAttendance::forCommittee($slug)
-            ->latest()
-            ->get();
-
-        $inventory = CommitteeInventory::forCommittee($slug)
-            ->orderBy('category')
-            ->orderBy('item_name')
-            ->get();
-
-        return view('committees.committees-show', compact(
-            'committee',
-            'photos',
-            'reports',
-            'resolutions',
-            'otherRecords',
-            'activities',
-            'accomplishments',
-            'attendances',
-            'inventory'
+        return view('committees.show', compact(
+            'committee', 'photos', 'reports', 'resolutions', 'otherRecords',
+            'activities', 'accomplishments', 'attendances', 'inventory', 'specificData'
         ));
     }
 
+    private function getSpecificData(string $slug): array
+    {
+        return match($slug) {
+            'peace-order' => [
+                'bpso'        => BpsoMember::orderBy('full_name')->get(),
+                'patrol_logs' => PatrolLog::latest('patrol_date')->get(),
+            ],
+            'health' => [
+                'health_records' => HealthRecord::latest('visit_date')->get(),
+            ],
+            'education' => [
+                'scholars' => Scholar::orderBy('full_name')->get(),
+            ],
+            'infrastructure' => [
+                'projects' => InfraProject::latest()->get(),
+            ],
+            'environment' => [
+                'programs' => EnvironmentProgram::latest('program_date')->get(),
+            ],
+            'livelihood' => [
+                'beneficiaries' => LivelihoodBeneficiary::orderBy('full_name')->get(),
+            ],
+            'transport' => [
+                'toda' => TodaVehicle::orderBy('operator_name')->get(),
+            ],
+            'bdrrm' => [
+                'emergency_logs'      => EmergencyLog::latest('incident_date')->get(),
+                'evacuation_centers'  => EvacuationCenter::orderBy('center_name')->get(),
+            ],
+            default => [],
+        };
+    }
+
     // -------------------------------------------------------
-    // STORE RECORD — Upload photo / file / document
+    // STORE methods for generic tabs
     // -------------------------------------------------------
     public function storeRecord(Request $request, string $slug)
     {
-        $this->getCommitteeConfig($slug); // validates slug
-
         $validated = $request->validate([
-            'record_type' => 'required|in:Photo,Video,Report,Resolution,Certificate,Partnership,Other',
+            'record_type' => 'required|string',
             'title'       => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'file'        => 'nullable|file|max:10240', // 10MB max
+            'description' => 'nullable|string|max:500',
+            'file'        => 'nullable|file|max:10240',
         ]);
 
         if ($request->hasFile('file')) {
-            $file      = $request->file('file');
-            $extension = $file->getClientOriginalExtension();
-
-            $validated['file_path'] = $file->store("committees/{$slug}", 'public');
-            $validated['file_type'] = $extension;
+            $validated['file_path'] = $request->file('file')->store("committees/{$slug}", 'public');
         }
 
-        CommitteeRecord::create([
-            'committee_slug' => $slug,
-            'record_type'    => $validated['record_type'],
-            'title'          => $validated['title'],
-            'description'    => $validated['description'] ?? null,
-            'file_path'      => $validated['file_path'] ?? null,
-            'file_type'      => $validated['file_type'] ?? null,
-            'uploaded_by'    => auth()->id(),
-        ]);
+        $validated['committee_slug'] = $slug;
+        CommitteeRecord::create($validated);
 
-        return redirect()
-            ->route('committees.show', $slug)
-            ->with('success', 'Record uploaded successfully.');
+        return back()->with('success', 'Record uploaded successfully.')->withFragment('records');
     }
 
-    // -------------------------------------------------------
-    // STORE ACTIVITY — Log activity or accomplishment
-    // -------------------------------------------------------
     public function storeActivity(Request $request, string $slug)
     {
-        $this->getCommitteeConfig($slug);
-
         $validated = $request->validate([
-            'activity_type'      => 'required|in:Activity,Accomplishment',
-            'title'              => 'required|string|max:255',
-            'description'        => 'nullable|string',
-            'activity_date'      => 'required|date',
-            'location'           => 'nullable|string|max:255',
-            'participants_count' => 'nullable|integer|min:0',
-            'status'             => 'required|in:Planned,Ongoing,Completed,Cancelled',
+            'activity_type'    => 'required|string',
+            'title'            => 'required|string|max:255',
+            'activity_date'    => 'required|date',
+            'location'         => 'nullable|string|max:255',
+            'participants_count'=> 'nullable|integer|min:0',
+            'status'           => 'required|string',
+            'description'      => 'nullable|string',
         ]);
+        $validated['committee_slug'] = $slug;
+        CommitteeActivity::create($validated);
 
-        CommitteeActivity::create([
-            'committee_slug'     => $slug,
-            'activity_type'      => $validated['activity_type'],
-            'title'              => $validated['title'],
-            'description'        => $validated['description'] ?? null,
-            'activity_date'      => $validated['activity_date'],
-            'location'           => $validated['location'] ?? null,
-            'participants_count' => $validated['participants_count'] ?? 0,
-            'status'             => $validated['status'],
-            'logged_by'          => auth()->id(),
-        ]);
-
-        return redirect()
-            ->route('committees.show', $slug)
-            ->with('success', 'Activity logged successfully.');
+        $tab = $validated['activity_type'] === 'Accomplishment' ? 'accomplishments' : 'activities';
+        return back()->with('success', 'Added successfully.')->withFragment($tab);
     }
 
-    // -------------------------------------------------------
-    // STORE ATTENDANCE — Record attendance sheet
-    // -------------------------------------------------------
     public function storeAttendance(Request $request, string $slug)
     {
-        $this->getCommitteeConfig($slug);
-
         $validated = $request->validate([
-            'event_name'      => 'required|string|max:255',
-            'event_date'      => 'required|date',
-            'venue'           => 'nullable|string|max:255',
-            'total_attendees' => 'required|integer|min:0',
-            'notes'           => 'nullable|string',
-            'file'            => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'event_name'     => 'required|string|max:255',
+            'event_date'     => 'required|date',
+            'venue'          => 'nullable|string|max:255',
+            'total_attendees'=> 'required|integer|min:0',
+            'notes'          => 'nullable|string',
+            'file'           => 'nullable|file|max:10240',
         ]);
 
-        $filePath = null;
         if ($request->hasFile('file')) {
-            $filePath = $request->file('file')
-                ->store("committees/{$slug}/attendance", 'public');
+            $validated['file_path'] = $request->file('file')->store("committees/{$slug}/attendance", 'public');
         }
 
-        CommitteeAttendance::create([
-            'committee_slug'  => $slug,
-            'event_name'      => $validated['event_name'],
-            'event_date'      => $validated['event_date'],
-            'venue'           => $validated['venue'] ?? null,
-            'total_attendees' => $validated['total_attendees'],
-            'notes'           => $validated['notes'] ?? null,
-            'file_path'       => $filePath,
-            'recorded_by'     => auth()->id(),
-        ]);
-
-        return redirect()
-            ->route('committees.show', $slug)
-            ->with('success', 'Attendance recorded successfully.');
+        $validated['committee_slug'] = $slug;
+        CommitteeAttendance::create($validated);
+        return back()->with('success', 'Attendance recorded.')->withFragment('attendance');
     }
 
-    // -------------------------------------------------------
-    // STORE INVENTORY — Add inventory item
-    // -------------------------------------------------------
     public function storeInventory(Request $request, string $slug)
     {
-        $this->getCommitteeConfig($slug);
-
         $validated = $request->validate([
             'item_name' => 'required|string|max:255',
             'category'  => 'nullable|string|max:100',
             'quantity'  => 'required|integer|min:0',
             'unit'      => 'nullable|string|max:50',
-            'condition' => 'required|in:Good,Fair,Poor,For Disposal',
+            'condition' => 'required|string',
             'remarks'   => 'nullable|string',
         ]);
+        $validated['committee_slug'] = $slug;
+        CommitteeInventory::create($validated);
+        return back()->with('success', 'Item added.')->withFragment('inventory');
+    }
 
-        CommitteeInventory::create([
-            'committee_slug' => $slug,
-            'item_name'      => $validated['item_name'],
-            'category'       => $validated['category'] ?? null,
-            'quantity'       => $validated['quantity'],
-            'unit'           => $validated['unit'] ?? null,
-            'condition'      => $validated['condition'],
-            'remarks'        => $validated['remarks'] ?? null,
-            'recorded_by'    => auth()->id(),
-        ]);
+    // -------------------------------------------------------
+    // STORE methods for committee-specific tabs
+    // -------------------------------------------------------
+    public function storeSpecific(Request $request, string $slug)
+    {
+        $type = $request->input('specific_type');
 
-        return redirect()
-            ->route('committees.show', $slug)
-            ->with('success', 'Inventory item added successfully.');
+        switch ($slug) {
+            case 'peace-order':
+                if ($type === 'bpso') {
+                    $v = $request->validate([
+                        'full_name'      => 'required|string|max:255',
+                        'rank'           => 'nullable|string|max:100',
+                        'badge_number'   => 'nullable|string|max:50',
+                        'contact_number' => 'nullable|string|max:20',
+                        'assignment'     => 'nullable|string|max:255',
+                        'status'         => 'required|in:Active,Inactive,On Leave',
+                    ]);
+                    BpsoMember::create($v);
+                } else {
+                    $v = $request->validate([
+                        'patrol_date'     => 'required|date',
+                        'shift'           => 'nullable|string|max:50',
+                        'area_covered'    => 'required|string|max:255',
+                        'personnel_count' => 'nullable|integer|min:0',
+                        'findings'        => 'nullable|string',
+                        'reported_by'     => 'nullable|string|max:255',
+                    ]);
+                    PatrolLog::create($v);
+                }
+                break;
+
+            case 'health':
+                $v = $request->validate([
+                    'patient_name' => 'required|string|max:255',
+                    'age'          => 'nullable|integer|min:0',
+                    'gender'       => 'nullable|string|max:10',
+                    'address'      => 'nullable|string|max:255',
+                    'diagnosis'    => 'nullable|string|max:255',
+                    'program'      => 'nullable|string|max:100',
+                    'visit_date'   => 'required|date',
+                    'attended_by'  => 'nullable|string|max:255',
+                    'notes'        => 'nullable|string',
+                ]);
+                HealthRecord::create($v);
+                break;
+
+            case 'education':
+                $v = $request->validate([
+                    'full_name'          => 'required|string|max:255',
+                    'school'             => 'required|string|max:255',
+                    'course_grade_level' => 'nullable|string|max:100',
+                    'scholarship_type'   => 'nullable|string|max:100',
+                    'year_level'         => 'nullable|string|max:50',
+                    'grant_amount'       => 'nullable|numeric|min:0',
+                    'status'             => 'required|in:Active,Graduated,Dropped,Suspended',
+                    'start_date'         => 'nullable|date',
+                ]);
+                Scholar::create($v);
+                break;
+
+            case 'infrastructure':
+                $v = $request->validate([
+                    'project_name'          => 'required|string|max:255',
+                    'project_type'          => 'nullable|string|max:100',
+                    'location'              => 'nullable|string|max:255',
+                    'budget'                => 'nullable|numeric|min:0',
+                    'actual_cost'           => 'nullable|numeric|min:0',
+                    'start_date'            => 'nullable|date',
+                    'end_date'              => 'nullable|date',
+                    'completion_percentage' => 'nullable|integer|min:0|max:100',
+                    'status'                => 'required|in:Planned,Ongoing,Completed,On Hold,Cancelled',
+                    'remarks'               => 'nullable|string',
+                ]);
+                InfraProject::create($v);
+                break;
+
+            case 'environment':
+                $v = $request->validate([
+                    'program_name'       => 'required|string|max:255',
+                    'program_type'       => 'nullable|string|max:100',
+                    'program_date'       => 'required|date',
+                    'location'           => 'nullable|string|max:255',
+                    'volunteers'         => 'nullable|integer|min:0',
+                    'trees_planted'      => 'nullable|integer|min:0',
+                    'waste_collected_kg' => 'nullable|numeric|min:0',
+                    'status'             => 'required|in:Planned,Completed,Cancelled',
+                    'notes'              => 'nullable|string',
+                ]);
+                EnvironmentProgram::create($v);
+                break;
+
+            case 'livelihood':
+                $v = $request->validate([
+                    'full_name'       => 'required|string|max:255',
+                    'address'         => 'nullable|string|max:255',
+                    'contact_number'  => 'nullable|string|max:20',
+                    'program_name'    => 'required|string|max:255',
+                    'program_type'    => 'nullable|string|max:100',
+                    'date_enrolled'   => 'nullable|date',
+                    'amount_received' => 'nullable|numeric|min:0',
+                    'status'          => 'required|in:Active,Completed,Dropped',
+                    'remarks'         => 'nullable|string',
+                ]);
+                LivelihoodBeneficiary::create($v);
+                break;
+
+            case 'transport':
+                $v = $request->validate([
+                    'operator_name'     => 'required|string|max:255',
+                    'driver_name'       => 'nullable|string|max:255',
+                    'vehicle_type'      => 'nullable|string|max:50',
+                    'plate_number'      => 'nullable|string|max:20',
+                    'toda_name'         => 'nullable|string|max:100',
+                    'route'             => 'nullable|string|max:255',
+                    'registration_date' => 'nullable|date',
+                    'expiry_date'       => 'nullable|date',
+                    'status'            => 'required|in:Active,Expired,Suspended',
+                ]);
+                TodaVehicle::create($v);
+                break;
+
+            case 'bdrrm':
+                if ($type === 'evacuation') {
+                    $v = $request->validate([
+                        'center_name'      => 'required|string|max:255',
+                        'location'         => 'required|string|max:255',
+                        'capacity'         => 'nullable|integer|min:0',
+                        'current_occupancy'=> 'nullable|integer|min:0',
+                        'status'           => 'required|in:Available,Active,Full,Closed',
+                        'contact_person'   => 'nullable|string|max:255',
+                        'contact_number'   => 'nullable|string|max:20',
+                        'facilities'       => 'nullable|string',
+                    ]);
+                    EvacuationCenter::create($v);
+                } else {
+                    $v = $request->validate([
+                        'incident_type'    => 'required|string|max:100',
+                        'incident_date'    => 'required|date',
+                        'location'         => 'required|string|max:255',
+                        'affected_families'=> 'nullable|integer|min:0',
+                        'affected_persons' => 'nullable|integer|min:0',
+                        'description'      => 'nullable|string',
+                        'response_actions' => 'nullable|string',
+                        'reported_by'      => 'nullable|string|max:255',
+                        'status'           => 'required|in:Active,Resolved,Monitoring',
+                    ]);
+                    EmergencyLog::create($v);
+                }
+                break;
+        }
+
+        return back()->with('success', 'Record saved successfully.');
     }
 }
