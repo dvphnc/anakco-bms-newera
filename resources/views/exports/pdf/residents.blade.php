@@ -4,51 +4,156 @@
 <meta charset="UTF-8">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #000; }
-.header { display:flex; align-items:center; justify-content:space-between; padding-bottom:8px; border-bottom:2px solid #0D2144; margin-bottom:10px; }
-.header img { width:48px; height:48px; }
-.header-titles { text-align:center; flex:1; padding:0 10px; }
-.header-titles .brgy { font-size:13pt; font-weight:bold; text-transform:uppercase; color:#0D2144; }
-.header-titles .sub  { font-size:8pt; color:#444; }
-.report-title { text-align:center; font-size:11pt; font-weight:bold; text-transform:uppercase; letter-spacing:0.1em; color:#0D2144; margin:8px 0 4px; text-decoration:underline; }
-.meta { font-size:7.5pt; color:#555; margin-bottom:8px; display:flex; justify-content:space-between; }
-table { width:100%; border-collapse:collapse; font-size:7.5pt; }
-thead th { background:#0D2144; color:#fff; padding:5px 6px; text-align:left; font-size:7pt; text-transform:uppercase; letter-spacing:0.04em; }
-tbody tr:nth-child(even) { background:#f5f7fa; }
-tbody td { padding:4px 6px; border-bottom:1px solid #e5e7eb; vertical-align:top; }
-.footer { margin-top:12px; padding-top:8px; border-top:1px solid #ccc; display:flex; justify-content:space-between; font-size:7pt; color:#666; }
-.badge { display:inline-block; padding:1px 6px; border-radius:99px; font-size:6.5pt; font-weight:bold; }
-.badge-green  { background:#dcfce7; color:#166534; }
-.badge-red    { background:#fee2e2; color:#991b1b; }
-.badge-yellow { background:#fef9c3; color:#854d0e; }
-.badge-gray   { background:#f3f4f6; color:#6b7280; }
-.badge-blue   { background:#dbeafe; color:#1e40af; }
+body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #111; }
+
+/* Header */
+.header {
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #0D2144;
+    margin-bottom: 12px;
+    position: relative;
+}
+.header .logo-left {
+    position: absolute; left: 0; top: 0;
+    width: 55px; height: 55px;
+}
+.header .logo-right {
+    position: absolute; right: 0; top: 0;
+    width: 55px; height: 55px;
+}
+.header .titles { padding: 0 70px; }
+.header .republic { font-size: 8pt; font-style: italic; color: #444; }
+.header .brgy { font-size: 14pt; font-weight: bold; text-transform: uppercase; color: #0D2144; letter-spacing: 0.05em; }
+.header .office { font-size: 8pt; color: #555; font-style: italic; }
+.header .address { font-size: 7.5pt; color: #777; }
+
+/* Report title */
+.report-title {
+    text-align: center;
+    font-size: 12pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #0D2144;
+    margin: 10px 0 3px;
+    text-decoration: underline;
+}
+.report-sub {
+    text-align: center;
+    font-size: 7.5pt;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* Meta info bar */
+.meta-bar {
+    background: #f0f4f8;
+    border: 1px solid #dde2ea;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 7.5pt;
+    color: #444;
+}
+
+/* Table */
+table { width: 100%; border-collapse: collapse; font-size: 7.5pt; }
+thead tr th {
+    background: #0D2144;
+    color: #fff;
+    padding: 6px 7px;
+    text-align: left;
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid #0a1a36;
+}
+tbody tr:nth-child(odd)  { background: #fff; }
+tbody tr:nth-child(even) { background: #f5f7fa; }
+tbody tr:hover { background: #eef1f6; }
+tbody td {
+    padding: 5px 7px;
+    border-bottom: 1px solid #e5e7eb;
+    border-right: 1px solid #f0f0f0;
+    vertical-align: middle;
+}
+tbody td:last-child { border-right: none; }
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 99px;
+    font-size: 6.5pt;
+    font-weight: bold;
+    margin: 1px;
+}
+.badge-green  { background: #dcfce7; color: #166534; }
+.badge-red    { background: #fee2e2; color: #991b1b; }
+.badge-yellow { background: #fef9c3; color: #854d0e; }
+.badge-gray   { background: #f3f4f6; color: #6b7280; }
+.badge-blue   { background: #dbeafe; color: #1e40af; }
+.badge-orange { background: #ffedd5; color: #9a3412; }
+.badge-gold   { background: #fef3dc; color: #92600a; }
+
+/* Footer */
+.footer {
+    margin-top: 14px;
+    padding-top: 8px;
+    border-top: 2px solid #0D2144;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7pt;
+    color: #555;
+}
+.footer .sig-line {
+    text-align: center;
+    min-width: 160px;
+}
+.footer .sig-line .line {
+    border-top: 1px solid #333;
+    margin-bottom: 3px;
+    width: 100%;
+}
+.footer .sig-line .name { font-weight: bold; font-size: 7.5pt; text-transform: uppercase; }
+.footer .sig-line .title { font-size: 7pt; color: #666; }
 </style>
 </head>
 <body>
+
+{{-- Header --}}
 <div class="header">
-    <img src="{{ public_path('images/qc-seal.png') }}">
-    <div class="header-titles">
-        <div style="font-size:8pt;font-style:italic">Republic of the Philippines — City of Quezon, NCR</div>
+    <img class="logo-left"  src="{{ public_path('images/qc-seal.png') }}" alt="QC">
+    <img class="logo-right" src="{{ public_path('images/bne-logo.png') }}" alt="BNE">
+    <div class="titles">
+        <div class="republic"><em>Republic of the Philippines</em></div>
+        <div style="font-size:8pt;color:#555">City of Quezon, National Capital Region</div>
         <div class="brgy">Barangay New Era</div>
-        <div class="sub">Office of the Punong Barangay — New Era, Quezon City</div>
+        <div class="office">Office of the Punong Barangay</div>
+        <div class="address">New Era, Quezon City, Metro Manila</div>
     </div>
-    <img src="{{ public_path('images/bne-logo.png') }}">
 </div>
 
 <div class="report-title">Residents Master List</div>
-<div class="meta">
-    <span>Total Records: <strong>{{ $data->count() }}</strong>
-        @if(!empty($filters['gender'])) | Gender: <strong>{{ $filters['gender'] }}</strong> @endif
-        @if(!empty($filters['status'])) | Status: <strong>{{ $filters['status'] }}</strong> @endif
-    </span>
-    <span>Generated by: <strong>{{ $generatedBy }}</strong> | {{ $generatedAt }}</span>
+<div class="report-sub">
+    As of {{ now()->format('F d, Y') }}
+    @if(!empty($filters['gender'])) &nbsp;·&nbsp; Gender: <strong>{{ $filters['gender'] }}</strong> @endif
+    @if(!empty($filters['status'])) &nbsp;·&nbsp; Status: <strong>{{ $filters['status'] }}</strong> @endif
+</div>
+
+<div class="meta-bar">
+    <span>Total Records: <strong>{{ $data->count() }}</strong></span>
+    <span>Generated by: <strong>{{ $generatedBy }}</strong> &nbsp;|&nbsp; {{ $generatedAt }}</span>
 </div>
 
 <table>
     <thead>
         <tr>
-            <th>#</th>
+            <th style="width:25px">#</th>
             <th>Name</th>
             <th>Gender</th>
             <th>Age</th>
@@ -63,24 +168,27 @@ tbody td { padding:4px 6px; border-bottom:1px solid #e5e7eb; vertical-align:top;
     <tbody>
         @foreach($data as $i => $r)
         <tr>
-            <td>{{ $i+1 }}</td>
-            <td><strong>{{ $r->last_name }}, {{ $r->first_name }} {{ $r->middle_name ? substr($r->middle_name,0,1).'.' : '' }}</strong></td>
+            <td style="text-align:center;color:#888">{{ $i+1 }}</td>
+            <td><strong>{{ $r->last_name }}, {{ $r->first_name }}{{ $r->middle_name ? ' '.substr($r->middle_name,0,1).'.' : '' }}{{ $r->suffix ? ' '.$r->suffix : '' }}</strong></td>
             <td>{{ $r->gender }}</td>
-            <td>{{ $r->age ?? '—' }}</td>
+            <td style="text-align:center">{{ $r->age ?? '—' }}</td>
             <td>{{ $r->civil_status ?? '—' }}</td>
             <td>{{ $r->purok->name ?? '—' }}</td>
             <td>{{ $r->address }}</td>
             <td>{{ $r->contact_number ?? '—' }}</td>
             <td>
-                @if($r->is_voter) <span class="badge badge-green">Voter</span> @endif
-                @if($r->is_senior) <span class="badge badge-yellow">Senior</span> @endif
-                @if($r->is_pwd) <span class="badge badge-blue">PWD</span> @endif
-                @if($r->is_4ps) <span class="badge badge-gray">4Ps</span> @endif
+                @if($r->is_voter)       <span class="badge badge-green">Voter</span> @endif
+                @if($r->is_senior)      <span class="badge badge-yellow">Senior</span> @endif
+                @if($r->is_pwd)         <span class="badge badge-blue">PWD</span> @endif
+                @if($r->is_solo_parent) <span class="badge badge-orange">Solo Parent</span> @endif
+                @if($r->is_4ps)         <span class="badge badge-gold">4Ps</span> @endif
+                @if(!$r->is_voter && !$r->is_senior && !$r->is_pwd && !$r->is_solo_parent && !$r->is_4ps)
+                    <span style="color:#aaa">—</span>
+                @endif
             </td>
             <td>
-                <span class="badge {{ $r->residency_status === 'Active' ? 'badge-green' : 'badge-gray' }}">
-                    {{ $r->residency_status }}
-                </span>
+                @php $sc = match($r->residency_status) { 'Active'=>'badge-green','Deceased'=>'badge-gray','Transferred'=>'badge-yellow',default=>'badge-gray' }; @endphp
+                <span class="badge {{ $sc }}">{{ $r->residency_status }}</span>
             </td>
         </tr>
         @endforeach
@@ -88,8 +196,17 @@ tbody td { padding:4px 6px; border-bottom:1px solid #e5e7eb; vertical-align:top;
 </table>
 
 <div class="footer">
-    <span>Barangay New Era Management System — Confidential</span>
-    <span>Certified by: {{ $officialName }}, Punong Barangay</span>
+    <div style="font-size:7pt;color:#888">
+        <em>This document is confidential. For official use only.</em><br>
+        Barangay New Era Management System
+    </div>
+    <div class="sig-line">
+        <div style="height:28px"></div>
+        <div class="line"></div>
+        <div class="name">{{ $officialName }}</div>
+        <div class="title">Punong Barangay</div>
+    </div>
 </div>
+
 </body>
 </html>
