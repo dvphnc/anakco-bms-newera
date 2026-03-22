@@ -187,7 +187,7 @@
 
 /* MIDDLE SECTION — photo + barcode + watermark */
 .idc-middle {
-    flex: 0 0 1.25in;
+    flex: 0 0 1.18in;
     position: relative;
     display: flex;
     align-items: center;
@@ -255,17 +255,17 @@
 .idc-name {
     flex-shrink: 0;
     text-align: center;
-    padding: 4px 8px 3px;
+    padding: 3px 8px 2px;
     background: #fff;
     border-top: 1px solid #e5e7eb;
 }
 .idc-hon  { font-size: 6.5pt; font-weight: 700; color: #0D2144; text-transform: uppercase; }
-.idc-nm   { font-size: 11pt; font-weight: 900; color: #0D2144; text-transform: uppercase; line-height: 1.1; }
+.idc-nm   { font-size: 10pt; font-weight: 900; color: #0D2144; text-transform: uppercase; line-height: 1.1; }
 
 /* SIGNATURE */
 .idc-sig {
     flex-shrink: 0;
-    padding: 3px 16px 2px;
+    padding: 2px 16px 2px;
     background: #fff;
 }
 .idc-sig-line  { border-top: 1px solid #333; width: 80%; margin: 0 auto 2px; }
@@ -289,7 +289,7 @@
     flex-shrink: 0;
     background: #C8861A;
     text-align: center;
-    padding: 4px 8px;
+    padding: 3px 8px;
     margin-top: auto;
     -webkit-print-color-adjust: exact;
 }
@@ -300,7 +300,7 @@
 .idc-footer {
     flex-shrink: 0;
     background: #0D2144;
-    padding: 3px 8px 4px;
+    padding: 4px 8px 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
