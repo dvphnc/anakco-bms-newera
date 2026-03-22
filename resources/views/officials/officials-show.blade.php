@@ -135,16 +135,19 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 2in;
-    height: 2in;
+    width: 2.2in;
+    height: 2.2in;
     object-fit: contain;
-    opacity: 0.07;
+    opacity: 0.09;
     pointer-events: none;
     z-index: 0;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
 }
-.id-card-wrap { position: relative; }
+.id-card-wrap {
+    position: relative;
+    background: #fff;
+}
 .id-card-wrap > *:not(.id-watermark) { position: relative; z-index: 1; }
 
 /* TOP HEADER — navy */
@@ -274,22 +277,6 @@
     margin-top: 1px;
 }
 
-/* BARCODE */
-.id-barcode {
-    background: #fff;
-    padding: 4px 10px 2px;
-    text-align: center;
-    border-top: 1px solid #e5e7eb;
-}
-.id-barcode svg { display: block; margin: 0 auto; }
-.id-barcode .bc-text {
-    font-family: 'Courier New', monospace;
-    font-size: 5pt;
-    color: #555;
-    letter-spacing: 0.08em;
-    margin-top: 1px;
-}
-
 /* VALIDITY FOOTER */
 .id-footer {
     background: #0D2144;
@@ -327,14 +314,36 @@
     {{-- ID Number --}}
     <div class="id-number-row">{{ $idNumber }}</div>
 
-    {{-- Photo --}}
-    <div class="id-photo-section">
+    {{-- Photo + Barcode --}}
+    <div class="id-photo-section" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 10px 5px;">
         <div class="id-photo-frame">
             @if($official->photo_path)
                 <img src="{{ asset('storage/'.$official->photo_path) }}" alt="Photo">
             @else
                 {{ strtoupper(substr($official->full_name, 0, 1)) }}
             @endif
+        </div>
+        {{-- Vertical barcode --}}
+        @php
+            $svgBars = '';
+            $y = 0;
+            foreach (str_split($idNumber) as $char) {
+                $ascii = ord($char);
+                $pattern = str_pad(decbin($ascii), 8, '0', STR_PAD_LEFT);
+                foreach (str_split($pattern) as $bit) {
+                    $h = $bit === '1' ? 2 : 1;
+                    $svgBars .= '<rect x="0" y="' . $y . '" width="14" height="' . $h . '" fill="' . ($bit === '1' ? '#111' : '#fff') . '"/>';
+                    $y += $h;
+                }
+                $y += 1;
+            }
+            $totalHeight = $y;
+        @endphp
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+            <svg width="14" height="{{ $totalHeight }}" xmlns="http://www.w3.org/2000/svg" style="max-height:1.1in">
+                {!! $svgBars !!}
+            </svg>
+            <div style="font-family:'Courier New',monospace;font-size:3.5pt;color:#555;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:0.04em">{{ $idNumber }}</div>
         </div>
     </div>
 
@@ -368,41 +377,6 @@
             <div class="id-det-val">{{ $official->contact_number }}</div>
         </div>
         @endif
-    </div>
-
-    {{-- Barcode --}}
-    <div class="id-barcode">
-        @php
-            $barcodeValue = $idNumber;
-            $bars = '';
-            $widths = [3,2,1,2,3,1,2,1,3,2,1,2,3,1,2,3,1,2,1,3,2,1,3,2,1,2,3,2,1,3];
-            foreach (str_split($barcodeValue) as $i => $char) {
-                $w = $widths[$i % count($widths)];
-                $isBlack = ($i % 2 === 0);
-                $bars .= '<rect x="' . ($i * 3.2) . '" y="0" width="' . $w . '" height="28" fill="' . ($isBlack ? '#000' : '#fff') . '"/>';
-            }
-            // Generate proper barcode bars from ASCII values
-            $barcodeStr = $barcodeValue;
-            $svgBars = '';
-            $x = 0;
-            $colors = ['#111','#fff','#111','#fff','#111'];
-            foreach (str_split($barcodeStr) as $char) {
-                $ascii = ord($char);
-                $pattern = str_pad(decbin($ascii), 8, '0', STR_PAD_LEFT);
-                foreach (str_split($pattern) as $bit) {
-                    $w = $bit === '1' ? 2 : 1;
-                    $svgBars .= '<rect x="' . $x . '" y="0" width="' . $w . '" height="30" fill="' . ($bit === '1' ? '#000' : '#fff') . '"/>';
-                    $x += $w;
-                }
-                $x += 1; // gap between chars
-            }
-            $totalWidth = $x;
-        @endphp
-        <svg width="{{ $totalWidth }}" height="30" xmlns="http://www.w3.org/2000/svg"
-             style="max-width:100%">
-            {!! $svgBars !!}
-        </svg>
-        <div class="bc-text">{{ $idNumber }}</div>
     </div>
 
     {{-- Position Bar --}}
