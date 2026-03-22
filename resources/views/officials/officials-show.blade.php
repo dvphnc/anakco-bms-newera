@@ -110,6 +110,11 @@
     .no-print  { display: none !important; }
     .print-only { display: block !important; }
     .sidebar, .topbar, .watermark, .page-header { display: none !important; }
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
 }
 .print-only { display: none; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
