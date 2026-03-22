@@ -4,13 +4,16 @@
 
 @section('content')
 
-<div class="page-header">
+<div class="page-header no-print">
     <div>
         <h1 class="page-title">Blotter Case</h1>
         <p class="page-subtitle">{{ $blotter->case_number }} — {{ $blotter->incident_type }}</p>
     </div>
     <div class="page-actions">
-        <a href="{{ route('blotter.edit', $blotter) }}" class="btn btn-primary">
+        <button onclick="window.print()" class="btn btn-primary">
+            <i class="fas fa-print"></i> Print Report
+        </button>
+        <a href="{{ route('blotter.edit', $blotter) }}" class="btn btn-secondary">
             <i class="fas fa-pen"></i> Edit
         </a>
         <a href="{{ route('blotter.index') }}" class="btn btn-secondary">
@@ -19,11 +22,11 @@
     </div>
 </div>
 
-<div style="display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start">
+{{-- Screen View --}}
+<div class="no-print" style="display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start">
 
     {{-- LEFT --}}
     <div style="display:flex;flex-direction:column;gap:16px">
-
         <div class="card">
             <div style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:24px 20px;text-align:center">
                 <div style="width:64px;height:64px;border-radius:50%;background:rgba(200,134,26,0.2);border:2px solid rgba(200,134,26,0.4);margin:0 auto 14px;display:flex;align-items:center;justify-content:center">
@@ -74,7 +77,6 @@
             </div>
         </div>
 
-        {{-- Attachment --}}
         @if($blotter->file_path)
         <div class="card">
             <div class="card-header">
@@ -84,8 +86,7 @@
                 @php $isImage = in_array(strtolower($blotter->file_type ?? ''), ['jpg','jpeg','png','gif']); @endphp
                 @if($isImage)
                     <img src="{{ asset('storage/'.$blotter->file_path) }}"
-                         style="width:100%;border-radius:var(--radius);border:1px solid var(--border)"
-                         alt="Attachment">
+                         style="width:100%;border-radius:var(--radius);border:1px solid var(--border)" alt="Attachment">
                 @endif
                 <div style="display:flex;align-items:center;gap:10px;{{ $isImage ? 'margin-top:10px' : '' }}">
                     <i class="fas {{ $isImage ? 'fa-image' : 'fa-file-pdf' }}" style="font-size:18px;color:var(--navy)"></i>
@@ -103,7 +104,6 @@
         </div>
         @endif
 
-        {{-- Quick Actions --}}
         <div class="card">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-bolt"></i> Actions</span>
@@ -136,13 +136,10 @@
                 </form>
             </div>
         </div>
-
     </div>
 
     {{-- RIGHT --}}
     <div style="display:flex;flex-direction:column;gap:20px">
-
-        {{-- Incident Details --}}
         <div class="card">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-file-lines"></i> Incident Details</span>
@@ -154,35 +151,33 @@
             </div>
         </div>
 
-        {{-- Parties --}}
         <div class="grid-2">
-            {{-- Complainant --}}
             <div class="card">
                 <div class="card-header">
                     <span class="card-title"><i class="fas fa-user"></i> Complainant</span>
                 </div>
                 <div class="card-body">
                     @if($blotter->complainantResident)
-                        <a href="{{ route('residents.show', $blotter->complainantResident) }}"
-                           style="display:flex;align-items:center;gap:10px;margin-bottom:14px;color:var(--navy)">
-                            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:#fff">
-                                {{ strtoupper(substr($blotter->complainantResident->first_name, 0, 1)) }}
-                            </div>
-                            <div>
-                                <div style="font-weight:600;font-size:13px">{{ $blotter->complainantResident->full_name }}</div>
-                                <div class="td-muted">Registered Resident</div>
-                            </div>
-                        </a>
-                    @else
-                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-                            <div style="width:40px;height:40px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-muted)">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <div style="font-weight:600;font-size:13px">{{ $blotter->complainant_name ?? '—' }}</div>
-                                <div class="td-muted">External</div>
-                            </div>
+                    <a href="{{ route('residents.show', $blotter->complainantResident) }}"
+                       style="display:flex;align-items:center;gap:10px;margin-bottom:14px;color:var(--navy)">
+                        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:#fff">
+                            {{ strtoupper(substr($blotter->complainantResident->first_name, 0, 1)) }}
                         </div>
+                        <div>
+                            <div style="font-weight:600;font-size:13px">{{ $blotter->complainantResident->full_name }}</div>
+                            <div class="td-muted">Registered Resident</div>
+                        </div>
+                    </a>
+                    @else
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+                        <div style="width:40px;height:40px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-muted)">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight:600;font-size:13px">{{ $blotter->complainant_name ?? '—' }}</div>
+                            <div class="td-muted">External</div>
+                        </div>
+                    </div>
                     @endif
                     <div style="display:flex;flex-direction:column;gap:8px">
                         @if($blotter->complainant_address)
@@ -201,7 +196,6 @@
                 </div>
             </div>
 
-            {{-- Respondent --}}
             <div class="card">
                 <div class="card-header">
                     <span class="card-title"><i class="fas fa-user-slash"></i> Respondent</span>
@@ -234,7 +228,6 @@
             </div>
         </div>
 
-        {{-- Resolution --}}
         @if($blotter->resolution_notes)
         <div class="card">
             <div class="card-header">
@@ -247,11 +240,283 @@
             </div>
         </div>
         @endif
+    </div>
+</div>
 
-        {{-- Activity Log --}}
+{{-- =============================================
+     PRINTABLE BLOTTER REPORT
+============================================= --}}
+<div class="print-only" id="blotter-report">
+@php
+    $officialName = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
+    $secretaryName = \App\Models\Official::where('position','Barangay Secretary')->where('is_active',true)->first()?->full_name ?? 'BARANGAY SECRETARY';
+@endphp
+<style>
+@media print {
+    @page { size: letter; margin: 0.6in 0.8in; }
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    .sidebar, .topbar, .watermark { display: none !important; }
+}
+.print-only { display: none; }
 
+.rpt-page {
+    font-family: 'Times New Roman', Times, serif;
+    color: #000;
+    font-size: 11pt;
+    line-height: 1.6;
+    width: 100%;
+    max-width: 6.9in;
+    margin: 0 auto;
+}
+.rpt-border {
+    border: 2px solid #1a3a6b;
+    padding: 28px 36px;
+    position: relative;
+}
+.rpt-border::before {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px; right: 4px; bottom: 4px;
+    border: 1px solid #c8861a;
+    pointer-events: none;
+}
+.rpt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #1a3a6b;
+    margin-bottom: 14px;
+}
+.rpt-logo { width: 65px; height: 65px; object-fit: contain; flex-shrink: 0; }
+.rpt-titles { text-align: center; flex: 1; padding: 0 12px; }
+.rpt-titles .rep  { font-size: 9.5pt; font-style: italic; }
+.rpt-titles .prov { font-size: 9pt; }
+.rpt-titles .brgy { font-size: 15pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.06em; color: #0d2144; }
+.rpt-titles .off  { font-size: 9.5pt; font-style: italic; }
+.rpt-titles .addr { font-size: 8.5pt; color: #444; }
+
+.rpt-doc-title {
+    text-align: center;
+    font-size: 14pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #0d2144;
+    text-decoration: underline;
+    margin: 12px 0 4px;
+}
+.rpt-case-num {
+    text-align: center;
+    font-size: 10pt;
+    color: #555;
+    margin-bottom: 16px;
+}
+
+.rpt-section-title {
+    font-size: 10pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: #0d2144;
+    color: #fff;
+    padding: 4px 10px;
+    margin: 14px 0 8px;
+}
+
+.rpt-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid #ccc;
+    margin-bottom: 2px;
+}
+.rpt-field {
+    padding: 6px 10px;
+    border-bottom: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+}
+.rpt-field:nth-child(even) { border-right: none; }
+.rpt-field .lbl { font-size: 8.5pt; font-weight: bold; color: #555; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 2px; }
+.rpt-field .val { font-size: 10.5pt; }
+
+.rpt-fullwidth {
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    margin-bottom: 2px;
+}
+.rpt-fullwidth .lbl { font-size: 8.5pt; font-weight: bold; color: #555; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; }
+.rpt-fullwidth .val { font-size: 10.5pt; line-height: 1.7; white-space: pre-line; }
+
+.rpt-sig-area {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 36px;
+    gap: 20px;
+}
+.rpt-sig-box { text-align: center; flex: 1; }
+.rpt-sig-line { border-top: 1px solid #000; margin-bottom: 4px; }
+.rpt-sig-name { font-size: 11pt; font-weight: bold; text-transform: uppercase; }
+.rpt-sig-title { font-size: 9pt; color: #333; }
+
+.rpt-footer {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px dashed #aaa;
+    font-size: 8pt;
+    color: #666;
+    display: flex;
+    justify-content: space-between;
+}
+</style>
+
+<div class="rpt-page">
+<div class="rpt-border">
+
+    {{-- Header --}}
+    <div class="rpt-header">
+        <img src="{{ asset('images/qc-seal.png') }}" class="rpt-logo" alt="QC Seal">
+        <div class="rpt-titles">
+            <div class="rep"><em>Republic of the Philippines</em></div>
+            <div class="prov">City of Quezon, National Capital Region</div>
+            <div class="brgy">Barangay New Era</div>
+            <div class="off">Office of the Punong Barangay</div>
+            <div class="addr">New Era, Quezon City, Metro Manila</div>
+        </div>
+        <img src="{{ asset('images/bne-logo.png') }}" class="rpt-logo" alt="BNE Seal">
     </div>
 
+    <div class="rpt-doc-title">Barangay Blotter Report</div>
+    <div class="rpt-case-num">Case No.: {{ $blotter->case_number }}</div>
+
+    {{-- Case Information --}}
+    <div class="rpt-section-title">Case Information</div>
+    <div class="rpt-grid">
+        <div class="rpt-field">
+            <span class="lbl">Case Number</span>
+            <span class="val">{{ $blotter->case_number }}</span>
+        </div>
+        <div class="rpt-field">
+            <span class="lbl">Incident Type</span>
+            <span class="val">{{ $blotter->incident_type }}</span>
+        </div>
+        <div class="rpt-field">
+            <span class="lbl">Incident Date</span>
+            <span class="val">{{ $blotter->incident_date ? \Carbon\Carbon::parse($blotter->incident_date)->format('F d, Y') : '—' }}</span>
+        </div>
+        <div class="rpt-field">
+            <span class="lbl">Status</span>
+            <span class="val"><strong>{{ $blotter->status }}</strong></span>
+        </div>
+        <div class="rpt-field">
+            <span class="lbl">Date Filed</span>
+            <span class="val">{{ $blotter->created_at->format('F d, Y') }}</span>
+        </div>
+        <div class="rpt-field">
+            <span class="lbl">Filed By</span>
+            <span class="val">{{ $blotter->filedBy->name ?? '—' }}</span>
+        </div>
+    </div>
+    <div class="rpt-fullwidth">
+        <span class="lbl">Incident Location</span>
+        <span class="val">{{ $blotter->incident_location ?? '—' }}</span>
+    </div>
+
+    {{-- Parties --}}
+    <div class="rpt-section-title">Parties Involved</div>
+    <div class="rpt-grid">
+        <div class="rpt-field">
+            <span class="lbl">Complainant</span>
+            <span class="val"><strong>{{ $blotter->complainant_name ?? ($blotter->complainantResident?->full_name ?? '—') }}</strong></span>
+        </div>
+        <div class="rpt-field">
+            <span class="lbl">Respondent</span>
+            <span class="val"><strong>{{ $blotter->respondent_name ?? '—' }}</strong></span>
+        </div>
+        <div class="rpt-field">
+            <span class="lbl">Complainant Address</span>
+            <span class="val">{{ $blotter->complainant_address ?? '—' }}</span>
+        </div>
+        <div class="rpt-field">
+            <span class="lbl">Respondent Address</span>
+            <span class="val">{{ $blotter->respondent_address ?? '—' }}</span>
+        </div>
+        <div class="rpt-field" style="border-bottom:none">
+            <span class="lbl">Complainant Contact</span>
+            <span class="val">{{ $blotter->complainant_contact ?? '—' }}</span>
+        </div>
+        <div class="rpt-field" style="border-bottom:none">
+            <span class="lbl">Respondent Contact</span>
+            <span class="val">{{ $blotter->respondent_contact ?? '—' }}</span>
+        </div>
+    </div>
+
+    {{-- Incident Details --}}
+    <div class="rpt-section-title">Incident Details / Narrative</div>
+    <div class="rpt-fullwidth">
+        <span class="val">{{ $blotter->incident_details ?? 'No details recorded.' }}</span>
+    </div>
+
+    {{-- Resolution --}}
+    @if($blotter->resolution_notes || $blotter->settled_at)
+    <div class="rpt-section-title">Resolution</div>
+    <div class="rpt-grid">
+        @if($blotter->settled_at)
+        <div class="rpt-field" style="border-bottom:none">
+            <span class="lbl">Date Settled</span>
+            <span class="val">{{ $blotter->settled_at->format('F d, Y') }}</span>
+        </div>
+        <div class="rpt-field" style="border-bottom:none">
+            <span class="lbl">Final Status</span>
+            <span class="val">{{ $blotter->status }}</span>
+        </div>
+        @endif
+    </div>
+    @if($blotter->resolution_notes)
+    <div class="rpt-fullwidth">
+        <span class="lbl">Resolution Notes</span>
+        <span class="val">{{ $blotter->resolution_notes }}</span>
+    </div>
+    @endif
+    @endif
+
+    {{-- Signatures --}}
+    <div class="rpt-sig-area">
+        <div class="rpt-sig-box">
+            <div style="height:50px"></div>
+            <div class="rpt-sig-line"></div>
+            <div class="rpt-sig-name">{{ $blotter->complainant_name ?? '—' }}</div>
+            <div class="rpt-sig-title">Complainant</div>
+        </div>
+        <div class="rpt-sig-box">
+            <div style="height:50px"></div>
+            <div class="rpt-sig-line"></div>
+            <div class="rpt-sig-name">{{ $blotter->respondent_name ?? '—' }}</div>
+            <div class="rpt-sig-title">Respondent</div>
+        </div>
+        <div class="rpt-sig-box">
+            <div style="height:50px"></div>
+            <div class="rpt-sig-line"></div>
+            <div class="rpt-sig-name">{{ $secretaryName }}</div>
+            <div class="rpt-sig-title">Barangay Secretary</div>
+        </div>
+        <div class="rpt-sig-box">
+            <div style="height:50px"></div>
+            <div class="rpt-sig-line"></div>
+            <div class="rpt-sig-name">{{ $officialName }}</div>
+            <div class="rpt-sig-title">Punong Barangay</div>
+        </div>
+    </div>
+
+    {{-- Footer --}}
+    <div class="rpt-footer">
+        <span>Printed by: {{ auth()->user()->name }} — {{ now()->format('F d, Y \a\t h:i A') }}</span>
+        <span>Barangay New Era BMS</span>
+    </div>
+
+</div>
+</div>
 </div>
 
 @endsection
