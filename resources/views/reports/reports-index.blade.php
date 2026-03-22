@@ -14,6 +14,12 @@
             <i class="fas fa-clock" style="color:var(--gold);margin-right:6px"></i>
             As of {{ now()->format('F d, Y') }}
         </span>
+        <a href="{{ route('export.analytics', 'pdf') }}" class="btn btn-secondary" title="Export Population Summary PDF">
+            <i class="fas fa-file-pdf" style="color:#dc2626"></i> Population PDF
+        </a>
+        <a href="{{ route('export.analytics', 'excel') }}" class="btn btn-secondary" title="Export Population Summary Excel">
+            <i class="fas fa-file-excel" style="color:#16a34a"></i> Population Excel
+        </a>
     </div>
 </div>
 
