@@ -11,7 +11,7 @@
         <a href="{{ route('export.pdf', 'documents') }}" class="btn btn-secondary" title="Export PDF">
     <i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF
 </a>
-<a href="{{ route('export.excel', 'residents') }}" class="btn btn-secondary" title="Export Excel">
+<a href="{{ route('export.excel', 'documents') }}" class="btn btn-secondary" title="Export Excel">
     <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
 </a>
         <a href="{{ route('documents.create') }}" class="btn btn-primary">

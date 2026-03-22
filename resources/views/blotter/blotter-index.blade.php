@@ -9,6 +9,7 @@
     </div>
     <div class="page-actions">
         <a href="{{ route('blotter.create') }}" class="btn btn-primary">
+        <a href="{{ route('blotter.create') }}" class="btn btn-primary">
             <i class="fas fa-gavel"></i> File Case
         </a>
     </div>
