@@ -13,6 +13,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PurokController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\VerifyController;
 
 // -------------------------------------------------------
@@ -122,6 +123,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     Route::get('activity-log', [ActivityLogController::class, 'index'])
         ->name('activity-log.index')
+        ->middleware('role:Admin,Secretary');
+
+    // ---------------------------------------------------
+    // Exports — Admin + Secretary
+    // ---------------------------------------------------
+    Route::get('export/excel/{module}', [ExportController::class, 'excel'])
+        ->name('export.excel')
+        ->middleware('role:Admin,Secretary');
+    Route::get('export/pdf/{module}', [ExportController::class, 'pdf'])
+        ->name('export.pdf')
         ->middleware('role:Admin,Secretary');
 
 });
