@@ -17,6 +17,57 @@
     </div>
 </div>
 
+{{-- EXPORT SECTION --}}
+<div class="card mb-6">
+    <div class="card-header">
+        <span class="card-title"><i class="fas fa-download"></i> Export Data</span>
+        <span style="font-size:11px;color:var(--text-muted)">Download records as PDF or Excel</span>
+    </div>
+    <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+            @php
+                $modules = [
+                    ['key' => 'residents',  'label' => 'Residents',  'icon' => 'fa-users',    'color' => '#1d76db'],
+                    ['key' => 'households', 'label' => 'Households', 'icon' => 'fa-house',    'color' => '#5319e7'],
+                    ['key' => 'documents',  'label' => 'Documents',  'icon' => 'fa-file-alt', 'color' => '#006b75'],
+                    ['key' => 'blotter',    'label' => 'Blotter',    'icon' => 'fa-gavel',    'color' => '#e11d48'],
+                    ['key' => 'businesses', 'label' => 'Businesses', 'icon' => 'fa-store',    'color' => '#f97316'],
+                ];
+            @endphp
+
+            @foreach($modules as $m)
+            <div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+                {{-- Module header --}}
+                <div style="background:{{ $m['color'] }}12;padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+                    <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:{{ $m['color'] }}20;color:{{ $m['color'] }};display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">
+                        <i class="fas {{ $m['icon'] }}"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:13px;font-weight:700;color:var(--text)">{{ $m['label'] }}</div>
+                        <div style="font-size:10px;color:var(--text-muted)">All records</div>
+                    </div>
+                </div>
+                {{-- Export buttons --}}
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+                    <a href="{{ route('export.pdf', $m['key']) }}"
+                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:12px;font-weight:600;color:#dc2626;background:#fff;border-right:1px solid var(--border);text-decoration:none;transition:background 0.15s"
+                       onmouseover="this.style.background='#fee2e2'"
+                       onmouseout="this.style.background='#fff'">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </a>
+                    <a href="{{ route('export.excel', $m['key']) }}"
+                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:12px;font-weight:600;color:#16a34a;background:#fff;text-decoration:none;transition:background 0.15s"
+                       onmouseover="this.style.background='#dcfce7'"
+                       onmouseout="this.style.background='#fff'">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </a>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
 {{-- TOP STATS --}}
 <div class="grid-4 mb-6">
     <div class="stat-card">
@@ -59,8 +110,6 @@
 
 {{-- CHARTS ROW --}}
 <div class="grid-2 mb-6" style="grid-template-columns:2fr 1fr">
-
-    {{-- Monthly Documents Chart --}}
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-chart-bar"></i> Documents Issued — {{ date('Y') }}</span>
@@ -69,8 +118,6 @@
             <canvas id="monthlyDocChart" height="110"></canvas>
         </div>
     </div>
-
-    {{-- Age Groups Donut --}}
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-chart-pie"></i> Age Groups</span>
@@ -79,13 +126,10 @@
             <canvas id="ageChart" height="160"></canvas>
         </div>
     </div>
-
 </div>
 
 {{-- POPULATION BREAKDOWN --}}
 <div class="grid-2 mb-6">
-
-    {{-- Demographics Progress Bars --}}
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-chart-bar"></i> Population Demographics</span>
@@ -93,11 +137,11 @@
         <div class="card-body">
             @php
                 $demos = [
-                    ['label' => 'Registered Voters', 'value' => $totalVoters,      'color' => 'var(--navy)'],
-                    ['label' => 'Senior Citizens',   'value' => $totalSeniors,     'color' => 'var(--gold)'],
-                    ['label' => 'PWD',               'value' => $totalPwd,         'color' => '#2563eb'],
-                    ['label' => 'Solo Parents',      'value' => $totalSoloParent,  'color' => '#7c3aed'],
-                    ['label' => '4Ps Beneficiaries', 'value' => $total4ps,         'color' => '#dc2626'],
+                    ['label' => 'Registered Voters', 'value' => $totalVoters,     'color' => 'var(--navy)'],
+                    ['label' => 'Senior Citizens',   'value' => $totalSeniors,    'color' => 'var(--gold)'],
+                    ['label' => 'PWD',               'value' => $totalPwd,        'color' => '#2563eb'],
+                    ['label' => 'Solo Parents',      'value' => $totalSoloParent, 'color' => '#7c3aed'],
+                    ['label' => '4Ps Beneficiaries', 'value' => $total4ps,        'color' => '#dc2626'],
                 ];
             @endphp
             @foreach($demos as $d)
@@ -115,7 +159,6 @@
             </div>
             @endforeach
 
-            {{-- Residency Status --}}
             <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">Residency Status</div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
@@ -135,7 +178,6 @@
                 </div>
             </div>
 
-            {{-- Gender Split --}}
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">Gender Split</div>
                 @php
@@ -161,7 +203,6 @@
         </div>
     </div>
 
-    {{-- Residents by Purok --}}
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-location-dot"></i> Residents by Purok</span>
@@ -199,13 +240,10 @@
             </table>
         </div>
     </div>
-
 </div>
 
 {{-- SERVICES SUMMARY ROW --}}
 <div class="grid-3 mb-6">
-
-    {{-- Documents --}}
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-file-alt"></i> Documents by Type</span>
@@ -242,7 +280,6 @@
         </div>
     </div>
 
-    {{-- Blotter by Type --}}
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-gavel"></i> Blotter by Type</span>
@@ -279,7 +316,6 @@
         </div>
     </div>
 
-    {{-- Businesses --}}
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-store"></i> Business Permits</span>
@@ -287,8 +323,8 @@
         <div class="card-body">
             @php
                 $bizStats = [
-                    ['label' => 'Active',  'value' => $activeBusinesses,                                'color' => '#16a34a'],
-                    ['label' => 'Expired', 'value' => $expiredBusinesses,                               'color' => 'var(--crimson)'],
+                    ['label' => 'Active',  'value' => $activeBusinesses,  'color' => '#16a34a'],
+                    ['label' => 'Expired', 'value' => $expiredBusinesses, 'color' => 'var(--crimson)'],
                     ['label' => 'Other',   'value' => $totalBusinesses - $activeBusinesses - $expiredBusinesses, 'color' => 'var(--text-subtle)'],
                 ];
             @endphp
@@ -310,7 +346,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 {{-- QUICK LINKS --}}
@@ -350,7 +385,6 @@
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-    // Monthly Documents Bar Chart
     new Chart(document.getElementById('monthlyDocChart').getContext('2d'), {
         type: 'bar',
         data: {
@@ -379,7 +413,6 @@
         }
     });
 
-    // Age Groups Donut
     new Chart(document.getElementById('ageChart').getContext('2d'), {
         type: 'doughnut',
         data: {
