@@ -104,19 +104,53 @@
     $idNumber   = 'BNE-' . str_pad($official->id, 4, '0', STR_PAD_LEFT) . '-' . date('Y');
     $validUntil = $official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('M d, Y') : '—';
 
-    // Generate vertical barcode SVG from ID number
+    // Code 39 barcode pattern for each character
+    $code39 = [
+        '0'=>'101001101101','1'=>'110100101011','2'=>'101100101011',
+        '3'=>'110110010101','4'=>'101001101011','5'=>'110100110101',
+        '6'=>'101100110101','7'=>'101001011011','8'=>'110100101101',
+        '9'=>'101100101101','-'=>'101011010011','*'=>'100101101101',
+        'B'=>'110010101011','E'=>'110010110101','N'=>'110101001011',
+        'A'=>'110101001011','C'=>'101011001011','D'=>'110101100101',
+    ];
+    $default = '101010110101';
+
+    // Build vertical barcode
     $svgBars = '';
     $y = 0;
-    foreach (str_split($idNumber) as $char) {
-        $ascii = ord($char);
-        $pattern = str_pad(decbin($ascii), 8, '0', STR_PAD_LEFT);
-        foreach (str_split($pattern) as $bit) {
-            $h = $bit === '1' ? 2.5 : 1.2;
-            $svgBars .= '<rect x="0" y="' . $y . '" width="18" height="' . $h . '" fill="' . ($bit === '1' ? '#0D2144' : '#fff') . '"/>';
-            $y += $h;
-        }
-        $y += 1.5;
+    $barW = 22;
+
+    // Start quiet zone
+    $y += 6;
+
+    // Start char *
+    $pattern = $code39['*'] ?? $default;
+    foreach (str_split($pattern) as $i => $bit) {
+        $h = $bit === '1' ? ($i % 3 === 0 ? 3.5 : 2) : 1;
+        $svgBars .= '<rect x="0" y="' . $y . '" width="' . $barW . '" height="' . $h . '" fill="' . ($bit === '1' ? '#0D2144' : '#C8D8E8') . '"/>';
+        $y += $h + 0.5;
     }
+    $y += 3;
+
+    foreach (str_split(strtoupper($idNumber)) as $char) {
+        $pattern = $code39[$char] ?? $default;
+        foreach (str_split($pattern) as $i => $bit) {
+            $h = $bit === '1' ? ($i % 3 === 0 ? 3.5 : 2) : 1;
+            $svgBars .= '<rect x="0" y="' . $y . '" width="' . $barW . '" height="' . $h . '" fill="' . ($bit === '1' ? '#0D2144' : '#C8D8E8') . '"/>';
+            $y += $h + 0.5;
+        }
+        $y += 3;
+    }
+
+    // Stop char *
+    $pattern = $code39['*'] ?? $default;
+    foreach (str_split($pattern) as $i => $bit) {
+        $h = $bit === '1' ? ($i % 3 === 0 ? 3.5 : 2) : 1;
+        $svgBars .= '<rect x="0" y="' . $y . '" width="' . $barW . '" height="' . $h . '" fill="' . ($bit === '1' ? '#0D2144' : '#C8D8E8') . '"/>';
+        $y += $h + 0.5;
+    }
+
+    $y += 6;
     $bcHeight = $y;
 @endphp
 <style>
@@ -323,11 +357,13 @@
             @endif
         </div>
 
-        <div style="display:flex;flex-direction:row;align-items:stretch;height:1.05in;position:relative;z-index:1;">
-            <svg width="18" height="{{ $bcHeight }}" xmlns="http://www.w3.org/2000/svg" style="height:100%;width:auto;max-width:18px;display:block;">
+        <div style="display:flex;flex-direction:row;align-items:center;position:relative;z-index:1;background:#fff;border:1.5px solid #0D2144;border-radius:3px;padding:3px 2px 3px 3px;">
+            <svg width="22" height="{{ $bcHeight }}" xmlns="http://www.w3.org/2000/svg"
+                 style="display:block;background:#C8D8E8;max-height:1.05in;border-radius:2px;">
+                <rect x="0" y="0" width="22" height="{{ $bcHeight }}" fill="#C8D8E8"/>
                 {!! $svgBars !!}
             </svg>
-            <div style="font-family:'Courier New',monospace;font-size:3.5pt;color:#0D2144;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:0.04em;font-weight:700;margin-left:2px;display:flex;align-items:center;">{{ $idNumber }}</div>
+            <div style="font-family:'Courier New',monospace;font-size:3.8pt;color:#0D2144;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:0.06em;font-weight:800;margin-left:3px;padding:2px 0;">{{ $idNumber }}</div>
         </div>
     </div>
 
