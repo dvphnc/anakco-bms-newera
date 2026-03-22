@@ -59,7 +59,7 @@ class OfficialController extends Controller
 
     public function show(Official $official)
     {
-        return redirect()->route('officials.edit', $official);
+        return view('officials.officials-show', compact('official'));
     }
 
     public function edit(Official $official)
