@@ -273,12 +273,12 @@
         </div>
 
         {{-- Demographics + Purok side by side --}}
-        <div class="grid-2" id="demo-purok-grid" style="align-items:start">
-        <div class="card" id="demo-card">
+        <div id="demo-purok-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch">
+        <div class="card" id="demo-card" style="display:flex;flex-direction:column">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-chart-bar" style="color:var(--gold)"></i> Population Demographics</span>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="flex:1">
                 @php
                     $maxDemo = max($activeResidents, $totalVoters, $totalSeniors, $totalPwd, $totalSoloParent, $total4ps, $totalMale, $totalFemale) ?: 1;
                     $demos = [
@@ -328,11 +328,11 @@
             </div>
         </div>
 
-        <div class="card" id="purok-card">
+        <div class="card" id="purok-card" style="display:flex;flex-direction:column">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-location-dot" style="color:var(--gold)"></i> Residents by Purok</span>
             </div>
-            <div class="card-body" style="padding:12px 16px">
+            <div class="card-body" style="padding:12px 16px;flex:1">
                 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
                     @foreach($puroks as $purok)
                     @php
@@ -383,29 +383,24 @@ function matchDemoHeight(val) {
     const snapshotCard = document.getElementById('snapshot-card');
     const demoCard     = document.getElementById('demo-card');
     const purokCard    = document.getElementById('purok-card');
-    const grid         = document.getElementById('demo-purok-grid');
-    if (!snapshotCard || !demoCard || !purokCard || !grid) return;
+    if (!snapshotCard || !demoCard || !purokCard) return;
 
-    // Reset first
     demoCard.style.minHeight  = '';
     purokCard.style.minHeight = '';
-    grid.style.alignItems     = 'start';
 
     if (val === 'annual') return;
 
-    // Calculate snapshot card bottom position
-    const snapRect = snapshotCard.getBoundingClientRect();
-    const demoRect = demoCard.getBoundingClientRect();
-
-    const snapBottom = snapRect.bottom;
-    const demoTop    = demoRect.top;
-    const needed     = snapBottom - demoTop;
-
-    if (needed > demoCard.offsetHeight) {
-        demoCard.style.minHeight  = needed + 'px';
-        purokCard.style.minHeight = needed + 'px';
-        grid.style.alignItems     = 'stretch';
-    }
+    // Use scrollHeight of left column vs position of demo card
+    requestAnimationFrame(() => {
+        const leftCol  = document.getElementById('left-col');
+        const leftBottom = leftCol.getBoundingClientRect().bottom;
+        const demoTop    = demoCard.getBoundingClientRect().top;
+        const needed     = Math.floor(leftBottom - demoTop) - 1;
+        if (needed > 0) {
+            demoCard.style.minHeight  = needed + 'px';
+            purokCard.style.minHeight = needed + 'px';
+        }
+    });
 }
 
 selectType('monthly');
