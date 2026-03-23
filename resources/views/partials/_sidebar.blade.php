@@ -19,7 +19,7 @@
     {{-- Navigation --}}
     <nav class="sidebar-nav">
 
-        @php $role = auth()->user()->role; @endphp
+        @php $role = auth()->user()?->role; @endphp
 
         <div class="nav-section-label">Main</div>
 
@@ -163,13 +163,13 @@
     <div class="sidebar-footer">
         <div class="sidebar-user">
             <div class="user-avatar">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                {{ strtoupper(substr(auth()->user()?->name ?? 'User', 0, 1)) }}
             </div>
             <div class="user-info" style="flex:1;min-width:0">
                 <div class="user-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-                    {{ auth()->user()->name }}
+                    {{ auth()->user()?->name ?? 'User' }}
                 </div>
-                <div class="user-role">{{ auth()->user()->role ?? 'Staff' }}</div>
+                <div class="user-role">{{ auth()->user()?->role ?? 'Staff' }}</div>
             </div>
             <form method="POST" action="{{ route('logout') }}" style="flex-shrink:0">
                 @csrf
