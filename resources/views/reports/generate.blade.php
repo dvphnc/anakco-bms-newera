@@ -273,12 +273,12 @@
         </div>
 
         {{-- Demographics + Purok side by side --}}
-        <div class="grid-2" style="align-items:start">
-        <div class="card">
+        <div id="demo-purok-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch">
+        <div class="card" id="demo-card" style="display:flex;flex-direction:column">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-chart-bar" style="color:var(--gold)"></i> Population Demographics</span>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="flex:1">
                 @php
                     $maxDemo = max($activeResidents, $totalVoters, $totalSeniors, $totalPwd, $totalSoloParent, $total4ps, $totalMale, $totalFemale) ?: 1;
                     $demos = [
@@ -328,11 +328,11 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="purok-card" style="display:flex;flex-direction:column">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-location-dot" style="color:var(--gold)"></i> Residents by Purok</span>
             </div>
-            <div class="card-body" style="padding:12px 16px">
+            <div class="card-body" style="padding:12px 16px;flex:1">
                 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
                     @foreach($puroks as $purok)
                     @php
@@ -367,13 +367,42 @@ function selectType(val) {
     card.style.borderColor = 'var(--gold)';
     card.style.background  = 'rgba(200,134,26,0.05)';
     card.querySelector('input[type=radio]').checked = true;
+
     const mf = document.getElementById('month-field');
     const qf = document.getElementById('quarter-field');
-    mf.style.display        = val === 'monthly'   ? 'block' : 'none';
-    mf.style.marginBottom   = val === 'monthly'   ? '16px'  : '0';
-    qf.style.display        = val === 'quarterly' ? 'block' : 'none';
-    qf.style.marginBottom   = val === 'quarterly' ? '16px'  : '0';
+    mf.style.display      = val === 'monthly'   ? 'block' : 'none';
+    mf.style.marginBottom = val === 'monthly'   ? '16px'  : '0';
+    qf.style.display      = val === 'quarterly' ? 'block' : 'none';
+    qf.style.marginBottom = val === 'quarterly' ? '16px'  : '0';
+
+    // Stretch demographics + purok to match snapshot height on monthly/quarterly
+    setTimeout(() => matchDemoHeight(val), 50);
 }
+
+function matchDemoHeight(val) {
+    const snapshotCard = document.getElementById('snapshot-card');
+    const demoCard     = document.getElementById('demo-card');
+    const purokCard    = document.getElementById('purok-card');
+    if (!snapshotCard || !demoCard || !purokCard) return;
+
+    demoCard.style.minHeight  = '';
+    purokCard.style.minHeight = '';
+
+    if (val === 'annual') return;
+
+    // Use scrollHeight of left column vs position of demo card
+    requestAnimationFrame(() => {
+        const leftCol  = document.getElementById('left-col');
+        const leftBottom = leftCol.getBoundingClientRect().bottom;
+        const demoTop    = demoCard.getBoundingClientRect().top;
+        const needed     = Math.floor(leftBottom - demoTop) - 1;
+        if (needed > 0) {
+            demoCard.style.minHeight  = needed + 'px';
+            purokCard.style.minHeight = needed + 'px';
+        }
+    });
+}
+
 selectType('monthly');
 
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -456,7 +485,15 @@ function matchColumnHeights() {
         snapshot.style.minHeight = (currentMin + diff) + 'px';
     }
 }
-window.addEventListener('load', matchColumnHeights);
-window.addEventListener('resize', matchColumnHeights);
+window.addEventListener('load', () => {
+    matchColumnHeights();
+    const selected = document.querySelector('input[name="report_type"]:checked');
+    if (selected) matchDemoHeight(selected.value);
+});
+window.addEventListener('resize', () => {
+    matchColumnHeights();
+    const selected = document.querySelector('input[name="report_type"]:checked');
+    if (selected) matchDemoHeight(selected.value);
+});
 </script>
 @endpush
