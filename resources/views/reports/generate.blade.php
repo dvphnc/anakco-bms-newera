@@ -87,16 +87,16 @@
                     <i class="fas fa-file-pdf" style="color:#ef4444"></i> Report Generator
                 </span>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="padding:20px 20px 24px">
                 <form method="POST" action="{{ route('reports.generate') }}">
                     @csrf
 
                     {{-- Type selector --}}
-                    <div class="form-group mb-4">
+                    <div class="form-group" style="margin-bottom:20px">
                         <label class="form-label">Report Type</label>
-                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
                             @foreach(['monthly'=>['Monthly','fa-calendar-day','Jan–Dec'],'quarterly'=>['Quarterly','fa-calendar-week','Q1–Q4'],'annual'=>['Annual','fa-calendar','Full Year']] as $val=>[$lbl,$icon,$sub])
-                            <label style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.15s;text-align:center;background:var(--surface);min-width:0;flex:1"
+                            <label style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.15s;text-align:center;background:var(--surface);min-width:0;flex:1"
                                    id="type-card-{{ $val }}" onclick="selectType('{{ $val }}')">
                                 <input type="radio" name="report_type" value="{{ $val }}" style="display:none" {{ $val==='monthly'?'checked':'' }}>
                                 <i class="fas {{ $icon }}" style="font-size:16px;color:var(--navy)"></i>
@@ -107,7 +107,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="form-group" style="margin-bottom:16px">
                         <label class="form-label">Module</label>
                         <select name="report_module" class="form-control" required>
                             <option value="summary">📊 Full Summary</option>
@@ -118,7 +118,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="form-group" style="margin-bottom:16px">
                         <label class="form-label">Year</label>
                         <select name="year" class="form-control" required>
                             @for($y=date('Y');$y>=2020;$y--)
@@ -146,7 +146,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">
+                    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">
                         <i class="fas fa-file-pdf"></i> Generate PDF Report
                     </button>
                 </form>
