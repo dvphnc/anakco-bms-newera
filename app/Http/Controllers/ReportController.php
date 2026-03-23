@@ -19,6 +19,64 @@ class ReportController extends Controller
         return view('reports.generate');
     }
 
+    public function analytics()
+    {
+        $totalActive      = Resident::where('residency_status', 'Active')->count();
+        $totalDeceased    = Resident::where('residency_status', 'Deceased')->count();
+        $totalTransferred = Resident::where('residency_status', 'Transferred')->count();
+        $totalMale        = Resident::where('gender', 'Male')->count();
+        $totalFemale      = Resident::where('gender', 'Female')->count();
+        $totalHouseholds  = \App\Models\Household::count();
+        $totalDocuments   = \App\Models\Document::count();
+        $totalBlotter     = \App\Models\BlotterCase::count();
+        $totalVoters      = Resident::where('is_voter', true)->count();
+        $totalSeniors     = Resident::where('is_senior', true)->count();
+        $totalPwd         = Resident::where('is_pwd', true)->count();
+        $totalSoloParent  = Resident::where('is_solo_parent', true)->count();
+        $total4ps         = Resident::where('is_4ps', true)->count();
+        $totalBusinesses  = \App\Models\Business::count();
+        $activeBusinesses = \App\Models\Business::where('status', 'Active')->count();
+        $expiredBusinesses= \App\Models\Business::where('status', 'Expired')->count();
+        $pendingDocuments = \App\Models\Document::where('status', 'Pending')->count();
+        $releasedDocuments= \App\Models\Document::where('status', 'Released')->count();
+        $activeBlotter    = \App\Models\BlotterCase::where('status', 'Active')->count();
+        $settledBlotter   = \App\Models\BlotterCase::whereIn('status', ['Settled', 'Closed'])->count();
+
+        $residentsByPurok = \App\Models\Purok::withCount([
+            'residents' => fn($q) => $q->where('residency_status', 'Active')
+        ])->orderByDesc('residents_count')->get();
+
+        $documentsByType = \App\Models\Document::selectRaw('document_type, count(*) as count')
+            ->groupBy('document_type')->pluck('count', 'document_type');
+
+        $blotterByType = \App\Models\BlotterCase::selectRaw('incident_type, count(*) as count')
+            ->groupBy('incident_type')->pluck('count', 'incident_type');
+
+        $monthlyData = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $monthlyData[$m] = \App\Models\Document::whereYear('created_at', date('Y'))
+                ->whereMonth('created_at', $m)->count();
+        }
+
+        $ageGroups = [
+            'Children (0-12)' => Resident::whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [0, 12])->count(),
+            'Teens (13-17)'   => Resident::whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [13, 17])->count(),
+            'Adults (18-59)'  => Resident::whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [18, 59])->count(),
+            'Seniors (60+)'   => Resident::where(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), '>=', 60)->count(),
+        ];
+
+        return view('reports.reports-index', compact(
+            'totalActive', 'totalDeceased', 'totalTransferred',
+            'totalMale', 'totalFemale', 'totalHouseholds',
+            'totalDocuments', 'totalBlotter', 'totalVoters',
+            'totalSeniors', 'totalPwd', 'totalSoloParent', 'total4ps',
+            'totalBusinesses', 'activeBusinesses', 'expiredBusinesses',
+            'pendingDocuments', 'releasedDocuments', 'activeBlotter', 'settledBlotter',
+            'residentsByPurok', 'documentsByType', 'blotterByType',
+            'monthlyData', 'ageGroups'
+        ));
+    }
+
     public function generate(Request $request)
     {
         $request->validate([
