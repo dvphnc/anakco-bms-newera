@@ -226,7 +226,8 @@
             </div>
         </div>
 
-        {{-- Demographics + Gender --}}
+        {{-- Demographics + Purok side by side --}}
+        <div class="grid-2" style="align-items:start">
         <div class="card">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-chart-bar" style="color:var(--gold)"></i> Population Demographics</span>
@@ -281,13 +282,12 @@
             </div>
         </div>
 
-        {{-- Residents by Purok --}}
         <div class="card">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-location-dot" style="color:var(--gold)"></i> Residents by Purok</span>
             </div>
             <div class="card-body" style="padding:12px 16px">
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
                     @foreach($puroks as $purok)
                     @php
                         $total = $puroks->sum('residents_count') ?: 1;
@@ -296,12 +296,13 @@
                     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;text-align:center">
                         <div style="font-size:18px;font-weight:700;color:var(--navy)">{{ $purok->residents_count }}</div>
                         <div style="font-size:10px;color:var(--text-muted);margin:2px 0">{{ $pct }}%</div>
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $purok->name }}</div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $purok->name }}</div>
                     </div>
                     @endforeach
                 </div>
             </div>
         </div>
+        </div>{{-- end grid-2 --}}
 
     </div>
 </div>
