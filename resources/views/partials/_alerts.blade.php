@@ -1,59 +1,37 @@
-{{-- Success Message --}}
+@if(isset($errors) && $errors->any())
+<div class="alert alert-error mb-4">
+    <i class="fas fa-exclamation-circle alert-icon"></i>
+    <div class="alert-message">
+        <strong>Please fix the following errors:</strong>
+        <ul class="alert-list">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+</div>
+@endif
+
 @if(session('success'))
-    <div class="alert alert-success" id="alert-success">
-        <div class="alert-icon">
-            <i class="fas fa-circle-check"></i>
-        </div>
-        <div class="alert-message">{{ session('success') }}</div>
-        <button class="alert-close" onclick="this.parentElement.remove()">
-            <i class="fas fa-xmark"></i>
-        </button>
-    </div>
+<div class="alert alert-success mb-4">
+    <i class="fas fa-check-circle alert-icon"></i>
+    <div class="alert-message">{{ session('success') }}</div>
+    <button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+</div>
 @endif
 
-{{-- Error Message --}}
 @if(session('error'))
-    <div class="alert alert-error" id="alert-error">
-        <div class="alert-icon">
-            <i class="fas fa-circle-xmark"></i>
-        </div>
-        <div class="alert-message">{{ session('error') }}</div>
-        <button class="alert-close" onclick="this.parentElement.remove()">
-            <i class="fas fa-xmark"></i>
-        </button>
-    </div>
+<div class="alert alert-error mb-4">
+    <i class="fas fa-exclamation-circle alert-icon"></i>
+    <div class="alert-message">{{ session('error') }}</div>
+    <button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+</div>
 @endif
 
-{{-- Validation Errors --}}
-@if($errors->any())
-    <div class="alert alert-error" id="alert-validation">
-        <div class="alert-icon">
-            <i class="fas fa-triangle-exclamation"></i>
-        </div>
-        <div class="alert-message">
-            <strong>Please fix the following errors:</strong>
-            <ul class="alert-list">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        <button class="alert-close" onclick="this.parentElement.remove()">
-            <i class="fas fa-xmark"></i>
-        </button>
-    </div>
+@if(session('warning'))
+<div class="alert mb-4" style="background:var(--gold-glow);border:1px solid var(--gold-border);color:#7A4F0A">
+    <i class="fas fa-exclamation-triangle alert-icon"></i>
+    <div class="alert-message">{{ session('warning') }}</div>
+    <button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+</div>
 @endif
-
-{{-- Auto-dismiss alerts after 4 seconds --}}
-<script>
-    setTimeout(function () {
-        ['alert-success', 'alert-error', 'alert-validation'].forEach(function (id) {
-            const el = document.getElementById(id);
-            if (el) {
-                el.style.transition = 'opacity 0.5s';
-                el.style.opacity = '0';
-                setTimeout(() => el.remove(), 500);
-            }
-        });
-    }, 4000);
-</script>
