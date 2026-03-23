@@ -15,6 +15,7 @@ use App\Http\Controllers\PurokController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\VerifyController;
 
 // -------------------------------------------------------
@@ -152,5 +153,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('backup/restore', [BackupController::class, 'restore'])->name('backup.restore')->middleware('role:Admin');
     Route::post('backup/upload', [BackupController::class, 'upload'])->name('backup.upload')->middleware('role:Admin');
     Route::delete('backup/{filename}', [BackupController::class, 'delete'])->name('backup.delete')->middleware('role:Admin');
+
+    // Global Search
+    Route::get('search', [SearchController::class, 'search'])->name('search');
 
 });
