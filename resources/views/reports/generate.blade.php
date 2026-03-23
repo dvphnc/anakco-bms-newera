@@ -183,6 +183,52 @@
             </div>
         </div>
 
+        {{-- Today's Snapshot --}}
+        @php
+            $todayDocs     = \App\Models\Document::whereDate('created_at', today())->count();
+            $todayResidents= \App\Models\Resident::whereDate('created_at', today())->count();
+            $todayBlotter  = \App\Models\BlotterCase::whereDate('created_at', today())->count();
+            $thisMonthDocs = \App\Models\Document::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
+            $thisMonthBlt  = \App\Models\BlotterCase::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
+            $thisMonthRes  = \App\Models\Resident::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
+        @endphp
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-calendar-day" style="color:var(--gold)"></i> Snapshot</span>
+                <span style="font-size:11px;color:var(--text-muted)">{{ now()->format('M d, Y') }}</span>
+            </div>
+            <div class="card-body" style="padding:10px 16px">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Today</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+                    @php $todayItems = [
+                        ['label'=>'Documents', 'value'=>$todayDocs,      'color'=>'#f59e0b','bg'=>'#fffbeb'],
+                        ['label'=>'Residents', 'value'=>$todayResidents, 'color'=>'#22c55e','bg'=>'#f0fdf4'],
+                        ['label'=>'Blotter',   'value'=>$todayBlotter,   'color'=>'#ef4444','bg'=>'#fef2f2'],
+                    ]; @endphp
+                    @foreach($todayItems as $t)
+                    <div style="text-align:center;padding:8px 6px;background:{{ $t['bg'] }};border-radius:var(--radius-sm)">
+                        <div style="font-size:20px;font-weight:800;color:{{ $t['color'] }}">{{ $t['value'] }}</div>
+                        <div style="font-size:10px;color:var(--text-muted)">{{ $t['label'] }}</div>
+                    </div>
+                    @endforeach
+                </div>
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">This Month — {{ now()->format('F') }}</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                    @php $monthItems = [
+                        ['label'=>'Documents', 'value'=>$thisMonthDocs, 'color'=>'#f59e0b','bg'=>'#fffbeb'],
+                        ['label'=>'Residents', 'value'=>$thisMonthRes,  'color'=>'#22c55e','bg'=>'#f0fdf4'],
+                        ['label'=>'Blotter',   'value'=>$thisMonthBlt,  'color'=>'#ef4444','bg'=>'#fef2f2'],
+                    ]; @endphp
+                    @foreach($monthItems as $t)
+                    <div style="text-align:center;padding:8px 6px;background:{{ $t['bg'] }};border-radius:var(--radius-sm)">
+                        <div style="font-size:20px;font-weight:800;color:{{ $t['color'] }}">{{ $t['value'] }}</div>
+                        <div style="font-size:10px;color:var(--text-muted)">{{ $t['label'] }}</div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
     </div>
 
     {{-- RIGHT COLUMN --}}
