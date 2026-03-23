@@ -287,16 +287,19 @@
                 <span class="card-title"><i class="fas fa-location-dot" style="color:var(--gold)"></i> Residents by Purok</span>
             </div>
             <div class="card-body" style="padding:12px 16px">
-                @foreach($puroks as $purok)
-                @php $pct = $puroks->max('residents_count') > 0 ? round(($purok->residents_count / $puroks->max('residents_count')) * 100) : 0; @endphp
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
-                    <div style="font-size:12px;color:var(--text);min-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $purok->name }}</div>
-                    <div style="flex:1;background:var(--surface2);border-radius:99px;height:7px;overflow:hidden">
-                        <div style="height:100%;width:{{ $pct }}%;background:#0D2144;border-radius:99px"></div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                    @foreach($puroks as $purok)
+                    @php
+                        $total = $puroks->sum('residents_count') ?: 1;
+                        $pct   = round(($purok->residents_count / $total) * 100);
+                    @endphp
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;text-align:center">
+                        <div style="font-size:18px;font-weight:700;color:var(--navy)">{{ $purok->residents_count }}</div>
+                        <div style="font-size:10px;color:var(--text-muted);margin:2px 0">{{ $pct }}%</div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $purok->name }}</div>
                     </div>
-                    <div style="font-size:12px;font-weight:700;color:var(--navy);min-width:28px;text-align:right">{{ $purok->residents_count }}</div>
+                    @endforeach
                 </div>
-                @endforeach
             </div>
         </div>
 
