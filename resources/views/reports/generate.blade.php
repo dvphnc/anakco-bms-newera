@@ -334,15 +334,26 @@
             </div>
             <div class="card-body" style="padding:12px 16px;flex:1;display:flex;flex-direction:column">
                 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;flex:1">
-                    @foreach($puroks as $purok)
+                    @php
+                        $purokColors = [
+                            ['bg'=>'#eff6ff','border'=>'#bfdbfe','num'=>'#1d4ed8','badge'=>'#dbeafe','text'=>'#1e40af'],
+                            ['bg'=>'#f0fdf4','border'=>'#bbf7d0','num'=>'#15803d','badge'=>'#dcfce7','text'=>'#166534'],
+                            ['bg'=>'#fffbeb','border'=>'#fde68a','num'=>'#b45309','badge'=>'#fef3c7','text'=>'#92400e'],
+                            ['bg'=>'#fdf4ff','border'=>'#e9d5ff','num'=>'#7e22ce','badge'=>'#f3e8ff','text'=>'#6b21a8'],
+                            ['bg'=>'#fff1f2','border'=>'#fecdd3','num'=>'#be123c','badge'=>'#ffe4e6','text'=>'#9f1239'],
+                            ['bg'=>'#f0fdfa','border'=>'#99f6e4','num'=>'#0f766e','badge'=>'#ccfbf1','text'=>'#115e59'],
+                        ];
+                    @endphp
+                    @foreach($puroks as $i => $purok)
                     @php
                         $total = $puroks->sum('residents_count') ?: 1;
                         $pct   = round(($purok->residents_count / $total) * 100);
+                        $c     = $purokColors[$i % count($purokColors)];
                     @endphp
-                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
-                        <div style="font-size:18px;font-weight:700;color:var(--navy)">{{ $purok->residents_count }}</div>
-                        <div style="font-size:10px;color:var(--text-muted);margin:2px 0">{{ $pct }}%</div>
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $purok->name }}</div>
+                    <div style="background:{{ $c['bg'] }};border:1px solid {{ $c['border'] }};border-radius:var(--radius-sm);padding:12px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                        <div style="font-size:22px;font-weight:800;color:{{ $c['num'] }}">{{ $purok->residents_count }}</div>
+                        <div style="display:inline-block;background:{{ $c['badge'] }};color:{{ $c['text'] }};font-size:10px;font-weight:700;padding:1px 7px;border-radius:99px;margin:3px 0">{{ $pct }}%</div>
+                        <div style="font-size:11px;font-weight:600;color:{{ $c['text'] }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">{{ $purok->name }}</div>
                     </div>
                     @endforeach
                 </div>
