@@ -111,7 +111,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     // Reports — Admin + Secretary only
     // ---------------------------------------------------
-    Route::get('reports', [ReportController::class, 'index'])
+    Route::get('reports', [ReportController::class, 'analytics'])
         ->name('reports.index')
         ->middleware('role:Admin,Secretary');
 
@@ -143,7 +143,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Report Generation
     Route::get('reports/generate', [ReportController::class, 'index'])->name('reports.generate');
-    Route::post('reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
+    Route::post('reports/generate', [ReportController::class, 'generate'])->name('reports.generate.post');
 
     // Database Backup
     Route::get('backup', [BackupController::class, 'index'])->name('backup.index')->middleware('role:Admin');
