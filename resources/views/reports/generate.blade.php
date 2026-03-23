@@ -127,7 +127,7 @@
                         </select>
                     </div>
 
-                    <div id="month-field" class="form-group mb-4">
+                    <div id="month-field" class="form-group" style="margin-bottom:16px">
                         <label class="form-label">Month</label>
                         <select name="month" class="form-control">
                             @foreach(['January','February','March','April','May','June','July','August','September','October','November','December'] as $i=>$m)
@@ -136,7 +136,7 @@
                         </select>
                     </div>
 
-                    <div id="quarter-field" class="form-group mb-4" style="display:none">
+                    <div id="quarter-field" class="form-group" style="display:none;margin-bottom:16px">
                         <label class="form-label">Quarter</label>
                         <select name="quarter" class="form-control">
                             <option value="1">Q1 — Jan to Mar</option>
@@ -367,8 +367,12 @@ function selectType(val) {
     card.style.borderColor = 'var(--gold)';
     card.style.background  = 'rgba(200,134,26,0.05)';
     card.querySelector('input[type=radio]').checked = true;
-    document.getElementById('month-field').style.display   = val === 'monthly'   ? 'block' : 'none';
-    document.getElementById('quarter-field').style.display = val === 'quarterly' ? 'block' : 'none';
+    const mf = document.getElementById('month-field');
+    const qf = document.getElementById('quarter-field');
+    mf.style.display        = val === 'monthly'   ? 'block' : 'none';
+    mf.style.marginBottom   = val === 'monthly'   ? '16px'  : '0';
+    qf.style.display        = val === 'quarterly' ? 'block' : 'none';
+    qf.style.marginBottom   = val === 'quarterly' ? '16px'  : '0';
 }
 selectType('monthly');
 
