@@ -78,7 +78,7 @@
 <div style="display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start">
 
     {{-- LEFT COLUMN --}}
-    <div style="display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:16px;height:100%">
 
         {{-- Form Card --}}
         <div class="card">
@@ -154,11 +154,11 @@
         </div>
 
         {{-- Quick Generate --}}
-        <div class="card" style="flex:1">
+        <div class="card" style="flex:1;display:flex;flex-direction:column">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-bolt" style="color:var(--gold)"></i> Quick Generate</span>
             </div>
-            <div class="card-body" style="padding:10px 12px;display:flex;flex-direction:column;gap:5px">
+            <div class="card-body" style="padding:10px 12px;display:flex;flex-direction:column;gap:5px;flex:1">
                 @php $quick = [
                     ['label'=>'This Month — Summary',   'type'=>'monthly',   'module'=>'summary',   'month'=>date('n'),'year'=>date('Y')],
                     ['label'=>'This Month — Documents', 'type'=>'monthly',   'module'=>'documents', 'month'=>date('n'),'year'=>date('Y')],
@@ -183,37 +183,10 @@
             </div>
         </div>
 
-        {{-- Report Info --}}
-        <div class="card" style="flex:1">
-            <div class="card-header">
-                <span class="card-title"><i class="fas fa-info-circle" style="color:var(--gold)"></i> Report Contents</span>
-            </div>
-            <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
-                @php $modules = [
-                    ['icon'=>'fa-chart-bar',   'color'=>'var(--navy)', 'label'=>'Full Summary',  'desc'=>'Population, documents, blotter, businesses overview'],
-                    ['icon'=>'fa-users',        'color'=>'#22c55e',     'label'=>'Residents',     'desc'=>'New registrations with demographics breakdown'],
-                    ['icon'=>'fa-file-alt',     'color'=>'#f59e0b',     'label'=>'Documents',     'desc'=>'Issued documents with type and status breakdown'],
-                    ['icon'=>'fa-gavel',        'color'=>'#ef4444',     'label'=>'Blotter',       'desc'=>'Cases filed with incident type summary'],
-                    ['icon'=>'fa-store',        'color'=>'#3b82f6',     'label'=>'Businesses',    'desc'=>'Permits issued, renewed, and expired'],
-                ]; @endphp
-                @foreach($modules as $m)
-                <div style="display:flex;align-items:flex-start;gap:10px">
-                    <div style="width:30px;height:30px;border-radius:var(--radius-sm);background:{{ $m['color'] }}12;color:{{ $m['color'] }};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px">
-                        <i class="fas {{ $m['icon'] }}"></i>
-                    </div>
-                    <div>
-                        <div style="font-size:12.5px;font-weight:700;color:var(--text)">{{ $m['label'] }}</div>
-                        <div style="font-size:11px;color:var(--text-muted)">{{ $m['desc'] }}</div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-
     </div>
 
     {{-- RIGHT COLUMN --}}
-    <div style="display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:16px;height:100%">
 
         {{-- Monthly Trend — Documents + Blotter combined --}}
         <div class="card">
