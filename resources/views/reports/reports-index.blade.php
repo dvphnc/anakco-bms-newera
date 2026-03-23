@@ -380,32 +380,31 @@ function selectType(val) {
 }
 
 function matchDemoHeight(val) {
-    const snapshot  = document.getElementById('snapshot-card');
-    const demoCard  = document.getElementById('demo-card');
-    const purokCard = document.getElementById('purok-card');
-    const grid      = document.getElementById('demo-purok-grid');
-    if (!snapshot || !demoCard || !purokCard) return;
+    const snapshotCard = document.getElementById('snapshot-card');
+    const demoCard     = document.getElementById('demo-card');
+    const purokCard    = document.getElementById('purok-card');
+    const grid         = document.getElementById('demo-purok-grid');
+    if (!snapshotCard || !demoCard || !purokCard || !grid) return;
 
-    if (val === 'annual') {
-        // Revert to natural height
-        demoCard.style.minHeight  = '';
-        purokCard.style.minHeight = '';
-        grid.style.alignItems     = 'start';
-    } else {
-        // Stretch to match left column bottom
-        const leftCol   = document.getElementById('left-col');
-        const rightCol  = document.getElementById('right-col');
-        const leftH     = leftCol ? leftCol.offsetHeight : 0;
+    // Reset first
+    demoCard.style.minHeight  = '';
+    purokCard.style.minHeight = '';
+    grid.style.alignItems     = 'start';
 
-        // Get height of everything above demo-purok-grid in right col
-        const gridTop   = demoCard.closest('.grid-2').offsetTop;
-        const remaining = leftH - gridTop - 20; // 20 for gap
+    if (val === 'annual') return;
 
-        if (remaining > demoCard.offsetHeight) {
-            demoCard.style.minHeight  = remaining + 'px';
-            purokCard.style.minHeight = remaining + 'px';
-        }
-        grid.style.alignItems = 'stretch';
+    // Calculate snapshot card bottom position
+    const snapRect = snapshotCard.getBoundingClientRect();
+    const demoRect = demoCard.getBoundingClientRect();
+
+    const snapBottom = snapRect.bottom;
+    const demoTop    = demoRect.top;
+    const needed     = snapBottom - demoTop;
+
+    if (needed > demoCard.offsetHeight) {
+        demoCard.style.minHeight  = needed + 'px';
+        purokCard.style.minHeight = needed + 'px';
+        grid.style.alignItems     = 'stretch';
     }
 }
 
