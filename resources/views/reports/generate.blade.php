@@ -278,7 +278,7 @@
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-chart-bar" style="color:var(--gold)"></i> Population Demographics</span>
             </div>
-            <div class="card-body" style="flex:1">
+            <div class="card-body" style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
                 @php
                     $maxDemo = max($activeResidents, $totalVoters, $totalSeniors, $totalPwd, $totalSoloParent, $total4ps, $totalMale, $totalFemale) ?: 1;
                     $demos = [
@@ -292,7 +292,7 @@
                         ['label'=>'Female',            'value'=>$totalFemale,     'color'=>'#ec4899'],
                     ];
                 @endphp
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;margin-bottom:16px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px 32px;flex:1;align-content:space-between">
                     @foreach($demos as $d)
                     @php $pct = round(($d['value'] / $maxDemo) * 100); @endphp
                     <div>
@@ -308,7 +308,7 @@
                 </div>
 
                 {{-- Gender split bar --}}
-                <div style="border-top:1px solid var(--border);padding-top:14px">
+                <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
                     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Gender Split</div>
                     <div style="display:flex;border-radius:99px;overflow:hidden;height:10px;margin-bottom:8px">
                         <div style="width:{{ $malePct }}%;background:#3b82f6"></div>
@@ -332,14 +332,14 @@
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-location-dot" style="color:var(--gold)"></i> Residents by Purok</span>
             </div>
-            <div class="card-body" style="padding:12px 16px;flex:1">
-                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+            <div class="card-body" style="padding:12px 16px;flex:1;display:flex;flex-direction:column">
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;flex:1">
                     @foreach($puroks as $purok)
                     @php
                         $total = $puroks->sum('residents_count') ?: 1;
                         $pct   = round(($purok->residents_count / $total) * 100);
                     @endphp
-                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;text-align:center">
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
                         <div style="font-size:18px;font-weight:700;color:var(--navy)">{{ $purok->residents_count }}</div>
                         <div style="font-size:10px;color:var(--text-muted);margin:2px 0">{{ $pct }}%</div>
                         <div style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $purok->name }}</div>
