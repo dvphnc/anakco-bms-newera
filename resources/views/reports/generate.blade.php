@@ -75,10 +75,10 @@
 </div>
 
 {{-- MAIN LAYOUT --}}
-<div style="display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start">
+<div style="display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:stretch">
 
     {{-- LEFT COLUMN --}}
-    <div style="display:flex;flex-direction:column;gap:16px;height:100%">
+    <div style="display:flex;flex-direction:column;gap:16px">
 
         {{-- Form Card --}}
         <div class="card">
@@ -192,7 +192,7 @@
             $thisMonthBlt  = \App\Models\BlotterCase::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
             $thisMonthRes  = \App\Models\Resident::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
         @endphp
-        <div class="card">
+        <div class="card" style="flex:1">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-calendar-day" style="color:var(--gold)"></i> Snapshot</span>
                 <span style="font-size:11px;color:var(--text-muted)">{{ now()->format('M d, Y') }}</span>
@@ -232,7 +232,7 @@
     </div>
 
     {{-- RIGHT COLUMN --}}
-    <div style="display:flex;flex-direction:column;gap:16px;height:100%">
+    <div style="display:flex;flex-direction:column;gap:16px">
 
         {{-- Monthly Trend — Documents + Blotter combined --}}
         <div class="card">
