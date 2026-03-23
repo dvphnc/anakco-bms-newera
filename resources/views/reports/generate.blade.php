@@ -75,13 +75,13 @@
 </div>
 
 {{-- MAIN LAYOUT --}}
-<div style="display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:stretch">
+<div style="display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:start">
 
     {{-- LEFT COLUMN --}}
-    <div id="left-col" style="display:flex;flex-direction:column;gap:16px">
+    <div id="left-col" style="display:flex;flex-direction:column;gap:16px;min-width:0;width:100%">
 
         {{-- Form Card --}}
-        <div class="card">
+        <div class="card" style="width:100%">
             <div class="card-header">
                 <span class="card-title">
                     <i class="fas fa-file-pdf" style="color:#ef4444"></i> Report Generator
@@ -96,7 +96,7 @@
                         <label class="form-label">Report Type</label>
                         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
                             @foreach(['monthly'=>['Monthly','fa-calendar-day','Jan–Dec'],'quarterly'=>['Quarterly','fa-calendar-week','Q1–Q4'],'annual'=>['Annual','fa-calendar','Full Year']] as $val=>[$lbl,$icon,$sub])
-                            <label style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.15s;text-align:center;background:var(--surface)"
+                            <label style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.15s;text-align:center;background:var(--surface);min-width:0;flex:1"
                                    id="type-card-{{ $val }}" onclick="selectType('{{ $val }}')">
                                 <input type="radio" name="report_type" value="{{ $val }}" style="display:none" {{ $val==='monthly'?'checked':'' }}>
                                 <i class="fas {{ $icon }}" style="font-size:16px;color:var(--navy)"></i>
@@ -154,11 +154,11 @@
         </div>
 
         {{-- Quick Generate --}}
-        <div class="card" style="flex:1;display:flex;flex-direction:column">
+        <div class="card" style="width:100%">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-bolt" style="color:var(--gold)"></i> Quick Generate</span>
             </div>
-            <div class="card-body" style="padding:10px 12px;display:flex;flex-direction:column;gap:5px;flex:1">
+            <div class="card-body" style="padding:10px 12px;display:flex;flex-direction:column;gap:5px">
                 @php $quick = [
                     ['label'=>'This Month — Summary',   'type'=>'monthly',   'module'=>'summary',   'month'=>date('n'),'year'=>date('Y')],
                     ['label'=>'This Month — Documents', 'type'=>'monthly',   'module'=>'documents', 'month'=>date('n'),'year'=>date('Y')],
@@ -192,7 +192,7 @@
             $thisMonthBlt  = \App\Models\BlotterCase::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
             $thisMonthRes  = \App\Models\Resident::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
         @endphp
-        <div class="card" id="snapshot-card" style="flex:1">
+        <div class="card" id="snapshot-card" style="width:100%">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-calendar-day" style="color:var(--gold)"></i> Snapshot</span>
                 <span style="font-size:11px;color:var(--text-muted)">{{ now()->format('M d, Y') }}</span>
@@ -232,7 +232,7 @@
     </div>
 
     {{-- RIGHT COLUMN --}}
-    <div id="left-col" style="display:flex;flex-direction:column;gap:16px">
+    <div id="left-col" style="display:flex;flex-direction:column;gap:16px;min-width:0;width:100%">
 
         {{-- Monthly Trend — Documents + Blotter combined --}}
         <div class="card">
