@@ -286,8 +286,17 @@
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-location-dot" style="color:var(--gold)"></i> Residents by Purok</span>
             </div>
-            <div class="card-body">
-                <canvas id="purokChart" height="110"></canvas>
+            <div class="card-body" style="padding:12px 16px">
+                @foreach($puroks as $purok)
+                @php $pct = $puroks->max('residents_count') > 0 ? round(($purok->residents_count / $puroks->max('residents_count')) * 100) : 0; @endphp
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+                    <div style="font-size:12px;color:var(--text);min-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $purok->name }}</div>
+                    <div style="flex:1;background:var(--surface2);border-radius:99px;height:7px;overflow:hidden">
+                        <div style="height:100%;width:{{ $pct }}%;background:#0D2144;border-radius:99px"></div>
+                    </div>
+                    <div style="font-size:12px;font-weight:700;color:var(--navy);min-width:28px;text-align:right">{{ $purok->residents_count }}</div>
+                </div>
+                @endforeach
             </div>
         </div>
 
@@ -373,29 +382,6 @@ new Chart(document.getElementById('blotterTypeChart'), {
     options: { responsive: true, cutout:'62%', plugins:{ legend:{ position:'bottom', labels:{ font:{size:10}, padding:8, color:'#6B7280', boxWidth:10 } } } }
 });
 
-// Purok horizontal bar
-new Chart(document.getElementById('purokChart'), {
-    type: 'bar',
-    data: {
-        labels: {!! json_encode($puroks->pluck('name')->toArray()) !!},
-        datasets: [{
-            label: 'Residents',
-            data: {!! json_encode($puroks->pluck('residents_count')->toArray()) !!},
-            backgroundColor: 'rgba(13,33,68,0.12)',
-            borderColor: '#0D2144',
-            borderWidth: 1.5,
-            borderRadius: 3,
-        }]
-    },
-    options: {
-        indexAxis: 'y',
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-            x: { ticks:{ color:'#9CA3AF', font:{size:10} }, grid:{ color:'#F3F4F6' }, beginAtZero:true },
-            y: { ticks:{ color:'#374151', font:{size:11} }, grid:{ display:false } }
-        }
-    }
-});
+
 </script>
 @endpush
