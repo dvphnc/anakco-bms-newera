@@ -608,7 +608,7 @@
         <div class="watermark"></div>
         @include('partials._topbar')
         <main class="main-content">
-            {{-- @include('partials._alerts') --}}
+            @include('partials._alerts')
             @yield('content')
         </main>
     </div>
