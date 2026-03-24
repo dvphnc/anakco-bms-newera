@@ -608,7 +608,7 @@
         <div class="watermark"></div>
         <?php echo $__env->make('partials._topbar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         <main class="main-content">
-            
+            <?php echo $__env->make('partials._alerts', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             <?php echo $__env->yieldContent('content'); ?>
         </main>
     </div>
