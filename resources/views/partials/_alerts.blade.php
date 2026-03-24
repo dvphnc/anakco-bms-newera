@@ -1,4 +1,4 @@
-@if(isset($errors) && $errors->any())
+@if($errors->any())
 <div class="alert alert-error mb-4">
     <i class="fas fa-exclamation-circle alert-icon"></i>
     <div class="alert-message">
@@ -24,14 +24,6 @@
 <div class="alert alert-error mb-4">
     <i class="fas fa-exclamation-circle alert-icon"></i>
     <div class="alert-message">{{ session('error') }}</div>
-    <button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
-</div>
-@endif
-
-@if(session('warning'))
-<div class="alert mb-4" style="background:var(--gold-glow);border:1px solid var(--gold-border);color:#7A4F0A">
-    <i class="fas fa-exclamation-triangle alert-icon"></i>
-    <div class="alert-message">{{ session('warning') }}</div>
     <button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
 </div>
 @endif
