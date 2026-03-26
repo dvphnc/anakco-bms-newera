@@ -97,25 +97,20 @@
                         <span class="badge badge-green"><i class="fas fa-check" style="margin-right:4px"></i>Verified</span>
                         <span style="font-size:11px;color:var(--text-subtle)">{{ $user->email_verified_at->format('M d, Y') }}</span>
                         @if(auth()->user()->role === 'Admin')
-                        <form method="POST" action="{{ route('users.unverify', $user) }}" style="display:inline">
-                            @csrf
-                            <button type="submit" class="btn btn-secondary btn-sm"
-                                    onclick="return confirm('Remove verification from {{ $user->name }}?')"
-                                    style="font-size:11px;padding:3px 10px">
-                                <i class="fas fa-times"></i> Unverify
-                            </button>
-                        </form>
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                onclick="if(confirm('Remove verification?')) document.getElementById('unverify-form').submit()"
+                                style="font-size:11px;padding:3px 10px">
+                            <i class="fas fa-times"></i> Unverify
+                        </button>
                         @endif
                     @else
                         <span class="badge badge-gray"><i class="fas fa-clock" style="margin-right:4px"></i>Unverified</span>
                         @if(auth()->user()->role === 'Admin')
-                        <form method="POST" action="{{ route('users.verify', $user) }}" style="display:inline">
-                            @csrf
-                            <button type="submit" class="btn btn-primary btn-sm"
-                                    style="font-size:11px;padding:3px 10px">
-                                <i class="fas fa-check"></i> Mark as Verified
-                            </button>
-                        </form>
+                        <button type="button" class="btn btn-primary btn-sm"
+                                onclick="document.getElementById('verify-form').submit()"
+                                style="font-size:11px;padding:3px 10px">
+                            <i class="fas fa-check"></i> Mark as Verified
+                        </button>
                         @endif
                     @endif
                 </div>
@@ -156,5 +151,13 @@
     @csrf @method('DELETE')
 </form>
 @endif
+
+{{-- Verify/Unverify forms outside main form --}}
+<form method="POST" action="{{ route('users.verify', $user) }}" id="verify-form">
+    @csrf
+</form>
+<form method="POST" action="{{ route('users.unverify', $user) }}" id="unverify-form">
+    @csrf
+</form>
 
 @endsection
