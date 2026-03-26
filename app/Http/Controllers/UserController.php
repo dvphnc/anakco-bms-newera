@@ -87,12 +87,23 @@ class UserController extends Controller
     }
 
     public function verify(User $user)
-    {
-        $user->email_verified_at = now();
-        $user->save();
-        $this->logActivity('updated', $user);
-        return back()->with('success', $user->name . ' has been verified successfully.');
+{
+    $user->email_verified_at = now();
+    $user->saveQuietly();
+    $this->logActivity('updated', $user);
+    return back()->with('success', $user->name . ' has been verified successfully.');
+}
+
+public function unverify(User $user)
+{
+    if ($user->id === auth()->id()) {
+        return back()->with('error', 'You cannot unverify your own account.');
     }
+    $user->email_verified_at = null;
+    $user->saveQuietly();
+    $this->logActivity('updated', $user);
+    return back()->with('success', $user->name . ' verification has been removed.');
+}
 
     public function unverify(User $user)
     {
