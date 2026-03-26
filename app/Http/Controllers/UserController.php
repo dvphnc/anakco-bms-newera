@@ -86,6 +86,7 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User account deleted successfully.');
     }
 
+    dd('verify method hit', $user->id);
     public function verify(User $user)
 {
     $user->email_verified_at = now();
