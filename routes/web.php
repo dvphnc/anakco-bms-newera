@@ -121,8 +121,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     Route::resource('users', UserController::class)
         ->middleware('role:Admin');
-    Route::post('users/{user}/verify', [UserController::class, 'verify'])->name('users.verify')->middleware('role:Admin');
-    Route::post('users/{user}/unverify', [UserController::class, 'unverify'])->name('users.unverify')->middleware('role:Admin');
+
 
     // ---------------------------------------------------
     // Activity Log — Admin + Secretary
