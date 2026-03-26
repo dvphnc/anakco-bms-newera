@@ -121,6 +121,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     Route::resource('users', UserController::class)
         ->middleware('role:Admin');
+    
 
     // ---------------------------------------------------
     // Activity Log — Admin + Secretary
