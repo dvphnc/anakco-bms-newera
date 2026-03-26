@@ -92,11 +92,31 @@
         <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:24px;flex-wrap:wrap">
             <div>
                 <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Verified</div>
-                <div style="font-size:13px;color:var(--text);margin-top:2px">
+                <div style="font-size:13px;color:var(--text);margin-top:6px;display:flex;align-items:center;gap:8px">
                     @if($user->email_verified_at)
-                        <span class="badge badge-green">Yes</span>
+                        <span class="badge badge-green"><i class="fas fa-check" style="margin-right:4px"></i>Verified</span>
+                        <span style="font-size:11px;color:var(--text-subtle)">{{ $user->email_verified_at->format('M d, Y') }}</span>
+                        @if(auth()->user()->role === 'Admin')
+                        <form method="POST" action="{{ route('users.unverify', $user) }}" style="display:inline">
+                            @csrf
+                            <button type="submit" class="btn btn-secondary btn-sm"
+                                    onclick="return confirm('Remove verification from {{ $user->name }}?')"
+                                    style="font-size:11px;padding:3px 10px">
+                                <i class="fas fa-times"></i> Unverify
+                            </button>
+                        </form>
+                        @endif
                     @else
-                        <span class="badge badge-gray">No</span>
+                        <span class="badge badge-gray"><i class="fas fa-clock" style="margin-right:4px"></i>Unverified</span>
+                        @if(auth()->user()->role === 'Admin')
+                        <form method="POST" action="{{ route('users.verify', $user) }}" style="display:inline">
+                            @csrf
+                            <button type="submit" class="btn btn-primary btn-sm"
+                                    style="font-size:11px;padding:3px 10px">
+                                <i class="fas fa-check"></i> Mark as Verified
+                            </button>
+                        </form>
+                        @endif
                     @endif
                 </div>
             </div>
