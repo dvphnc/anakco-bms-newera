@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('users.update', $user) }}">
+<form method="POST" action="{{ route('users.update', $user) }}" id="edit-user-form">
 @csrf @method('PUT')
 
 <div class="card mb-6">
@@ -37,6 +37,9 @@
                 <label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label>
                 <input type="text" name="name" class="form-control"
                        value="{{ old('name', $user->name) }}" required>
+                @error('name')
+                    <span style="font-size:11px;color:var(--crimson)">{{ $message }}</span>
+                @enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Email Address <span style="color:var(--crimson)">*</span></label>
@@ -63,6 +66,9 @@
                     <i class="fas fa-lock" style="font-size:10px"></i> You cannot change your own role.
                 </span>
             @endif
+            @error('role')
+                <span style="font-size:11px;color:var(--crimson)">{{ $message }}</span>
+            @enderror
         </div>
 
         <div class="form-section-title">Change Password <span style="font-size:11px;color:var(--text-subtle);text-transform:none;font-weight:400;letter-spacing:0">(leave blank to keep current)</span></div>
@@ -71,6 +77,9 @@
                 <label class="form-label">New Password</label>
                 <input type="password" name="password" class="form-control"
                        placeholder="Min. 8 characters" autocomplete="new-password">
+                @error('password')
+                    <span style="font-size:11px;color:var(--crimson)">{{ $message }}</span>
+                @enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Confirm New Password</label>
@@ -110,16 +119,22 @@
     </button>
     <a href="{{ route('users.index') }}" class="btn btn-secondary">Cancel</a>
     @if($user->id !== auth()->id())
-    <form method="POST" action="{{ route('users.destroy', $user) }}" style="margin-left:auto"
-          onsubmit="return confirm('Permanently delete {{ $user->name }}?')">
-        @csrf @method('DELETE')
-        <button type="submit" class="btn btn-danger">
-            <i class="fas fa-trash"></i> Delete User
-        </button>
-    </form>
+    {{-- Delete button triggers separate form outside main form --}}
+    <button type="button" class="btn btn-danger" style="margin-left:auto"
+            onclick="document.getElementById('delete-user-form').submit()"
+            onmousedown="return confirm('Permanently delete {{ $user->name }}? This cannot be undone.')">
+        <i class="fas fa-trash"></i> Delete User
+    </button>
     @endif
 </div>
 
 </form>
+
+{{-- Delete form is OUTSIDE the edit form to prevent nesting --}}
+@if($user->id !== auth()->id())
+<form method="POST" action="{{ route('users.destroy', $user) }}" id="delete-user-form">
+    @csrf @method('DELETE')
+</form>
+@endif
 
 @endsection
