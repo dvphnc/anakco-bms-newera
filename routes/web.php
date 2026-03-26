@@ -119,6 +119,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     // User Management — Admin only
     // ---------------------------------------------------
+    Route::post('users/{user}/verify', [UserController::class, 'verify'])->name('users.verify')->middleware('role:Admin');
+    Route::post('users/{user}/unverify', [UserController::class, 'unverify'])->name('users.unverify')->middleware('role:Admin');
     Route::resource('users', UserController::class)
         ->middleware('role:Admin');
 
