@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Edit Document')
-
 @section('content')
 
 <div class="page-header">
@@ -10,12 +8,8 @@
         <p class="page-subtitle">{{ $document->doc_number }} — {{ $document->document_type }}</p>
     </div>
     <div class="page-actions">
-        <a href="{{ route('documents.show', $document) }}" class="btn btn-secondary">
-            <i class="fas fa-eye"></i> View
-        </a>
-        <a href="{{ route('documents.index') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back
-        </a>
+        <a href="{{ route('documents.show', $document) }}" class="btn btn-secondary"><i class="fas fa-eye"></i> View</a>
+        <a href="{{ route('documents.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 </div>
 
@@ -29,51 +23,36 @@
     </div>
     <div class="card-body">
 
-        {{-- RESIDENT & TYPE --}}
         <div class="form-section-title">Resident & Type</div>
         <div class="form-grid-2 mb-6">
-
-            {{-- Resident -- shown as read-only display + hidden input --}}
             <div class="form-group">
-                <label class="form-label">Resident</label>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);font-size:13.5px">
-                    <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px;flex-shrink:0">
-                        {{ strtoupper(substr($document->resident->first_name ?? 'R', 0, 1)) }}
-                    </div>
-                    <div>
-                        <div style="font-weight:600">{{ $document->resident->full_name ?? '—' }}</div>
-                        <div class="td-muted">{{ $document->resident->purok->name ?? '' }} — {{ $document->resident->address ?? '' }}</div>
-                    </div>
-                </div>
-                {{-- Keep resident_id in form so update() validation passes --}}
-                <input type="hidden" name="resident_id" value="{{ $document->resident_id }}">
+                <label class="form-label">Resident <span style="color:var(--crimson)">*</span></label>
+                <select name="resident_id" id="resident_id" class="select2-resident" required style="width:100%" data-placeholder="Search resident by name...">
+                    @if($document->resident)
+                        <option value="{{ $document->resident_id }}" selected>
+                            {{ $document->resident->last_name }}, {{ $document->resident->first_name }} — {{ $document->resident->address }}
+                        </option>
+                    @endif
+                </select>
+                @error('resident_id')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
             </div>
-
             <div class="form-group">
                 <label class="form-label">Document Type <span style="color:var(--crimson)">*</span></label>
                 <select name="document_type" class="form-control" required>
-                    @foreach([
-                        'Barangay Clearance',
-                        'Certificate of Residency',
-                        'Certificate of Indigency',
-                        'Good Moral Character',
-                        'Business Clearance',
-                        'Certificate of Live Birth',
-                        'Other',
-                    ] as $t)
+                    @foreach(['Barangay Clearance','Certificate of Residency','Certificate of Indigency','Good Moral Character','Business Clearance','Certificate of Live Birth','Other'] as $t)
                         <option value="{{ $t }}" {{ old('document_type', $document->document_type) === $t ? 'selected' : '' }}>{{ $t }}</option>
                     @endforeach
                 </select>
+                @error('document_type')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
             </div>
         </div>
 
-        {{-- REQUEST DETAILS --}}
         <div class="form-section-title">Request Details</div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Purpose <span style="color:var(--crimson)">*</span></label>
-                <input type="text" name="purpose" class="form-control"
-                       value="{{ old('purpose', $document->purpose) }}" required>
+                <input type="text" name="purpose" class="form-control" value="{{ old('purpose', $document->purpose) }}" required>
+                @error('purpose')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Status</label>
@@ -85,23 +64,18 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Fee (₱)</label>
-                <input type="number" name="fee_paid" class="form-control"
-                       value="{{ old('fee_paid', $document->fee_paid ?? 0) }}" min="0" step="0.01">
+                <input type="number" name="fee_paid" class="form-control" value="{{ old('fee_paid', $document->fee_paid ?? 0) }}" min="0" step="0.01">
             </div>
             <div class="form-group">
                 <label class="form-label">OR Number</label>
-                <input type="text" name="or_number" class="form-control"
-                       placeholder="e.g. OR-2026-00001"
-                       value="{{ old('or_number', $document->or_number) }}">
+                <input type="text" name="or_number" class="form-control" placeholder="e.g. OR-2026-00001" value="{{ old('or_number', $document->or_number) }}">
             </div>
             <div class="form-group">
                 <label class="form-label">Date Released</label>
-                <input type="date" name="released_at" class="form-control"
-                       value="{{ old('released_at', $document->released_at?->format('Y-m-d')) }}">
+                <input type="date" name="released_at" class="form-control" value="{{ old('released_at', $document->released_at?->format('Y-m-d')) }}">
             </div>
         </div>
 
-        {{-- ISSUED BY --}}
         <div class="form-section-title">Issued By</div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
@@ -117,7 +91,6 @@
                 </div>
                 <input type="hidden" name="issued_by" value="{{ $document->issued_by ?? auth()->id() }}">
             </div>
-
             <div class="form-group">
                 <label class="form-label">Document Number</label>
                 <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);font-size:13.5px;font-family:monospace;color:var(--text-muted)">
@@ -125,17 +98,13 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
 <div class="form-actions">
-    <button type="submit" class="btn btn-primary">
-        <i class="fas fa-floppy-disk"></i> Save Changes
-    </button>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-floppy-disk"></i> Save Changes</button>
     <a href="{{ route('documents.show', $document) }}" class="btn btn-secondary">Cancel</a>
 </div>
-
 </form>
 
 @endsection
