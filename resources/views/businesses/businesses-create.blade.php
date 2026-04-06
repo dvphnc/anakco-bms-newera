@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Issue Business Permit')
-
 @section('content')
 
 <div class="page-header">
@@ -10,9 +8,7 @@
         <p class="page-subtitle">Register a new business in Barangay New Era</p>
     </div>
     <div class="page-actions">
-        <a href="{{ route('businesses.index') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back
-        </a>
+        <a href="{{ route('businesses.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 </div>
 
@@ -29,9 +25,8 @@
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Business Name <span style="color:var(--crimson)">*</span></label>
-                <input type="text" name="business_name" class="form-control"
-                       value="{{ old('business_name') }}"
-                       placeholder="e.g. Juan's Sari-Sari Store" required>
+                <input type="text" name="business_name" class="form-control" value="{{ old('business_name') }}" placeholder="e.g. Juan's Sari-Sari Store" required>
+                @error('business_name')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Business Type <span style="color:var(--crimson)">*</span></label>
@@ -41,12 +36,12 @@
                         <option value="{{ $t }}" {{ old('business_type') === $t ? 'selected' : '' }}>{{ $t }}</option>
                     @endforeach
                 </select>
+                @error('business_type')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
             </div>
             <div class="form-group" style="grid-column:span 2">
                 <label class="form-label">Business Address <span style="color:var(--crimson)">*</span></label>
-                <input type="text" name="business_address" class="form-control"
-                       value="{{ old('business_address') }}"
-                       placeholder="Full address of business location" required>
+                <input type="text" name="business_address" id="business_address" class="form-control" value="{{ old('business_address') }}" placeholder="Full address of business location" required>
+                @error('business_address')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
             </div>
         </div>
 
@@ -54,23 +49,21 @@
         <div class="form-grid-3 mb-6">
             <div class="form-group">
                 <label class="form-label">Owner Name <span style="color:var(--crimson)">*</span></label>
-                <input type="text" name="owner_name" class="form-control"
-                       value="{{ old('owner_name') }}" placeholder="Full name" required>
+                <input type="text" name="owner_name" id="owner_name" class="form-control" value="{{ old('owner_name') }}" placeholder="Full name" required>
+                @error('owner_name')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Owner Contact</label>
-                <input type="text" name="owner_contact" class="form-control"
-                       value="{{ old('owner_contact') }}" placeholder="09XX XXX XXXX">
+                <input type="text" name="owner_contact" id="owner_contact" class="form-control" value="{{ old('owner_contact') }}" placeholder="09XX XXX XXXX">
             </div>
             <div class="form-group">
-                <label class="form-label">Owner (Resident)</label>
-                <select name="owner_resident_id" class="form-control">
-                    <option value="">Select if registered resident</option>
-                    @foreach($residents as $r)
-                        <option value="{{ $r->id }}" {{ old('owner_resident_id') == $r->id ? 'selected' : '' }}>
-                            {{ $r->full_name }}
-                        </option>
-                    @endforeach
+                <label class="form-label">Link to Resident <span style="font-size:10px;color:var(--text-subtle)">(auto-fills owner)</span></label>
+                <select name="owner_resident_id" id="owner_resident_id" class="select2-resident" style="width:100%" data-placeholder="Search registered resident...">
+                    <option value=""></option>
+                    @if(old('owner_resident_id'))
+                        @php $or = \App\Models\Resident::find(old('owner_resident_id')); @endphp
+                        @if($or)<option value="{{ $or->id }}" selected>{{ $or->last_name }}, {{ $or->first_name }} — {{ $or->address }}</option>@endif
+                    @endif
                 </select>
             </div>
         </div>
@@ -79,13 +72,11 @@
         <div class="form-grid-3 mb-6">
             <div class="form-group">
                 <label class="form-label">Permit Date <span style="color:var(--crimson)">*</span></label>
-                <input type="date" name="permit_date" class="form-control"
-                       value="{{ old('permit_date', date('Y-m-d')) }}" required>
+                <input type="date" name="permit_date" class="form-control" value="{{ old('permit_date', date('Y-m-d')) }}" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Expiry Date <span style="color:var(--crimson)">*</span></label>
-                <input type="date" name="expiry_date" class="form-control"
-                       value="{{ old('expiry_date', date('Y-m-d', strtotime('+1 year'))) }}" required>
+                <input type="date" name="expiry_date" class="form-control" value="{{ old('expiry_date', date('Y-m-d', strtotime('+1 year'))) }}" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Status</label>
@@ -99,20 +90,33 @@
 
         <div class="form-group">
             <label class="form-label">Remarks</label>
-            <textarea name="remarks" class="form-control" rows="3"
-                      placeholder="Optional notes...">{{ old('remarks') }}</textarea>
+            <textarea name="remarks" class="form-control" rows="3" placeholder="Optional notes...">{{ old('remarks') }}</textarea>
         </div>
-
     </div>
 </div>
 
 <div class="form-actions">
-    <button type="submit" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Issue Permit
-    </button>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Issue Permit</button>
     <a href="{{ route('businesses.index') }}" class="btn btn-secondary">Cancel</a>
 </div>
-
 </form>
+
+@push('scripts')
+<script>
+$('#owner_resident_id').on('select2:select', function(e) {
+    const text = e.params.data.text;
+    const parts = text.split(' — ');
+    const namePart = parts[0].trim();
+    const address  = parts[1] ? parts[1].trim() : '';
+    const nameParts = namePart.split(', ');
+    const fullName  = nameParts.length > 1 ? nameParts[1] + ' ' + nameParts[0] : namePart;
+    $('#owner_name').val(fullName);
+    if (address) $('#business_address').val(address);
+});
+$('#owner_resident_id').on('select2:clear', function() {
+    $('#owner_name').val('');
+});
+</script>
+@endpush
 
 @endsection
