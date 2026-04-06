@@ -92,12 +92,22 @@
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Respondent Name <span style="color:var(--crimson)">*</span></label>
-                <input type="text" name="respondent_name" class="form-control" value="{{ old('respondent_name') }}" placeholder="Full name" required>
+                <input type="text" name="respondent_name" id="respondent_name" class="form-control" value="{{ old('respondent_name') }}" placeholder="Full name" required>
                 @error('respondent_name')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
             </div>
             <div class="form-group">
+                <label class="form-label">Linked Resident <span style="font-size:10px;color:var(--text-subtle)">(optional — auto-fills name)</span></label>
+                <select name="respondent_resident_id" id="respondent_resident_id" class="select2-resident" style="width:100%" data-placeholder="Search registered resident...">
+                    <option value=""></option>
+                    @if(old('respondent_resident_id'))
+                        @php $rr = \App\Models\Resident::find(old('respondent_resident_id')); @endphp
+                        @if($rr)<option value="{{ $rr->id }}" selected>{{ $rr->last_name }}, {{ $rr->first_name }} — {{ $rr->address }}</option>@endif
+                    @endif
+                </select>
+            </div>
+            <div class="form-group">
                 <label class="form-label">Respondent Address</label>
-                <input type="text" name="respondent_address" class="form-control" value="{{ old('respondent_address') }}" placeholder="Address">
+                <input type="text" name="respondent_address" id="respondent_address" class="form-control" value="{{ old('respondent_address') }}" placeholder="Address">
             </div>
             <div class="form-group">
                 <label class="form-label">Respondent Contact</label>
@@ -159,6 +169,22 @@ $('#complainant_resident_id').on('select2:clear', function() {
     $('#complainant_name').val('');
     $('#complainant_address').val('');
     $('#complainant_contact').val('');
+});
+
+// Auto-fill respondent
+$('#respondent_resident_id').on('select2:select', function(e) {
+    const text = e.params.data.text;
+    const parts = text.split(' — ');
+    const namePart = parts[0].trim();
+    const address  = parts[1] ? parts[1].trim() : '';
+    const nameParts = namePart.split(', ');
+    const fullName  = nameParts.length > 1 ? nameParts[1] + ' ' + nameParts[0] : namePart;
+    $('#respondent_name').val(fullName);
+    $('#respondent_address').val(address);
+});
+$('#respondent_resident_id').on('select2:clear', function() {
+    $('#respondent_name').val('');
+    $('#respondent_address').val('');
 });
 
 // File upload
