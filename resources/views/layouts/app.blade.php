@@ -633,6 +633,33 @@
     </script>
 
     @stack('scripts')
-    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.select2-resident').each(function() {
+        if ($(this).data('select2')) return;
+        $(this).select2({
+            ajax: {
+                url: '/select2/residents',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) { return { q: params.term }; },
+                processResults: function(data) { return { results: data.results }; },
+                cache: true
+            },
+            minimumInputLength: 1,
+            placeholder: $(this).data('placeholder') || 'Type to search resident...',
+            allowClear: true,
+            language: {
+                inputTooShort: function() { return 'Type at least 1 character...'; },
+                searching: function() { return 'Searching...'; },
+                noResults: function() { return 'No residents found'; }
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>
