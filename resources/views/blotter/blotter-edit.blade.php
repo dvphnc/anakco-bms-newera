@@ -199,7 +199,7 @@ dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = 'var
 dropZone.addEventListener('drop', e => {
     e.preventDefault();
     dropZone.style.borderColor = 'var(--border)';
-    dropZone.style.background = '';
+    dropZonea.style.background = '';
     const dt = new DataTransfer();
     dt.items.add(e.dataTransfer.files[0]);
     fileInput.files = dt.files;
