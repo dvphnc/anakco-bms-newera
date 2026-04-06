@@ -16,6 +16,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\Select2Controller;
 use App\Http\Controllers\VerifyController;
 
 // -------------------------------------------------------
@@ -119,11 +120,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     // User Management — Admin only
     // ---------------------------------------------------
-    Route::post('users/{user}/verify', [UserController::class, 'verify'])->name('users.verify')->middleware('role:Admin');
-    Route::post('users/{user}/unverify', [UserController::class, 'unverify'])->name('users.unverify')->middleware('role:Admin');
     Route::resource('users', UserController::class)
         ->middleware('role:Admin');
-
 
     // ---------------------------------------------------
     // Activity Log — Admin + Secretary
@@ -159,5 +157,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Global Search
     Route::get('search', [SearchController::class, 'search'])->name('search');
+
+    // Select2 AJAX
+    Route::get('select2/residents', [Select2Controller::class, 'residents'])->name('select2.residents');
 
 });
