@@ -327,7 +327,7 @@
     $birthdate    = $resident?->birthdate ? $resident->birthdate->format('F d, Y') : null;
     $issuedDate   = $document->released_at ?? $document->created_at;
     $purpose      = $document->purpose ?? 'whatever legal purpose it may serve';
-    $officialName = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
+    $officialName = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'ROBERT S. ROMANO';
 
     // Build certificate body based on document type
     $certBody = match($document->document_type) {
