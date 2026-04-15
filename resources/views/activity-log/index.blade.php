@@ -31,115 +31,115 @@ $routeMap = [
 ];
 @endphp
 
-{{-- Summary Stat Cards --}}
-<div class="grid-4 mb-6">
-    <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-calendar-day"></i></div>
-        <div class="stat-info">
-            <div class="stat-number">{{ number_format($todayCount) }}</div>
-            <div class="stat-label">Today</div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(13,33,68,0.06);color:var(--navy-mid)"><i class="fas fa-calendar-week"></i></div>
-        <div class="stat-info">
-            <div class="stat-number">{{ number_format($thisWeekCount) }}</div>
-            <div class="stat-label">This Week</div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-calendar"></i></div>
-        <div class="stat-info">
-            <div class="stat-number">{{ number_format($thisMonthCount) }}</div>
-            <div class="stat-label">This Month</div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.08);color:#16a34a"><i class="fas fa-clock-rotate-left"></i></div>
-        <div class="stat-info">
-            <div class="stat-number">{{ number_format($actionTotals['created'] + $actionTotals['updated'] + $actionTotals['deleted']) }}</div>
-            <div class="stat-label">Total Logs</div>
-        </div>
-    </div>
-</div>
+{{-- MONTHLY TREND + STATS (top) --}}
+<div class="grid-2 mb-6" style="grid-template-columns:2fr 1fr;align-items:stretch">
 
-{{-- Charts Row --}}
-<div class="grid-2 mb-6" style="grid-template-columns:2fr 1fr">
-
-    {{-- Weekly Bar Chart --}}
+    {{-- Monthly Trend --}}
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-chart-bar"></i> Activity This Week</span>
-            <div style="display:flex;gap:12px;font-size:11px;color:var(--text-muted)">
-                <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#16a34a;display:inline-block"></span>Created</span>
-                <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#f59e0b;display:inline-block"></span>Updated</span>
-                <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#ef4444;display:inline-block"></span>Deleted</span>
-            </div>
+            <span class="card-title"><i class="fas fa-chart-line"></i> Monthly Activity Trend — Last 12 Months</span>
         </div>
         <div class="card-body">
-            <canvas id="weeklyChart" height="120"></canvas>
+            <canvas id="monthlyChart" height="110"></canvas>
         </div>
     </div>
 
-    {{-- Action Breakdown Doughnut --}}
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title"><i class="fas fa-chart-pie"></i> By Action</span>
+    {{-- Stats + Action Breakdown --}}
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+        {{-- Stat Cards 2x2 --}}
+        <div class="grid-2" style="gap:12px">
+            <div class="stat-card" style="padding:16px">
+                <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.08);color:var(--navy);font-size:16px"><i class="fas fa-calendar-day"></i></div>
+                <div class="stat-info">
+                    <div class="stat-number" style="font-size:24px">{{ number_format($todayCount) }}</div>
+                    <div class="stat-label">Today</div>
+                </div>
+            </div>
+            <div class="stat-card" style="padding:16px">
+                <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.06);color:var(--navy-mid);font-size:16px"><i class="fas fa-calendar-week"></i></div>
+                <div class="stat-info">
+                    <div class="stat-number" style="font-size:24px">{{ number_format($thisWeekCount) }}</div>
+                    <div class="stat-label">This Week</div>
+                </div>
+            </div>
+            <div class="stat-card" style="padding:16px">
+                <div class="stat-icon" style="width:40px;height:40px;background:rgba(200,134,26,0.1);color:var(--gold);font-size:16px"><i class="fas fa-calendar"></i></div>
+                <div class="stat-info">
+                    <div class="stat-number" style="font-size:24px">{{ number_format($thisMonthCount) }}</div>
+                    <div class="stat-label">This Month</div>
+                </div>
+            </div>
+            <div class="stat-card" style="padding:16px">
+                <div class="stat-icon" style="width:40px;height:40px;background:rgba(22,101,52,0.08);color:#16a34a;font-size:16px"><i class="fas fa-clock-rotate-left"></i></div>
+                <div class="stat-info">
+                    <div class="stat-number" style="font-size:24px">{{ number_format($actionTotals['created'] + $actionTotals['updated'] + $actionTotals['deleted']) }}</div>
+                    <div class="stat-label">Total Logs</div>
+                </div>
+            </div>
         </div>
-        <div class="card-body" style="display:flex;flex-direction:column;align-items:center">
-            <canvas id="actionChart" height="160" style="max-width:160px"></canvas>
-            <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;width:100%">
-                <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px">
-                    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;background:#16a34a;display:inline-block"></span>Created</span>
-                    <span style="font-weight:700;color:var(--navy)">{{ number_format($actionTotals['created']) }}</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px">
-                    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block"></span>Updated</span>
-                    <span style="font-weight:700;color:var(--navy)">{{ number_format($actionTotals['updated']) }}</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px">
-                    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block"></span>Deleted</span>
-                    <span style="font-weight:700;color:var(--navy)">{{ number_format($actionTotals['deleted']) }}</span>
+
+        {{-- Action Breakdown Card --}}
+        <div class="card" style="flex:1">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-chart-pie"></i> By Action</span>
+            </div>
+            <div class="card-body" style="display:flex;align-items:center;gap:20px">
+                <canvas id="actionChart" style="width:90px!important;height:90px!important;flex-shrink:0"></canvas>
+                <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <span style="display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text)">
+                            <span style="width:10px;height:10px;border-radius:50%;background:#16a34a;display:inline-block;flex-shrink:0"></span>Created
+                        </span>
+                        <span style="font-size:15px;font-weight:700;color:var(--navy)">{{ number_format($actionTotals['created']) }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <span style="display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text)">
+                            <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block;flex-shrink:0"></span>Updated
+                        </span>
+                        <span style="font-size:15px;font-weight:700;color:var(--navy)">{{ number_format($actionTotals['updated']) }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <span style="display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text)">
+                            <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;flex-shrink:0"></span>Deleted
+                        </span>
+                        <span style="font-size:15px;font-weight:700;color:var(--navy)">{{ number_format($actionTotals['deleted']) }}</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-{{-- Monthly Trend --}}
+{{-- Weekly Bar Chart --}}
 <div class="card mb-6">
     <div class="card-header">
-        <span class="card-title"><i class="fas fa-chart-line"></i> Monthly Activity Trend — Last 12 Months</span>
+        <span class="card-title"><i class="fas fa-chart-bar"></i> Activity This Week</span>
+        <div style="display:flex;gap:14px;font-size:11px;color:var(--text-muted)">
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#16a34a;display:inline-block"></span>Created</span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#f59e0b;display:inline-block"></span>Updated</span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#ef4444;display:inline-block"></span>Deleted</span>
+        </div>
     </div>
     <div class="card-body">
-        <canvas id="monthlyChart" height="80"></canvas>
+        <canvas id="weeklyChart" height="80"></canvas>
     </div>
 </div>
 
-{{-- Module Cards --}}
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px">
+{{-- Module Filter Pills --}}
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
     <a href="{{ route('activity-log.index') }}"
-       style="flex:1;min-width:110px;display:flex;align-items:center;gap:12px;padding:16px;background:var(--surface);border:2px solid {{ !request('module') ? 'var(--navy)' : 'var(--border)' }};border-radius:var(--radius-lg);text-decoration:none;transition:all 0.15s">
-        <div style="width:40px;height:40px;border-radius:var(--radius);background:rgba(13,33,68,0.08);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">
-            <i class="fas fa-clock-rotate-left"></i>
-        </div>
-        <div>
-            <div style="font-size:20px;font-weight:700;color:var(--navy)">{{ number_format($actionTotals['created'] + $actionTotals['updated'] + $actionTotals['deleted']) }}</div>
-            <div style="font-size:11px;color:var(--text-muted)">All Activity</div>
-        </div>
+       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ !request('module') ? 'var(--navy)' : 'var(--border)' }};background:{{ !request('module') ? 'var(--navy)' : 'var(--surface)' }};color:{{ !request('module') ? '#fff' : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
+        <i class="fas fa-clock-rotate-left" style="font-size:11px"></i> All
     </a>
     @foreach($moduleMap as $class => $info)
     @php $count = $moduleCounts[$class] ?? 0; @endphp
     @if($count > 0)
     <a href="{{ route('activity-log.index', ['module' => $info['slug']]) }}"
-       style="flex:1;min-width:110px;display:flex;align-items:center;gap:12px;padding:16px;background:var(--surface);border:2px solid {{ request('module') === $info['slug'] ? 'var(--navy)' : 'var(--border)' }};border-radius:var(--radius-lg);text-decoration:none;transition:all 0.15s">
-        <div style="width:40px;height:40px;border-radius:var(--radius);background:{{ $info['color'] }}18;color:{{ $info['color'] }};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">
-            <i class="fas {{ $info['icon'] }}"></i>
-        </div>
-        <div>
-            <div style="font-size:20px;font-weight:700;color:var(--navy)">{{ number_format($count) }}</div>
-            <div style="font-size:11px;color:var(--text-muted)">{{ $info['label'] }}</div>
-        </div>
+       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ request('module') === $info['slug'] ? $info['color'] : 'var(--border)' }};background:{{ request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)' }};color:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
+        <i class="fas {{ $info['icon'] }}" style="font-size:11px"></i>
+        {{ $info['label'] }}
+        <span style="background:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--surface3)' }};color:{{ request('module') === $info['slug'] ? '#fff' : 'var(--text-muted)' }};border-radius:99px;padding:0 6px;font-size:10px">{{ $count }}</span>
     </a>
     @endif
     @endforeach
