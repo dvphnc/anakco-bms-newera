@@ -45,34 +45,42 @@ $routeMap = [
 
 {{-- MONTHLY TREND + STATS --}}
 <div class="grid-4 mb-6">
-    <div class="stat-card" style="padding:16px">
-        <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.08);color:var(--navy);font-size:16px"><i class="fas fa-calendar-day"></i></div>
-        <div class="stat-info">
-            <div class="stat-number" style="font-size:24px">{{ number_format($todayCount) }}</div>
-            <div class="stat-label">Today</div>
+    <a href="{{ route('activity-log.index', ['period' => 'today']) }}" style="text-decoration:none">
+        <div class="stat-card" style="padding:16px;cursor:pointer;{{ request('period') === 'today' ? 'border-color:var(--navy);box-shadow:0 0 0 3px var(--navy-pale)' : '' }}">
+            <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.08);color:var(--navy);font-size:16px"><i class="fas fa-calendar-day"></i></div>
+            <div class="stat-info">
+                <div class="stat-number" style="font-size:24px">{{ number_format($todayCount) }}</div>
+                <div class="stat-label">Today</div>
+            </div>
         </div>
-    </div>
-    <div class="stat-card" style="padding:16px">
-        <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.06);color:var(--navy-mid);font-size:16px"><i class="fas fa-calendar-week"></i></div>
-        <div class="stat-info">
-            <div class="stat-number" style="font-size:24px">{{ number_format($thisWeekCount) }}</div>
-            <div class="stat-label">This Week</div>
+    </a>
+    <a href="{{ route('activity-log.index', ['period' => 'week']) }}" style="text-decoration:none">
+        <div class="stat-card" style="padding:16px;cursor:pointer;{{ request('period') === 'week' ? 'border-color:var(--navy);box-shadow:0 0 0 3px var(--navy-pale)' : '' }}">
+            <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.06);color:var(--navy-mid);font-size:16px"><i class="fas fa-calendar-week"></i></div>
+            <div class="stat-info">
+                <div class="stat-number" style="font-size:24px">{{ number_format($thisWeekCount) }}</div>
+                <div class="stat-label">This Week</div>
+            </div>
         </div>
-    </div>
-    <div class="stat-card" style="padding:16px">
-        <div class="stat-icon" style="width:40px;height:40px;background:rgba(200,134,26,0.1);color:var(--gold);font-size:16px"><i class="fas fa-calendar"></i></div>
-        <div class="stat-info">
-            <div class="stat-number" style="font-size:24px">{{ number_format($thisMonthCount) }}</div>
-            <div class="stat-label">This Month</div>
+    </a>
+    <a href="{{ route('activity-log.index', ['period' => 'month']) }}" style="text-decoration:none">
+        <div class="stat-card" style="padding:16px;cursor:pointer;{{ request('period') === 'month' ? 'border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glow)' : '' }}">
+            <div class="stat-icon" style="width:40px;height:40px;background:rgba(200,134,26,0.1);color:var(--gold);font-size:16px"><i class="fas fa-calendar"></i></div>
+            <div class="stat-info">
+                <div class="stat-number" style="font-size:24px">{{ number_format($thisMonthCount) }}</div>
+                <div class="stat-label">This Month</div>
+            </div>
         </div>
-    </div>
-    <div class="stat-card" style="padding:16px">
-        <div class="stat-icon" style="width:40px;height:40px;background:rgba(22,101,52,0.08);color:#16a34a;font-size:16px"><i class="fas fa-clock-rotate-left"></i></div>
-        <div class="stat-info">
-            <div class="stat-number" style="font-size:24px">{{ number_format($actionTotals['created'] + $actionTotals['updated'] + $actionTotals['deleted']) }}</div>
-            <div class="stat-label">Total Logs</div>
+    </a>
+    <a href="{{ route('activity-log.index') }}" style="text-decoration:none">
+        <div class="stat-card" style="padding:16px;cursor:pointer;{{ !request('period') && !request('module') && !request('action') ? 'border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,101,52,0.08)' : '' }}">
+            <div class="stat-icon" style="width:40px;height:40px;background:rgba(22,101,52,0.08);color:#16a34a;font-size:16px"><i class="fas fa-clock-rotate-left"></i></div>
+            <div class="stat-info">
+                <div class="stat-number" style="font-size:24px">{{ number_format($actionTotals['created'] + $actionTotals['updated'] + $actionTotals['deleted']) }}</div>
+                <div class="stat-label">All Logs</div>
+            </div>
         </div>
-    </div>
+    </a>
 </div>
 
 {{-- Monthly Trend Full Width --}}
