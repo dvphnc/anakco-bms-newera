@@ -31,6 +31,18 @@ $routeMap = [
 ];
 @endphp
 
+{{-- Charts Toggle --}}
+<div style="margin-bottom:16px">
+    <button onclick="toggleCharts()" id="charts-toggle-btn"
+            style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 16px;font-size:12.5px;font-weight:600;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:8px;font-family:'Poppins',sans-serif;transition:all 0.15s">
+        <i class="fas fa-chart-line" style="color:var(--gold)"></i>
+        <span id="charts-toggle-label">Show Charts</span>
+        <i class="fas fa-chevron-down" id="charts-chevron" style="font-size:11px;transition:transform 0.2s"></i>
+    </button>
+</div>
+
+<div id="charts-section" style="display:none">
+
 {{-- MONTHLY TREND + STATS --}}
 <div class="grid-4 mb-6">
     <div class="stat-card" style="padding:16px">
@@ -128,6 +140,8 @@ $routeMap = [
         </form>
     </div>
 </div>
+
+</div>{{-- end charts-section --}}
 
 {{-- Module Filter Pills --}}
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="module-pills">
@@ -314,6 +328,23 @@ new Chart(document.getElementById('monthlyChart'), {
         }
     }
 });
+
+function toggleCharts() {
+    const section  = document.getElementById('charts-section');
+    const label    = document.getElementById('charts-toggle-label');
+    const chevron  = document.getElementById('charts-chevron');
+    const btn      = document.getElementById('charts-toggle-btn');
+    const isHidden = section.style.display === 'none';
+    section.style.display = isHidden ? 'block' : 'none';
+    label.textContent     = isHidden ? 'Hide Charts' : 'Show Charts';
+    chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    btn.style.color = isHidden ? 'var(--navy)' : 'var(--text-muted)';
+    localStorage.setItem('activityChartsOpen', isHidden ? '1' : '0');
+}
+
+// Restore chart state from localStorage
+const chartsOpen = localStorage.getItem('activityChartsOpen');
+if (chartsOpen === '1') toggleCharts();
 
 // Auto-refresh every 60s
 setTimeout(() => location.reload(), 60000);
