@@ -112,7 +112,7 @@ class ReportController extends Controller
             ($type === 'monthly' ? "_{$month}" : ($type === 'quarterly' ? "_q{$quarter}" : '')) .
             '.pdf';
 
-        return $pdf->download($filename);
+        return $pdf->stream($filename);
     }
 
     private function getDateRange(string $type, int $year, ?int $month, ?int $quarter): array
