@@ -90,14 +90,14 @@ $routeMap = [
 
 {{-- Module Filter Pills --}}
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="module-pills">
-    <a href="{{ route('activity-log.index') }}" onclick="document.querySelector('.main-content').scrollTop=0"
+    <a href="{{ route('activity-log.index') }}"
        style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ !request('module') ? 'var(--navy)' : 'var(--border)' }};background:{{ !request('module') ? 'var(--navy)' : 'var(--surface)' }};color:{{ !request('module') ? '#fff' : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
         <i class="fas fa-clock-rotate-left" style="font-size:11px"></i> All
     </a>
     @foreach($moduleMap as $class => $info)
     @php $count = $moduleCounts[$class] ?? 0; @endphp
     @if($count > 0)
-    <a href="{{ route('activity-log.index', ['module' => $info['slug']]) }}" onclick="document.querySelector('.main-content').scrollTop=0"
+    <a href="{{ route('activity-log.index', ['module' => $info['slug']]) }}"
        style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ request('module') === $info['slug'] ? $info['color'] : 'var(--border)' }};background:{{ request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)' }};color:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
         <i class="fas {{ $info['icon'] }}" style="font-size:11px"></i>
         {{ $info['label'] }}
@@ -114,7 +114,7 @@ $routeMap = [
             <div class="filter-bar">
                 <div class="form-group">
                     <label class="form-label">Module</label>
-                    <select name="module" class="form-control" onchange="document.querySelector('.main-content').scrollTop=0;this.form.submit()">
+                    <select name="module" class="form-control" onchange="this.form.submit()">
                         <option value="">All Modules</option>
                         @foreach($moduleMap as $info)
                         <option value="{{ $info['slug'] }}" {{ request('module') === $info['slug'] ? 'selected' : '' }}>{{ $info['label'] }}</option>
@@ -123,7 +123,7 @@ $routeMap = [
                 </div>
                 <div class="form-group">
                     <label class="form-label">Action</label>
-                    <select name="action" class="form-control" onchange="document.querySelector('.main-content').scrollTop=0;this.form.submit()">
+                    <select name="action" class="form-control" onchange="this.form.submit()">
                         <option value="">All Actions</option>
                         <option value="created" {{ request('action') === 'created' ? 'selected' : '' }}>Created</option>
                         <option value="updated" {{ request('action') === 'updated' ? 'selected' : '' }}>Updated</option>
@@ -132,7 +132,7 @@ $routeMap = [
                 </div>
                 <div class="form-group">
                     <label class="form-label">User</label>
-                    <select name="user_id" class="form-control" onchange="document.querySelector('.main-content').scrollTop=0;this.form.submit()">
+                    <select name="user_id" class="form-control" onchange="this.form.submit()">
                         <option value="">All Users</option>
                         @foreach($users as $u)
                         <option value="{{ $u->id }}" {{ request('user_id') == $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
@@ -314,8 +314,17 @@ new Chart(document.getElementById('monthlyChart'), {
     }
 });
 
-// Scroll to top on load
-document.querySelector('.main-content').scrollTop = 0;
+// Scroll to top immediately on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const main = document.querySelector('.main-content');
+    if (main) main.scrollTop = 0;
+});
+
+// Also force scroll after all resources load
+window.addEventListener('load', function() {
+    const main = document.querySelector('.main-content');
+    if (main) main.scrollTop = 0;
+});
 
 // Auto-refresh every 60s
 setTimeout(() => location.reload(), 60000);
