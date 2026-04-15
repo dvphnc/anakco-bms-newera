@@ -89,14 +89,14 @@ $routeMap = [
 
 
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="module-pills">
-    <a href="<?php echo e(route('activity-log.index')); ?>" onclick="document.querySelector('.main-content').scrollTop=0"
+    <a href="<?php echo e(route('activity-log.index')); ?>"
        style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid <?php echo e(!request('module') ? 'var(--navy)' : 'var(--border)'); ?>;background:<?php echo e(!request('module') ? 'var(--navy)' : 'var(--surface)'); ?>;color:<?php echo e(!request('module') ? '#fff' : 'var(--text-muted)'); ?>;font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
         <i class="fas fa-clock-rotate-left" style="font-size:11px"></i> All
     </a>
     <?php $__currentLoopData = $moduleMap; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class => $info): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
     <?php $count = $moduleCounts[$class] ?? 0; ?>
     <?php if($count > 0): ?>
-    <a href="<?php echo e(route('activity-log.index', ['module' => $info['slug']])); ?>" onclick="document.querySelector('.main-content').scrollTop=0"
+    <a href="<?php echo e(route('activity-log.index', ['module' => $info['slug']])); ?>"
        style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid <?php echo e(request('module') === $info['slug'] ? $info['color'] : 'var(--border)'); ?>;background:<?php echo e(request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)'); ?>;color:<?php echo e(request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)'); ?>;font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
         <i class="fas <?php echo e($info['icon']); ?>" style="font-size:11px"></i>
         <?php echo e($info['label']); ?>
@@ -114,7 +114,7 @@ $routeMap = [
             <div class="filter-bar">
                 <div class="form-group">
                     <label class="form-label">Module</label>
-                    <select name="module" class="form-control" onchange="document.querySelector('.main-content').scrollTop=0;this.form.submit()">
+                    <select name="module" class="form-control" onchange="this.form.submit()">
                         <option value="">All Modules</option>
                         <?php $__currentLoopData = $moduleMap; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $info): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <option value="<?php echo e($info['slug']); ?>" <?php echo e(request('module') === $info['slug'] ? 'selected' : ''); ?>><?php echo e($info['label']); ?></option>
@@ -123,7 +123,7 @@ $routeMap = [
                 </div>
                 <div class="form-group">
                     <label class="form-label">Action</label>
-                    <select name="action" class="form-control" onchange="document.querySelector('.main-content').scrollTop=0;this.form.submit()">
+                    <select name="action" class="form-control" onchange="this.form.submit()">
                         <option value="">All Actions</option>
                         <option value="created" <?php echo e(request('action') === 'created' ? 'selected' : ''); ?>>Created</option>
                         <option value="updated" <?php echo e(request('action') === 'updated' ? 'selected' : ''); ?>>Updated</option>
@@ -132,7 +132,7 @@ $routeMap = [
                 </div>
                 <div class="form-group">
                     <label class="form-label">User</label>
-                    <select name="user_id" class="form-control" onchange="document.querySelector('.main-content').scrollTop=0;this.form.submit()">
+                    <select name="user_id" class="form-control" onchange="this.form.submit()">
                         <option value="">All Users</option>
                         <?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $u): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <option value="<?php echo e($u->id); ?>" <?php echo e(request('user_id') == $u->id ? 'selected' : ''); ?>><?php echo e($u->name); ?></option>
@@ -320,8 +320,17 @@ new Chart(document.getElementById('monthlyChart'), {
     }
 });
 
-// Scroll to top on load
-document.querySelector('.main-content').scrollTop = 0;
+// Scroll to top immediately on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const main = document.querySelector('.main-content');
+    if (main) main.scrollTop = 0;
+});
+
+// Also force scroll after all resources load
+window.addEventListener('load', function() {
+    const main = document.querySelector('.main-content');
+    if (main) main.scrollTop = 0;
+});
 
 // Auto-refresh every 60s
 setTimeout(() => location.reload(), 60000);
