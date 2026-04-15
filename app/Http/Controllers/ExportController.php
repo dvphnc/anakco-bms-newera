@@ -247,12 +247,12 @@ class ExportController extends Controller
                     ->when($filters['purok_id'] ?? null, fn($q, $v) => $q->where('purok_id', $v))
                     ->orderBy('last_name')->get();
                 return Pdf::loadView('exports.pdf.residents', compact('data','generatedAt','generatedBy','officialName','filters'))
-                    ->setPaper('a4','landscape')->download("residents-{$date}.pdf");
+                    ->setPaper('a4','landscape')->stream("residents-{$date}.pdf");
 
             case 'households':
                 $data = Household::with(['purok','residents'])->orderBy('household_number')->get();
                 return Pdf::loadView('exports.pdf.households', compact('data','generatedAt','generatedBy','officialName'))
-                    ->setPaper('a4','landscape')->download("households-{$date}.pdf");
+                    ->setPaper('a4','landscape')->stream("households-{$date}.pdf");
 
             case 'documents':
                 $data = Document::with(['resident','issuedBy'])
@@ -260,7 +260,7 @@ class ExportController extends Controller
                     ->when($filters['document_type'] ?? null, fn($q, $v) => $q->where('document_type', $v))
                     ->orderBy('created_at','desc')->get();
                 return Pdf::loadView('exports.pdf.documents', compact('data','generatedAt','generatedBy','officialName','filters'))
-                    ->setPaper('a4','landscape')->download("documents-{$date}.pdf");
+                    ->setPaper('a4','landscape')->stream("documents-{$date}.pdf");
 
             case 'blotter':
                 $data = BlotterCase::with(['filedBy'])
@@ -268,14 +268,14 @@ class ExportController extends Controller
                     ->when($filters['incident_type'] ?? null, fn($q, $v) => $q->where('incident_type', $v))
                     ->orderBy('incident_date','desc')->get();
                 return Pdf::loadView('exports.pdf.blotter', compact('data','generatedAt','generatedBy','officialName','filters'))
-                    ->setPaper('a4','landscape')->download("blotter-cases-{$date}.pdf");
+                    ->setPaper('a4','landscape')->stream("blotter-cases-{$date}.pdf");
 
             case 'businesses':
                 $data = Business::with(['issuedBy'])
                     ->when($filters['status'] ?? null, fn($q, $v) => $q->where('status', $v))
                     ->orderBy('business_name')->get();
                 return Pdf::loadView('exports.pdf.businesses', compact('data','generatedAt','generatedBy','officialName','filters'))
-                    ->setPaper('a4','landscape')->download("businesses-{$date}.pdf");
+                    ->setPaper('a4','landscape')->stream("businesses-{$date}.pdf");
 
             default:
                 abort(404);
@@ -324,7 +324,7 @@ class ExportController extends Controller
                 'totalMale','totalFemale','totalHouseholds',
                 'totalVoters','totalSeniors','totalPwd','totalSoloParent','total4ps',
                 'ageGroups','residentsByPurok'
-            ))->setPaper('a4','portrait')->download("population-summary-{$date}.pdf");
+            ))->setPaper('a4','portrait')->stream("population-summary-{$date}.pdf");
         }
 
         // Excel
