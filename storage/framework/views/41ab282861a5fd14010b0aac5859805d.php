@@ -107,20 +107,19 @@ $routeMap = [
     </div>
 </div>
 
+</div>
+
 
 <div class="card mb-6">
     <div class="card-body" style="padding:14px 20px">
         <form method="GET" action="<?php echo e(route('activity-log.index')); ?>">
+            <?php if(request('module')): ?>
+                <input type="hidden" name="module" value="<?php echo e(request('module')); ?>">
+            <?php endif; ?>
+            <?php if(request('period')): ?>
+                <input type="hidden" name="period" value="<?php echo e(request('period')); ?>">
+            <?php endif; ?>
             <div class="filter-bar">
-                <div class="form-group">
-                    <label class="form-label">Module</label>
-                    <select name="module" class="form-control" onchange="this.form.submit()">
-                        <option value="">All Modules</option>
-                        <?php $__currentLoopData = $moduleMap; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $info): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($info['slug']); ?>" <?php echo e(request('module') === $info['slug'] ? 'selected' : ''); ?>><?php echo e($info['label']); ?></option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </select>
-                </div>
                 <div class="form-group">
                     <label class="form-label">Action</label>
                     <select name="action" class="form-control" onchange="this.form.submit()">
@@ -130,7 +129,7 @@ $routeMap = [
                         <option value="deleted" <?php echo e(request('action') === 'deleted' ? 'selected' : ''); ?>>Deleted</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group flex-1">
                     <label class="form-label">User</label>
                     <select name="user_id" class="form-control" onchange="this.form.submit()">
                         <option value="">All Users</option>
@@ -139,15 +138,13 @@ $routeMap = [
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="justify-content:flex-end">
                     <label class="form-label">&nbsp;</label>
-                    <a href="<?php echo e(route('activity-log.index')); ?>" class="btn btn-secondary"><i class="fas fa-xmark"></i> Reset</a>
+                    <a href="<?php echo e(route('activity-log.index')); ?>" class="btn btn-secondary"><i class="fas fa-xmark"></i> Reset All</a>
                 </div>
             </div>
         </form>
     </div>
-</div>
-
 </div>
 
 
@@ -181,7 +178,6 @@ $routeMap = [
     <?php $__empty_1 = true; $__currentLoopData = $query; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $log): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
     <?php
         $module = $moduleMap[$log->loggable_type] ?? ['label' => 'Record', 'icon' => 'fa-circle', 'color' => '#9ca3af', 'slug' => ''];
-        $actionLabel = match($log->action) { 'created' => 'created a new', 'deleted' => 'deleted a', default => 'updated a' };
         $actionColor = match($log->action) { 'created' => '#166534', 'deleted' => '#991b1b', default => '#92400e' };
         $actionBg    = match($log->action) { 'created' => '#dcfce7', 'deleted' => '#fee2e2', default => '#fef3c7' };
         $dateStr = $log->created_at->isToday() ? 'Today' : ($log->created_at->isYesterday() ? 'Yesterday' : $log->created_at->format('M d, Y'));

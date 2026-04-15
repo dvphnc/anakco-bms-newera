@@ -108,20 +108,19 @@ $routeMap = [
     </div>
 </div>
 
-{{-- Filters --}}
+</div>{{-- end charts-section --}}
+
+{{-- Filters — always visible, no module dropdown (pills handle that) --}}
 <div class="card mb-6">
     <div class="card-body" style="padding:14px 20px">
         <form method="GET" action="{{ route('activity-log.index') }}">
+            @if(request('module'))
+                <input type="hidden" name="module" value="{{ request('module') }}">
+            @endif
+            @if(request('period'))
+                <input type="hidden" name="period" value="{{ request('period') }}">
+            @endif
             <div class="filter-bar">
-                <div class="form-group">
-                    <label class="form-label">Module</label>
-                    <select name="module" class="form-control" onchange="this.form.submit()">
-                        <option value="">All Modules</option>
-                        @foreach($moduleMap as $info)
-                        <option value="{{ $info['slug'] }}" {{ request('module') === $info['slug'] ? 'selected' : '' }}>{{ $info['label'] }}</option>
-                        @endforeach
-                    </select>
-                </div>
                 <div class="form-group">
                     <label class="form-label">Action</label>
                     <select name="action" class="form-control" onchange="this.form.submit()">
@@ -131,7 +130,7 @@ $routeMap = [
                         <option value="deleted" {{ request('action') === 'deleted' ? 'selected' : '' }}>Deleted</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group flex-1">
                     <label class="form-label">User</label>
                     <select name="user_id" class="form-control" onchange="this.form.submit()">
                         <option value="">All Users</option>
@@ -140,16 +139,14 @@ $routeMap = [
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="justify-content:flex-end">
                     <label class="form-label">&nbsp;</label>
-                    <a href="{{ route('activity-log.index') }}" class="btn btn-secondary"><i class="fas fa-xmark"></i> Reset</a>
+                    <a href="{{ route('activity-log.index') }}" class="btn btn-secondary"><i class="fas fa-xmark"></i> Reset All</a>
                 </div>
             </div>
         </form>
     </div>
 </div>
-
-</div>{{-- end charts-section --}}
 
 {{-- Module Filter Pills --}}
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="module-pills">
@@ -181,7 +178,6 @@ $routeMap = [
     @forelse($query as $log)
     @php
         $module = $moduleMap[$log->loggable_type] ?? ['label' => 'Record', 'icon' => 'fa-circle', 'color' => '#9ca3af', 'slug' => ''];
-        $actionLabel = match($log->action) { 'created' => 'created a new', 'deleted' => 'deleted a', default => 'updated a' };
         $actionColor = match($log->action) { 'created' => '#166534', 'deleted' => '#991b1b', default => '#92400e' };
         $actionBg    = match($log->action) { 'created' => '#dcfce7', 'deleted' => '#fee2e2', default => '#fef3c7' };
         $dateStr = $log->created_at->isToday() ? 'Today' : ($log->created_at->isYesterday() ? 'Yesterday' : $log->created_at->format('M d, Y'));
