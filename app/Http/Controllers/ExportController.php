@@ -237,7 +237,7 @@ class ExportController extends Controller
         $generatedAt = now()->format('F d, Y \a\t h:i A');
         $generatedBy = auth()->user()->name;
         $officialName = \App\Models\Official::where('position','Punong Barangay')
-            ->where('is_active', true)->first()?->full_name ?? 'PUNONG BARANGAY';
+            ->where('is_active', true)->first()?->full_name ?? 'ROBERT S. ROMANO';
 
         switch ($module) {
             case 'residents':
