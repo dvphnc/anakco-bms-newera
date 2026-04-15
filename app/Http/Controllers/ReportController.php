@@ -100,7 +100,7 @@ class ReportController extends Controller
         $data         = $this->gatherData($module, $startDate, $endDate);
         $generatedAt  = now()->format('F d, Y \a\t h:i A');
         $generatedBy  = auth()->user()->name;
-        $officialName = Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
+        $officialName = Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PY';
 
         $pdf = Pdf::loadView('reports.pdf', compact(
             'type','module','year','periodLabel',
