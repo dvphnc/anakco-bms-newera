@@ -88,25 +88,6 @@ $routeMap = [
     </div>
 </div>
 
-{{-- Module Filter Pills --}}
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="module-pills">
-    <a href="{{ route('activity-log.index') }}"
-       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ !request('module') ? 'var(--navy)' : 'var(--border)' }};background:{{ !request('module') ? 'var(--navy)' : 'var(--surface)' }};color:{{ !request('module') ? '#fff' : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
-        <i class="fas fa-clock-rotate-left" style="font-size:11px"></i> All
-    </a>
-    @foreach($moduleMap as $class => $info)
-    @php $count = $moduleCounts[$class] ?? 0; @endphp
-    @if($count > 0)
-    <a href="{{ route('activity-log.index', ['module' => $info['slug']]) }}"
-       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ request('module') === $info['slug'] ? $info['color'] : 'var(--border)' }};background:{{ request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)' }};color:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
-        <i class="fas {{ $info['icon'] }}" style="font-size:11px"></i>
-        {{ $info['label'] }}
-        <span style="background:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--surface3)' }};color:{{ request('module') === $info['slug'] ? '#fff' : 'var(--text-muted)' }};border-radius:99px;padding:0 6px;font-size:10px">{{ $count }}</span>
-    </a>
-    @endif
-    @endforeach
-</div>
-
 {{-- Filters --}}
 <div class="card mb-6">
     <div class="card-body" style="padding:14px 20px">
@@ -147,6 +128,26 @@ $routeMap = [
         </form>
     </div>
 </div>
+
+{{-- Module Filter Pills --}}
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="module-pills">
+    <a href="{{ route('activity-log.index') }}"
+       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ !request('module') ? 'var(--navy)' : 'var(--border)' }};background:{{ !request('module') ? 'var(--navy)' : 'var(--surface)' }};color:{{ !request('module') ? '#fff' : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
+        <i class="fas fa-clock-rotate-left" style="font-size:11px"></i> All
+    </a>
+    @foreach($moduleMap as $class => $info)
+    @php $count = $moduleCounts[$class] ?? 0; @endphp
+    @if($count > 0)
+    <a href="{{ route('activity-log.index', ['module' => $info['slug']]) }}"
+       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ request('module') === $info['slug'] ? $info['color'] : 'var(--border)' }};background:{{ request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)' }};color:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
+        <i class="fas {{ $info['icon'] }}" style="font-size:11px"></i>
+        {{ $info['label'] }}
+        <span style="background:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--surface3)' }};color:{{ request('module') === $info['slug'] ? '#fff' : 'var(--text-muted)' }};border-radius:99px;padding:0 6px;font-size:10px">{{ $count }}</span>
+    </a>
+    @endif
+    @endforeach
+</div>
+
 
 {{-- Activity Feed --}}
 <div class="card" id="activity-feed">
@@ -310,17 +311,6 @@ new Chart(document.getElementById('monthlyChart'), {
         scales: {
             x: { ticks: { color: '#9CA3AF', font: { size: 11 } }, grid: { color: '#E5E7EB' } },
             y: { beginAtZero: true, ticks: { color: '#9CA3AF', font: { size: 11 }, stepSize: 1 }, grid: { color: '#E5E7EB' } }
-        }
-    }
-});
-
-// Scroll to activity feed if anchor in URL
-window.addEventListener('load', function() {
-    if (window.location.hash === '#activity-feed') {
-        const el = document.getElementById('activity-feed');
-        const main = document.querySelector('.main-content');
-        if (el && main) {
-            setTimeout(() => main.scrollTo({ top: el.offsetTop - 20, behavior: 'smooth' }), 100);
         }
     }
 });
