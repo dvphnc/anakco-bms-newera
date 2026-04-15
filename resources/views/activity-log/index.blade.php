@@ -253,81 +253,62 @@ $routeMap = [
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-// Weekly stacked bar chart
-const weeklyData = @json($weeklyData);
-new Chart(document.getElementById('weeklyChart'), {
-    type: 'bar',
-    data: {
-        labels: weeklyData.map(d => d.label + '\n' + d.date),
-        datasets: [
-            {
-                label: 'Created',
-                data: weeklyData.map(d => d.created),
-                backgroundColor: '#16a34a',
-                borderRadius: 3,
-            },
-            {
-                label: 'Updated',
-                data: weeklyData.map(d => d.updated),
-                backgroundColor: '#f59e0b',
-                borderRadius: 3,
-            },
-            {
-                label: 'Deleted',
-                data: weeklyData.map(d => d.deleted),
-                backgroundColor: '#ef4444',
-                borderRadius: 3,
-            },
-        ]
-    },
-    options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-            x: {
-                stacked: true,
-                ticks: { color: '#9CA3AF', font: { size: 11 } },
-                grid: { display: false }
-            },
-            y: {
-                stacked: true,
-                beginAtZero: true,
-                ticks: { color: '#9CA3AF', font: { size: 11 }, stepSize: 1 },
-                grid: { color: '#E5E7EB' }
+const weeklyData  = @json($weeklyData);
+const monthlyData = @json($monthlyData);
+let chartsInitialized = false;
+
+function initCharts() {
+    if (chartsInitialized) return;
+    chartsInitialized = true;
+
+    new Chart(document.getElementById('weeklyChart'), {
+        type: 'bar',
+        data: {
+            labels: weeklyData.map(d => d.label),
+            datasets: [
+                { label: 'Created', data: weeklyData.map(d => d.created), backgroundColor: '#16a34a', borderRadius: 3 },
+                { label: 'Updated', data: weeklyData.map(d => d.updated), backgroundColor: '#f59e0b', borderRadius: 3 },
+                { label: 'Deleted', data: weeklyData.map(d => d.deleted), backgroundColor: '#ef4444', borderRadius: 3 },
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { stacked: true, ticks: { color: '#9CA3AF', font: { size: 11 } }, grid: { display: false } },
+                y: { stacked: true, beginAtZero: true, ticks: { color: '#9CA3AF', font: { size: 11 }, stepSize: 1 }, grid: { color: '#E5E7EB' } }
             }
         }
-    }
-});
+    });
 
-// Monthly line chart
-const monthlyData = @json($monthlyData);
-new Chart(document.getElementById('monthlyChart'), {
-    type: 'line',
-    data: {
-        labels: monthlyData.map(d => d.label + ' ' + d.year),
-        datasets: [{
-            label: 'Total Activity',
-            data: monthlyData.map(d => d.total),
-            borderColor: '#0D2144',
-            backgroundColor: 'rgba(13,33,68,0.06)',
-            borderWidth: 2,
-            pointBackgroundColor: '#C8861A',
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            pointRadius: 5,
-            fill: true,
-            tension: 0.3,
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-            x: { ticks: { color: '#9CA3AF', font: { size: 11 } }, grid: { color: '#E5E7EB' } },
-            y: { beginAtZero: true, ticks: { color: '#9CA3AF', font: { size: 11 }, stepSize: 1 }, grid: { color: '#E5E7EB' } }
+    new Chart(document.getElementById('monthlyChart'), {
+        type: 'line',
+        data: {
+            labels: monthlyData.map(d => d.label + ' ' + d.year),
+            datasets: [{
+                label: 'Total Activity',
+                data: monthlyData.map(d => d.total),
+                borderColor: '#0D2144',
+                backgroundColor: 'rgba(13,33,68,0.06)',
+                borderWidth: 2,
+                pointBackgroundColor: '#C8861A',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                fill: true,
+                tension: 0.3,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: '#9CA3AF', font: { size: 11 } }, grid: { color: '#E5E7EB' } },
+                y: { beginAtZero: true, ticks: { color: '#9CA3AF', font: { size: 11 }, stepSize: 1 }, grid: { color: '#E5E7EB' } }
+            }
         }
-    }
-});
+    });
+}
 
 function toggleCharts() {
     const section  = document.getElementById('charts-section');
@@ -336,15 +317,15 @@ function toggleCharts() {
     const btn      = document.getElementById('charts-toggle-btn');
     const isHidden = section.style.display === 'none';
     section.style.display = isHidden ? 'block' : 'none';
-    label.textContent     = isHidden ? 'Hide Charts' : 'Show Charts';
-    chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
-    btn.style.color = isHidden ? 'var(--navy)' : 'var(--text-muted)';
+    label.textContent       = isHidden ? 'Hide Charts' : 'Show Charts';
+    chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0)';
+    btn.style.color         = isHidden ? 'var(--navy)' : 'var(--text-muted)';
     localStorage.setItem('activityChartsOpen', isHidden ? '1' : '0');
+    if (isHidden) initCharts();
 }
 
-// Restore chart state from localStorage
-const chartsOpen = localStorage.getItem('activityChartsOpen');
-if (chartsOpen === '1') toggleCharts();
+// Restore state
+if (localStorage.getItem('activityChartsOpen') === '1') toggleCharts();
 
 // Auto-refresh every 60s
 setTimeout(() => location.reload(), 60000);
