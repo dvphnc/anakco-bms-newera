@@ -31,83 +31,45 @@ $routeMap = [
 ];
 @endphp
 
-{{-- MONTHLY TREND + STATS (top) --}}
-<div class="grid-2 mb-6" style="grid-template-columns:2fr 1fr;align-items:stretch">
-
-    {{-- Monthly Trend --}}
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title"><i class="fas fa-chart-line"></i> Monthly Activity Trend — Last 12 Months</span>
-        </div>
-        <div class="card-body">
-            <canvas id="monthlyChart" height="110"></canvas>
+{{-- MONTHLY TREND + STATS --}}
+<div class="grid-4 mb-6">
+    <div class="stat-card" style="padding:16px">
+        <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.08);color:var(--navy);font-size:16px"><i class="fas fa-calendar-day"></i></div>
+        <div class="stat-info">
+            <div class="stat-number" style="font-size:24px">{{ number_format($todayCount) }}</div>
+            <div class="stat-label">Today</div>
         </div>
     </div>
-
-    {{-- Stats + Action Breakdown --}}
-    <div style="display:flex;flex-direction:column;gap:16px">
-
-        {{-- Stat Cards 2x2 --}}
-        <div class="grid-2" style="gap:12px">
-            <div class="stat-card" style="padding:16px">
-                <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.08);color:var(--navy);font-size:16px"><i class="fas fa-calendar-day"></i></div>
-                <div class="stat-info">
-                    <div class="stat-number" style="font-size:24px">{{ number_format($todayCount) }}</div>
-                    <div class="stat-label">Today</div>
-                </div>
-            </div>
-            <div class="stat-card" style="padding:16px">
-                <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.06);color:var(--navy-mid);font-size:16px"><i class="fas fa-calendar-week"></i></div>
-                <div class="stat-info">
-                    <div class="stat-number" style="font-size:24px">{{ number_format($thisWeekCount) }}</div>
-                    <div class="stat-label">This Week</div>
-                </div>
-            </div>
-            <div class="stat-card" style="padding:16px">
-                <div class="stat-icon" style="width:40px;height:40px;background:rgba(200,134,26,0.1);color:var(--gold);font-size:16px"><i class="fas fa-calendar"></i></div>
-                <div class="stat-info">
-                    <div class="stat-number" style="font-size:24px">{{ number_format($thisMonthCount) }}</div>
-                    <div class="stat-label">This Month</div>
-                </div>
-            </div>
-            <div class="stat-card" style="padding:16px">
-                <div class="stat-icon" style="width:40px;height:40px;background:rgba(22,101,52,0.08);color:#16a34a;font-size:16px"><i class="fas fa-clock-rotate-left"></i></div>
-                <div class="stat-info">
-                    <div class="stat-number" style="font-size:24px">{{ number_format($actionTotals['created'] + $actionTotals['updated'] + $actionTotals['deleted']) }}</div>
-                    <div class="stat-label">Total Logs</div>
-                </div>
-            </div>
+    <div class="stat-card" style="padding:16px">
+        <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.06);color:var(--navy-mid);font-size:16px"><i class="fas fa-calendar-week"></i></div>
+        <div class="stat-info">
+            <div class="stat-number" style="font-size:24px">{{ number_format($thisWeekCount) }}</div>
+            <div class="stat-label">This Week</div>
         </div>
-
-        {{-- Action Breakdown Card --}}
-        <div class="card" style="flex:1">
-            <div class="card-header">
-                <span class="card-title"><i class="fas fa-chart-pie"></i> By Action</span>
-            </div>
-            <div class="card-body" style="display:flex;align-items:center;gap:20px">
-                <canvas id="actionChart" style="width:90px!important;height:90px!important;flex-shrink:0"></canvas>
-                <div style="flex:1;display:flex;flex-direction:column;gap:10px">
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <span style="display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text)">
-                            <span style="width:10px;height:10px;border-radius:50%;background:#16a34a;display:inline-block;flex-shrink:0"></span>Created
-                        </span>
-                        <span style="font-size:15px;font-weight:700;color:var(--navy)">{{ number_format($actionTotals['created']) }}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <span style="display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text)">
-                            <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block;flex-shrink:0"></span>Updated
-                        </span>
-                        <span style="font-size:15px;font-weight:700;color:var(--navy)">{{ number_format($actionTotals['updated']) }}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <span style="display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text)">
-                            <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;flex-shrink:0"></span>Deleted
-                        </span>
-                        <span style="font-size:15px;font-weight:700;color:var(--navy)">{{ number_format($actionTotals['deleted']) }}</span>
-                    </div>
-                </div>
-            </div>
+    </div>
+    <div class="stat-card" style="padding:16px">
+        <div class="stat-icon" style="width:40px;height:40px;background:rgba(200,134,26,0.1);color:var(--gold);font-size:16px"><i class="fas fa-calendar"></i></div>
+        <div class="stat-info">
+            <div class="stat-number" style="font-size:24px">{{ number_format($thisMonthCount) }}</div>
+            <div class="stat-label">This Month</div>
         </div>
+    </div>
+    <div class="stat-card" style="padding:16px">
+        <div class="stat-icon" style="width:40px;height:40px;background:rgba(22,101,52,0.08);color:#16a34a;font-size:16px"><i class="fas fa-clock-rotate-left"></i></div>
+        <div class="stat-info">
+            <div class="stat-number" style="font-size:24px">{{ number_format($actionTotals['created'] + $actionTotals['updated'] + $actionTotals['deleted']) }}</div>
+            <div class="stat-label">Total Logs</div>
+        </div>
+    </div>
+</div>
+
+{{-- Monthly Trend Full Width --}}
+<div class="card mb-6">
+    <div class="card-header">
+        <span class="card-title"><i class="fas fa-chart-line"></i> Monthly Activity Trend — Last 12 Months</span>
+    </div>
+    <div class="card-body">
+        <canvas id="monthlyChart" height="80"></canvas>
     </div>
 </div>
 
@@ -127,15 +89,15 @@ $routeMap = [
 </div>
 
 {{-- Module Filter Pills --}}
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
-    <a href="{{ route('activity-log.index') }}"
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="module-pills">
+    <a href="{{ route('activity-log.index') }}" onclick="document.querySelector('.main-content').scrollTop=0"
        style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ !request('module') ? 'var(--navy)' : 'var(--border)' }};background:{{ !request('module') ? 'var(--navy)' : 'var(--surface)' }};color:{{ !request('module') ? '#fff' : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
         <i class="fas fa-clock-rotate-left" style="font-size:11px"></i> All
     </a>
     @foreach($moduleMap as $class => $info)
     @php $count = $moduleCounts[$class] ?? 0; @endphp
     @if($count > 0)
-    <a href="{{ route('activity-log.index', ['module' => $info['slug']]) }}"
+    <a href="{{ route('activity-log.index', ['module' => $info['slug']]) }}" onclick="document.querySelector('.main-content').scrollTop=0"
        style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ request('module') === $info['slug'] ? $info['color'] : 'var(--border)' }};background:{{ request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)' }};color:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
         <i class="fas {{ $info['icon'] }}" style="font-size:11px"></i>
         {{ $info['label'] }}
@@ -152,7 +114,7 @@ $routeMap = [
             <div class="filter-bar">
                 <div class="form-group">
                     <label class="form-label">Module</label>
-                    <select name="module" class="form-control" onchange="this.form.submit()">
+                    <select name="module" class="form-control" onchange="document.querySelector('.main-content').scrollTop=0;this.form.submit()">
                         <option value="">All Modules</option>
                         @foreach($moduleMap as $info)
                         <option value="{{ $info['slug'] }}" {{ request('module') === $info['slug'] ? 'selected' : '' }}>{{ $info['label'] }}</option>
@@ -161,7 +123,7 @@ $routeMap = [
                 </div>
                 <div class="form-group">
                     <label class="form-label">Action</label>
-                    <select name="action" class="form-control" onchange="this.form.submit()">
+                    <select name="action" class="form-control" onchange="document.querySelector('.main-content').scrollTop=0;this.form.submit()">
                         <option value="">All Actions</option>
                         <option value="created" {{ request('action') === 'created' ? 'selected' : '' }}>Created</option>
                         <option value="updated" {{ request('action') === 'updated' ? 'selected' : '' }}>Updated</option>
@@ -170,7 +132,7 @@ $routeMap = [
                 </div>
                 <div class="form-group">
                     <label class="form-label">User</label>
-                    <select name="user_id" class="form-control" onchange="this.form.submit()">
+                    <select name="user_id" class="form-control" onchange="document.querySelector('.main-content').scrollTop=0;this.form.submit()">
                         <option value="">All Users</option>
                         @foreach($users as $u)
                         <option value="{{ $u->id }}" {{ request('user_id') == $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
@@ -322,25 +284,6 @@ new Chart(document.getElementById('weeklyChart'), {
     }
 });
 
-// Action doughnut chart
-new Chart(document.getElementById('actionChart'), {
-    type: 'doughnut',
-    data: {
-        labels: ['Created', 'Updated', 'Deleted'],
-        datasets: [{
-            data: [{{ $actionTotals['created'] }}, {{ $actionTotals['updated'] }}, {{ $actionTotals['deleted'] }}],
-            backgroundColor: ['#16a34a', '#f59e0b', '#ef4444'],
-            borderWidth: 2,
-            borderColor: '#fff',
-        }]
-    },
-    options: {
-        responsive: true,
-        cutout: '65%',
-        plugins: { legend: { display: false } }
-    }
-});
-
 // Monthly line chart
 const monthlyData = @json($monthlyData);
 new Chart(document.getElementById('monthlyChart'), {
@@ -370,6 +313,9 @@ new Chart(document.getElementById('monthlyChart'), {
         }
     }
 });
+
+// Scroll to top on load
+document.querySelector('.main-content').scrollTop = 0;
 
 // Auto-refresh every 60s
 setTimeout(() => location.reload(), 60000);
