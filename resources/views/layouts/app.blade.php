@@ -306,6 +306,29 @@
         }
 
         /* =============================================
+           FORM ERROR HIGHLIGHTING
+        ============================================= */
+        .is-invalid {
+            border-color: var(--crimson) !important;
+            box-shadow: 0 0 0 3px rgba(155,28,28,0.1) !important;
+        }
+        .invalid-feedback {
+            font-size: 11px;
+            color: var(--crimson);
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .form-control.is-invalid:focus {
+            border-color: var(--crimson) !important;
+            box-shadow: 0 0 0 3px rgba(155,28,28,0.12) !important;
+        }
+        .is-valid {
+            border-color: #16a34a !important;
+        }
+
+        /* =============================================
            SELECT2 — Matches BMS form-control exactly
         ============================================= */
         .select2-container { width: 100% !important; }
