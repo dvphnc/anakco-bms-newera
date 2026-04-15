@@ -97,18 +97,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('committees.show');
 
     Route::post('committees/{slug}/records', [CommitteeController::class, 'storeRecord'])
-        ->name('committees.storeRecord');
+        ->name('committees.storeRecord')->middleware('role:Admin,Secretary,Committee');
 
     Route::post('committees/{slug}/activities', [CommitteeController::class, 'storeActivity'])
-        ->name('committees.storeActivity');
+        ->name('committees.storeActivity')->middleware('role:Admin,Secretary,Committee');
 
     Route::post('committees/{slug}/attendance', [CommitteeController::class, 'storeAttendance'])
-        ->name('committees.storeAttendance');
+        ->name('committees.storeAttendance')->middleware('role:Admin,Secretary,Committee');
 
     Route::post('committees/{slug}/inventory', [CommitteeController::class, 'storeInventory'])
-        ->name('committees.storeInventory');
+        ->name('committees.storeInventory')->middleware('role:Admin,Secretary,Committee');
+
     Route::post('committees/{slug}/specific', [CommitteeController::class, 'storeSpecific'])
-        ->name('committees.storeSpecific');
+        ->name('committees.storeSpecific')->middleware('role:Admin,Secretary,Committee');
 
     // ---------------------------------------------------
     // Reports — Admin + Secretary only
@@ -120,6 +121,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     // User Management — Admin only
     // ---------------------------------------------------
+    Route::post('users/{user}/verify',   [UserController::class, 'verify'])->name('users.verify')->middleware('role:Admin');
+    Route::post('users/{user}/unverify', [UserController::class, 'unverify'])->name('users.unverify')->middleware('role:Admin');
     Route::resource('users', UserController::class)
         ->middleware('role:Admin');
 
@@ -143,9 +146,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('export.analytics')
         ->middleware('role:Admin,Secretary');
 
-    // Report Generation
-    Route::get('reports/generate', [ReportController::class, 'index'])->name('reports.generate');
-    Route::post('reports/generate', [ReportController::class, 'generate'])->name('reports.generate.post');
+    // Report Generation — Admin + Secretary only
+    Route::get('reports/generate', [ReportController::class, 'index'])->name('reports.generate')->middleware('role:Admin,Secretary');
+    Route::post('reports/generate', [ReportController::class, 'generate'])->name('reports.generate.post')->middleware('role:Admin,Secretary');
 
     // Database Backup
     Route::get('backup', [BackupController::class, 'index'])->name('backup.index')->middleware('role:Admin');
@@ -155,10 +158,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('backup/upload', [BackupController::class, 'upload'])->name('backup.upload')->middleware('role:Admin');
     Route::delete('backup/{filename}', [BackupController::class, 'delete'])->name('backup.delete')->middleware('role:Admin');
 
-    // Global Search
+    // Global Search — all authenticated users (results filtered by role in controller)
     Route::get('search', [SearchController::class, 'search'])->name('search');
 
-    // Select2 AJAX
-    Route::get('select2/residents', [Select2Controller::class, 'residents'])->name('select2.residents');
+    // Select2 AJAX — Admin + Secretary only
+    Route::get('select2/residents', [Select2Controller::class, 'residents'])->name('select2.residents')->middleware('role:Admin,Secretary');
 
 });
