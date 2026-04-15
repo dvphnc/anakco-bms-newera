@@ -48,43 +48,45 @@
 @endif
 
 {{-- Stat Cards --}}
-<div class="grid-4 mb-6" style="grid-template-columns:repeat(6,1fr)">
-    <div class="stat-card" style="cursor:pointer" onclick="$('#statusFilter').val('').trigger('change')">
+<div class="grid-4 mb-6">
+    <div class="stat-card" style="cursor:pointer" onclick="$('#statusFilter').val('').trigger('change');$('#expiryFilter').val('').trigger('change')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-store"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format(array_sum([$summaryCounts['Active'],$summaryCounts['Expired'],$summaryCounts['Suspended'],$summaryCounts['Cancelled']])) }}</div>
-            <div class="stat-label">Total</div>
+            <div class="stat-label">Total Businesses</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="$('#statusFilter').val('Active').trigger('change')">
+    <div class="stat-card" style="cursor:pointer" onclick="$('#statusFilter').val('Active').trigger('change');$('#expiryFilter').val('').trigger('change')">
         <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-check-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Active']) }}</div>
-            <div class="stat-label">Active</div>
+            <div class="stat-label">Active Permits</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer;border-color:#fde68a" onclick="$('#expiryFilter').val('expiring_soon').trigger('change')">
+    <div class="stat-card" style="cursor:pointer;border-color:#fde68a" onclick="$('#expiryFilter').val('expiring_soon').trigger('change');$('#statusFilter').val('').trigger('change')">
         <div class="stat-icon" style="background:#fffbeb;color:#b45309"><i class="fas fa-clock"></i></div>
         <div class="stat-info">
             <div class="stat-number" style="color:#b45309">{{ number_format($summaryCounts['ExpiringSoon']) }}</div>
-            <div class="stat-label">Expiring Soon</div>
+            <div class="stat-label">Expiring in 30 Days</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer;border-color:#fecaca" onclick="$('#expiryFilter').val('expired').trigger('change')">
+    <div class="stat-card" style="cursor:pointer;border-color:#fecaca" onclick="$('#expiryFilter').val('expired').trigger('change');$('#statusFilter').val('').trigger('change')">
         <div class="stat-icon" style="background:#fef2f2;color:#ef4444"><i class="fas fa-triangle-exclamation"></i></div>
         <div class="stat-info">
             <div class="stat-number" style="color:#ef4444">{{ number_format($summaryCounts['Overdue']) }}</div>
-            <div class="stat-label">Overdue</div>
+            <div class="stat-label">Overdue (Active)</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="$('#statusFilter').val('Expired').trigger('change')">
+</div>
+<div class="grid-2 mb-6">
+    <div class="stat-card" style="cursor:pointer" onclick="$('#statusFilter').val('Expired').trigger('change');$('#expiryFilter').val('').trigger('change')">
         <div class="stat-icon" style="background:rgba(155,28,28,0.08);color:#9B1C1C"><i class="fas fa-times-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Expired']) }}</div>
-            <div class="stat-label">Expired</div>
+            <div class="stat-label">Marked Expired</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="$('#statusFilter').val('Suspended').trigger('change')">
+    <div class="stat-card" style="cursor:pointer" onclick="$('#statusFilter').val('Suspended').trigger('change');$('#expiryFilter').val('').trigger('change')">
         <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-pause-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Suspended']) }}</div>
