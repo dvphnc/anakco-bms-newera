@@ -149,7 +149,7 @@ $routeMap = [
 </div>
 
 {{-- Activity Feed --}}
-<div class="card">
+<div class="card" id="activity-feed">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-clock-rotate-left"></i> Activity Feed</span>
         <span style="font-size:12px;color:var(--text-muted)">{{ $query->total() }} entries · refreshes every 60s</span>
@@ -314,16 +314,15 @@ new Chart(document.getElementById('monthlyChart'), {
     }
 });
 
-// Scroll to top immediately on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const main = document.querySelector('.main-content');
-    if (main) main.scrollTop = 0;
-});
-
-// Also force scroll after all resources load
+// Scroll to activity feed if anchor in URL
 window.addEventListener('load', function() {
-    const main = document.querySelector('.main-content');
-    if (main) main.scrollTop = 0;
+    if (window.location.hash === '#activity-feed') {
+        const el = document.getElementById('activity-feed');
+        const main = document.querySelector('.main-content');
+        if (el && main) {
+            setTimeout(() => main.scrollTo({ top: el.offsetTop - 20, behavior: 'smooth' }), 100);
+        }
+    }
 });
 
 // Auto-refresh every 60s
