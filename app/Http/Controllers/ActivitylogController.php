@@ -11,6 +11,15 @@ class ActivityLogController extends Controller
     public function index(Request $request)
     {
         $query = ActivityLog::with('user')
+            ->when($request->period, function ($q) use ($request) {
+                if ($request->period === 'today') {
+                    $q->whereDate('created_at', today());
+                } elseif ($request->period === 'week') {
+                    $q->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                } elseif ($request->period === 'month') {
+                    $q->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
+                }
+            })
             ->when($request->module, function ($q) use ($request) {
                 $modelMap = [
                     'residents'   => 'App\Models\Resident',
