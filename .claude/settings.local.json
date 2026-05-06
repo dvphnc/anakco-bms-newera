@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(php -l \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\app\\\\Http\\\\Controllers\\\\ExportController.php\" 2>&1; php -l \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\app\\\\Http\\\\Controllers\\\\ReportController.php\" 2>&1)"
+      "PowerShell(php -l \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\app\\\\Http\\\\Controllers\\\\ExportController.php\" 2>&1; php -l \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\app\\\\Http\\\\Controllers\\\\ReportController.php\" 2>&1)",
+      "PowerShell(Get-Content *)"
     ]
   }
 }
