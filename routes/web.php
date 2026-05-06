@@ -1,23 +1,23 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ResidentController;
-use App\Http\Controllers\HouseholdController;
-use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BlotterController;
 use App\Http\Controllers\BusinessController;
-use App\Http\Controllers\OfficialController;
 use App\Http\Controllers\CommitteeController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\PurokController;
-use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ExportController;
-use App\Http\Controllers\BackupController;
+use App\Http\Controllers\HouseholdController;
+use App\Http\Controllers\OfficialController;
+use App\Http\Controllers\PurokController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ResidentController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Select2Controller;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyController;
+use Illuminate\Support\Facades\Route;
 
 // -------------------------------------------------------
 // Public Verification Routes — no login required
@@ -28,7 +28,7 @@ Route::get('/verify/business/{permitNumber}', [VerifyController::class, 'busines
 // -------------------------------------------------------
 // Guest Routes — handled by Breeze (keep this line)
 // -------------------------------------------------------
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 // -------------------------------------------------------
 // Authenticated Routes — all require login
@@ -121,7 +121,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     // User Management — Admin only
     // ---------------------------------------------------
-    Route::post('users/{user}/verify',   [UserController::class, 'verify'])->name('users.verify')->middleware('role:Admin');
+    Route::post('users/{user}/verify', [UserController::class, 'verify'])->name('users.verify')->middleware('role:Admin');
     Route::post('users/{user}/unverify', [UserController::class, 'unverify'])->name('users.unverify')->middleware('role:Admin');
     Route::resource('users', UserController::class)
         ->middleware('role:Admin');

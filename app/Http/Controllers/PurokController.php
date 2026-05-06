@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 class PurokController extends Controller
 {
     use LogsActivity;
+
     public function index()
     {
         $puroks = Purok::with(['leader', 'residents'])
@@ -36,7 +37,7 @@ class PurokController extends Controller
     {
         $validated = $request->validate([
             'description' => 'nullable|string|max:500',
-            'leader_id'   => 'nullable|exists:residents,id',
+            'leader_id' => 'nullable|exists:residents,id',
         ]);
 
         $oldData = $purok->getOriginal();

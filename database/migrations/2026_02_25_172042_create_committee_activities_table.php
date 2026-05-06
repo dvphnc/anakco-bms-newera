@@ -21,12 +21,12 @@ return new class extends Migration
                 'environment',
                 'livelihood',
                 'transport',
-                'bdrrm'
+                'bdrrm',
             ]);
 
             $table->enum('activity_type', [
                 'Activity',
-                'Accomplishment'
+                'Accomplishment',
             ])->default('Activity');
 
             $table->string('title');
@@ -35,14 +35,14 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->integer('participants_count')->default(0);
             $table->enum('status', [
-                'Planned', 'Ongoing', 'Completed', 'Cancelled'
+                'Planned', 'Ongoing', 'Completed', 'Cancelled',
             ])->default('Completed');
 
             // --- Logged By ---
             $table->foreignId('logged_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
         });

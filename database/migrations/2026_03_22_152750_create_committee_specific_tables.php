@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('badge_number')->nullable();
             $table->string('contact_number')->nullable();
             $table->string('assignment')->nullable();
-            $table->enum('status', ['Active','Inactive','On Leave'])->default('Active');
+            $table->enum('status', ['Active', 'Inactive', 'On Leave'])->default('Active');
             $table->timestamps();
         });
 
@@ -56,7 +56,7 @@ return new class extends Migration
             $table->string('scholarship_type')->nullable();
             $table->string('year_level')->nullable();
             $table->decimal('grant_amount', 10, 2)->nullable();
-            $table->enum('status', ['Active','Graduated','Dropped','Suspended'])->default('Active');
+            $table->enum('status', ['Active', 'Graduated', 'Dropped', 'Suspended'])->default('Active');
             $table->date('start_date')->nullable();
             $table->timestamps();
         });
@@ -72,7 +72,7 @@ return new class extends Migration
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->integer('completion_percentage')->default(0);
-            $table->enum('status', ['Planned','Ongoing','Completed','On Hold','Cancelled'])->default('Planned');
+            $table->enum('status', ['Planned', 'Ongoing', 'Completed', 'On Hold', 'Cancelled'])->default('Planned');
             $table->text('remarks')->nullable();
             $table->timestamps();
         });
@@ -87,7 +87,7 @@ return new class extends Migration
             $table->integer('volunteers')->default(0);
             $table->integer('trees_planted')->nullable();
             $table->decimal('waste_collected_kg', 10, 2)->nullable();
-            $table->enum('status', ['Planned','Completed','Cancelled'])->default('Planned');
+            $table->enum('status', ['Planned', 'Completed', 'Cancelled'])->default('Planned');
             $table->text('notes')->nullable();
             $table->timestamps();
         });
@@ -102,7 +102,7 @@ return new class extends Migration
             $table->string('program_type')->nullable(); // Training, Loan, Goods
             $table->date('date_enrolled')->nullable();
             $table->decimal('amount_received', 10, 2)->nullable();
-            $table->enum('status', ['Active','Completed','Dropped'])->default('Active');
+            $table->enum('status', ['Active', 'Completed', 'Dropped'])->default('Active');
             $table->text('remarks')->nullable();
             $table->timestamps();
         });
@@ -118,7 +118,7 @@ return new class extends Migration
             $table->string('route')->nullable();
             $table->date('registration_date')->nullable();
             $table->date('expiry_date')->nullable();
-            $table->enum('status', ['Active','Expired','Suspended'])->default('Active');
+            $table->enum('status', ['Active', 'Expired', 'Suspended'])->default('Active');
             $table->timestamps();
         });
 
@@ -133,7 +133,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->text('response_actions')->nullable();
             $table->string('reported_by')->nullable();
-            $table->enum('status', ['Active','Resolved','Monitoring'])->default('Active');
+            $table->enum('status', ['Active', 'Resolved', 'Monitoring'])->default('Active');
             $table->timestamps();
         });
 
@@ -144,7 +144,7 @@ return new class extends Migration
             $table->string('location');
             $table->integer('capacity')->default(0);
             $table->integer('current_occupancy')->default(0);
-            $table->enum('status', ['Available','Active','Full','Closed'])->default('Available');
+            $table->enum('status', ['Available', 'Active', 'Full', 'Closed'])->default('Available');
             $table->string('contact_person')->nullable();
             $table->string('contact_number')->nullable();
             $table->text('facilities')->nullable();

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Official extends Model
 {
@@ -24,8 +24,8 @@ class Official extends Model
     {
         return [
             'term_start' => 'date',
-            'term_end'   => 'date',
-            'is_active'  => 'boolean',
+            'term_end' => 'date',
+            'is_active' => 'boolean',
         ];
     }
 
@@ -44,7 +44,7 @@ class Official extends Model
 
     public function getTermDurationAttribute(): string
     {
-        return $this->term_start->format('Y') . ' – ' . $this->term_end->format('Y');
+        return $this->term_start->format('Y').' – '.$this->term_end->format('Y');
     }
 
     public function isCurrentlyServing(): bool

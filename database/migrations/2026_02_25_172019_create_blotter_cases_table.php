@@ -22,7 +22,7 @@ return new class extends Migration
                 'Domestic Dispute',
                 'Property Damage',
                 'Threat',
-                'Other'
+                'Other',
             ]);
             $table->date('incident_date');
             $table->string('incident_location');
@@ -33,9 +33,9 @@ return new class extends Migration
             $table->string('complainant_address')->nullable();
             $table->string('complainant_contact')->nullable();
             $table->foreignId('complainant_resident_id')    // If registered resident
-                  ->nullable()
-                  ->constrained('residents')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('residents')
+                ->nullOnDelete();
 
             // --- Respondent ---
             $table->string('respondent_name');
@@ -49,7 +49,7 @@ return new class extends Migration
                 'Mediated',
                 'Settled',
                 'Closed',
-                'Referred to Higher Authority'
+                'Referred to Higher Authority',
             ])->default('Active');
 
             $table->text('resolution_notes')->nullable();   // What was agreed
@@ -57,9 +57,9 @@ return new class extends Migration
 
             // --- Filed By ---
             $table->foreignId('filed_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
         });

@@ -14,8 +14,8 @@ return new class extends Migration
 
             // --- Who requested it ---
             $table->foreignId('resident_id')
-                  ->constrained('residents')
-                  ->cascadeOnDelete();
+                ->constrained('residents')
+                ->cascadeOnDelete();
 
             // --- Document Details ---
             $table->enum('document_type', [
@@ -25,21 +25,21 @@ return new class extends Migration
                 'Good Moral Character',
                 'Business Clearance',
                 'Certificate of Live Birth',
-                'Other'
+                'Other',
             ]);
             $table->text('purpose');                        // Why they need it
             $table->decimal('fee_paid', 8, 2)->default(0.00);
 
             // --- Status ---
             $table->enum('status', [
-                'Pending', 'Processing', 'Released', 'Cancelled'
+                'Pending', 'Processing', 'Released', 'Cancelled',
             ])->default('Pending');
 
             // --- Who processed it ---
             $table->foreignId('issued_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->date('released_at')->nullable();
             $table->timestamps();

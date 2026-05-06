@@ -7,10 +7,9 @@ use App\Models\Business;
 use App\Models\Document;
 use App\Models\Household;
 use App\Models\Official;
-use App\Models\Purok;
 use App\Models\Resident;
 use Illuminate\Database\Seeder;
-use Database\Seeders\PurokSeeder;
+
 class FakeDataSeeder extends Seeder
 {
     public function run(): void

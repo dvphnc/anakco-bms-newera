@@ -23,7 +23,7 @@ return new class extends Migration
                 'Laundry',
                 'Printing / Photocopy',
                 'Retail Store',
-                'Other'
+                'Other',
             ]);
             $table->text('business_address');
 
@@ -31,9 +31,9 @@ return new class extends Migration
             $table->string('owner_name');
             $table->string('owner_contact')->nullable();
             $table->foreignId('owner_resident_id')         // If registered resident
-                  ->nullable()
-                  ->constrained('residents')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('residents')
+                ->nullOnDelete();
 
             // --- Permit Dates ---
             $table->date('permit_date');
@@ -41,14 +41,14 @@ return new class extends Migration
 
             // --- Status ---
             $table->enum('status', [
-                'Active', 'Expired', 'Suspended', 'Cancelled'
+                'Active', 'Expired', 'Suspended', 'Cancelled',
             ])->default('Active');
 
             // --- Issued By ---
             $table->foreignId('issued_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
         });

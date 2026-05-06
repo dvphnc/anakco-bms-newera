@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class EmergencyLog extends Model
 {
@@ -11,7 +11,7 @@ class EmergencyLog extends Model
 
     protected $table = 'committee_emergency_logs';
 
-    protected $fillable = ['incident_type','incident_date','location','affected_families','affected_persons','description','response_actions','reported_by','status'];
+    protected $fillable = ['incident_type', 'incident_date', 'location', 'affected_families', 'affected_persons', 'description', 'response_actions', 'reported_by', 'status'];
 
-    protected $casts = ['incident_date'=>'date'];
+    protected $casts = ['incident_date' => 'date'];
 }

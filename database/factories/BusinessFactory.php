@@ -33,33 +33,33 @@ class BusinessFactory extends Factory
         ];
 
         $year = $this->faker->randomElement([2023, 2024, 2025, 2026]);
-        $permitNumber = 'BIZ-' . $year . '-' . str_pad($sequence++, 5, '0', STR_PAD_LEFT);
+        $permitNumber = 'BIZ-'.$year.'-'.str_pad($sequence++, 5, '0', STR_PAD_LEFT);
         $permitDate = $this->faker->dateTimeBetween('-3 years', 'now');
         $expiryDate = $this->faker->dateTimeBetween('-1 year', '+2 years');
         $status = now() > $expiryDate
             ? $this->faker->randomElement(['Expired', 'Expired', 'Cancelled'])
             : $this->faker->randomElement(['Active', 'Active', 'Active', 'Suspended']);
 
-        $businessName = $this->faker->randomElement($businessPrefixes) . ' ' .
-                        $this->faker->lastName() . ' ' .
+        $businessName = $this->faker->randomElement($businessPrefixes).' '.
+                        $this->faker->lastName().' '.
                         $this->faker->randomElement($businessSuffixes);
 
         return [
-            'permit_number'    => $permitNumber,
-            'business_name'    => $businessName,
-            'business_type'    => $this->faker->randomElement($businessTypes),
-            'business_address' => $this->faker->buildingNumber() . ' ' .
-                                  $this->faker->randomElement(['Sampaguita', 'Rosal', 'Ilang-Ilang', 'Camia']) .
+            'permit_number' => $permitNumber,
+            'business_name' => $businessName,
+            'business_type' => $this->faker->randomElement($businessTypes),
+            'business_address' => $this->faker->buildingNumber().' '.
+                                  $this->faker->randomElement(['Sampaguita', 'Rosal', 'Ilang-Ilang', 'Camia']).
                                   ' St., Barangay New Era, Quezon City',
-            'owner_name'       => $this->faker->randomElement($filipinoOwnerNames),
-            'owner_contact'    => '09' . $this->faker->numerify('#########'),
-            'owner_resident_id'=> null,
-            'permit_date'      => $permitDate,
-            'expiry_date'      => $expiryDate,
-            'status'           => $status,
-            'issued_by'        => 1,
-            'created_at'       => $permitDate,
-            'updated_at'       => $permitDate,
+            'owner_name' => $this->faker->randomElement($filipinoOwnerNames),
+            'owner_contact' => '09'.$this->faker->numerify('#########'),
+            'owner_resident_id' => null,
+            'permit_date' => $permitDate,
+            'expiry_date' => $expiryDate,
+            'status' => $status,
+            'issued_by' => 1,
+            'created_at' => $permitDate,
+            'updated_at' => $permitDate,
         ];
     }
 }

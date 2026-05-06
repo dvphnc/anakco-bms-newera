@@ -23,7 +23,7 @@ return new class extends Migration
                 'environment',
                 'livelihood',
                 'transport',
-                'bdrrm'
+                'bdrrm',
             ]);
 
             // --- Record Type ---
@@ -34,7 +34,7 @@ return new class extends Migration
                 'Resolution',
                 'Certificate',
                 'Partnership',
-                'Other'
+                'Other',
             ]);
 
             $table->string('title');
@@ -44,9 +44,9 @@ return new class extends Migration
 
             // --- Uploaded By ---
             $table->foreignId('uploaded_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
         });

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Document extends Model
 {
@@ -23,7 +23,7 @@ class Document extends Model
     protected function casts(): array
     {
         return [
-            'fee_paid'    => 'decimal:2',
+            'fee_paid' => 'decimal:2',
             'released_at' => 'date',
         ];
     }
@@ -49,10 +49,10 @@ class Document extends Model
     // Generate next document number e.g. DOC-2025-00001
     public static function generateDocNumber(): string
     {
-        $year  = date('Y');
+        $year = date('Y');
         $count = self::whereYear('created_at', $year)->count() + 1;
 
-        return 'DOC-' . $year . '-' . str_pad($count, 5, '0', STR_PAD_LEFT);
+        return 'DOC-'.$year.'-'.str_pad($count, 5, '0', STR_PAD_LEFT);
     }
 
     public function isReleased(): bool

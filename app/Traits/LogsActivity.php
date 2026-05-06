@@ -21,29 +21,31 @@ trait LogsActivity
         ];
 
         $friendlyNames = [
-            'purok_id'     => 'Purok',
+            'purok_id' => 'Purok',
             'household_id' => 'Household',
-            'resident_id'  => 'Resident',
-            'issued_by'    => 'Issued By',
-            'filed_by'     => 'Filed By',
-            'user_id'      => 'User',
-            'leader_id'    => 'Leader',
+            'resident_id' => 'Resident',
+            'issued_by' => 'Issued By',
+            'filed_by' => 'Filed By',
+            'user_id' => 'User',
+            'leader_id' => 'Leader',
         ];
 
         // FK fields that should resolve to names
         $resolveFk = [
-            'leader_id'    => fn($id) => \App\Models\Resident::find($id)?->full_name ?? "ID: $id",
-            'purok_id'     => fn($id) => \App\Models\Purok::find($id)?->name ?? "ID: $id",
-            'household_id' => fn($id) => \App\Models\Household::find($id)?->household_number ?? "ID: $id",
-            'issued_by'    => fn($id) => \App\Models\User::find($id)?->name ?? "ID: $id",
-            'filed_by'     => fn($id) => \App\Models\User::find($id)?->name ?? "ID: $id",
+            'leader_id' => fn ($id) => \App\Models\Resident::find($id)?->full_name ?? "ID: $id",
+            'purok_id' => fn ($id) => \App\Models\Purok::find($id)?->name ?? "ID: $id",
+            'household_id' => fn ($id) => \App\Models\Household::find($id)?->household_number ?? "ID: $id",
+            'issued_by' => fn ($id) => \App\Models\User::find($id)?->name ?? "ID: $id",
+            'filed_by' => fn ($id) => \App\Models\User::find($id)?->name ?? "ID: $id",
         ];
 
         $changes = [];
 
-        if ($action === 'updated' && !empty($oldData) && !empty($newData)) {
+        if ($action === 'updated' && ! empty($oldData) && ! empty($newData)) {
             foreach ($newData as $key => $newVal) {
-                if (in_array($key, $skipFields)) continue;
+                if (in_array($key, $skipFields)) {
+                    continue;
+                }
 
                 $oldVal = $oldData[$key] ?? null;
 
@@ -51,9 +53,12 @@ trait LogsActivity
                 if (isset($resolveFk[$key])) {
                     $oldVal = $oldVal ? ($resolveFk[$key])($oldVal) : '—';
                     $newVal = $newVal ? ($resolveFk[$key])($newVal) : '—';
-                    if ((string)$oldVal === (string)$newVal) continue;
+                    if ((string) $oldVal === (string) $newVal) {
+                        continue;
+                    }
                     $label = $friendlyNames[$key] ?? $key;
                     $changes[$label] = ['old' => $oldVal, 'new' => $newVal];
+
                     continue;
                 }
 
@@ -68,7 +73,9 @@ trait LogsActivity
                 $newVal = $this->normalizeValue($newVal);
 
                 // Skip if truly unchanged
-                if ((string)$oldVal === (string)$newVal) continue;
+                if ((string) $oldVal === (string) $newVal) {
+                    continue;
+                }
 
                 $label = $friendlyNames[$key] ?? $key;
                 $changes[$label] = [
@@ -79,16 +86,24 @@ trait LogsActivity
         }
 
         // Skip no-op updates
-        if ($action === 'updated' && empty($changes)) return;
+        if ($action === 'updated' && empty($changes)) {
+            return;
+        }
 
         ActivityLog::log($action, $model, $changes);
     }
 
     private function normalizeValue($val): string
     {
-        if (is_null($val)) return '';
-        if (is_array($val)) return '[file]';
-        if (is_bool($val)) return $val ? 'Yes' : 'No';
+        if (is_null($val)) {
+            return '';
+        }
+        if (is_array($val)) {
+            return '[file]';
+        }
+        if (is_bool($val)) {
+            return $val ? 'Yes' : 'No';
+        }
 
         $str = (string) $val;
 

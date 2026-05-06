@@ -35,10 +35,10 @@ class ActivityLog extends Model
     {
         static::create([
             'loggable_type' => get_class($model),
-            'loggable_id'   => $model->id,
-            'action'        => $action,
-            'user_id'       => auth()->id(),
-            'changes'       => $changes,
+            'loggable_id' => $model->id,
+            'action' => $action,
+            'user_id' => auth()->id(),
+            'changes' => $changes,
         ]);
     }
 }

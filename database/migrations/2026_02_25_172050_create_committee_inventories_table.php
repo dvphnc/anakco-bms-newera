@@ -19,7 +19,7 @@ return new class extends Migration
                 'environment',
                 'livelihood',
                 'transport',
-                'bdrrm'
+                'bdrrm',
             ]);
 
             $table->string('item_name');
@@ -27,14 +27,14 @@ return new class extends Migration
             $table->integer('quantity')->default(0);
             $table->string('unit')->nullable();             // pcs, kg, boxes, etc.
             $table->enum('condition', [
-                'Good', 'Fair', 'Poor', 'For Disposal'
+                'Good', 'Fair', 'Poor', 'For Disposal',
             ])->default('Good');
             $table->text('remarks')->nullable();
 
             $table->foreignId('recorded_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
         });

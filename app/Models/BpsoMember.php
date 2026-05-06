@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class BpsoMember extends Model
 {
@@ -11,6 +11,5 @@ class BpsoMember extends Model
 
     protected $table = 'committee_bpso';
 
-    protected $fillable = ['full_name','rank','badge_number','contact_number','assignment','status'];
-
+    protected $fillable = ['full_name', 'rank', 'badge_number', 'contact_number', 'assignment', 'status'];
 }

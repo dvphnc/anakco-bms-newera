@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class LivelihoodBeneficiary extends Model
 {
@@ -11,7 +11,7 @@ class LivelihoodBeneficiary extends Model
 
     protected $table = 'committee_livelihood_beneficiaries';
 
-    protected $fillable = ['full_name','address','contact_number','program_name','program_type','date_enrolled','amount_received','status','remarks'];
+    protected $fillable = ['full_name', 'address', 'contact_number', 'program_name', 'program_type', 'date_enrolled', 'amount_received', 'status', 'remarks'];
 
-    protected $casts = ['date_enrolled'=>'date'];
+    protected $casts = ['date_enrolled' => 'date'];
 }

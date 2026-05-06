@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class ActivityLogController extends Controller
 {
@@ -22,21 +21,21 @@ class ActivityLogController extends Controller
             })
             ->when($request->module, function ($q) use ($request) {
                 $modelMap = [
-                    'residents'   => 'App\Models\Resident',
-                    'households'  => 'App\Models\Household',
-                    'documents'   => 'App\Models\Document',
-                    'blotter'     => 'App\Models\BlotterCase',
-                    'businesses'  => 'App\Models\Business',
-                    'officials'   => 'App\Models\Official',
-                    'users'       => 'App\Models\User',
-                    'puroks'      => 'App\Models\Purok',
+                    'residents' => 'App\Models\Resident',
+                    'households' => 'App\Models\Household',
+                    'documents' => 'App\Models\Document',
+                    'blotter' => 'App\Models\BlotterCase',
+                    'businesses' => 'App\Models\Business',
+                    'officials' => 'App\Models\Official',
+                    'users' => 'App\Models\User',
+                    'puroks' => 'App\Models\Purok',
                 ];
                 if (isset($modelMap[$request->module])) {
                     $q->where('loggable_type', $modelMap[$request->module]);
                 }
             })
-            ->when($request->action, fn($q) => $q->where('action', $request->action))
-            ->when($request->user_id, fn($q) => $q->where('user_id', $request->user_id))
+            ->when($request->action, fn ($q) => $q->where('action', $request->action))
+            ->when($request->user_id, fn ($q) => $q->where('user_id', $request->user_id))
             ->latest()
             ->paginate(20)
             ->withQueryString();
@@ -54,12 +53,12 @@ class ActivityLogController extends Controller
             $day = now()->subDays($i);
             $dayLogs = ActivityLog::whereDate('created_at', $day)->get();
             $weeklyData[] = [
-                'label'   => $day->format('D'),
-                'date'    => $day->format('M d'),
+                'label' => $day->format('D'),
+                'date' => $day->format('M d'),
                 'created' => $dayLogs->where('action', 'created')->count(),
                 'updated' => $dayLogs->where('action', 'updated')->count(),
                 'deleted' => $dayLogs->where('action', 'deleted')->count(),
-                'total'   => $dayLogs->count(),
+                'total' => $dayLogs->count(),
             ];
         }
 
@@ -69,10 +68,10 @@ class ActivityLogController extends Controller
             $month = now()->subMonths($i);
             $monthlyData[] = [
                 'label' => $month->format('M'),
-                'year'  => $month->format('Y'),
+                'year' => $month->format('Y'),
                 'total' => ActivityLog::whereYear('created_at', $month->year)
-                                      ->whereMonth('created_at', $month->month)
-                                      ->count(),
+                    ->whereMonth('created_at', $month->month)
+                    ->count(),
             ];
         }
 
@@ -84,11 +83,11 @@ class ActivityLogController extends Controller
         ];
 
         // Today vs yesterday
-        $todayCount     = ActivityLog::whereDate('created_at', today())->count();
+        $todayCount = ActivityLog::whereDate('created_at', today())->count();
         $yesterdayCount = ActivityLog::whereDate('created_at', today()->subDay())->count();
-        $thisWeekCount  = ActivityLog::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
+        $thisWeekCount = ActivityLog::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
         $thisMonthCount = ActivityLog::whereMonth('created_at', now()->month)
-                                     ->whereYear('created_at', now()->year)->count();
+            ->whereYear('created_at', now()->year)->count();
 
         return view('activity-log.index', compact(
             'query', 'moduleCounts', 'users',

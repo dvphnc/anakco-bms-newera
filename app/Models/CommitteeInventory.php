@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class CommitteeInventory extends Model
 {
@@ -45,12 +45,12 @@ class CommitteeInventory extends Model
     // Badge color per condition for the blade views
     public function getConditionBadgeAttribute(): string
     {
-        return match($this->condition) {
-            'Good'        => 'badge-green',
-            'Fair'        => 'badge-yellow',
-            'Poor'        => 'badge-red',
-            'For Disposal'=> 'badge-gray',
-            default       => 'badge-gray',
+        return match ($this->condition) {
+            'Good' => 'badge-green',
+            'Fair' => 'badge-yellow',
+            'Poor' => 'badge-red',
+            'For Disposal' => 'badge-gray',
+            default => 'badge-gray',
         };
     }
 }

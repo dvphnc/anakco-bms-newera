@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('household_number')->unique();    // e.g. "HH-2025-0001"
             $table->foreignId('purok_id')
-                  ->constrained('puroks')
-                  ->cascadeOnDelete();
+                ->constrained('puroks')
+                ->cascadeOnDelete();
             $table->string('address');
             $table->string('household_head')->nullable();   // Name of head of household
             $table->integer('family_size')->default(1);

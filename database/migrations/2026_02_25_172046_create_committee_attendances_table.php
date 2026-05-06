@@ -19,7 +19,7 @@ return new class extends Migration
                 'environment',
                 'livelihood',
                 'transport',
-                'bdrrm'
+                'bdrrm',
             ]);
 
             $table->string('event_name');                   // e.g. "Monthly Meeting"
@@ -30,9 +30,9 @@ return new class extends Migration
             $table->string('file_path')->nullable();        // Scanned attendance sheet
 
             $table->foreignId('recorded_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
         });

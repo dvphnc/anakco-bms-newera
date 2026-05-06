@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class BlotterCase extends Model
 {
@@ -32,7 +32,7 @@ class BlotterCase extends Model
     {
         return [
             'incident_date' => 'date',
-            'settled_at'    => 'date',
+            'settled_at' => 'date',
         ];
     }
 
@@ -57,10 +57,10 @@ class BlotterCase extends Model
     // Generate next case number e.g. CASE-2025-0001
     public static function generateCaseNumber(): string
     {
-        $year  = date('Y');
+        $year = date('Y');
         $count = self::whereYear('created_at', $year)->count() + 1;
 
-        return 'CASE-' . $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+        return 'CASE-'.$year.'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
     public function isActive(): bool
@@ -76,14 +76,14 @@ class BlotterCase extends Model
     // Badge color per status for the blade views
     public function getStatusBadgeAttribute(): string
     {
-        return match($this->status) {
-            'Active'                      => 'badge-red',
-            'Under Investigation'         => 'badge-yellow',
-            'Mediated'                    => 'badge-blue',
-            'Settled'                     => 'badge-green',
-            'Closed'                      => 'badge-gray',
-            'Referred to Higher Authority'=> 'badge-orange',
-            default                       => 'badge-gray',
+        return match ($this->status) {
+            'Active' => 'badge-red',
+            'Under Investigation' => 'badge-yellow',
+            'Mediated' => 'badge-blue',
+            'Settled' => 'badge-green',
+            'Closed' => 'badge-gray',
+            'Referred to Higher Authority' => 'badge-orange',
+            default => 'badge-gray',
         };
     }
 }

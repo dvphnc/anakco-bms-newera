@@ -20,7 +20,7 @@ class BlotterCaseFactory extends Factory
 
         $incidentTypes = [
             'Noise Complaint', 'Physical Assault', 'Verbal Abuse', 'Theft',
-            'Trespassing', 'Domestic Dispute', 'Property Damage', 'Threat', 'Other'
+            'Trespassing', 'Domestic Dispute', 'Property Damage', 'Threat', 'Other',
         ];
 
         $locations = [
@@ -35,35 +35,35 @@ class BlotterCaseFactory extends Factory
         ];
 
         $year = $this->faker->randomElement([2024, 2025, 2026]);
-        $caseNumber = 'BLT-' . $year . '-' . str_pad($sequence++, 5, '0', STR_PAD_LEFT);
+        $caseNumber = 'BLT-'.$year.'-'.str_pad($sequence++, 5, '0', STR_PAD_LEFT);
         $status = $this->faker->randomElement([
-            'Active', 'Active', 'Under Investigation', 'Mediated', 'Settled', 'Settled', 'Closed'
+            'Active', 'Active', 'Under Investigation', 'Mediated', 'Settled', 'Settled', 'Closed',
         ]);
         $incidentDate = $this->faker->dateTimeBetween('-2 years', 'now');
 
         return [
-            'case_number'            => $caseNumber,
-            'incident_type'          => $this->faker->randomElement($incidentTypes),
-            'incident_date'          => $incidentDate,
-            'incident_location'      => $this->faker->randomElement($locations),
-            'incident_details'       => $this->faker->paragraph(3),
-            'complainant_name'       => $this->faker->randomElement($filipinoNames),
-            'complainant_address'    => $this->faker->buildingNumber() . ' Sampaguita St., Barangay New Era',
-            'complainant_contact'    => '09' . $this->faker->numerify('#########'),
-            'complainant_resident_id'=> null,
-            'respondent_name'        => $this->faker->randomElement($filipinoNames),
-            'respondent_address'     => $this->faker->buildingNumber() . ' Rosal St., Barangay New Era',
-            'respondent_contact'     => '09' . $this->faker->numerify('#########'),
-            'status'                 => $status,
-            'resolution_notes'       => in_array($status, ['Settled', 'Closed', 'Mediated'])
+            'case_number' => $caseNumber,
+            'incident_type' => $this->faker->randomElement($incidentTypes),
+            'incident_date' => $incidentDate,
+            'incident_location' => $this->faker->randomElement($locations),
+            'incident_details' => $this->faker->paragraph(3),
+            'complainant_name' => $this->faker->randomElement($filipinoNames),
+            'complainant_address' => $this->faker->buildingNumber().' Sampaguita St., Barangay New Era',
+            'complainant_contact' => '09'.$this->faker->numerify('#########'),
+            'complainant_resident_id' => null,
+            'respondent_name' => $this->faker->randomElement($filipinoNames),
+            'respondent_address' => $this->faker->buildingNumber().' Rosal St., Barangay New Era',
+            'respondent_contact' => '09'.$this->faker->numerify('#########'),
+            'status' => $status,
+            'resolution_notes' => in_array($status, ['Settled', 'Closed', 'Mediated'])
                                         ? $this->faker->paragraph(2)
                                         : null,
-            'settled_at'             => in_array($status, ['Settled', 'Closed'])
+            'settled_at' => in_array($status, ['Settled', 'Closed'])
                                         ? $this->faker->dateTimeBetween($incidentDate, 'now')
                                         : null,
-            'filed_by'               => 1,
-            'created_at'             => $incidentDate,
-            'updated_at'             => $incidentDate,
+            'filed_by' => 1,
+            'created_at' => $incidentDate,
+            'updated_at' => $incidentDate,
         ];
     }
 }

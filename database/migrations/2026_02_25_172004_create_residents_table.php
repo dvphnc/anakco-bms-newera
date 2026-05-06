@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('birthdate');
             $table->enum('gender', ['Male', 'Female']);
             $table->enum('civil_status', [
-                'Single', 'Married', 'Widowed', 'Separated', 'Annulled'
+                'Single', 'Married', 'Widowed', 'Separated', 'Annulled',
             ])->nullable();
             $table->string('birthplace')->nullable();
             $table->string('nationality')->default('Filipino');
@@ -35,12 +35,12 @@ return new class extends Migration
             // --- Address ---
             $table->text('address');
             $table->foreignId('purok_id')
-                  ->constrained('puroks')
-                  ->restrictOnDelete();
+                ->constrained('puroks')
+                ->restrictOnDelete();
             $table->foreignId('household_id')
-                  ->nullable()
-                  ->constrained('households')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('households')
+                ->nullOnDelete();
 
             // --- Classifications ---
             $table->boolean('is_voter')->default(false);
@@ -51,7 +51,7 @@ return new class extends Migration
 
             // --- Status ---
             $table->enum('residency_status', [
-                'Active', 'Deceased', 'Transferred'
+                'Active', 'Deceased', 'Transferred',
             ])->default('Active');
 
             // --- Photo ---

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Business extends Model
 {
@@ -52,10 +52,10 @@ class Business extends Model
     // Generate next permit number e.g. BP-2025-00001
     public static function generatePermitNumber(): string
     {
-        $year  = date('Y');
+        $year = date('Y');
         $count = self::whereYear('created_at', $year)->count() + 1;
 
-        return 'BP-' . $year . '-' . str_pad($count, 5, '0', STR_PAD_LEFT);
+        return 'BP-'.$year.'-'.str_pad($count, 5, '0', STR_PAD_LEFT);
     }
 
     public function isExpired(): bool
@@ -65,18 +65,18 @@ class Business extends Model
 
     public function isActive(): bool
     {
-        return $this->status === 'Active' && !$this->isExpired();
+        return $this->status === 'Active' && ! $this->isExpired();
     }
 
     // Badge color per status for the blade views
     public function getStatusBadgeAttribute(): string
     {
-        return match($this->status) {
-            'Active'    => 'badge-green',
-            'Expired'   => 'badge-red',
+        return match ($this->status) {
+            'Active' => 'badge-green',
+            'Expired' => 'badge-red',
             'Suspended' => 'badge-yellow',
             'Cancelled' => 'badge-gray',
-            default     => 'badge-gray',
+            default => 'badge-gray',
         };
     }
 }

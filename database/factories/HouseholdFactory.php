@@ -28,13 +28,13 @@ class HouseholdFactory extends Factory
         ];
 
         return [
-            'household_number'   => 'HH-' . str_pad($sequence++, 4, '0', STR_PAD_LEFT),
-            'purok_id'           => $purokId,
-            'address'            => $this->faker->buildingNumber() . ' ' .
-                                    $this->faker->randomElement($streets) .
+            'household_number' => 'HH-'.str_pad($sequence++, 4, '0', STR_PAD_LEFT),
+            'purok_id' => $purokId,
+            'address' => $this->faker->buildingNumber().' '.
+                                    $this->faker->randomElement($streets).
                                     ', Barangay New Era, Quezon City',
-            'household_head'     => $this->faker->randomElement($filipinoNames),
-            'family_size'        => $this->faker->numberBetween(1, 10),
+            'household_head' => $this->faker->randomElement($filipinoNames),
+            'family_size' => $this->faker->numberBetween(1, 10),
             'is_voter_household' => $this->faker->boolean(70),
         ];
     }

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Official;
-use Illuminate\Http\Request;
 use App\Traits\LogsActivity;
+use Illuminate\Http\Request;
 
 class OfficialController extends Controller
 {
@@ -27,22 +27,23 @@ class OfficialController extends Controller
 
     public function create()
     {
-        $positions  = ['Punong Barangay','Kagawad','SK Chairperson','SK Kagawad','Barangay Secretary','Barangay Treasurer','BPSO'];
-        $committees = ['Peace & Order','Health','Education','Infrastructure','Environment','Livelihood','Transport & Communication','BDRRM'];
+        $positions = ['Punong Barangay', 'Kagawad', 'SK Chairperson', 'SK Kagawad', 'Barangay Secretary', 'Barangay Treasurer', 'BPSO'];
+        $committees = ['Peace & Order', 'Health', 'Education', 'Infrastructure', 'Environment', 'Livelihood', 'Transport & Communication', 'BDRRM'];
+
         return view('officials.officials-create', compact('positions', 'committees'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'full_name'      => 'required|string|max:255',
-            'position'       => 'required|string|max:100',
-            'committee'      => 'nullable|string|max:100',
+            'full_name' => 'required|string|max:255',
+            'position' => 'required|string|max:100',
+            'committee' => 'nullable|string|max:100',
             'contact_number' => 'nullable|string|max:20',
-            'term_start'     => 'required|date',
-            'term_end'       => 'required|date|after:term_start',
-            'is_active'      => 'boolean',
-            'photo_path'     => 'nullable|image|max:2048',
+            'term_start' => 'required|date',
+            'term_end' => 'required|date|after:term_start',
+            'is_active' => 'boolean',
+            'photo_path' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('photo_path')) {
@@ -64,22 +65,23 @@ class OfficialController extends Controller
 
     public function edit(Official $official)
     {
-        $positions  = ['Punong Barangay','Kagawad','SK Chairperson','SK Kagawad','Barangay Secretary','Barangay Treasurer','BPSO'];
-        $committees = ['Peace & Order','Health','Education','Infrastructure','Environment','Livelihood','Transport & Communication','BDRRM'];
+        $positions = ['Punong Barangay', 'Kagawad', 'SK Chairperson', 'SK Kagawad', 'Barangay Secretary', 'Barangay Treasurer', 'BPSO'];
+        $committees = ['Peace & Order', 'Health', 'Education', 'Infrastructure', 'Environment', 'Livelihood', 'Transport & Communication', 'BDRRM'];
+
         return view('officials.officials-edit', compact('official', 'positions', 'committees'));
     }
 
     public function update(Request $request, Official $official)
     {
         $validated = $request->validate([
-            'full_name'      => 'required|string|max:255',
-            'position'       => 'required|string|max:100',
-            'committee'      => 'nullable|string|max:100',
+            'full_name' => 'required|string|max:255',
+            'position' => 'required|string|max:100',
+            'committee' => 'nullable|string|max:100',
             'contact_number' => 'nullable|string|max:20',
-            'term_start'     => 'required|date',
-            'term_end'       => 'required|date|after:term_start',
-            'is_active'      => 'boolean',
-            'photo_path'     => 'nullable|image|max:2048',
+            'term_start' => 'required|date',
+            'term_end' => 'required|date|after:term_start',
+            'is_active' => 'boolean',
+            'photo_path' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('photo_path')) {
@@ -99,6 +101,7 @@ class OfficialController extends Controller
     {
         $this->logActivity('deleted', $official);
         $official->delete();
+
         return redirect()->route('officials.index')->with('success', 'Official removed successfully.');
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Resident extends Model
 {
@@ -40,12 +40,12 @@ class Resident extends Model
     protected function casts(): array
     {
         return [
-            'birthdate'      => 'date',
-            'is_voter'       => 'boolean',
-            'is_pwd'         => 'boolean',
-            'is_senior'      => 'boolean',
+            'birthdate' => 'date',
+            'is_voter' => 'boolean',
+            'is_pwd' => 'boolean',
+            'is_senior' => 'boolean',
             'is_solo_parent' => 'boolean',
-            'is_4ps'         => 'boolean',
+            'is_4ps' => 'boolean',
         ];
     }
 
@@ -57,22 +57,22 @@ class Resident extends Model
     public function getFullNameAttribute(): string
     {
         $middle = $this->middle_name
-            ? ' ' . substr($this->middle_name, 0, 1) . '.'
+            ? ' '.substr($this->middle_name, 0, 1).'.'
             : '';
 
-        $suffix = $this->suffix ? ' ' . $this->suffix : '';
+        $suffix = $this->suffix ? ' '.$this->suffix : '';
 
-        return $this->first_name . $middle . ' ' . $this->last_name . $suffix;
+        return $this->first_name.$middle.' '.$this->last_name.$suffix;
     }
 
     // Full name for lists: "SANTOS, Juan D."
     public function getFullNameFormalAttribute(): string
     {
         $middle = $this->middle_name
-            ? ' ' . substr($this->middle_name, 0, 1) . '.'
+            ? ' '.substr($this->middle_name, 0, 1).'.'
             : '';
 
-        return strtoupper($this->last_name) . ', ' . $this->first_name . $middle;
+        return strtoupper($this->last_name).', '.$this->first_name.$middle;
     }
 
     // Age computed from birthdate

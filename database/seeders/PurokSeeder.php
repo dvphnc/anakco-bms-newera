@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Purok;
+use Illuminate\Database\Seeder;
 
 class PurokSeeder extends Seeder
 {
