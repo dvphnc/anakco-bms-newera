@@ -1,6 +1,73 @@
 <?php $__env->startSection('title', 'Dashboard'); ?>
 
+<?php $__env->startPush('styles'); ?>
+<style>
+/* ── Alert Strip ─────────────────────────────────────────── */
+.alert-strip { display:flex; flex-direction:column; gap:8px; margin-bottom:24px; }
+.alert-item  { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:var(--radius); font-size:13px; }
+.alert-item i { flex-shrink:0; font-size:14px; }
+.alert-item > span { flex:1; line-height:1.5; }
+.alert-birthday { background:#faf5ff; border:1px solid #e9d5ff; border-left:4px solid #7c3aed; color:#6b21a8; }
+.alert-permit   { background:#fef2f2; border:1px solid #fecaca; border-left:4px solid #ef4444; color:#991b1b; }
+.alert-link {
+    font-size:11.5px; font-weight:600; color:inherit; opacity:.8;
+    text-decoration:none; padding:3px 12px; border:1px solid currentColor;
+    border-radius:99px; white-space:nowrap; flex-shrink:0;
+}
+.alert-link:hover { opacity:1; }
+
+/* ── Stat Cards ──────────────────────────────────────────── */
+.dash-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+.dash-stat-card {
+    display:flex; align-items:center; gap:16px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:20px 22px;
+    text-decoration:none; box-shadow:var(--shadow-sm);
+    transition:box-shadow .15s, transform .15s;
+}
+.dash-stat-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+.dash-stat-icon {
+    width:48px; height:48px; border-radius:var(--radius);
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; flex-shrink:0;
+}
+.dash-stat-number { font-size:26px; font-weight:700; color:var(--text); line-height:1.1; }
+.dash-stat-label  { font-size:12px; color:var(--text-muted); margin-top:3px; }
+
+/* ── Mid Row: Chart + Quick Access ───────────────────────── */
+.dash-mid { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px; }
+
+.quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.quick-item {
+    display:flex; flex-direction:column; align-items:center; gap:7px;
+    padding:14px 6px; background:var(--surface2);
+    border:1px solid var(--border); border-radius:var(--radius);
+    text-decoration:none; transition:all .15s;
+}
+.quick-item:hover { background:var(--navy-pale); border-color:var(--qa-color, var(--navy)); }
+.quick-icon { width:38px; height:38px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:16px; }
+.quick-label { font-size:11px; font-weight:600; color:var(--text); text-align:center; }
+
+/* ── Bottom 2-col ────────────────────────────────────────── */
+.dash-bottom { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+/* ── Feed Rows (shared) ──────────────────────────────────── */
+.feed-row {
+    display:flex; align-items:center; gap:12px;
+    padding:12px 16px; border-bottom:1px solid var(--border);
+    text-decoration:none; transition:background .1s;
+}
+.feed-row:last-child { border-bottom:none; }
+.feed-row:hover { background:var(--navy-pale); }
+.feed-icon { width:36px; height:36px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; }
+.feed-body { flex:1; min-width:0; }
+.feed-title { font-size:12.5px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.feed-sub   { font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+</style>
+<?php $__env->stopPush(); ?>
+
 <?php $__env->startSection('content'); ?>
+
 
 <div class="page-header">
     <div>
@@ -17,257 +84,122 @@
 
 
 <?php
-    $today       = now()->format('m-d');
-    $birthdays   = \App\Models\Resident::where('residency_status','Active')
+    $today     = now()->format('m-d');
+    $birthdays = \App\Models\Resident::where('residency_status', 'Active')
         ->whereRaw("DATE_FORMAT(birthdate,'%m-%d') = ?", [$today])
         ->orderBy('last_name')->get();
-    $seniorBdays = $birthdays->filter(fn($r) => $r->age >= 60);
-    $regularBdays= $birthdays->filter(fn($r) => $r->age < 60);
 
-    $expiringPermits = \App\Models\Business::where('status','Active')
+    $expiringPermits = \App\Models\Business::where('status', 'Active')
         ->whereBetween('expiry_date', [now(), now()->addDays(30)])
         ->orderBy('expiry_date')->get();
-
-    $expiringDocs = \App\Models\Document::where('status','Pending')
-        ->where('created_at', '<=', now()->subDays(7))
-        ->orderBy('created_at')->limit(5)->get();
 ?>
 
 <?php if($birthdays->count() || $expiringPermits->count()): ?>
-<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+<div class="alert-strip">
+    <?php if($birthdays->count()): ?>
+    <div class="alert-item alert-birthday">
+        <i class="fas fa-birthday-cake"></i>
+        <span>
+            <strong><?php echo e($birthdays->count()); ?> Birthday<?php echo e($birthdays->count() > 1 ? 's' : ''); ?> Today —</strong>
+            <?php echo e($birthdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ' (' . $r->age . ')')->take(4)->implode(', ')); ?><?php echo e($birthdays->count() > 4 ? ' +' . ($birthdays->count() - 4) . ' more' : ''); ?>
 
-    
-    <?php if($seniorBdays->count()): ?>
-    <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#faf5ff;border:1px solid #e9d5ff;border-left:4px solid #7c3aed;border-radius:var(--radius)">
-        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:#f3e8ff;color:#7c3aed;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">
-            🎂
-        </div>
-        <div style="flex:1">
-            <div style="font-size:12.5px;font-weight:700;color:#6b21a8;margin-bottom:2px">
-                Senior Citizen Birthdays Today (<?php echo e($seniorBdays->count()); ?>)
-            </div>
-            <div style="font-size:12px;color:#7c3aed">
-                <?php echo e($seniorBdays->map(fn($r) => $r->first_name.' '.$r->last_name.' ('.$r->age.')')->implode(', ')); ?>
-
-            </div>
-        </div>
-        <a href="<?php echo e(route('residents.index')); ?>?filter=senior" class="btn btn-secondary btn-sm">View All</a>
+        </span>
+        <a href="<?php echo e(route('residents.index')); ?>" class="alert-link">View All</a>
     </div>
     <?php endif; ?>
 
-    
-    <?php if($regularBdays->count()): ?>
-    <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff7ed;border:1px solid #fed7aa;border-left:4px solid #f97316;border-radius:var(--radius)">
-        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:#ffedd5;color:#f97316;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">
-            🎉
-        </div>
-        <div style="flex:1">
-            <div style="font-size:12.5px;font-weight:700;color:#c2410c;margin-bottom:2px">
-                Resident Birthdays Today (<?php echo e($regularBdays->count()); ?>)
-            </div>
-            <div style="font-size:12px;color:#f97316">
-                <?php echo e($regularBdays->map(fn($r) => $r->first_name.' '.$r->last_name.' ('.$r->age.')')->implode(', ')); ?>
-
-            </div>
-        </div>
-    </div>
-    <?php endif; ?>
-
-    
     <?php if($expiringPermits->count()): ?>
-    <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fef2f2;border:1px solid #fecaca;border-left:4px solid #ef4444;border-radius:var(--radius)">
-        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:#fee2e2;color:#ef4444;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">
-            ⚠️
-        </div>
-        <div style="flex:1">
-            <div style="font-size:12.5px;font-weight:700;color:#991b1b;margin-bottom:2px">
-                <?php echo e($expiringPermits->count()); ?> Business Permit<?php echo e($expiringPermits->count() > 1 ? 's' : ''); ?> Expiring Within 30 Days
-            </div>
-            <div style="font-size:12px;color:#ef4444">
-                <?php echo e($expiringPermits->map(fn($b) => $b->business_name.' (expires '.\Carbon\Carbon::parse($b->expiry_date)->format('M d').')')->take(3)->implode(', ')); ?>
+    <div class="alert-item alert-permit">
+        <i class="fas fa-triangle-exclamation"></i>
+        <span>
+            <strong><?php echo e($expiringPermits->count()); ?> Business Permit<?php echo e($expiringPermits->count() > 1 ? 's' : ''); ?> Expiring Within 30 Days —</strong>
+            <?php echo e($expiringPermits->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(', ')); ?><?php echo e($expiringPermits->count() > 3 ? ' +' . ($expiringPermits->count() - 3) . ' more' : ''); ?>
 
-                <?php if($expiringPermits->count() > 3): ?> and <?php echo e($expiringPermits->count() - 3); ?> more... <?php endif; ?>
-            </div>
-        </div>
-        <a href="<?php echo e(route('businesses.index')); ?>" class="btn btn-secondary btn-sm">View All</a>
+        </span>
+        <a href="<?php echo e(route('businesses.index')); ?>" class="alert-link">View All</a>
     </div>
     <?php endif; ?>
-
 </div>
 <?php endif; ?>
 
 
-<div class="grid-4 mb-6">
-    <?php
-        $stats = [
-            ['label'=>'Total Residents',  'value'=>number_format($totalResidents),  'icon'=>'fa-users',    'color'=>'#22c55e','bg'=>'#f0fdf4', 'route'=>'residents.index'],
-            ['label'=>'Households',       'value'=>number_format($totalHouseholds), 'icon'=>'fa-house',    'color'=>'#3b82f6','bg'=>'#eff6ff', 'route'=>'households.index'],
-            ['label'=>'Pending Documents','value'=>number_format($pendingDocuments),'icon'=>'fa-file-alt', 'color'=>'#f59e0b','bg'=>'#fffbeb', 'route'=>'documents.index'],
-            ['label'=>'Active Blotter',   'value'=>number_format($activeBlotter),   'icon'=>'fa-gavel',    'color'=>'#ef4444','bg'=>'#fef2f2', 'route'=>'blotter.index'],
-            ['label'=>'Male Residents',   'value'=>number_format($totalMale),       'icon'=>'fa-person',   'color'=>'#3b82f6','bg'=>'#eff6ff', 'route'=>'residents.index'],
-            ['label'=>'Female Residents', 'value'=>number_format($totalFemale),     'icon'=>'fa-person-dress','color'=>'#f97316','bg'=>'#fff7ed','route'=>'residents.index'],
-            ['label'=>'Registered Voters','value'=>number_format($totalVoters),     'icon'=>'fa-check-to-slot','color'=>'#22c55e','bg'=>'#f0fdf4','route'=>'residents.index'],
-            ['label'=>'Active Businesses','value'=>number_format($activeBusinesses),'icon'=>'fa-store',    'color'=>'#f59e0b','bg'=>'#fffbeb', 'route'=>'businesses.index'],
-        ];
-    ?>
-    <?php $__currentLoopData = $stats; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-    <a href="<?php echo e(route($s['route'])); ?>" style="text-decoration:none">
-        <div class="stat-card">
-            <div class="stat-icon" style="background:<?php echo e($s['bg']); ?>;color:<?php echo e($s['color']); ?>">
-                <i class="fas <?php echo e($s['icon']); ?>"></i>
-            </div>
-            <div class="stat-info">
-                <div class="stat-number"><?php echo e($s['value']); ?></div>
-                <div class="stat-label"><?php echo e($s['label']); ?></div>
-            </div>
+<div class="dash-stats">
+    <a href="<?php echo e(route('residents.index')); ?>" class="dash-stat-card">
+        <div class="dash-stat-icon" style="background:#eef2ff;color:#4f46e5"><i class="fas fa-users"></i></div>
+        <div>
+            <div class="dash-stat-number"><?php echo e(number_format($totalResidents)); ?></div>
+            <div class="dash-stat-label">Total Residents</div>
         </div>
     </a>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    <a href="<?php echo e(route('documents.index')); ?>" class="dash-stat-card">
+        <div class="dash-stat-icon" style="background:#fffbeb;color:#d97706"><i class="fas fa-file-alt"></i></div>
+        <div>
+            <div class="dash-stat-number"><?php echo e(number_format($pendingDocuments)); ?></div>
+            <div class="dash-stat-label">Pending Documents</div>
+        </div>
+    </a>
+    <a href="<?php echo e(route('blotter.index')); ?>" class="dash-stat-card">
+        <div class="dash-stat-icon" style="background:#fef2f2;color:#dc2626"><i class="fas fa-gavel"></i></div>
+        <div>
+            <div class="dash-stat-number"><?php echo e(number_format($activeBlotter)); ?></div>
+            <div class="dash-stat-label">Active Blotter Cases</div>
+        </div>
+    </a>
+    <a href="<?php echo e(route('businesses.index')); ?>" class="dash-stat-card">
+        <div class="dash-stat-icon" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-store"></i></div>
+        <div>
+            <div class="dash-stat-number"><?php echo e(number_format($activeBusinesses)); ?></div>
+            <div class="dash-stat-label">Active Businesses</div>
+        </div>
+    </a>
 </div>
 
 
-<div class="grid-2 mb-6" style="grid-template-columns:2fr 1fr">
+<div class="dash-mid">
+
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-chart-bar"></i> Documents Issued — <?php echo e(date('Y')); ?></span>
         </div>
         <div class="card-body">
-            <canvas id="monthlyDocChart" height="110"></canvas>
+            <canvas id="monthlyDocChart" height="105"></canvas>
         </div>
     </div>
+
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-chart-pie"></i> Age Groups</span>
+            <span class="card-title"><i class="fas fa-bolt"></i> Quick Access</span>
         </div>
         <div class="card-body">
-            <canvas id="ageChart" height="160"></canvas>
+            <div class="quick-grid">
+                <?php $links = [
+                    ['href' => route('residents.index'),  'icon' => 'fa-users',     'label' => 'Residents',  'color' => '#4f46e5'],
+                    ['href' => route('households.index'), 'icon' => 'fa-house',     'label' => 'Households', 'color' => '#0891b2'],
+                    ['href' => route('documents.index'),  'icon' => 'fa-file-alt',  'label' => 'Documents',  'color' => '#d97706'],
+                    ['href' => route('blotter.index'),    'icon' => 'fa-gavel',     'label' => 'Blotter',    'color' => '#dc2626'],
+                    ['href' => route('businesses.index'), 'icon' => 'fa-store',     'label' => 'Businesses', 'color' => '#16a34a'],
+                    ['href' => route('officials.index'),  'icon' => 'fa-user-tie',  'label' => 'Officials',  'color' => '#7c3aed'],
+                    ['href' => route('reports.index'),    'icon' => 'fa-chart-bar', 'label' => 'Analytics',  'color' => '#0D2144'],
+                    ['href' => route('reports.generate'), 'icon' => 'fa-file-pdf',  'label' => 'Reports',    'color' => '#ef4444'],
+                    ['href' => route('backup.index'),     'icon' => 'fa-database',  'label' => 'Backup',     'color' => '#374151'],
+                ]; ?>
+                <?php $__currentLoopData = $links; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $l): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <a href="<?php echo e($l['href']); ?>" class="quick-item" style="--qa-color:<?php echo e($l['color']); ?>">
+                    <div class="quick-icon" style="background:<?php echo e($l['color']); ?>18;color:<?php echo e($l['color']); ?>">
+                        <i class="fas <?php echo e($l['icon']); ?>"></i>
+                    </div>
+                    <span class="quick-label"><?php echo e($l['label']); ?></span>
+                </a>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
         </div>
     </div>
+
 </div>
 
 
-<div class="grid-2 mb-6">
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title"><i class="fas fa-chart-bar"></i> Population Demographics</span>
-        </div>
-        <div class="card-body">
-            <?php
-                $demos = [
-                    ['label'=>'Registered Voters','value'=>$totalVoters,     'color'=>'var(--navy)'],
-                    ['label'=>'Senior Citizens',  'value'=>$totalSeniors,    'color'=>'var(--gold)'],
-                    ['label'=>'PWD',              'value'=>$totalPwd,        'color'=>'#2563eb'],
-                    ['label'=>'Solo Parents',     'value'=>$totalSoloParent, 'color'=>'#7c3aed'],
-                    ['label'=>'4Ps Beneficiaries','value'=>$total4ps,        'color'=>'#dc2626'],
-                ];
-            ?>
-            <?php $__currentLoopData = $demos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <?php $pct = $totalResidents > 0 ? round(($d['value'] / $totalResidents) * 100) : 0; ?>
-            <div style="margin-bottom:14px">
-                <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-                    <span style="font-size:12.5px;color:var(--text)"><?php echo e($d['label']); ?></span>
-                    <span style="font-size:12px;color:var(--text-muted)"><?php echo e(number_format($d['value'])); ?> <span style="color:var(--text-subtle)">(<?php echo e($pct); ?>%)</span></span>
-                </div>
-                <div class="progress-bar-wrap">
-                    <div class="progress-bar" style="width:<?php echo e($pct); ?>%;background:<?php echo e($d['color']); ?>"></div>
-                </div>
-            </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+<div class="dash-bottom">
 
-            <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
-                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">Residency Status</div>
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-                    <?php $statuses = [['Active',$totalActive,'#16a34a'],['Deceased',$totalDeceased,'var(--text-muted)'],['Transferred',$totalTransferred,'var(--gold)']]; ?>
-                    <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as [$label,$val,$color]): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div style="text-align:center;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
-                        <div style="font-size:18px;font-weight:700;color:<?php echo e($color); ?>"><?php echo e(number_format($val)); ?></div>
-                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px"><?php echo e($label); ?></div>
-                    </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </div>
-            </div>
-
-            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">Gender Split</div>
-                <?php $gTotal = $totalMale + $totalFemale ?: 1; $mPct = round(($totalMale/$gTotal)*100); ?>
-                <div style="display:flex;border-radius:99px;overflow:hidden;height:12px;margin-bottom:8px">
-                    <div style="width:<?php echo e($mPct); ?>%;background:var(--navy)"></div>
-                    <div style="width:<?php echo e(100-$mPct); ?>%;background:var(--gold)"></div>
-                </div>
-                <div style="display:flex;gap:20px">
-                    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)">
-                        <div style="width:10px;height:10px;border-radius:50%;background:var(--navy)"></div>
-                        Male — <?php echo e(number_format($totalMale)); ?> (<?php echo e($mPct); ?>%)
-                    </div>
-                    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)">
-                        <div style="width:10px;height:10px;border-radius:50%;background:var(--gold)"></div>
-                        Female — <?php echo e(number_format($totalFemale)); ?> (<?php echo e(100-$mPct); ?>%)
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title"><i class="fas fa-location-dot"></i> Residents by Purok</span>
-        </div>
-        <div class="card-body" style="padding:0">
-            <table>
-                <thead><tr><th>Purok</th><th style="text-align:right">Residents</th><th style="text-align:right">%</th></tr></thead>
-                <tbody>
-                    <?php $__empty_1 = true; $__currentLoopData = $residentsByPurok; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $purok): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                    <?php $pct = $totalResidents > 0 ? round(($purok->residents_count/$totalResidents)*100) : 0; ?>
-                    <tr>
-                        <td>
-                            <div style="display:flex;align-items:center;gap:8px">
-                                <div style="width:26px;height:26px;border-radius:var(--radius-sm);background:var(--navy-pale);display:flex;align-items:center;justify-content:center">
-                                    <i class="fas fa-location-dot" style="font-size:11px;color:var(--navy)"></i>
-                                </div>
-                                <span style="font-weight:500;font-size:13px"><?php echo e($purok->name); ?></span>
-                            </div>
-                        </td>
-                        <td style="text-align:right;font-weight:600;color:var(--navy)"><?php echo e(number_format($purok->residents_count)); ?></td>
-                        <td style="text-align:right;color:var(--text-muted);font-size:12px"><?php echo e($pct); ?>%</td>
-                    </tr>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                    <tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text-muted)">No purok data yet</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-
-<div class="grid-3 mb-6">
-
-    
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title"><i class="fas fa-users"></i> Recent Residents</span>
-            <a href="<?php echo e(route('residents.index')); ?>" class="btn btn-secondary btn-sm">View All</a>
-        </div>
-        <div class="card-body" style="padding:0">
-            <?php $__empty_1 = true; $__currentLoopData = $recentResidents; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $r): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-            <a href="<?php echo e(route('residents.show', $r->id)); ?>" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);text-decoration:none;transition:background 0.1s" onmouseover="this.style.background='var(--navy-pale)'" onmouseout="this.style.background=''">
-                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--gold);flex-shrink:0">
-                    <?php echo e(strtoupper(substr($r->first_name,0,1))); ?>
-
-                </div>
-                <div style="flex:1;min-width:0">
-                    <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><?php echo e($r->last_name); ?>, <?php echo e($r->first_name); ?></div>
-                    <div style="font-size:11px;color:var(--text-muted)"><?php echo e($r->purok->name ?? '—'); ?></div>
-                </div>
-                <span class="badge <?php echo e($r->residency_status === 'Active' ? 'badge-green' : 'badge-gray'); ?>" style="font-size:10px"><?php echo e($r->residency_status); ?></span>
-            </a>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-            <div class="empty-state" style="padding:24px"><i class="fas fa-users"></i><p>No residents yet</p></div>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-file-alt"></i> Recent Documents</span>
@@ -275,23 +207,20 @@
         </div>
         <div class="card-body" style="padding:0">
             <?php $__empty_1 = true; $__currentLoopData = $recentDocuments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-            <a href="<?php echo e(route('documents.show', $d->id)); ?>" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);text-decoration:none;transition:background 0.1s" onmouseover="this.style.background='var(--navy-pale)'" onmouseout="this.style.background=''">
-                <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:#fffbeb;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                    <i class="fas fa-file-alt" style="color:#f59e0b;font-size:14px"></i>
-                </div>
-                <div style="flex:1;min-width:0">
-                    <div style="font-size:12px;font-weight:600;color:var(--text);font-family:monospace"><?php echo e($d->doc_number); ?></div>
-                    <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><?php echo e($d->resident->full_name ?? '—'); ?></div>
+            <a href="<?php echo e(route('documents.show', $d->id)); ?>" class="feed-row">
+                <div class="feed-icon" style="background:#fffbeb"><i class="fas fa-file-alt" style="color:#d97706"></i></div>
+                <div class="feed-body">
+                    <div class="feed-title"><?php echo e($d->doc_number); ?></div>
+                    <div class="feed-sub"><?php echo e($d->resident->full_name ?? '—'); ?> · <?php echo e($d->document_type); ?></div>
                 </div>
                 <span class="badge <?php echo e($d->status === 'Released' ? 'badge-green' : ($d->status === 'Pending' ? 'badge-yellow' : 'badge-blue')); ?>" style="font-size:10px"><?php echo e($d->status); ?></span>
             </a>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-            <div class="empty-state" style="padding:24px"><i class="fas fa-file-alt"></i><p>No documents yet</p></div>
+            <div class="empty-state" style="padding:32px"><i class="fas fa-file-alt"></i><p>No documents yet</p></div>
             <?php endif; ?>
         </div>
     </div>
 
-    
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-gavel"></i> Recent Blotter</span>
@@ -299,165 +228,17 @@
         </div>
         <div class="card-body" style="padding:0">
             <?php $__empty_1 = true; $__currentLoopData = $recentBlotter; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-            <a href="<?php echo e(route('blotter.show', $b->id)); ?>" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);text-decoration:none;transition:background 0.1s" onmouseover="this.style.background='var(--navy-pale)'" onmouseout="this.style.background=''">
-                <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:#fef2f2;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                    <i class="fas fa-gavel" style="color:#ef4444;font-size:14px"></i>
-                </div>
-                <div style="flex:1;min-width:0">
-                    <div style="font-size:12px;font-weight:600;color:var(--text);font-family:monospace"><?php echo e($b->case_number); ?></div>
-                    <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><?php echo e($b->incident_type); ?></div>
+            <a href="<?php echo e(route('blotter.show', $b->id)); ?>" class="feed-row">
+                <div class="feed-icon" style="background:#fef2f2"><i class="fas fa-gavel" style="color:#dc2626"></i></div>
+                <div class="feed-body">
+                    <div class="feed-title"><?php echo e($b->case_number); ?></div>
+                    <div class="feed-sub"><?php echo e($b->incident_type); ?></div>
                 </div>
                 <span class="badge <?php echo e($b->status === 'Settled' ? 'badge-green' : ($b->status === 'Active' ? 'badge-red' : 'badge-gray')); ?>" style="font-size:10px"><?php echo e($b->status); ?></span>
             </a>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-            <div class="empty-state" style="padding:24px"><i class="fas fa-gavel"></i><p>No blotter cases yet</p></div>
+            <div class="empty-state" style="padding:32px"><i class="fas fa-gavel"></i><p>No blotter cases yet</p></div>
             <?php endif; ?>
-        </div>
-    </div>
-
-</div>
-
-
-<div class="grid-3 mb-6">
-    <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-file-alt"></i> Documents by Type</span></div>
-        <div class="card-body" style="padding:0">
-            <table><thead><tr><th>Type</th><th style="text-align:right">Count</th></tr></thead>
-            <tbody>
-                <?php $__empty_1 = true; $__currentLoopData = $documentsByType; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type => $count): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                <tr><td style="font-size:12.5px"><?php echo e($type); ?></td><td style="text-align:right;font-weight:600;color:var(--navy)"><?php echo e(number_format($count)); ?></td></tr>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                <tr><td colspan="2" style="text-align:center;padding:20px;color:var(--text-muted)">No data</td></tr>
-                <?php endif; ?>
-            </tbody></table>
-        </div>
-        <div style="padding:12px 16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
-                <div style="font-size:15px;font-weight:700;color:var(--gold)"><?php echo e(number_format($pendingDocuments)); ?></div>
-                <div style="font-size:10px;color:var(--text-subtle)">Pending</div>
-            </div>
-            <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
-                <div style="font-size:15px;font-weight:700;color:#16a34a"><?php echo e(number_format($releasedDocuments)); ?></div>
-                <div style="font-size:10px;color:var(--text-subtle)">Released</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-gavel"></i> Blotter by Type</span></div>
-        <div class="card-body" style="padding:0">
-            <table><thead><tr><th>Incident Type</th><th style="text-align:right">Count</th></tr></thead>
-            <tbody>
-                <?php $__empty_1 = true; $__currentLoopData = $blotterByType; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type => $count): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                <tr><td style="font-size:12.5px"><?php echo e($type); ?></td><td style="text-align:right;font-weight:600;color:var(--crimson)"><?php echo e(number_format($count)); ?></td></tr>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                <tr><td colspan="2" style="text-align:center;padding:20px;color:var(--text-muted)">No data</td></tr>
-                <?php endif; ?>
-            </tbody></table>
-        </div>
-        <div style="padding:12px 16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
-                <div style="font-size:15px;font-weight:700;color:var(--crimson)"><?php echo e(number_format($activeBlotter)); ?></div>
-                <div style="font-size:10px;color:var(--text-subtle)">Active</div>
-            </div>
-            <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
-                <div style="font-size:15px;font-weight:700;color:#16a34a"><?php echo e(number_format($settledBlotter)); ?></div>
-                <div style="font-size:10px;color:var(--text-subtle)">Settled</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-store"></i> Business Permits</span></div>
-        <div class="card-body">
-            <?php $bizStats = [['Active',$activeBusinesses,'#16a34a'],['Expired',$expiredBusinesses,'var(--crimson)'],['Other',$totalBusinesses-$activeBusinesses-$expiredBusinesses,'var(--text-subtle)']]; ?>
-            <?php $__currentLoopData = $bizStats; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as [$label,$val,$color]): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <?php $pct = $totalBusinesses > 0 ? round(($val/$totalBusinesses)*100) : 0; ?>
-            <div style="margin-bottom:14px">
-                <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-                    <span style="font-size:12.5px"><?php echo e($label); ?></span>
-                    <span style="font-size:12px;color:var(--text-muted)"><?php echo e(number_format($val)); ?> (<?php echo e($pct); ?>%)</span>
-                </div>
-                <div class="progress-bar-wrap"><div class="progress-bar" style="width:<?php echo e($pct); ?>%;background:<?php echo e($color); ?>"></div></div>
-            </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);text-align:center">
-                <div style="font-size:22px;font-weight:700;color:var(--navy)"><?php echo e(number_format($totalBusinesses)); ?></div>
-                <div style="font-size:11px;color:var(--text-subtle)">Total Registered Businesses</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="grid-2">
-
-    
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title"><i class="fas fa-clock-rotate-left"></i> Recent Activity</span>
-            <a href="<?php echo e(route('activity-log.index')); ?>" class="btn btn-secondary btn-sm">View All</a>
-        </div>
-        <div class="card-body" style="padding:0;max-height:340px;overflow-y:auto">
-            <?php $__empty_1 = true; $__currentLoopData = $recentActivity; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $log): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-            <?php
-                $iconMap = ['created'=>'fa-plus','updated'=>'fa-pen','deleted'=>'fa-trash'];
-                $colorMap = ['created'=>'#22c55e','updated'=>'#f59e0b','deleted'=>'#ef4444'];
-                $icon  = $iconMap[$log->action]  ?? 'fa-circle';
-                $color = $colorMap[$log->action] ?? 'var(--text-muted)';
-            ?>
-            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)">
-                <div style="width:30px;height:30px;border-radius:50%;background:<?php echo e($color); ?>15;color:<?php echo e($color); ?>;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;margin-top:2px">
-                    <i class="fas <?php echo e($icon); ?>"></i>
-                </div>
-                <div style="flex:1;min-width:0">
-                    <div style="font-size:12.5px;color:var(--text)">
-                        <strong><?php echo e($log->user->name ?? 'System'); ?></strong>
-                        <?php echo e($log->action); ?>
-
-                        a <?php echo e(strtolower(class_basename($log->loggable_type ?? ''))); ?>
-
-                    </div>
-                    <div style="font-size:11px;color:var(--text-muted);margin-top:2px"><?php echo e($log->created_at->diffForHumans()); ?></div>
-                </div>
-                <span class="badge badge-gray" style="font-size:9px;flex-shrink:0"><?php echo e(class_basename($log->loggable_type ?? 'System')); ?></span>
-            </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-            <div class="empty-state" style="padding:32px"><i class="fas fa-clock-rotate-left"></i><p>No activity yet</p></div>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title"><i class="fas fa-bolt"></i> Quick Access</span>
-        </div>
-        <div class="card-body">
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-                <?php $links = [
-                    ['href'=>route('residents.index'),  'icon'=>'fa-users',    'label'=>'Residents',  'color'=>'var(--navy)'],
-                    ['href'=>route('households.index'), 'icon'=>'fa-house',    'label'=>'Households', 'color'=>'var(--gold)'],
-                    ['href'=>route('documents.index'),  'icon'=>'fa-file-alt', 'label'=>'Documents',  'color'=>'#16a34a'],
-                    ['href'=>route('blotter.index'),    'icon'=>'fa-gavel',    'label'=>'Blotter',    'color'=>'var(--crimson)'],
-                    ['href'=>route('businesses.index'), 'icon'=>'fa-store',    'label'=>'Businesses', 'color'=>'#2563eb'],
-                    ['href'=>route('officials.index'),  'icon'=>'fa-user-tie', 'label'=>'Officials',  'color'=>'#7c3aed'],
-                    ['href'=>route('reports.index'),    'icon'=>'fa-chart-bar','label'=>'Analytics',  'color'=>'#0891b2'],
-                    ['href'=>route('reports.generate'), 'icon'=>'fa-file-pdf', 'label'=>'Reports',    'color'=>'#ef4444'],
-                    ['href'=>route('backup.index'),     'icon'=>'fa-database', 'label'=>'Backup',     'color'=>'#374151'],
-                ]; ?>
-                <?php $__currentLoopData = $links; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $l): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <a href="<?php echo e($l['href']); ?>"
-                   style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);text-align:center;transition:all 0.15s;text-decoration:none"
-                   onmouseover="this.style.borderColor='<?php echo e($l['color']); ?>';this.style.background='var(--navy-pale)'"
-                   onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface2)'">
-                    <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:<?php echo e($l['color']); ?>18;display:flex;align-items:center;justify-content:center;color:<?php echo e($l['color']); ?>;font-size:17px">
-                        <i class="fas <?php echo e($l['icon']); ?>"></i>
-                    </div>
-                    <span style="font-size:11.5px;font-weight:600;color:var(--text)"><?php echo e($l['label']); ?></span>
-                </a>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </div>
         </div>
     </div>
 
@@ -475,41 +256,24 @@ new Chart(document.getElementById('monthlyDocChart').getContext('2d'), {
         datasets: [{
             label: 'Documents',
             data: [<?php echo e($monthlyData[1]); ?>,<?php echo e($monthlyData[2]); ?>,<?php echo e($monthlyData[3]); ?>,<?php echo e($monthlyData[4]); ?>,<?php echo e($monthlyData[5]); ?>,<?php echo e($monthlyData[6]); ?>,<?php echo e($monthlyData[7]); ?>,<?php echo e($monthlyData[8]); ?>,<?php echo e($monthlyData[9]); ?>,<?php echo e($monthlyData[10]); ?>,<?php echo e($monthlyData[11]); ?>,<?php echo e($monthlyData[12]); ?>],
-            backgroundColor: 'rgba(13,33,68,0.12)',
+            backgroundColor: 'rgba(13,33,68,0.10)',
             borderColor: '#0D2144',
             borderWidth: 1.5,
-            borderRadius: 4,
+            borderRadius: 5,
+            hoverBackgroundColor: 'rgba(200,134,26,0.18)',
+            hoverBorderColor: '#C8861A',
         }]
     },
     options: {
         responsive: true,
         plugins: { legend: { display: false } },
         scales: {
-            x: { ticks:{ color:'#9CA3AF', font:{size:10} }, grid:{ color:'#E5E7EB' } },
-            y: { ticks:{ color:'#9CA3AF', font:{size:10}, stepSize:1 }, grid:{ color:'#E5E7EB' }, beginAtZero:true }
-        }
-    }
-});
-
-new Chart(document.getElementById('ageChart').getContext('2d'), {
-    type: 'doughnut',
-    data: {
-        labels: <?php echo json_encode(array_keys($ageGroups)); ?>,
-        datasets: [{
-            data: <?php echo json_encode(array_values($ageGroups)); ?>,
-            backgroundColor: ['#C8861A','#0D2144','#16a34a','#9CA3AF'],
-            borderWidth: 2,
-            borderColor: '#fff',
-        }]
-    },
-    options: {
-        responsive: true,
-        cutout: '60%',
-        plugins: {
-            legend: { position:'bottom', labels:{ font:{size:11}, padding:10, color:'#4B5563' } }
+            x: { ticks: { color: '#9CA3AF', font: { size: 11, family: 'Poppins' } }, grid: { color: '#F3F4F6' } },
+            y: { ticks: { color: '#9CA3AF', font: { size: 11 }, stepSize: 1 }, grid: { color: '#F3F4F6' }, beginAtZero: true }
         }
     }
 });
 </script>
 <?php $__env->stopPush(); ?>
+
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\anakco_bms\resources\views/dashboard.blade.php ENDPATH**/ ?>
