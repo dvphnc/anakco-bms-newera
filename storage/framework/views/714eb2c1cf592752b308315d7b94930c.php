@@ -7,8 +7,9 @@
 .alert-item  { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:var(--radius); font-size:13px; }
 .alert-item i { flex-shrink:0; font-size:14px; }
 .alert-item > span { flex:1; line-height:1.5; }
-.alert-birthday { background:#faf5ff; border:1px solid #e9d5ff; border-left:4px solid #7c3aed; color:#6b21a8; }
-.alert-permit   { background:#fef2f2; border:1px solid #fecaca; border-left:4px solid #ef4444; color:#991b1b; }
+.alert-senior  { background:var(--gold-pale);    border:1px solid var(--gold-border);    border-left:4px solid var(--gold);    color:#78450a; }
+.alert-birthday{ background:var(--navy-pale);    border:1px solid var(--navy-border);    border-left:4px solid var(--navy);    color:var(--navy); }
+.alert-permit  { background:var(--crimson-pale); border:1px solid var(--crimson-border); border-left:4px solid var(--crimson); color:var(--crimson); }
 .alert-link {
     font-size:11.5px; font-weight:600; color:inherit; opacity:.8;
     text-decoration:none; padding:3px 12px; border:1px solid currentColor;
@@ -84,10 +85,12 @@
 
 
 <?php
-    $today     = now()->format('m-d');
-    $birthdays = \App\Models\Resident::where('residency_status', 'Active')
+    $today        = now()->format('m-d');
+    $birthdays    = \App\Models\Resident::where('residency_status', 'Active')
         ->whereRaw("DATE_FORMAT(birthdate,'%m-%d') = ?", [$today])
         ->orderBy('last_name')->get();
+    $seniorBdays  = $birthdays->filter(fn($r) => $r->age >= 60);
+    $regularBdays = $birthdays->filter(fn($r) => $r->age < 60);
 
     $expiringPermits = \App\Models\Business::where('status', 'Active')
         ->whereBetween('expiry_date', [now(), now()->addDays(30)])
@@ -96,15 +99,27 @@
 
 <?php if($birthdays->count() || $expiringPermits->count()): ?>
 <div class="alert-strip">
-    <?php if($birthdays->count()): ?>
-    <div class="alert-item alert-birthday">
-        <i class="fas fa-birthday-cake"></i>
+
+    <?php if($seniorBdays->count()): ?>
+    <div class="alert-item alert-senior">
+        <i class="fas fa-star"></i>
         <span>
-            <strong><?php echo e($birthdays->count()); ?> Birthday<?php echo e($birthdays->count() > 1 ? 's' : ''); ?> Today —</strong>
-            <?php echo e($birthdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ' (' . $r->age . ')')->take(4)->implode(', ')); ?><?php echo e($birthdays->count() > 4 ? ' +' . ($birthdays->count() - 4) . ' more' : ''); ?>
+            <strong>Senior Citizen <?php echo e($seniorBdays->count() === 1 ? 'Birthday' : 'Birthdays'); ?> Today (<?php echo e($seniorBdays->count()); ?>) —</strong>
+            <?php echo e($seniorBdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ', ' . $r->age . ' yrs')->take(4)->implode(' · ')); ?><?php echo e($seniorBdays->count() > 4 ? ' +' . ($seniorBdays->count() - 4) . ' more' : ''); ?>
 
         </span>
         <a href="<?php echo e(route('residents.index')); ?>" class="alert-link">View All</a>
+    </div>
+    <?php endif; ?>
+
+    <?php if($regularBdays->count()): ?>
+    <div class="alert-item alert-birthday">
+        <i class="fas fa-birthday-cake"></i>
+        <span>
+            <strong><?php echo e($regularBdays->count() === 1 ? 'Birthday' : 'Birthdays'); ?> Today (<?php echo e($regularBdays->count()); ?>) —</strong>
+            <?php echo e($regularBdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ', ' . $r->age . ' yrs')->take(4)->implode(' · ')); ?><?php echo e($regularBdays->count() > 4 ? ' +' . ($regularBdays->count() - 4) . ' more' : ''); ?>
+
+        </span>
     </div>
     <?php endif; ?>
 
@@ -113,12 +128,13 @@
         <i class="fas fa-triangle-exclamation"></i>
         <span>
             <strong><?php echo e($expiringPermits->count()); ?> Business Permit<?php echo e($expiringPermits->count() > 1 ? 's' : ''); ?> Expiring Within 30 Days —</strong>
-            <?php echo e($expiringPermits->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(', ')); ?><?php echo e($expiringPermits->count() > 3 ? ' +' . ($expiringPermits->count() - 3) . ' more' : ''); ?>
+            <?php echo e($expiringPermits->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(' · ')); ?><?php echo e($expiringPermits->count() > 3 ? ' +' . ($expiringPermits->count() - 3) . ' more' : ''); ?>
 
         </span>
         <a href="<?php echo e(route('businesses.index')); ?>" class="alert-link">View All</a>
     </div>
     <?php endif; ?>
+
 </div>
 <?php endif; ?>
 
