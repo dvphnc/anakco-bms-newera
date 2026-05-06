@@ -86,10 +86,12 @@
 
 {{-- ALERTS STRIP --}}
 @php
-    $today     = now()->format('m-d');
-    $birthdays = \App\Models\Resident::where('residency_status', 'Active')
+    $today        = now()->format('m-d');
+    $birthdays    = \App\Models\Resident::where('residency_status', 'Active')
         ->whereRaw("DATE_FORMAT(birthdate,'%m-%d') = ?", [$today])
         ->orderBy('last_name')->get();
+    $seniorBdays  = $birthdays->filter(fn($r) => $r->age >= 60);
+    $regularBdays = $birthdays->filter(fn($r) => $r->age < 60);
 
     $expiringPermits = \App\Models\Business::where('status', 'Active')
         ->whereBetween('expiry_date', [now(), now()->addDays(30)])
@@ -98,14 +100,25 @@
 
 @if($birthdays->count() || $expiringPermits->count())
 <div class="alert-strip">
-    @if($birthdays->count())
+
+    @if($seniorBdays->count())
+    <div class="alert-item alert-senior">
+        <i class="fas fa-star"></i>
+        <span>
+            <strong>Senior Citizen {{ $seniorBdays->count() === 1 ? 'Birthday' : 'Birthdays' }} Today ({{ $seniorBdays->count() }}) —</strong>
+            {{ $seniorBdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ', ' . $r->age . ' yrs')->take(4)->implode(' · ') }}{{ $seniorBdays->count() > 4 ? ' +' . ($seniorBdays->count() - 4) . ' more' : '' }}
+        </span>
+        <a href="{{ route('residents.index') }}" class="alert-link">View All</a>
+    </div>
+    @endif
+
+    @if($regularBdays->count())
     <div class="alert-item alert-birthday">
         <i class="fas fa-birthday-cake"></i>
         <span>
-            <strong>{{ $birthdays->count() }} Birthday{{ $birthdays->count() > 1 ? 's' : '' }} Today —</strong>
-            {{ $birthdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ' (' . $r->age . ')')->take(4)->implode(', ') }}{{ $birthdays->count() > 4 ? ' +' . ($birthdays->count() - 4) . ' more' : '' }}
+            <strong>{{ $regularBdays->count() === 1 ? 'Birthday' : 'Birthdays' }} Today ({{ $regularBdays->count() }}) —</strong>
+            {{ $regularBdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ', ' . $r->age . ' yrs')->take(4)->implode(' · ') }}{{ $regularBdays->count() > 4 ? ' +' . ($regularBdays->count() - 4) . ' more' : '' }}
         </span>
-        <a href="{{ route('residents.index') }}" class="alert-link">View All</a>
     </div>
     @endif
 
@@ -114,11 +127,12 @@
         <i class="fas fa-triangle-exclamation"></i>
         <span>
             <strong>{{ $expiringPermits->count() }} Business Permit{{ $expiringPermits->count() > 1 ? 's' : '' }} Expiring Within 30 Days —</strong>
-            {{ $expiringPermits->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(', ') }}{{ $expiringPermits->count() > 3 ? ' +' . ($expiringPermits->count() - 3) . ' more' : '' }}
+            {{ $expiringPermits->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(' · ') }}{{ $expiringPermits->count() > 3 ? ' +' . ($expiringPermits->count() - 3) . ' more' : '' }}
         </span>
         <a href="{{ route('businesses.index') }}" class="alert-link">View All</a>
     </div>
     @endif
+
 </div>
 @endif
 
