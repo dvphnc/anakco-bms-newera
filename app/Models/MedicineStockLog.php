@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class MedicineStockLog extends Model
+{
+    protected $table = 'medicine_stock_logs';
+
+    protected $fillable = [
+        'medicine_id',
+        'adjustment_type',
+        'quantity',
+        'stock_before',
+        'stock_after',
+        'reason',
+        'performed_by',
+    ];
+
+    protected $casts = [
+        'quantity'     => 'integer',
+        'stock_before' => 'integer',
+        'stock_after'  => 'integer',
+    ];
+
+    public function medicine()
+    {
+        return $this->belongsTo(MedicineInventory::class, 'medicine_id');
+    }
+}
