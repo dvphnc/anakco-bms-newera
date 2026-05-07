@@ -223,15 +223,15 @@
         <div class="card-body">
             <div class="quick-grid">
                 @php $links = [
-                    ['href' => route('residents.index'),  'icon' => 'fa-users',     'label' => 'Residents',  'color' => '#4f46e5'],
-                    ['href' => route('households.index'), 'icon' => 'fa-house',     'label' => 'Households', 'color' => '#0891b2'],
-                    ['href' => route('documents.index'),  'icon' => 'fa-file-alt',  'label' => 'Documents',  'color' => '#d97706'],
-                    ['href' => route('blotter.index'),    'icon' => 'fa-gavel',     'label' => 'Blotter',    'color' => '#dc2626'],
-                    ['href' => route('businesses.index'), 'icon' => 'fa-store',     'label' => 'Businesses', 'color' => '#16a34a'],
-                    ['href' => route('officials.index'),  'icon' => 'fa-user-tie',  'label' => 'Officials',  'color' => '#7c3aed'],
-                    ['href' => route('reports.index'),    'icon' => 'fa-chart-bar', 'label' => 'Analytics',  'color' => '#0D2144'],
-                    ['href' => route('reports.generate'), 'icon' => 'fa-file-pdf',  'label' => 'Reports',    'color' => '#ef4444'],
-                    ['href' => route('backup.index'),     'icon' => 'fa-database',  'label' => 'Backup',     'color' => '#374151'],
+                    ['href' => route('residents.index'),    'icon' => 'fa-users',          'label' => 'Residents',     'color' => '#4f46e5'],
+                    ['href' => route('households.index'),   'icon' => 'fa-house',          'label' => 'Households',    'color' => '#0891b2'],
+                    ['href' => route('documents.index'),    'icon' => 'fa-file-alt',       'label' => 'Documents',     'color' => '#d97706'],
+                    ['href' => route('blotter.index'),      'icon' => 'fa-gavel',          'label' => 'Blotter',       'color' => '#dc2626'],
+                    ['href' => route('businesses.index'),   'icon' => 'fa-store',          'label' => 'Businesses',    'color' => '#16a34a'],
+                    ['href' => route('appointments.index'), 'icon' => 'fa-calendar-check', 'label' => 'Appointments',  'color' => '#C8861A'],
+                    ['href' => route('officials.index'),    'icon' => 'fa-user-tie',       'label' => 'Officials',     'color' => '#7c3aed'],
+                    ['href' => route('reports.index'),      'icon' => 'fa-chart-bar',      'label' => 'Analytics',     'color' => '#0D2144'],
+                    ['href' => route('backup.index'),       'icon' => 'fa-database',       'label' => 'Backup',        'color' => '#374151'],
                 ]; @endphp
                 @foreach($links as $l)
                 <a href="{{ $l['href'] }}" class="quick-item" style="--qa-color:{{ $l['color'] }}">

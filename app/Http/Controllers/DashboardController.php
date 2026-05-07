@@ -78,6 +78,7 @@ class DashboardController extends Controller
             'totalBusinesses', 'activeBusinesses', 'expiredBusinesses',
             'pendingDocuments', 'releasedDocuments', 'totalDocuments',
             'activeBlotter', 'settledBlotter', 'totalBlotter',
+            'pendingAppointments',
             'monthlyData', 'ageGroups', 'residentsByPurok',
             'documentsByType', 'blotterByType',
             'recentResidents', 'recentDocuments', 'recentBlotter',
