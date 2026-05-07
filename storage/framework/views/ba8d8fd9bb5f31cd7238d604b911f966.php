@@ -79,6 +79,19 @@
             <i class="fas fa-store"></i>
             <span>Business Permits</span>
         </a>
+
+        <a href="<?php echo e(route('appointments.index')); ?>"
+           class="nav-item <?php echo e(request()->routeIs('appointments.*') ? 'active' : ''); ?>">
+            <i class="fas fa-calendar-check"></i>
+            <span>Appointments</span>
+        </a>
+
+        <a href="<?php echo e(route('portal.index')); ?>" target="_blank"
+           class="nav-item">
+            <i class="fas fa-globe"></i>
+            <span>Resident Portal</span>
+            <i class="fas fa-arrow-up-right-from-square" style="font-size:9px;margin-left:auto;opacity:.5"></i>
+        </a>
         <?php endif; ?>
 
         
