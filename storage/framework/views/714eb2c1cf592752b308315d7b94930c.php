@@ -18,7 +18,7 @@
 .alert-link:hover { opacity:1; }
 
 /* ── Stat Cards ──────────────────────────────────────────── */
-.dash-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+.dash-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:16px; margin-bottom:24px; }
 .dash-stat-card {
     display:flex; align-items:center; gap:16px;
     background:var(--surface); border:1px solid var(--border);
@@ -95,9 +95,13 @@
     $expiringPermits = \App\Models\Business::where('status', 'Active')
         ->whereBetween('expiry_date', [now(), now()->addDays(30)])
         ->orderBy('expiry_date')->get();
+
+    $pendingAppointments = \App\Models\DocumentAppointment::where('status', 'Pending')->count();
+
+    $lowStockMeds = \App\Models\MedicineInventory::whereColumn('current_stock', '<=', 'reorder_level')->get();
 ?>
 
-<?php if($birthdays->count() || $expiringPermits->count()): ?>
+<?php if($birthdays->count() || $expiringPermits->count() || $pendingAppointments || $lowStockMeds->count()): ?>
 <div class="alert-strip">
 
     <?php if($seniorBdays->count()): ?>
@@ -135,6 +139,30 @@
     </div>
     <?php endif; ?>
 
+    <?php if($pendingAppointments): ?>
+    <div class="alert-item alert-birthday">
+        <i class="fas fa-calendar-clock"></i>
+        <span>
+            <strong><?php echo e($pendingAppointments); ?> Pending Document Appointment<?php echo e($pendingAppointments > 1 ? 's' : ''); ?></strong> — waiting for staff confirmation.
+        </span>
+        <?php if(in_array(auth()->user()->role, ['Admin','Secretary'])): ?>
+        <a href="<?php echo e(route('appointments.index')); ?>?status=Pending" class="alert-link">Review</a>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if($lowStockMeds->count()): ?>
+    <div class="alert-item alert-permit">
+        <i class="fas fa-pills"></i>
+        <span>
+            <strong><?php echo e($lowStockMeds->count()); ?> Medicine<?php echo e($lowStockMeds->count() > 1 ? 's' : ''); ?> Low on Stock —</strong>
+            <?php echo e($lowStockMeds->map(fn($m) => $m->medicine_name . ' (' . $m->current_stock . ' ' . $m->unit . ')')->take(3)->implode(' · ')); ?><?php echo e($lowStockMeds->count() > 3 ? ' +' . ($lowStockMeds->count() - 3) . ' more' : ''); ?>
+
+        </span>
+        <a href="<?php echo e(route('committees.show', 'health')); ?>#medicine-inventory" class="alert-link">View</a>
+    </div>
+    <?php endif; ?>
+
 </div>
 <?php endif; ?>
 
@@ -168,6 +196,15 @@
             <div class="dash-stat-label">Active Businesses</div>
         </div>
     </a>
+    <?php if(in_array(auth()->user()->role, ['Admin','Secretary'])): ?>
+    <a href="<?php echo e(route('appointments.index')); ?>" class="dash-stat-card">
+        <div class="dash-stat-icon" style="background:var(--gold-pale);color:var(--gold)"><i class="fas fa-calendar-check"></i></div>
+        <div>
+            <div class="dash-stat-number"><?php echo e(number_format($pendingAppointments)); ?></div>
+            <div class="dash-stat-label">Pending Appointments</div>
+        </div>
+    </a>
+    <?php endif; ?>
 </div>
 
 
@@ -189,15 +226,15 @@
         <div class="card-body">
             <div class="quick-grid">
                 <?php $links = [
-                    ['href' => route('residents.index'),  'icon' => 'fa-users',     'label' => 'Residents',  'color' => '#4f46e5'],
-                    ['href' => route('households.index'), 'icon' => 'fa-house',     'label' => 'Households', 'color' => '#0891b2'],
-                    ['href' => route('documents.index'),  'icon' => 'fa-file-alt',  'label' => 'Documents',  'color' => '#d97706'],
-                    ['href' => route('blotter.index'),    'icon' => 'fa-gavel',     'label' => 'Blotter',    'color' => '#dc2626'],
-                    ['href' => route('businesses.index'), 'icon' => 'fa-store',     'label' => 'Businesses', 'color' => '#16a34a'],
-                    ['href' => route('officials.index'),  'icon' => 'fa-user-tie',  'label' => 'Officials',  'color' => '#7c3aed'],
-                    ['href' => route('reports.index'),    'icon' => 'fa-chart-bar', 'label' => 'Analytics',  'color' => '#0D2144'],
-                    ['href' => route('reports.generate'), 'icon' => 'fa-file-pdf',  'label' => 'Reports',    'color' => '#ef4444'],
-                    ['href' => route('backup.index'),     'icon' => 'fa-database',  'label' => 'Backup',     'color' => '#374151'],
+                    ['href' => route('residents.index'),    'icon' => 'fa-users',          'label' => 'Residents',     'color' => '#4f46e5'],
+                    ['href' => route('households.index'),   'icon' => 'fa-house',          'label' => 'Households',    'color' => '#0891b2'],
+                    ['href' => route('documents.index'),    'icon' => 'fa-file-alt',       'label' => 'Documents',     'color' => '#d97706'],
+                    ['href' => route('blotter.index'),      'icon' => 'fa-gavel',          'label' => 'Blotter',       'color' => '#dc2626'],
+                    ['href' => route('businesses.index'),   'icon' => 'fa-store',          'label' => 'Businesses',    'color' => '#16a34a'],
+                    ['href' => route('appointments.index'), 'icon' => 'fa-calendar-check', 'label' => 'Appointments',  'color' => '#C8861A'],
+                    ['href' => route('officials.index'),    'icon' => 'fa-user-tie',       'label' => 'Officials',     'color' => '#7c3aed'],
+                    ['href' => route('reports.index'),      'icon' => 'fa-chart-bar',      'label' => 'Analytics',     'color' => '#0D2144'],
+                    ['href' => route('backup.index'),       'icon' => 'fa-database',       'label' => 'Backup',        'color' => '#374151'],
                 ]; ?>
                 <?php $__currentLoopData = $links; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $l): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <a href="<?php echo e($l['href']); ?>" class="quick-item" style="--qa-color:<?php echo e($l['color']); ?>">
