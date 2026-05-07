@@ -237,6 +237,31 @@ class CommitteeController extends Controller
         return back()->with('success', 'Item added.')->withFragment('inventory');
     }
 
+    // Partnership tab — generic, works for all committees
+    public function storePartnership(Request $request, string $slug)
+    {
+        $validated = $request->validate([
+            'partner_name'   => 'required|string|max:255',
+            'partner_type'   => 'required|in:Government,NGO,Private,Community,Other',
+            'mou_date'       => 'nullable|date',
+            'validity_date'  => 'nullable|date|after_or_equal:mou_date',
+            'contact_person' => 'nullable|string|max:255',
+            'contact_number' => 'nullable|string|max:20',
+            'description'    => 'nullable|string',
+            'file'           => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+        ]);
+
+        if ($request->hasFile('file')) {
+            $validated['file_path'] = $request->file('file')->store("committees/{$slug}/partnerships", 'public');
+        }
+        unset($validated['file']);
+        $validated['committee_slug'] = $slug;
+
+        CommitteePartnership::create($validated);
+
+        return back()->with('success', 'Partnership record added.')->withFragment('partnerships');
+    }
+
     // -------------------------------------------------------
     // STORE methods for committee-specific tabs
     // -------------------------------------------------------
