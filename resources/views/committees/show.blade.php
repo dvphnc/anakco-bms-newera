@@ -1228,6 +1228,65 @@
         <div class="empty-state"><i class="fas fa-user-doctor"></i><p>No clinic doctors or staff listed yet.</p></div>
         @endif
     </div>
+
+    {{-- ── TAB: MEDICINE INVENTORY (Health) ───────────────── --}}
+    <div id="tab-medicine-inventory" class="tab-content">
+        <div class="panel-hd">
+            <span class="panel-hd-title"><i class="fas fa-pills"></i> Medicine Inventory</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-medicine', this)" data-label="Add Medicine">
+                <i class="fas fa-plus"></i> Add Medicine
+            </button>
+        </div>
+        <div id="form-medicine" class="form-panel">
+            <div class="form-panel-inner">
+                <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Medicine to Inventory</div>
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                    @csrf <input type="hidden" name="specific_type" value="medicine">
+                    <div class="form-grid-3" style="gap:12px">
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Medicine Name <span style="color:var(--crimson)">*</span></label><input type="text" name="medicine_name" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Generic Name</label><input type="text" name="generic_name" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Unit <span style="color:var(--crimson)">*</span></label><select name="unit" class="form-control" required>@foreach(['tablets','capsules','vials','sachets','bottles','ampules','boxes','strips','packs','other'] as $u)<option>{{ $u }}</option>@endforeach</select></div>
+                        <div class="form-group"><label class="form-label">Current Stock <span style="color:var(--crimson)">*</span></label><input type="number" name="current_stock" class="form-control" min="0" value="0" required></div>
+                        <div class="form-group"><label class="form-label">Reorder Level <span style="color:var(--crimson)">*</span></label><input type="number" name="reorder_level" class="form-control" min="0" value="10" required></div>
+                        <div class="form-group"><label class="form-label">Expiry Date</label><input type="date" name="expiry_date" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Supplier</label><input type="text" name="supplier" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Batch Number</label><input type="text" name="batch_number" class="form-control"></div>
+                    </div>
+                    <div style="margin-top:14px;display:flex;gap:8px">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleForm('form-medicine', document.querySelector('[onclick*=form-medicine]'))">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if(isset($specificData['medicine_inventory']) && $specificData['medicine_inventory']->count())
+        <table>
+            <thead><tr><th>Medicine Name</th><th>Generic Name</th><th style="text-align:right">Stock</th><th>Unit</th><th>Reorder Lvl</th><th>Expiry</th><th>Supplier</th><th>Batch</th></tr></thead>
+            <tbody>
+                @foreach($specificData['medicine_inventory'] as $med)
+                <tr>
+                    <td style="font-weight:600;color:var(--navy)">{{ $med->medicine_name }}</td>
+                    <td class="td-muted">{{ $med->generic_name ?? '—' }}</td>
+                    <td style="text-align:right;font-weight:700;color:{{ $med->isLowStock() ? 'var(--crimson)' : 'var(--navy)' }}">
+                        {{ number_format($med->current_stock) }}
+                        @if($med->isLowStock())<i class="fas fa-triangle-exclamation" style="margin-left:4px;color:var(--crimson);font-size:10px" title="Low stock!"></i>@endif
+                    </td>
+                    <td class="td-muted">{{ $med->unit }}</td>
+                    <td class="td-muted">{{ number_format($med->reorder_level) }}</td>
+                    <td class="{{ $med->isExpired() ? 'td-danger' : 'td-muted' }}">
+                        {{ $med->expiry_date?->format('M d, Y') ?? '—' }}
+                        @if($med->isExpired()) <span style="font-size:10px">(expired)</span> @endif
+                    </td>
+                    <td class="td-muted">{{ $med->supplier ?? '—' }}</td>
+                    <td class="td-muted td-mono" style="font-size:11px">{{ $med->batch_number ?? '—' }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <div class="empty-state"><i class="fas fa-pills"></i><p>No medicines in inventory yet.</p></div>
+        @endif
+    </div>
     @endif
 
     {{-- ── TAB: STREET SWEEPERS (Environment) ──────────────── --}}
