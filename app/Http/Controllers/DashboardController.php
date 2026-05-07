@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\BlotterCase;
 use App\Models\Business;
 use App\Models\Document;
+use App\Models\DocumentAppointment;
 use App\Models\Household;
 use App\Models\Purok;
 use App\Models\Resident;
@@ -34,6 +35,7 @@ class DashboardController extends Controller
         $releasedDocuments = Document::where('status', 'Released')->count();
         $totalDocuments = Document::count();
         $activeBlotter = BlotterCase::where('status', 'Active')->count();
+        $pendingAppointments = DocumentAppointment::where('status', 'Pending')->count();
         $settledBlotter = BlotterCase::whereIn('status', ['Settled', 'Closed'])->count();
         $totalBlotter = BlotterCase::count();
 

@@ -193,6 +193,15 @@
             <div class="dash-stat-label">Active Businesses</div>
         </div>
     </a>
+    @if(in_array(auth()->user()->role, ['Admin','Secretary']))
+    <a href="{{ route('appointments.index') }}" class="dash-stat-card">
+        <div class="dash-stat-icon" style="background:var(--gold-pale);color:var(--gold)"><i class="fas fa-calendar-check"></i></div>
+        <div>
+            <div class="dash-stat-number">{{ number_format($pendingAppointments) }}</div>
+            <div class="dash-stat-label">Pending Appointments</div>
+        </div>
+    </a>
+    @endif
 </div>
 
 {{-- CHART + QUICK ACCESS --}}
