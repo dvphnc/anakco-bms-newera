@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BlotterController;
 use App\Http\Controllers\BusinessController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\OfficialController;
 use App\Http\Controllers\PurokController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResidentController;
+use App\Http\Controllers\ResidentPortalController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Select2Controller;
 use App\Http\Controllers\UserController;
@@ -24,6 +26,18 @@ use Illuminate\Support\Facades\Route;
 // -------------------------------------------------------
 Route::get('/verify/business/{permitNumber}', [VerifyController::class, 'business'])
     ->name('verify.business');
+
+// -------------------------------------------------------
+// Resident Portal — public, no login required
+// -------------------------------------------------------
+Route::prefix('portal')->name('portal.')->group(function () {
+    Route::get('/',                         [ResidentPortalController::class, 'index'])->name('index');
+    Route::get('/request',                  [ResidentPortalController::class, 'create'])->name('request');
+    Route::post('/request',                 [ResidentPortalController::class, 'store'])->name('store');
+    Route::get('/confirmation/{number}',    [ResidentPortalController::class, 'confirmation'])->name('confirmation');
+    Route::get('/track',                    [ResidentPortalController::class, 'trackForm'])->name('track');
+    Route::post('/track',                   [ResidentPortalController::class, 'track'])->name('track.post');
+});
 
 // -------------------------------------------------------
 // Guest Routes — handled by Breeze (keep this line)
@@ -110,6 +124,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('committees/{slug}/specific', [CommitteeController::class, 'storeSpecific'])
         ->name('committees.storeSpecific')->middleware('role:Admin,Secretary,Committee');
+
+    Route::post('committees/{slug}/partnerships', [CommitteeController::class, 'storePartnership'])
+        ->name('committees.storePartnership')->middleware('role:Admin,Secretary,Committee');
+
+    // ---------------------------------------------------
+    // Appointments (Document Scheduling) — Admin + Secretary
+    // ---------------------------------------------------
+    Route::get('appointments', [AppointmentController::class, 'index'])
+        ->name('appointments.index')->middleware('role:Admin,Secretary');
+    Route::patch('appointments/{appointment}/status', [AppointmentController::class, 'updateStatus'])
+        ->name('appointments.updateStatus')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Reports — Admin + Secretary only

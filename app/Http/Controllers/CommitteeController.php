@@ -475,27 +475,39 @@ class CommitteeController extends Controller
             case 'bdrrm':
                 if ($type === 'evacuation') {
                     $v = $request->validate([
-                        'center_name' => 'required|string|max:255',
-                        'location' => 'required|string|max:255',
-                        'capacity' => 'nullable|integer|min:0',
+                        'center_name'       => 'required|string|max:255',
+                        'location'          => 'required|string|max:255',
+                        'capacity'          => 'nullable|integer|min:0',
                         'current_occupancy' => 'nullable|integer|min:0',
-                        'status' => 'required|in:Available,Active,Full,Closed',
-                        'contact_person' => 'nullable|string|max:255',
-                        'contact_number' => 'nullable|string|max:20',
-                        'facilities' => 'nullable|string',
+                        'status'            => 'required|in:Available,Active,Full,Closed',
+                        'contact_person'    => 'nullable|string|max:255',
+                        'contact_number'    => 'nullable|string|max:20',
+                        'facilities'        => 'nullable|string',
                     ]);
                     EvacuationCenter::create($v);
+                } elseif ($type === 'relief') {
+                    $v = $request->validate([
+                        'item_name'     => 'required|string|max:255',
+                        'category'      => 'required|in:Food,Non-food,Medicine,PPE,Equipment,Other',
+                        'quantity'      => 'required|integer|min:0',
+                        'unit'          => 'nullable|string|max:50',
+                        'source'        => 'nullable|string|max:255',
+                        'date_received' => 'nullable|date',
+                        'status'        => 'required|in:Available,Distributed,Depleted',
+                        'remarks'       => 'nullable|string',
+                    ]);
+                    ReliefSupply::create($v);
                 } else {
                     $v = $request->validate([
-                        'incident_type' => 'required|string|max:100',
-                        'incident_date' => 'required|date',
-                        'location' => 'required|string|max:255',
+                        'incident_type'     => 'required|string|max:100',
+                        'incident_date'     => 'required|date',
+                        'location'          => 'required|string|max:255',
                         'affected_families' => 'nullable|integer|min:0',
-                        'affected_persons' => 'nullable|integer|min:0',
-                        'description' => 'nullable|string',
-                        'response_actions' => 'nullable|string',
-                        'reported_by' => 'nullable|string|max:255',
-                        'status' => 'required|in:Active,Resolved,Monitoring',
+                        'affected_persons'  => 'nullable|integer|min:0',
+                        'description'       => 'nullable|string',
+                        'response_actions'  => 'nullable|string',
+                        'reported_by'       => 'nullable|string|max:255',
+                        'status'            => 'required|in:Active,Resolved,Monitoring',
                     ]);
                     EmergencyLog::create($v);
                 }
