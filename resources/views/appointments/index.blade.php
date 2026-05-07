@@ -259,11 +259,15 @@
                         @php $sc = strtolower($apt->status); @endphp
                         <span class="badge badge-{{ $sc }}">{{ $apt->status }}</span>
                     </td>
-                    <td>
+                    <td style="white-space:nowrap;display:flex;gap:.4rem">
                         <button class="btn btn-navy btn-sm"
                                 onclick="openModal({{ $apt->id }}, '{{ $apt->appointment_number }}', '{{ $apt->status }}', '{{ addslashes($apt->notes ?? '') }}')">
                             <i class="fas fa-pencil"></i> Update
                         </button>
+                        <form method="POST" action="{{ route('appointments.destroy', $apt) }}" onsubmit="return confirm('Delete appointment {{ $apt->appointment_number }}?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-sm" style="background:var(--crimson-pale);color:var(--crimson);border:1.5px solid var(--crimson-border)"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 @endforeach
