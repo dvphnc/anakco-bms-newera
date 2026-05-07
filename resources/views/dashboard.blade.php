@@ -18,6 +18,46 @@
 }
 .alert-link:hover { opacity:1; }
 
+/* ── Dashboard Tab Strip ─────────────────────────────────── */
+.dash-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 6px;
+    width: fit-content;
+}
+.dash-tab-btn {
+    padding: 8px 20px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+    font-family: 'Poppins', sans-serif;
+    transition: all .15s;
+}
+.dash-tab-btn:hover { color: var(--navy); background: var(--surface2); }
+.dash-tab-btn.active { background: var(--navy); color: #fff; }
+.dash-tab-btn .tab-badge {
+    font-size: 10px; font-weight: 700;
+    padding: 1px 6px; border-radius: 99px;
+    background: rgba(255,255,255,.25);
+    color: inherit;
+}
+.dash-tab-btn:not(.active) .tab-badge { background: var(--gold-pale); color: var(--gold); }
+
+.dash-panel { display: none; }
+.dash-panel.active { display: block; }
+
 /* ── Stat Cards ──────────────────────────────────────────── */
 .dash-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:16px; margin-bottom:24px; }
 .dash-stat-card {
@@ -65,6 +105,28 @@
 .feed-body { flex:1; min-width:0; }
 .feed-title { font-size:12.5px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .feed-sub   { font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+
+/* ── Analytics Tab ───────────────────────────────────────── */
+.analytics-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+.demog-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; }
+.demog-item {
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:var(--radius); padding:14px 16px; text-align:center;
+}
+.demog-num { font-size:22px; font-weight:700; color:var(--navy); line-height:1.1; }
+.demog-lbl { font-size:11px; color:var(--text-muted); margin-top:3px; }
+
+/* ── Appointment Status Badges (dashboard) ───────────────── */
+.apt-badge {
+    display:inline-block; padding:2px 8px; border-radius:999px;
+    font-size:10px; font-weight:700; border:1.5px solid;
+}
+.apt-pending    { background:var(--gold-pale);    color:#78450a; border-color:var(--gold-border); }
+.apt-confirmed  { background:var(--navy-pale);    color:var(--navy); border-color:var(--navy-border); }
+.apt-processing { background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe; }
+.apt-ready      { background:#f0fdf4; color:#14532d; border-color:#bbf7d0; }
+.apt-released   { background:#f9fafb; color:#6b7280; border-color:#d1d5db; }
+.apt-cancelled  { background:var(--crimson-pale); color:var(--crimson); border-color:var(--crimson-border); }
 </style>
 @endpush
 
