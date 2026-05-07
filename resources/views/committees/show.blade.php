@@ -1118,6 +1118,59 @@
         </div>
         @else<div class="empty-state"><i class="fas fa-house-chimney-medical"></i><p>No evacuation centers yet.</p></div>@endif
     </div>
+
+    {{-- ── TAB: RELIEF SUPPLIES (BDRRM) ────────────────────── --}}
+    <div id="tab-relief-supplies" class="tab-content">
+        <div class="panel-hd">
+            <span class="panel-hd-title"><i class="fas fa-boxes-stacked"></i> Relief Supplies</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-relief', this)" data-label="Add Item">
+                <i class="fas fa-plus"></i> Add Item
+            </button>
+        </div>
+        <div id="form-relief" class="form-panel">
+            <div class="form-panel-inner">
+                <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Relief Supply Item</div>
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                    @csrf <input type="hidden" name="specific_type" value="relief">
+                    <div class="form-grid-3" style="gap:12px">
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Item Name <span style="color:var(--crimson)">*</span></label><input type="text" name="item_name" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Category <span style="color:var(--crimson)">*</span></label><select name="category" class="form-control" required>@foreach(['Food','Non-food','Medicine','PPE','Equipment','Other'] as $c)<option>{{ $c }}</option>@endforeach</select></div>
+                        <div class="form-group"><label class="form-label">Quantity <span style="color:var(--crimson)">*</span></label><input type="number" name="quantity" class="form-control" min="0" value="0" required></div>
+                        <div class="form-group"><label class="form-label">Unit</label><input type="text" name="unit" class="form-control" placeholder="e.g. pcs, packs, boxes, sacks"></div>
+                        <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-control">@foreach(['Available','Distributed','Depleted'] as $s)<option>{{ $s }}</option>@endforeach</select></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Source / Donated By</label><input type="text" name="source" class="form-control" placeholder="DSWD, LGU, private donor, etc."></div>
+                        <div class="form-group"><label class="form-label">Date Received</label><input type="date" name="date_received" class="form-control"></div>
+                        <div class="form-group" style="grid-column:span 3"><label class="form-label">Remarks</label><input type="text" name="remarks" class="form-control"></div>
+                    </div>
+                    <div style="margin-top:14px;display:flex;gap:8px">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleForm('form-relief', document.querySelector('[onclick*=form-relief]'))">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if(isset($specificData['relief_supplies']) && $specificData['relief_supplies']->count())
+        <table>
+            <thead><tr><th>Item</th><th>Category</th><th style="text-align:right">Qty</th><th>Unit</th><th>Source</th><th>Date Received</th><th>Status</th><th>Remarks</th></tr></thead>
+            <tbody>
+                @foreach($specificData['relief_supplies'] as $rs)
+                <tr>
+                    <td style="font-weight:600;color:var(--navy)">{{ $rs->item_name }}</td>
+                    <td><span class="badge badge-navy" style="font-size:10px">{{ $rs->category }}</span></td>
+                    <td style="text-align:right;font-weight:700;color:var(--navy)">{{ number_format($rs->quantity) }}</td>
+                    <td class="td-muted">{{ $rs->unit ?? '—' }}</td>
+                    <td class="td-muted">{{ $rs->source ?? '—' }}</td>
+                    <td class="td-muted">{{ $rs->date_received?->format('M d, Y') ?? '—' }}</td>
+                    <td><span class="badge {{ match($rs->status) { 'Available'=>'badge-green','Distributed'=>'badge-yellow',default=>'badge-gray' } }}">{{ $rs->status }}</span></td>
+                    <td class="td-muted">{{ $rs->remarks ?? '—' }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <div class="empty-state"><i class="fas fa-boxes-stacked"></i><p>No relief supplies recorded yet.</p></div>
+        @endif
+    </div>
     @endif
 
 
