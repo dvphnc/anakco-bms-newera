@@ -96,9 +96,13 @@
     $expiringPermits = \App\Models\Business::where('status', 'Active')
         ->whereBetween('expiry_date', [now(), now()->addDays(30)])
         ->orderBy('expiry_date')->get();
+
+    $pendingAppointments = \App\Models\DocumentAppointment::where('status', 'Pending')->count();
+
+    $lowStockMeds = \App\Models\MedicineInventory::whereColumn('current_stock', '<=', 'reorder_level')->get();
 @endphp
 
-@if($birthdays->count() || $expiringPermits->count())
+@if($birthdays->count() || $expiringPermits->count() || $pendingAppointments || $lowStockMeds->count())
 <div class="alert-strip">
 
     @if($seniorBdays->count())
@@ -130,6 +134,29 @@
             {{ $expiringPermits->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(' · ') }}{{ $expiringPermits->count() > 3 ? ' +' . ($expiringPermits->count() - 3) . ' more' : '' }}
         </span>
         <a href="{{ route('businesses.index') }}" class="alert-link">View All</a>
+    </div>
+    @endif
+
+    @if($pendingAppointments)
+    <div class="alert-item alert-birthday">
+        <i class="fas fa-calendar-clock"></i>
+        <span>
+            <strong>{{ $pendingAppointments }} Pending Document Appointment{{ $pendingAppointments > 1 ? 's' : '' }}</strong> — waiting for staff confirmation.
+        </span>
+        @if(in_array(auth()->user()->role, ['Admin','Secretary']))
+        <a href="{{ route('appointments.index') }}?status=Pending" class="alert-link">Review</a>
+        @endif
+    </div>
+    @endif
+
+    @if($lowStockMeds->count())
+    <div class="alert-item alert-permit">
+        <i class="fas fa-pills"></i>
+        <span>
+            <strong>{{ $lowStockMeds->count() }} Medicine{{ $lowStockMeds->count() > 1 ? 's' : '' }} Low on Stock —</strong>
+            {{ $lowStockMeds->map(fn($m) => $m->medicine_name . ' (' . $m->current_stock . ' ' . $m->unit . ')')->take(3)->implode(' · ') }}{{ $lowStockMeds->count() > 3 ? ' +' . ($lowStockMeds->count() - 3) . ' more' : '' }}
+        </span>
+        <a href="{{ route('committees.show', 'health') }}#medicine-inventory" class="alert-link">View</a>
     </div>
     @endif
 
