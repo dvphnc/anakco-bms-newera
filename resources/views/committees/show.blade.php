@@ -527,6 +527,64 @@
         @endif
     </div>
 
+    {{-- ── TAB: PARTNERSHIPS (all committees) ─────────────── --}}
+    <div id="tab-partnerships" class="tab-content">
+        <div class="panel-hd">
+            <span class="panel-hd-title"><i class="fas fa-handshake"></i> Partnership Records</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-partnership', this)" data-label="Add Partnership">
+                <i class="fas fa-plus"></i> Add Partnership
+            </button>
+        </div>
+        <div id="form-partnership" class="form-panel">
+            <div class="form-panel-inner">
+                <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Partnership / MOU Record</div>
+                <form method="POST" action="{{ route('committees.storePartnership', $committee['slug']) }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-grid-3" style="gap:12px">
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Partner Name / Organization <span style="color:var(--crimson)">*</span></label><input type="text" name="partner_name" class="form-control" placeholder="e.g. Quezon City Health Department" required></div>
+                        <div class="form-group"><label class="form-label">Partner Type <span style="color:var(--crimson)">*</span></label><select name="partner_type" class="form-control" required>@foreach(['Government','NGO','Private','Community','Other'] as $pt)<option>{{ $pt }}</option>@endforeach</select></div>
+                        <div class="form-group"><label class="form-label">MOU / MOA Date</label><input type="date" name="mou_date" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Validity Date</label><input type="date" name="validity_date" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Contact Person</label><input type="text" name="contact_person" class="form-control" placeholder="Name of focal person"></div>
+                        <div class="form-group"><label class="form-label">Contact Number</label><input type="text" name="contact_number" class="form-control"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Description / Scope</label><textarea name="description" class="form-control" rows="2" placeholder="Brief description of the partnership"></textarea></div>
+                        <div class="form-group"><label class="form-label">MOU / MOA Document</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png"></div>
+                    </div>
+                    <div style="margin-top:14px;display:flex;gap:8px">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleForm('form-partnership', document.querySelector('[onclick*=form-partnership]'))">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if($partnerships->count())
+        <table>
+            <thead><tr><th>Organization</th><th>Type</th><th>MOU Date</th><th>Valid Until</th><th>Contact Person</th><th>Contact</th><th>MOU File</th></tr></thead>
+            <tbody>
+                @foreach($partnerships as $p)
+                <tr>
+                    <td>
+                        <div style="font-weight:600;color:var(--navy)">{{ $p->partner_name }}</div>
+                        @if($p->description)<div style="font-size:11px;color:var(--text-muted);margin-top:2px">{{ Str::limit($p->description, 60) }}</div>@endif
+                    </td>
+                    <td><span class="badge badge-navy" style="font-size:10px">{{ $p->partner_type }}</span></td>
+                    <td class="td-muted">{{ $p->mou_date?->format('M d, Y') ?? '—' }}</td>
+                    <td class="{{ $p->validity_date && $p->validity_date->isPast() ? 'td-danger' : 'td-muted' }}">
+                        {{ $p->validity_date?->format('M d, Y') ?? '—' }}
+                        @if($p->validity_date && $p->validity_date->isPast()) <span style="font-size:10px">(expired)</span> @endif
+                    </td>
+                    <td class="td-muted">{{ $p->contact_person ?? '—' }}</td>
+                    <td class="td-muted">{{ $p->contact_number ?? '—' }}</td>
+                    <td>@if($p->file_path)<a href="{{ asset('storage/'.$p->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <div class="empty-state"><i class="fas fa-handshake"></i><p>No partnership records yet.</p></div>
+        @endif
+    </div>
+
     {{-- ═══════════════════════════════════════════════════════
          COMMITTEE-SPECIFIC TABS
     ═══════════════════════════════════════════════════════ --}}
