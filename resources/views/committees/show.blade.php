@@ -2025,9 +2025,30 @@ function toggleForm(id, btnEl) {
     }
 }
 
+// Tab scroll arrows
+function tabScroll(dir) {
+    const strip = document.getElementById('tabStrip');
+    if (strip) strip.scrollBy({ left: dir * 200, behavior: 'smooth' });
+}
+function updateTabScrollBtns() {
+    const strip = document.getElementById('tabStrip');
+    const btnL  = document.getElementById('tabScrollLeft');
+    const btnR  = document.getElementById('tabScrollRight');
+    if (!strip || !btnL || !btnR) return;
+    const overflows = strip.scrollWidth > strip.clientWidth + 4;
+    btnL.classList.toggle('visible', overflows && strip.scrollLeft > 4);
+    btnR.classList.toggle('visible', overflows && strip.scrollLeft < strip.scrollWidth - strip.clientWidth - 4);
+}
 document.addEventListener('DOMContentLoaded', function () {
     const hash = window.location.hash.replace('#', '');
     if (hash && document.getElementById('tab-' + hash)) switchTab(hash);
+
+    const strip = document.getElementById('tabStrip');
+    if (strip) {
+        updateTabScrollBtns();
+        strip.addEventListener('scroll', updateTabScrollBtns);
+        window.addEventListener('resize', updateTabScrollBtns);
+    }
 });
 
 // ── Medicine inventory JS ────────────────────────────────────

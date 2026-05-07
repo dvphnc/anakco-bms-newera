@@ -8,23 +8,37 @@
     background: var(--surface);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     border-bottom: 2px solid var(--border);
-}
-.tab-strip-wrap::after {
-    content: '';
-    position: absolute;
-    top: 0; right: 0; bottom: 2px;
-    width: 48px;
-    background: linear-gradient(to right, transparent, var(--surface) 80%);
-    pointer-events: none;
-    border-radius: 0 var(--radius-lg) 0 0;
-}
-.tab-strip {
     display: flex;
-    padding: 0 20px;
+    align-items: stretch;
+}
+.tab-scroll-btn {
+    flex-shrink: 0;
+    width: 32px;
+    background: var(--surface);
+    border: none;
+    border-bottom: 2px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 11px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: color .15s, background .15s;
+}
+.tab-scroll-btn:hover { color: var(--navy); background: var(--surface2); }
+.tab-scroll-btn.left  { border-radius: var(--radius-lg) 0 0 0; border-right: 1px solid var(--border); }
+.tab-scroll-btn.right { border-radius: 0 var(--radius-lg) 0 0; border-left: 1px solid var(--border); }
+.tab-scroll-btn.visible { display: flex; }
+.tab-strip {
+    flex: 1;
+    display: flex;
+    padding: 0 12px;
     gap: 2px;
     overflow-x: auto;
     scrollbar-width: none;
     background: transparent;
+    min-width: 0;
 }
 .tab-strip::-webkit-scrollbar { display: none; }
 .tab-btn {
@@ -327,7 +341,8 @@
 
     
     <div class="tab-strip-wrap">
-    <div class="tab-strip">
+    <button class="tab-scroll-btn left" id="tabScrollLeft" onclick="tabScroll(-1)" title="Scroll left"><i class="fas fa-chevron-left"></i></button>
+    <div class="tab-strip" id="tabStrip">
         <?php
             $tabs = [
                 ['id' => 'records',         'label' => 'Records',         'icon' => 'fas fa-folder-open',   'count' => $photos->count() + $reports->count() + $resolutions->count() + $otherRecords->count()],
@@ -380,6 +395,7 @@
         </button>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>
+    <button class="tab-scroll-btn right" id="tabScrollRight" onclick="tabScroll(1)" title="Scroll right"><i class="fas fa-chevron-right"></i></button>
     </div>
 
     
@@ -2012,9 +2028,30 @@ function toggleForm(id, btnEl) {
     }
 }
 
+// Tab scroll arrows
+function tabScroll(dir) {
+    const strip = document.getElementById('tabStrip');
+    if (strip) strip.scrollBy({ left: dir * 200, behavior: 'smooth' });
+}
+function updateTabScrollBtns() {
+    const strip = document.getElementById('tabStrip');
+    const btnL  = document.getElementById('tabScrollLeft');
+    const btnR  = document.getElementById('tabScrollRight');
+    if (!strip || !btnL || !btnR) return;
+    const overflows = strip.scrollWidth > strip.clientWidth + 4;
+    btnL.classList.toggle('visible', overflows && strip.scrollLeft > 4);
+    btnR.classList.toggle('visible', overflows && strip.scrollLeft < strip.scrollWidth - strip.clientWidth - 4);
+}
 document.addEventListener('DOMContentLoaded', function () {
     const hash = window.location.hash.replace('#', '');
     if (hash && document.getElementById('tab-' + hash)) switchTab(hash);
+
+    const strip = document.getElementById('tabStrip');
+    if (strip) {
+        updateTabScrollBtns();
+        strip.addEventListener('scroll', updateTabScrollBtns);
+        window.addEventListener('resize', updateTabScrollBtns);
+    }
 });
 
 // ── Medicine inventory JS ────────────────────────────────────
