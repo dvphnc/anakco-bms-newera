@@ -563,7 +563,7 @@
         </div>
         <?php if($partnerships->count()): ?>
         <table>
-            <thead><tr><th>Organization</th><th>Type</th><th>MOU Date</th><th>Valid Until</th><th>Contact Person</th><th>Contact</th><th>MOU File</th></tr></thead>
+            <thead><tr><th>Organization</th><th>Type</th><th>MOU Date</th><th>Valid Until</th><th>Contact Person</th><th>Contact</th><th>MOU File</th><th></th></tr></thead>
             <tbody>
                 <?php $__currentLoopData = $partnerships; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr>
@@ -581,6 +581,12 @@
                     <td class="td-muted"><?php echo e($p->contact_person ?? '—'); ?></td>
                     <td class="td-muted"><?php echo e($p->contact_number ?? '—'); ?></td>
                     <td><?php if($p->file_path): ?><a href="<?php echo e(asset('storage/'.$p->file_path)); ?>" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a><?php else: ?><span class="td-muted">—</span><?php endif; ?></td>
+                    <td>
+                        <form method="POST" action="<?php echo e(route('committees.destroyPartnership', [$committee['slug'], $p->id])); ?>" onsubmit="return confirm('Delete this partnership record?')">
+                            <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                            <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </tbody>
@@ -1155,7 +1161,7 @@
         </div>
         <?php if(isset($specificData['relief_supplies']) && $specificData['relief_supplies']->count()): ?>
         <table>
-            <thead><tr><th>Item</th><th>Category</th><th style="text-align:right">Qty</th><th>Unit</th><th>Source</th><th>Date Received</th><th>Status</th><th>Remarks</th></tr></thead>
+            <thead><tr><th>Item</th><th>Category</th><th style="text-align:right">Qty</th><th>Unit</th><th>Source</th><th>Date Received</th><th>Status</th><th>Remarks</th><th></th></tr></thead>
             <tbody>
                 <?php $__currentLoopData = $specificData['relief_supplies']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rs): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr>
@@ -1167,6 +1173,12 @@
                     <td class="td-muted"><?php echo e($rs->date_received?->format('M d, Y') ?? '—'); ?></td>
                     <td><span class="badge <?php echo e(match($rs->status) { 'Available'=>'badge-green','Distributed'=>'badge-yellow',default=>'badge-gray' }); ?>"><?php echo e($rs->status); ?></span></td>
                     <td class="td-muted"><?php echo e($rs->remarks ?? '—'); ?></td>
+                    <td>
+                        <form method="POST" action="<?php echo e(route('committees.destroyRelief', [$committee['slug'], $rs->id])); ?>" onsubmit="return confirm('Delete this item?')">
+                            <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                            <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </tbody>
@@ -1317,8 +1329,42 @@
             </div>
         </div>
         <?php if(isset($specificData['medicine_inventory']) && $specificData['medicine_inventory']->count()): ?>
+        
+        <div id="stockAdjustModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center">
+            <div style="background:#fff;border-radius:14px;width:100%;max-width:400px;padding:1.5rem;position:relative;box-shadow:0 8px 40px rgba(0,0,0,.2)">
+                <button onclick="document.getElementById('stockAdjustModal').style.display='none'" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;font-size:1rem;color:#9ca3af;cursor:pointer"><i class="fas fa-times"></i></button>
+                <div style="font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid #f0f0f0">
+                    <i class="fas fa-pills" style="color:var(--gold)"></i>&nbsp; Adjust Stock
+                </div>
+                <div id="stockMedicineName" style="font-size:.82rem;color:#6b7280;margin-bottom:1rem"></div>
+                <form id="stockAdjustForm" method="POST">
+                    <?php echo csrf_field(); ?>
+                    <div style="margin-bottom:1rem">
+                        <label style="display:block;font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:.35rem">Transaction Type</label>
+                        <select name="adjustment_type" class="form-control" style="width:100%;padding:.5rem .8rem;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.83rem">
+                            <option value="in">📦 Stock In (received new supply)</option>
+                            <option value="out">💊 Dispense / Issue Out</option>
+                            <option value="disposed">🗑️ Disposed / Expired</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:1rem">
+                        <label style="display:block;font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:.35rem">Quantity <span style="color:var(--crimson)">*</span></label>
+                        <input type="number" name="quantity" min="1" value="1" class="form-control" style="width:100%;padding:.5rem .8rem;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.83rem" required>
+                    </div>
+                    <div style="margin-bottom:1.25rem">
+                        <label style="display:block;font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:.35rem">Reason / Notes</label>
+                        <input type="text" name="reason" placeholder="e.g. Monthly supply from DOH, dispensed to patient" class="form-control" style="width:100%;padding:.5rem .8rem;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.83rem">
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;gap:.6rem">
+                        <button type="button" onclick="document.getElementById('stockAdjustModal').style.display='none'" style="padding:.5rem 1.1rem;border-radius:6px;border:1.5px solid var(--navy);background:transparent;color:var(--navy);font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer">Cancel</button>
+                        <button type="submit" style="padding:.5rem 1.1rem;border-radius:6px;border:none;background:var(--gold);color:#fff;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer"><i class="fas fa-save"></i> Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <table>
-            <thead><tr><th>Medicine Name</th><th>Generic Name</th><th style="text-align:right">Stock</th><th>Unit</th><th>Reorder Lvl</th><th>Expiry</th><th>Supplier</th><th>Batch</th></tr></thead>
+            <thead><tr><th>Medicine Name</th><th>Generic Name</th><th style="text-align:right">Stock</th><th>Unit</th><th>Reorder Lvl</th><th>Expiry</th><th>Supplier</th><th>Actions</th></tr></thead>
             <tbody>
                 <?php $__currentLoopData = $specificData['medicine_inventory']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $med): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr>
@@ -1337,7 +1383,17 @@
                         <?php if($med->isExpired()): ?> <span style="font-size:10px">(expired)</span> <?php endif; ?>
                     </td>
                     <td class="td-muted"><?php echo e($med->supplier ?? '—'); ?></td>
-                    <td class="td-muted td-mono" style="font-size:11px"><?php echo e($med->batch_number ?? '—'); ?></td>
+                    <td style="white-space:nowrap">
+                        <button type="button"
+                                onclick="openStockModal(<?php echo e($med->id); ?>, '<?php echo e(addslashes($med->medicine_name)); ?>')"
+                                class="btn btn-primary btn-sm btn-icon" title="Adjust stock">
+                            <i class="fas fa-arrow-right-arrow-left"></i>
+                        </button>
+                        <form method="POST" action="<?php echo e(route('committees.destroyMedicine', [$committee['slug'], $med->id])); ?>" style="display:inline" onsubmit="return confirm('Delete this medicine record?')">
+                            <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                            <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </tbody>
@@ -1562,6 +1618,17 @@ function toggleForm(id, btnEl) {
 document.addEventListener('DOMContentLoaded', function () {
     const hash = window.location.hash.replace('#', '');
     if (hash && document.getElementById('tab-' + hash)) switchTab(hash);
+});
+
+function openStockModal(medId, medName) {
+    const baseSlug = '<?php echo e($committee['slug']); ?>';
+    document.getElementById('stockAdjustForm').action = '/committees/' + baseSlug + '/medicine/' + medId + '/adjust';
+    document.getElementById('stockMedicineName').textContent = 'Medicine: ' + medName;
+    const modal = document.getElementById('stockAdjustModal');
+    modal.style.display = 'flex';
+}
+document.getElementById('stockAdjustModal')?.addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
 });
 </script>
 <?php $__env->stopPush(); ?>
