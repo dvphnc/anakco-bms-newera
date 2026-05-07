@@ -401,15 +401,32 @@ class CommitteeController extends Controller
                 } elseif ($type === 'medicine') {
                     $v = $request->validate([
                         'medicine_name'  => 'required|string|max:255',
+                        'brand_name'     => 'nullable|string|max:255',
                         'generic_name'   => 'nullable|string|max:255',
+                        'category'       => 'nullable|string|max:100',
+                        'dosage_form'    => 'nullable|string|max:100',
                         'unit'           => 'required|string|max:50',
                         'current_stock'  => 'required|integer|min:0',
                         'reorder_level'  => 'required|integer|min:0',
                         'expiry_date'    => 'nullable|date',
                         'supplier'       => 'nullable|string|max:255',
                         'batch_number'   => 'nullable|string|max:100',
+                        'barcode'        => 'nullable|string|max:100',
                     ]);
-                    MedicineInventory::create($v);
+                    $medicine = MedicineInventory::create($v);
+                    $this->logActivity('added', $medicine);
+
+                    if ($medicine->current_stock > 0) {
+                        MedicineStockLog::create([
+                            'medicine_id'     => $medicine->id,
+                            'adjustment_type' => 'in',
+                            'quantity'        => $medicine->current_stock,
+                            'stock_before'    => 0,
+                            'stock_after'     => $medicine->current_stock,
+                            'reason'          => 'Initial stock entry',
+                            'performed_by'    => auth()->user()->name,
+                        ]);
+                    }
                 } else {
                     $v = $request->validate([
                         'patient_name' => 'required|string|max:255',
