@@ -577,6 +577,15 @@
 <?php $__env->startPush('scripts'); ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
+// Tab switching
+function switchDashTab(id) {
+    document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.dash-tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('dpanel-' + id).classList.add('active');
+    document.getElementById('dtab-' + id).classList.add('active');
+}
+
+// Monthly documents bar chart (Overview tab)
 new Chart(document.getElementById('monthlyDocChart').getContext('2d'), {
     type: 'bar',
     data: {
@@ -598,6 +607,72 @@ new Chart(document.getElementById('monthlyDocChart').getContext('2d'), {
         scales: {
             x: { ticks: { color: '#9CA3AF', font: { size: 11, family: 'Poppins' } }, grid: { color: '#F3F4F6' } },
             y: { ticks: { color: '#9CA3AF', font: { size: 11 }, stepSize: 1 }, grid: { color: '#F3F4F6' }, beginAtZero: true }
+        }
+    }
+});
+
+// Age distribution donut (Analytics tab)
+new Chart(document.getElementById('ageChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+        labels: <?php echo json_encode(array_keys($ageGroups)); ?>,
+        datasets: [{
+            data: <?php echo json_encode(array_values($ageGroups)); ?>,
+            backgroundColor: ['#4f46e5','#C8861A','#16a34a','#dc2626'],
+            borderWidth: 2,
+            borderColor: '#fff',
+        }]
+    },
+    options: {
+        responsive: true,
+        cutout: '68%',
+        plugins: { legend: { display: false } }
+    }
+});
+
+// Documents by type donut (Analytics tab)
+<?php $dtLabels = $documentsByType->keys()->toArray(); $dtValues = $documentsByType->values()->toArray(); ?>
+new Chart(document.getElementById('docTypeChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+        labels: <?php echo json_encode($dtLabels); ?>,
+        datasets: [{
+            data: <?php echo json_encode($dtValues); ?>,
+            backgroundColor: ['#0D2144','#C8861A','#4f46e5','#16a34a','#dc2626','#0891b2'],
+            borderWidth: 2,
+            borderColor: '#fff',
+        }]
+    },
+    options: {
+        responsive: true,
+        cutout: '68%',
+        plugins: { legend: { display: false } }
+    }
+});
+
+// Residents by purok bar chart (Analytics tab)
+new Chart(document.getElementById('purokChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+        labels: <?php echo json_encode($residentsByPurok->pluck('name')->toArray()); ?>,
+        datasets: [{
+            label: 'Active Residents',
+            data: <?php echo json_encode($residentsByPurok->pluck('residents_count')->toArray()); ?>,
+            backgroundColor: 'rgba(13,33,68,0.12)',
+            borderColor: '#0D2144',
+            borderWidth: 1.5,
+            borderRadius: 4,
+            hoverBackgroundColor: 'rgba(200,134,26,0.20)',
+            hoverBorderColor: '#C8861A',
+        }]
+    },
+    options: {
+        responsive: true,
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { ticks: { color: '#9CA3AF', font: { size: 10 } }, grid: { color: '#F3F4F6' }, beginAtZero: true },
+            y: { ticks: { color: '#374151', font: { size: 11, family: 'Poppins' } }, grid: { display: false } }
         }
     }
 });
