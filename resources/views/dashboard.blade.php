@@ -225,136 +225,349 @@
 </div>
 @endif
 
-{{-- STAT CARDS --}}
-<div class="dash-stats">
-    <a href="{{ route('residents.index') }}" class="dash-stat-card">
-        <div class="dash-stat-icon" style="background:#eef2ff;color:#4f46e5"><i class="fas fa-users"></i></div>
-        <div>
-            <div class="dash-stat-number">{{ number_format($totalResidents) }}</div>
-            <div class="dash-stat-label">Total Residents</div>
-        </div>
-    </a>
-    <a href="{{ route('documents.index') }}" class="dash-stat-card">
-        <div class="dash-stat-icon" style="background:#fffbeb;color:#d97706"><i class="fas fa-file-alt"></i></div>
-        <div>
-            <div class="dash-stat-number">{{ number_format($pendingDocuments) }}</div>
-            <div class="dash-stat-label">Pending Documents</div>
-        </div>
-    </a>
-    <a href="{{ route('blotter.index') }}" class="dash-stat-card">
-        <div class="dash-stat-icon" style="background:#fef2f2;color:#dc2626"><i class="fas fa-gavel"></i></div>
-        <div>
-            <div class="dash-stat-number">{{ number_format($activeBlotter) }}</div>
-            <div class="dash-stat-label">Active Blotter Cases</div>
-        </div>
-    </a>
-    <a href="{{ route('businesses.index') }}" class="dash-stat-card">
-        <div class="dash-stat-icon" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-store"></i></div>
-        <div>
-            <div class="dash-stat-number">{{ number_format($activeBusinesses) }}</div>
-            <div class="dash-stat-label">Active Businesses</div>
-        </div>
-    </a>
+{{-- DASHBOARD TABS --}}
+<div class="dash-tabs">
+    <button class="dash-tab-btn active" onclick="switchDashTab('overview')" id="dtab-overview">
+        <i class="fas fa-tachometer-alt"></i> Overview
+    </button>
+    <button class="dash-tab-btn" onclick="switchDashTab('analytics')" id="dtab-analytics">
+        <i class="fas fa-chart-pie"></i> Analytics
+    </button>
     @if(in_array(auth()->user()->role, ['Admin','Secretary']))
-    <a href="{{ route('appointments.index') }}" class="dash-stat-card">
-        <div class="dash-stat-icon" style="background:var(--gold-pale);color:var(--gold)"><i class="fas fa-calendar-check"></i></div>
-        <div>
-            <div class="dash-stat-number">{{ number_format($pendingAppointments) }}</div>
-            <div class="dash-stat-label">Pending Appointments</div>
-        </div>
-    </a>
+    <button class="dash-tab-btn" onclick="switchDashTab('appointments')" id="dtab-appointments">
+        <i class="fas fa-calendar-check"></i> Appointments
+        @if($pendingAppointments) <span class="tab-badge">{{ $pendingAppointments }}</span> @endif
+    </button>
     @endif
 </div>
 
-{{-- CHART + QUICK ACCESS --}}
-<div class="dash-mid">
+{{-- ═══════════ TAB 1: OVERVIEW ═══════════ --}}
+<div id="dpanel-overview" class="dash-panel active">
 
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title"><i class="fas fa-chart-bar"></i> Documents Issued — {{ date('Y') }}</span>
-        </div>
-        <div class="card-body">
-            <canvas id="monthlyDocChart" height="105"></canvas>
-        </div>
+    {{-- STAT CARDS --}}
+    <div class="dash-stats">
+        <a href="{{ route('residents.index') }}" class="dash-stat-card">
+            <div class="dash-stat-icon" style="background:#eef2ff;color:#4f46e5"><i class="fas fa-users"></i></div>
+            <div>
+                <div class="dash-stat-number">{{ number_format($totalResidents) }}</div>
+                <div class="dash-stat-label">Total Residents</div>
+            </div>
+        </a>
+        <a href="{{ route('documents.index') }}" class="dash-stat-card">
+            <div class="dash-stat-icon" style="background:#fffbeb;color:#d97706"><i class="fas fa-file-alt"></i></div>
+            <div>
+                <div class="dash-stat-number">{{ number_format($pendingDocuments) }}</div>
+                <div class="dash-stat-label">Pending Documents</div>
+            </div>
+        </a>
+        <a href="{{ route('blotter.index') }}" class="dash-stat-card">
+            <div class="dash-stat-icon" style="background:#fef2f2;color:#dc2626"><i class="fas fa-gavel"></i></div>
+            <div>
+                <div class="dash-stat-number">{{ number_format($activeBlotter) }}</div>
+                <div class="dash-stat-label">Active Blotter Cases</div>
+            </div>
+        </a>
+        <a href="{{ route('businesses.index') }}" class="dash-stat-card">
+            <div class="dash-stat-icon" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-store"></i></div>
+            <div>
+                <div class="dash-stat-number">{{ number_format($activeBusinesses) }}</div>
+                <div class="dash-stat-label">Active Businesses</div>
+            </div>
+        </a>
+        @if(in_array(auth()->user()->role, ['Admin','Secretary']))
+        <a href="{{ route('appointments.index') }}" class="dash-stat-card">
+            <div class="dash-stat-icon" style="background:var(--gold-pale);color:var(--gold)"><i class="fas fa-calendar-check"></i></div>
+            <div>
+                <div class="dash-stat-number">{{ number_format($pendingAppointments) }}</div>
+                <div class="dash-stat-label">Pending Appointments</div>
+            </div>
+        </a>
+        @endif
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title"><i class="fas fa-bolt"></i> Quick Access</span>
+    {{-- CHART + QUICK ACCESS --}}
+    <div class="dash-mid">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-chart-bar"></i> Documents Issued — {{ date('Y') }}</span>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyDocChart" height="105"></canvas>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="quick-grid">
-                @php $links = [
-                    ['href' => route('residents.index'),    'icon' => 'fa-users',          'label' => 'Residents',     'color' => '#4f46e5'],
-                    ['href' => route('households.index'),   'icon' => 'fa-house',          'label' => 'Households',    'color' => '#0891b2'],
-                    ['href' => route('documents.index'),    'icon' => 'fa-file-alt',       'label' => 'Documents',     'color' => '#d97706'],
-                    ['href' => route('blotter.index'),      'icon' => 'fa-gavel',          'label' => 'Blotter',       'color' => '#dc2626'],
-                    ['href' => route('businesses.index'),   'icon' => 'fa-store',          'label' => 'Businesses',    'color' => '#16a34a'],
-                    ['href' => route('appointments.index'), 'icon' => 'fa-calendar-check', 'label' => 'Appointments',  'color' => '#C8861A'],
-                    ['href' => route('officials.index'),    'icon' => 'fa-user-tie',       'label' => 'Officials',     'color' => '#7c3aed'],
-                    ['href' => route('reports.index'),      'icon' => 'fa-chart-bar',      'label' => 'Analytics',     'color' => '#0D2144'],
-                    ['href' => route('backup.index'),       'icon' => 'fa-database',       'label' => 'Backup',        'color' => '#374151'],
-                ]; @endphp
-                @foreach($links as $l)
-                <a href="{{ $l['href'] }}" class="quick-item" style="--qa-color:{{ $l['color'] }}">
-                    <div class="quick-icon" style="background:{{ $l['color'] }}18;color:{{ $l['color'] }}">
-                        <i class="fas {{ $l['icon'] }}"></i>
-                    </div>
-                    <span class="quick-label">{{ $l['label'] }}</span>
-                </a>
-                @endforeach
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-bolt"></i> Quick Access</span>
+            </div>
+            <div class="card-body">
+                <div class="quick-grid">
+                    @php $links = [
+                        ['href' => route('residents.index'),    'icon' => 'fa-users',          'label' => 'Residents',    'color' => '#4f46e5'],
+                        ['href' => route('households.index'),   'icon' => 'fa-house',          'label' => 'Households',   'color' => '#0891b2'],
+                        ['href' => route('documents.index'),    'icon' => 'fa-file-alt',       'label' => 'Documents',    'color' => '#d97706'],
+                        ['href' => route('blotter.index'),      'icon' => 'fa-gavel',          'label' => 'Blotter',      'color' => '#dc2626'],
+                        ['href' => route('businesses.index'),   'icon' => 'fa-store',          'label' => 'Businesses',   'color' => '#16a34a'],
+                        ['href' => route('appointments.index'), 'icon' => 'fa-calendar-check', 'label' => 'Appointments', 'color' => '#C8861A'],
+                        ['href' => route('officials.index'),    'icon' => 'fa-user-tie',       'label' => 'Officials',    'color' => '#7c3aed'],
+                        ['href' => route('reports.index'),      'icon' => 'fa-chart-bar',      'label' => 'Analytics',    'color' => '#0D2144'],
+                        ['href' => route('backup.index'),       'icon' => 'fa-database',       'label' => 'Backup',       'color' => '#374151'],
+                    ]; @endphp
+                    @foreach($links as $l)
+                    <a href="{{ $l['href'] }}" class="quick-item" style="--qa-color:{{ $l['color'] }}">
+                        <div class="quick-icon" style="background:{{ $l['color'] }}18;color:{{ $l['color'] }}">
+                            <i class="fas {{ $l['icon'] }}"></i>
+                        </div>
+                        <span class="quick-label">{{ $l['label'] }}</span>
+                    </a>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
 
-</div>
-
-{{-- RECENT DOCUMENTS + RECENT BLOTTER --}}
-<div class="dash-bottom">
-
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title"><i class="fas fa-file-alt"></i> Recent Documents</span>
-            <a href="{{ route('documents.index') }}" class="btn btn-secondary btn-sm">View All</a>
+    {{-- RECENT DOCUMENTS + RECENT BLOTTER --}}
+    <div class="dash-bottom">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-file-alt"></i> Recent Documents</span>
+                <a href="{{ route('documents.index') }}" class="btn btn-secondary btn-sm">View All</a>
+            </div>
+            <div class="card-body" style="padding:0">
+                @forelse($recentDocuments as $d)
+                <a href="{{ route('documents.show', $d->id) }}" class="feed-row">
+                    <div class="feed-icon" style="background:#fffbeb"><i class="fas fa-file-alt" style="color:#d97706"></i></div>
+                    <div class="feed-body">
+                        <div class="feed-title">{{ $d->doc_number }}</div>
+                        <div class="feed-sub">{{ $d->resident->full_name ?? '—' }} · {{ $d->document_type }}</div>
+                    </div>
+                    <span class="badge {{ $d->status === 'Released' ? 'badge-green' : ($d->status === 'Pending' ? 'badge-yellow' : 'badge-blue') }}" style="font-size:10px">{{ $d->status }}</span>
+                </a>
+                @empty
+                <div class="empty-state" style="padding:32px"><i class="fas fa-file-alt"></i><p>No documents yet</p></div>
+                @endforelse
+            </div>
         </div>
-        <div class="card-body" style="padding:0">
-            @forelse($recentDocuments as $d)
-            <a href="{{ route('documents.show', $d->id) }}" class="feed-row">
-                <div class="feed-icon" style="background:#fffbeb"><i class="fas fa-file-alt" style="color:#d97706"></i></div>
-                <div class="feed-body">
-                    <div class="feed-title">{{ $d->doc_number }}</div>
-                    <div class="feed-sub">{{ $d->resident->full_name ?? '—' }} · {{ $d->document_type }}</div>
-                </div>
-                <span class="badge {{ $d->status === 'Released' ? 'badge-green' : ($d->status === 'Pending' ? 'badge-yellow' : 'badge-blue') }}" style="font-size:10px">{{ $d->status }}</span>
-            </a>
-            @empty
-            <div class="empty-state" style="padding:32px"><i class="fas fa-file-alt"></i><p>No documents yet</p></div>
-            @endforelse
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-gavel"></i> Recent Blotter</span>
+                <a href="{{ route('blotter.index') }}" class="btn btn-secondary btn-sm">View All</a>
+            </div>
+            <div class="card-body" style="padding:0">
+                @forelse($recentBlotter as $b)
+                <a href="{{ route('blotter.show', $b->id) }}" class="feed-row">
+                    <div class="feed-icon" style="background:#fef2f2"><i class="fas fa-gavel" style="color:#dc2626"></i></div>
+                    <div class="feed-body">
+                        <div class="feed-title">{{ $b->case_number }}</div>
+                        <div class="feed-sub">{{ $b->incident_type }}</div>
+                    </div>
+                    <span class="badge {{ $b->status === 'Settled' ? 'badge-green' : ($b->status === 'Active' ? 'badge-red' : 'badge-gray') }}" style="font-size:10px">{{ $b->status }}</span>
+                </a>
+                @empty
+                <div class="empty-state" style="padding:32px"><i class="fas fa-gavel"></i><p>No blotter cases yet</p></div>
+                @endforelse
+            </div>
         </div>
     </div>
 
+</div>{{-- end #dpanel-overview --}}
+
+{{-- ═══════════ TAB 2: ANALYTICS ═══════════ --}}
+<div id="dpanel-analytics" class="dash-panel">
+
+    {{-- Demographic summary numbers --}}
+    <div class="card" style="margin-bottom:16px">
+        <div class="card-header">
+            <span class="card-title"><i class="fas fa-users"></i> Resident Demographics</span>
+            <a href="{{ route('residents.index') }}" class="btn btn-secondary btn-sm">View Residents</a>
+        </div>
+        <div class="card-body">
+            <div class="demog-grid">
+                <div class="demog-item">
+                    <div class="demog-num">{{ number_format($totalActive) }}</div>
+                    <div class="demog-lbl">Active</div>
+                </div>
+                <div class="demog-item">
+                    <div class="demog-num" style="color:var(--gold)">{{ number_format($totalSeniors) }}</div>
+                    <div class="demog-lbl">Senior Citizens</div>
+                </div>
+                <div class="demog-item">
+                    <div class="demog-num">{{ number_format($totalVoters) }}</div>
+                    <div class="demog-lbl">Registered Voters</div>
+                </div>
+                <div class="demog-item">
+                    <div class="demog-num">{{ number_format($totalPwd) }}</div>
+                    <div class="demog-lbl">PWD</div>
+                </div>
+                <div class="demog-item">
+                    <div class="demog-num">{{ number_format($totalSoloParent) }}</div>
+                    <div class="demog-lbl">Solo Parents</div>
+                </div>
+                <div class="demog-item">
+                    <div class="demog-num">{{ number_format($total4ps) }}</div>
+                    <div class="demog-lbl">4Ps Beneficiaries</div>
+                </div>
+                <div class="demog-item">
+                    <div class="demog-num">{{ number_format($totalMale) }}</div>
+                    <div class="demog-lbl">Male</div>
+                </div>
+                <div class="demog-item">
+                    <div class="demog-num">{{ number_format($totalFemale) }}</div>
+                    <div class="demog-lbl">Female</div>
+                </div>
+                <div class="demog-item">
+                    <div class="demog-num">{{ number_format($totalHouseholds) }}</div>
+                    <div class="demog-lbl">Households</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="analytics-grid">
+        {{-- Age Groups --}}
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-chart-pie"></i> Age Distribution</span>
+            </div>
+            <div class="card-body" style="display:flex;align-items:center;gap:20px">
+                <div style="flex-shrink:0;width:160px;height:160px">
+                    <canvas id="ageChart"></canvas>
+                </div>
+                <div style="flex:1">
+                    @php $ageColors = ['#4f46e5','#C8861A','#16a34a','#dc2626']; $ai=0; @endphp
+                    @foreach($ageGroups as $label => $count)
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                        <div style="width:10px;height:10px;border-radius:2px;background:{{ $ageColors[$ai] }};flex-shrink:0"></div>
+                        <div style="flex:1;font-size:12px;color:var(--text)">{{ $label }}</div>
+                        <div style="font-size:12px;font-weight:700;color:var(--navy)">{{ number_format($count) }}</div>
+                    </div>
+                    @php $ai++; @endphp
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+        {{-- Document Types --}}
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-file-alt"></i> Documents by Type</span>
+            </div>
+            <div class="card-body" style="display:flex;align-items:center;gap:20px">
+                <div style="flex-shrink:0;width:160px;height:160px">
+                    <canvas id="docTypeChart"></canvas>
+                </div>
+                <div style="flex:1">
+                    @php $dtColors = ['#0D2144','#C8861A','#4f46e5','#16a34a','#dc2626','#0891b2']; $di=0; @endphp
+                    @foreach($documentsByType as $type => $count)
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                        <div style="width:10px;height:10px;border-radius:2px;background:{{ $dtColors[$di % count($dtColors)] }};flex-shrink:0"></div>
+                        <div style="flex:1;font-size:11px;color:var(--text)">{{ $type }}</div>
+                        <div style="font-size:11px;font-weight:700;color:var(--navy)">{{ number_format($count) }}</div>
+                    </div>
+                    @php $di++; @endphp
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Purok Breakdown --}}
+    <div class="card" style="margin-bottom:16px">
+        <div class="card-header">
+            <span class="card-title"><i class="fas fa-location-dot"></i> Residents by Purok</span>
+        </div>
+        <div class="card-body">
+            <canvas id="purokChart" height="60"></canvas>
+        </div>
+    </div>
+
+    {{-- Blotter by type --}}
+    @if($blotterByType->count())
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-gavel"></i> Recent Blotter</span>
+            <span class="card-title"><i class="fas fa-gavel"></i> Blotter by Incident Type</span>
             <a href="{{ route('blotter.index') }}" class="btn btn-secondary btn-sm">View All</a>
         </div>
-        <div class="card-body" style="padding:0">
-            @forelse($recentBlotter as $b)
-            <a href="{{ route('blotter.show', $b->id) }}" class="feed-row">
-                <div class="feed-icon" style="background:#fef2f2"><i class="fas fa-gavel" style="color:#dc2626"></i></div>
-                <div class="feed-body">
-                    <div class="feed-title">{{ $b->case_number }}</div>
-                    <div class="feed-sub">{{ $b->incident_type }}</div>
+        <div class="card-body">
+            @php $maxBlotter = $blotterByType->max() ?: 1; @endphp
+            @foreach($blotterByType->sortDesc() as $type => $count)
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <div style="width:130px;font-size:11.5px;color:var(--text);flex-shrink:0">{{ $type }}</div>
+                <div style="flex:1;background:#f3f4f6;border-radius:99px;height:8px;overflow:hidden">
+                    <div style="height:100%;border-radius:99px;background:var(--crimson);width:{{ round(($count/$maxBlotter)*100) }}%"></div>
                 </div>
-                <span class="badge {{ $b->status === 'Settled' ? 'badge-green' : ($b->status === 'Active' ? 'badge-red' : 'badge-gray') }}" style="font-size:10px">{{ $b->status }}</span>
-            </a>
-            @empty
-            <div class="empty-state" style="padding:32px"><i class="fas fa-gavel"></i><p>No blotter cases yet</p></div>
-            @endforelse
+                <div style="font-size:11.5px;font-weight:700;color:var(--crimson);width:28px;text-align:right">{{ $count }}</div>
+            </div>
+            @endforeach
         </div>
     </div>
+    @endif
 
-</div>
+</div>{{-- end #dpanel-analytics --}}
+
+{{-- ═══════════ TAB 3: APPOINTMENTS ═══════════ --}}
+@if(in_array(auth()->user()->role, ['Admin','Secretary']))
+<div id="dpanel-appointments" class="dash-panel">
+
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fas fa-calendar-check"></i> Document Appointments</span>
+            <div style="display:flex;gap:.5rem">
+                <a href="{{ route('portal.index') }}" target="_blank" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-globe"></i> View Portal
+                </a>
+                <a href="{{ route('appointments.index') }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-list"></i> Manage All
+                </a>
+            </div>
+        </div>
+
+        {{-- Summary strip --}}
+        @php
+            use App\Models\DocumentAppointment;
+            $aptCounts = DocumentAppointment::selectRaw('status, count(*) as cnt')->groupBy('status')->pluck('cnt','status');
+        @endphp
+        <div style="display:flex;gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+            @foreach(['Pending','Confirmed','Processing','Ready','Released','Cancelled'] as $st)
+            <div style="flex:1;padding:10px;text-align:center;background:var(--surface2)">
+                <div style="font-size:17px;font-weight:700;color:var(--navy)">{{ $aptCounts[$st] ?? 0 }}</div>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:2px">{{ $st }}</div>
+            </div>
+            @endforeach
+        </div>
+
+        <div class="card-body" style="padding:0">
+            @forelse($recentAppointments as $apt)
+            @php $sc = strtolower($apt->status); @endphp
+            <div class="feed-row" style="text-decoration:none">
+                <div class="feed-icon" style="background:var(--gold-pale)"><i class="fas fa-calendar" style="color:var(--gold)"></i></div>
+                <div class="feed-body">
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <span class="feed-title">{{ $apt->appointment_number }}</span>
+                        <span class="apt-badge apt-{{ $sc }}">{{ $apt->status }}</span>
+                    </div>
+                    <div class="feed-sub">{{ $apt->resident_name }} · {{ $apt->document_type }} · {{ $apt->preferred_date->format('M d, Y') }}</div>
+                </div>
+                <a href="{{ route('appointments.index') }}?search={{ $apt->appointment_number }}"
+                   class="btn btn-secondary btn-sm" style="flex-shrink:0;font-size:11px">Update</a>
+            </div>
+            @empty
+            <div class="empty-state" style="padding:40px"><i class="fas fa-calendar-check"></i><p>No appointments yet</p></div>
+            @endforelse
+        </div>
+
+        @if($recentAppointments->count() >= 8)
+        <div style="padding:.75rem 1rem;border-top:1px solid var(--border);text-align:center">
+            <a href="{{ route('appointments.index') }}" style="font-size:.8rem;color:var(--navy);font-weight:600">
+                View all appointments <i class="fas fa-arrow-right" style="font-size:10px"></i>
+            </a>
+        </div>
+        @endif
+    </div>
+
+</div>{{-- end #dpanel-appointments --}}
+@endif
 
 @endsection
 
