@@ -118,6 +118,137 @@
     border-bottom: 1px solid var(--border);
 }
 .td-danger { color: var(--crimson) !important; font-weight: 700; }
+
+/* ── Pharmacy / Medicine Inventory ───────────────────────── */
+.med-search-bar {
+    display: flex; gap: 10px; align-items: center;
+    padding: 12px 16px; background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+.med-search-input {
+    flex: 1; min-width: 220px;
+    padding: 7px 12px 7px 34px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'Poppins', sans-serif; font-size: .82rem;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;
+    background-size: 14px;
+}
+.med-search-input:focus { outline: none; border-color: var(--navy); }
+.med-cat-filter {
+    padding: 7px 10px; border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); font-family: 'Poppins', sans-serif;
+    font-size: .82rem; background: #fff; min-width: 175px;
+}
+.med-cat-filter:focus { outline: none; border-color: var(--navy); }
+
+.med-stats-strip {
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--border);
+}
+.med-stat {
+    flex: 1; padding: 10px 14px; text-align: center;
+    border-right: 1px solid var(--border);
+    background: var(--surface2);
+}
+.med-stat:last-child { border-right: none; }
+.med-stat-num { font-size: 1.15rem; font-weight: 700; color: var(--navy); line-height: 1; }
+.med-stat-lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
+.med-stat.warn .med-stat-num { color: #b45309; }
+.med-stat.danger .med-stat-num { color: var(--crimson); }
+
+/* Category badges */
+.cat-badge {
+    display: inline-block; padding: 2px 9px; border-radius: 999px;
+    font-size: .68rem; font-weight: 700; white-space: nowrap; border: 1.5px solid;
+}
+.cat-gold   { background: #fef3dc; color: #78450a; border-color: #f0c060; }
+.cat-navy   { background: var(--navy-pale); color: var(--navy); border-color: var(--navy-border); }
+.cat-purple { background: #ede9fe; color: #5b21b6; border-color: #c4b5fd; }
+.cat-blue   { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+.cat-green  { background: #dcfce7; color: #14532d; border-color: #86efac; }
+.cat-gray   { background: #f3f4f6; color: #6b7280; border-color: #d1d5db; }
+
+/* Medicine table primary/subtitle */
+.med-primary { font-size: .88rem; font-weight: 700; color: var(--navy); line-height: 1.2; }
+.med-brand   { font-size: .74rem; color: var(--text-muted); margin-top: 2px; }
+.med-barcode { font-size: .68rem; color: #9ca3af; font-family: monospace; margin-top: 2px; }
+
+/* Dosage — high-contrast for clinic readability */
+.dosage-text {
+    font-size: .84rem; font-weight: 700;
+    color: #111827; letter-spacing: .01em;
+}
+
+/* Stock display */
+.stock-num      { font-size: .92rem; font-weight: 700; }
+.stock-ok       { color: var(--navy); }
+.stock-low      { color: var(--crimson); }
+.stock-unit     { font-size: .72rem; color: var(--text-muted); margin-left: 3px; }
+.low-badge {
+    display: inline-block; padding: 1px 6px; border-radius: 999px;
+    background: #fee2e2; color: var(--crimson); font-size: .64rem;
+    font-weight: 700; border: 1px solid #fca5a5; margin-left: 4px; vertical-align: middle;
+}
+.expiring-badge {
+    display: inline-block; padding: 1px 6px; border-radius: 999px;
+    background: #fef3dc; color: #78450a; font-size: .64rem;
+    font-weight: 700; border: 1px solid #f0c060; margin-left: 4px; vertical-align: middle;
+}
+
+/* Medicine Details Modal */
+.med-modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); z-index: 1100;
+    align-items: center; justify-content: center; padding: 16px;
+}
+.med-modal-backdrop.open { display: flex; }
+.med-modal {
+    background: #fff; border-radius: var(--radius-lg);
+    width: 100%; max-width: 680px; max-height: 88vh;
+    overflow-y: auto; box-shadow: 0 16px 60px rgba(0,0,0,.25);
+    position: relative;
+}
+.med-modal-header {
+    padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-between;
+    position: sticky; top: 0; background: #fff; z-index: 1;
+}
+.med-modal-title { font-size: 1rem; font-weight: 700; color: var(--navy); }
+.med-modal-subtitle { font-size: .78rem; color: var(--text-muted); margin-top: 2px; }
+.med-modal-close {
+    background: none; border: none; font-size: .95rem;
+    color: #9ca3af; cursor: pointer; padding: 4px;
+}
+.med-modal-close:hover { color: var(--crimson); }
+.med-modal-body { padding: 1.25rem 1.5rem; }
+.med-specs-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 1.25rem;
+}
+.med-spec-item { background: var(--surface2); border-radius: var(--radius-sm); padding: 10px 12px; }
+.med-spec-label { font-size: .68rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
+.med-spec-value { font-size: .85rem; font-weight: 600; color: var(--navy); margin-top: 3px; }
+.med-spec-item.full { grid-column: span 2; }
+.med-section-title {
+    font-size: .78rem; font-weight: 700; color: #fff;
+    background: var(--navy); padding: 6px 12px;
+    border-radius: var(--radius-sm); margin-bottom: 10px;
+    text-transform: uppercase; letter-spacing: .05em;
+}
+.log-table { width: 100%; border-collapse: collapse; font-size: .78rem; }
+.log-table th {
+    background: #f8fafc; color: var(--text-muted); font-size: .67rem;
+    font-weight: 600; padding: 6px 10px; text-align: left;
+    text-transform: uppercase; letter-spacing: .04em;
+    border-bottom: 1px solid var(--border);
+}
+.log-table td { padding: 7px 10px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+.log-table tr:last-child td { border-bottom: none; }
+.log-in      { color: #14532d; font-weight: 700; }
+.log-out     { color: var(--navy); font-weight: 700; }
+.log-disposed{ color: var(--crimson); font-weight: 700; }
 </style>
 @endpush
 
