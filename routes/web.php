@@ -128,6 +128,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('committees/{slug}/partnerships', [CommitteeController::class, 'storePartnership'])
         ->name('committees.storePartnership')->middleware('role:Admin,Secretary,Committee');
 
+    Route::delete('committees/{slug}/partnerships/{id}', [CommitteeController::class, 'destroyPartnership'])
+        ->name('committees.destroyPartnership')->middleware('role:Admin,Secretary,Committee');
+
+    Route::delete('committees/{slug}/medicine/{id}', [CommitteeController::class, 'destroyMedicine'])
+        ->name('committees.destroyMedicine')->middleware('role:Admin,Secretary,Committee');
+
+    Route::post('committees/{slug}/medicine/{id}/adjust', [CommitteeController::class, 'adjustMedicine'])
+        ->name('committees.adjustMedicine')->middleware('role:Admin,Secretary,Committee');
+
+    Route::delete('committees/{slug}/relief/{id}', [CommitteeController::class, 'destroyRelief'])
+        ->name('committees.destroyRelief')->middleware('role:Admin,Secretary,Committee');
+
     // ---------------------------------------------------
     // Appointments (Document Scheduling) — Admin + Secretary
     // ---------------------------------------------------
@@ -135,6 +147,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('appointments.index')->middleware('role:Admin,Secretary');
     Route::patch('appointments/{appointment}/status', [AppointmentController::class, 'updateStatus'])
         ->name('appointments.updateStatus')->middleware('role:Admin,Secretary');
+    Route::delete('appointments/{appointment}', [AppointmentController::class, 'destroy'])
+        ->name('appointments.destroy')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Reports — Admin + Secretary only
