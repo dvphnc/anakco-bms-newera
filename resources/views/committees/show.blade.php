@@ -563,7 +563,7 @@
         </div>
         @if($partnerships->count())
         <table>
-            <thead><tr><th>Organization</th><th>Type</th><th>MOU Date</th><th>Valid Until</th><th>Contact Person</th><th>Contact</th><th>MOU File</th></tr></thead>
+            <thead><tr><th>Organization</th><th>Type</th><th>MOU Date</th><th>Valid Until</th><th>Contact Person</th><th>Contact</th><th>MOU File</th><th></th></tr></thead>
             <tbody>
                 @foreach($partnerships as $p)
                 <tr>
@@ -580,6 +580,12 @@
                     <td class="td-muted">{{ $p->contact_person ?? '—' }}</td>
                     <td class="td-muted">{{ $p->contact_number ?? '—' }}</td>
                     <td>@if($p->file_path)<a href="{{ asset('storage/'.$p->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
+                    <td>
+                        <form method="POST" action="{{ route('committees.destroyPartnership', [$committee['slug'], $p->id]) }}" onsubmit="return confirm('Delete this partnership record?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
