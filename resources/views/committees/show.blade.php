@@ -134,13 +134,17 @@
             <p class="page-subtitle">Chairperson: <strong>{{ $committee['chair'] }}</strong></p>
         </div>
     </div>
-    @if($committee['slug'] === 'peace-order')
     <div class="page-actions">
+        @if($committee['slug'] === 'peace-order')
         <a href="{{ route('blotter.index') }}" class="btn btn-secondary btn-sm">
             <i class="fas fa-gavel"></i> View Blotter Cases
         </a>
+        @endif
+        <a href="{{ route('export.pdf', 'committees') }}?slug={{ $committee['slug'] }}"
+           class="btn btn-secondary btn-sm" target="_blank">
+            <i class="fas fa-file-pdf"></i> Export PDF
+        </a>
     </div>
-    @endif
 </div>
 
 {{-- QUICK STATS --}}

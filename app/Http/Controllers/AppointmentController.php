@@ -53,9 +53,10 @@ class AppointmentController extends Controller
             $validated['released_at'] = now();
         }
 
+        $old = $appointment->toArray();
         $appointment->update($validated);
 
-        $this->logActivity('updated', "Appointment #{$appointment->appointment_number} status → {$validated['status']}");
+        $this->logActivity('updated', $appointment, $old, $appointment->fresh()->toArray());
 
         return back()->with('success', "Appointment status updated to {$validated['status']}.");
     }
