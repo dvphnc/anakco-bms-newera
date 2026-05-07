@@ -36,6 +36,7 @@ class DashboardController extends Controller
         $totalDocuments = Document::count();
         $activeBlotter = BlotterCase::where('status', 'Active')->count();
         $pendingAppointments = DocumentAppointment::where('status', 'Pending')->count();
+        $aptCounts = DocumentAppointment::selectRaw('status, count(*) as cnt')->groupBy('status')->pluck('cnt', 'status');
         $settledBlotter = BlotterCase::whereIn('status', ['Settled', 'Closed'])->count();
         $totalBlotter = BlotterCase::count();
 
