@@ -106,12 +106,16 @@ class CommitteeController extends Controller
         $attendances = CommitteeAttendance::where('committee_slug', $slug)->latest()->get();
         $inventory = CommitteeInventory::where('committee_slug', $slug)->latest()->get();
 
+        // Partnerships — generic tab for all committees
+        $partnerships = CommitteePartnership::where('committee_slug', $slug)->latest()->get();
+
         // Committee-specific data
         $specificData = $this->getSpecificData($slug);
 
         return view('committees.show', compact(
             'committee', 'photos', 'reports', 'resolutions', 'otherRecords',
-            'activities', 'accomplishments', 'attendances', 'inventory', 'specificData'
+            'activities', 'accomplishments', 'attendances', 'inventory',
+            'partnerships', 'specificData'
         ));
     }
 
@@ -124,8 +128,9 @@ class CommitteeController extends Controller
                 'trainings' => TanodTraining::latest('training_date')->get(),
             ],
             'health' => [
-                'health_records' => HealthRecord::latest('visit_date')->get(),
-                'clinic_staff'   => ClinicStaff::orderBy('full_name')->get(),
+                'health_records'     => HealthRecord::latest('visit_date')->get(),
+                'clinic_staff'       => ClinicStaff::orderBy('full_name')->get(),
+                'medicine_inventory' => MedicineInventory::orderBy('medicine_name')->get(),
             ],
             'education' => [
                 'scholars' => Scholar::orderBy('full_name')->get(),
@@ -146,8 +151,9 @@ class CommitteeController extends Controller
                 'toda' => TodaVehicle::orderBy('operator_name')->get(),
             ],
             'bdrrm' => [
-                'emergency_logs'    => EmergencyLog::latest('incident_date')->get(),
+                'emergency_logs'     => EmergencyLog::latest('incident_date')->get(),
                 'evacuation_centers' => EvacuationCenter::orderBy('center_name')->get(),
+                'relief_supplies'    => ReliefSupply::orderBy('item_name')->get(),
             ],
             default => [],
         };
