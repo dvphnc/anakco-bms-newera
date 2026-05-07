@@ -1161,7 +1161,7 @@
         </div>
         @if(isset($specificData['relief_supplies']) && $specificData['relief_supplies']->count())
         <table>
-            <thead><tr><th>Item</th><th>Category</th><th style="text-align:right">Qty</th><th>Unit</th><th>Source</th><th>Date Received</th><th>Status</th><th>Remarks</th></tr></thead>
+            <thead><tr><th>Item</th><th>Category</th><th style="text-align:right">Qty</th><th>Unit</th><th>Source</th><th>Date Received</th><th>Status</th><th>Remarks</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['relief_supplies'] as $rs)
                 <tr>
@@ -1173,6 +1173,12 @@
                     <td class="td-muted">{{ $rs->date_received?->format('M d, Y') ?? '—' }}</td>
                     <td><span class="badge {{ match($rs->status) { 'Available'=>'badge-green','Distributed'=>'badge-yellow',default=>'badge-gray' } }}">{{ $rs->status }}</span></td>
                     <td class="td-muted">{{ $rs->remarks ?? '—' }}</td>
+                    <td>
+                        <form method="POST" action="{{ route('committees.destroyRelief', [$committee['slug'], $rs->id]) }}" onsubmit="return confirm('Delete this item?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -1608,6 +1614,17 @@ function toggleForm(id, btnEl) {
 document.addEventListener('DOMContentLoaded', function () {
     const hash = window.location.hash.replace('#', '');
     if (hash && document.getElementById('tab-' + hash)) switchTab(hash);
+});
+
+function openStockModal(medId, medName) {
+    const baseSlug = '{{ $committee['slug'] }}';
+    document.getElementById('stockAdjustForm').action = '/committees/' + baseSlug + '/medicine/' + medId + '/adjust';
+    document.getElementById('stockMedicineName').textContent = 'Medicine: ' + medName;
+    const modal = document.getElementById('stockAdjustModal');
+    modal.style.display = 'flex';
+}
+document.getElementById('stockAdjustModal')?.addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
 });
 </script>
 @endpush
