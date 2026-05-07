@@ -323,6 +323,18 @@ class CommitteeController extends Controller
                         'status'         => 'required|in:Active,Inactive,On Leave',
                     ]);
                     ClinicStaff::create($v);
+                } elseif ($type === 'medicine') {
+                    $v = $request->validate([
+                        'medicine_name'  => 'required|string|max:255',
+                        'generic_name'   => 'nullable|string|max:255',
+                        'unit'           => 'required|string|max:50',
+                        'current_stock'  => 'required|integer|min:0',
+                        'reorder_level'  => 'required|integer|min:0',
+                        'expiry_date'    => 'nullable|date',
+                        'supplier'       => 'nullable|string|max:255',
+                        'batch_number'   => 'nullable|string|max:100',
+                    ]);
+                    MedicineInventory::create($v);
                 } else {
                     $v = $request->validate([
                         'patient_name' => 'required|string|max:255',
