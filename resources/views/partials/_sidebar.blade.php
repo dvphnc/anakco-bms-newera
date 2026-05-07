@@ -85,6 +85,13 @@
             <i class="fas fa-calendar-check"></i>
             <span>Appointments</span>
         </a>
+
+        <a href="{{ route('portal.index') }}" target="_blank"
+           class="nav-item">
+            <i class="fas fa-globe"></i>
+            <span>Resident Portal</span>
+            <i class="fas fa-arrow-up-right-from-square" style="font-size:9px;margin-left:auto;opacity:.5"></i>
+        </a>
         @endif
 
         {{-- Committees — all roles --}}
