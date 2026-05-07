@@ -252,7 +252,9 @@ class CommitteeController extends Controller
 
     public function destroyMedicine(string $slug, int $id)
     {
-        MedicineInventory::findOrFail($id)->delete();
+        $medicine = MedicineInventory::findOrFail($id);
+        $this->logActivity('deleted', $medicine);
+        $medicine->delete();
         return back()->with('success', 'Medicine record deleted.')->withFragment('medicine-inventory');
     }
 
@@ -275,7 +277,8 @@ class CommitteeController extends Controller
             'reason'          => 'nullable|string|max:255',
         ]);
 
-        $qty = (int) $v['quantity'];
+        $qty        = (int) $v['quantity'];
+        $stockBefore = $medicine->current_stock;
 
         if ($v['adjustment_type'] === 'in') {
             $medicine->current_stock += $qty;
@@ -284,6 +287,21 @@ class CommitteeController extends Controller
         }
 
         $medicine->save();
+
+        MedicineStockLog::create([
+            'medicine_id'     => $medicine->id,
+            'adjustment_type' => $v['adjustment_type'],
+            'quantity'        => $qty,
+            'stock_before'    => $stockBefore,
+            'stock_after'     => $medicine->current_stock,
+            'reason'          => $v['reason'] ?? null,
+            'performed_by'    => auth()->user()->name,
+        ]);
+
+        $this->logActivity('adjusted stock', $medicine,
+            ['current_stock' => $stockBefore],
+            ['current_stock' => $medicine->current_stock]
+        );
 
         $label = match($v['adjustment_type']) {
             'in'       => "Added {$qty} units",
