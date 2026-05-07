@@ -18,16 +18,20 @@ use App\Models\InfraFinancial;
 use App\Models\InfraProject;
 use App\Models\LivelihoodBeneficiary;
 use App\Models\MedicineInventory;
+use App\Models\MedicineStockLog;
 use App\Models\PatrolLog;
 use App\Models\ReliefSupply;
 use App\Models\Scholar;
 use App\Models\StreetSweeper;
 use App\Models\TanodTraining;
 use App\Models\TodaVehicle;
+use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
 
 class CommitteeController extends Controller
 {
+    use LogsActivity;
+
     private array $committees = [
         'peace-order' => [
             'name' => 'Peace & Order',
@@ -130,7 +134,7 @@ class CommitteeController extends Controller
             'health' => [
                 'health_records'     => HealthRecord::latest('visit_date')->get(),
                 'clinic_staff'       => ClinicStaff::orderBy('full_name')->get(),
-                'medicine_inventory' => MedicineInventory::orderBy('medicine_name')->get(),
+                'medicine_inventory' => MedicineInventory::with(['stockLogs' => fn ($q) => $q->latest()->limit(30)])->orderBy('generic_name')->orderBy('medicine_name')->get(),
             ],
             'education' => [
                 'scholars' => Scholar::orderBy('full_name')->get(),
