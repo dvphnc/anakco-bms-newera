@@ -66,8 +66,6 @@ class AppointmentController extends Controller
         $num = $appointment->appointment_number;
         $appointment->delete();
 
-        $this->logActivity('deleted', $appointment);
-
         return back()->with('success', "Appointment {$num} deleted.");
     }
 }

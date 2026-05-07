@@ -292,6 +292,31 @@ class ExportController extends Controller
                 return Pdf::loadView('exports.pdf.businesses', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'filters'))
                     ->setPaper('a4', 'landscape')->stream("businesses-{$date}.pdf");
 
+            case 'committees':
+                $slug      = $request->input('slug', '');
+                $slugMap   = [
+                    'peace-order'    => 'Peace & Order',
+                    'health'         => 'Health',
+                    'education'      => 'Education',
+                    'infrastructure' => 'Infrastructure',
+                    'environment'    => 'Environment',
+                    'livelihood'     => 'Livelihood',
+                    'transport'      => 'Transport & Comm.',
+                    'bdrrm'          => 'BDRRM',
+                ];
+                $committeeName = $slugMap[$slug] ?? 'Committee';
+
+                $records       = \App\Models\CommitteeRecord::where('committee_slug', $slug)->latest()->get();
+                $activities    = \App\Models\CommitteeActivity::where('committee_slug', $slug)->latest()->get();
+                $attendances   = \App\Models\CommitteeAttendance::where('committee_slug', $slug)->latest()->get();
+                $inventory     = \App\Models\CommitteeInventory::where('committee_slug', $slug)->latest()->get();
+                $partnerships  = \App\Models\CommitteePartnership::where('committee_slug', $slug)->latest()->get();
+
+                return Pdf::loadView('exports.pdf.committee', compact(
+                    'slug', 'committeeName', 'records', 'activities', 'attendances', 'inventory', 'partnerships',
+                    'generatedAt', 'generatedBy', 'officialName'
+                ))->setPaper('a4', 'portrait')->stream("{$slug}-report-{$date}.pdf");
+
             default:
                 abort(404);
         }
