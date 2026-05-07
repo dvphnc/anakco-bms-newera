@@ -196,8 +196,9 @@
                     ['id' => 'training', 'label' => 'Trainings',    'icon' => 'fas fa-chalkboard-user',    'count' => isset($specificData['trainings'])   ? $specificData['trainings']->count()   : 0],
                 ],
                 'health'         => [
-                    ['id' => 'health-records', 'label' => 'Health Records', 'icon' => 'fas fa-notes-medical', 'count' => isset($specificData['health_records']) ? $specificData['health_records']->count() : 0],
-                    ['id' => 'clinic-staff',   'label' => 'Clinic Staff',   'icon' => 'fas fa-user-doctor',   'count' => isset($specificData['clinic_staff'])   ? $specificData['clinic_staff']->count()   : 0],
+                    ['id' => 'health-records',     'label' => 'Health Records',     'icon' => 'fas fa-notes-medical',  'count' => isset($specificData['health_records'])     ? $specificData['health_records']->count()     : 0],
+                    ['id' => 'clinic-staff',        'label' => 'Clinic Staff',       'icon' => 'fas fa-user-doctor',    'count' => isset($specificData['clinic_staff'])       ? $specificData['clinic_staff']->count()       : 0],
+                    ['id' => 'medicine-inventory',  'label' => 'Medicine Inventory', 'icon' => 'fas fa-pills',          'count' => isset($specificData['medicine_inventory']) ? $specificData['medicine_inventory']->count() : 0],
                 ],
                 'education'      => [['id' => 'scholars',    'label' => 'Scholars',       'icon' => 'fas fa-graduation-cap',     'count' => isset($specificData['scholars'])      ? $specificData['scholars']->count()      : 0]],
                 'infrastructure' => [
@@ -212,8 +213,9 @@
                 'livelihood'     => [['id' => 'beneficiaries', 'label' => 'Beneficiaries',  'icon' => 'fas fa-hand-holding-heart',   'count' => isset($specificData['beneficiaries'])    ? $specificData['beneficiaries']->count()    : 0]],
                 'transport'      => [['id' => 'toda',           'label' => 'TODA Registry',  'icon' => 'fas fa-bus',                  'count' => isset($specificData['toda'])             ? $specificData['toda']->count()             : 0]],
                 'bdrrm'          => [
-                    ['id' => 'emergency',  'label' => 'Emergency Logs',     'icon' => 'fas fa-exclamation-triangle',  'count' => isset($specificData['emergency_logs'])     ? $specificData['emergency_logs']->count()     : 0],
-                    ['id' => 'evacuation', 'label' => 'Evacuation Centers', 'icon' => 'fas fa-house-chimney-medical', 'count' => isset($specificData['evacuation_centers']) ? $specificData['evacuation_centers']->count() : 0],
+                    ['id' => 'emergency',       'label' => 'Emergency Logs',     'icon' => 'fas fa-exclamation-triangle',  'count' => isset($specificData['emergency_logs'])     ? $specificData['emergency_logs']->count()     : 0],
+                    ['id' => 'evacuation',       'label' => 'Evacuation Centers', 'icon' => 'fas fa-house-chimney-medical', 'count' => isset($specificData['evacuation_centers']) ? $specificData['evacuation_centers']->count() : 0],
+                    ['id' => 'relief-supplies',  'label' => 'Relief Supplies',   'icon' => 'fas fa-boxes-stacked',         'count' => isset($specificData['relief_supplies'])    ? $specificData['relief_supplies']->count()    : 0],
                 ],
                 default => [],
             };
