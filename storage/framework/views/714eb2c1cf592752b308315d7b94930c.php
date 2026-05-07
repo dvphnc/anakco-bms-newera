@@ -527,10 +527,6 @@
         </div>
 
         
-        <?php
-            use App\Models\DocumentAppointment;
-            $aptCounts = DocumentAppointment::selectRaw('status, count(*) as cnt')->groupBy('status')->pluck('cnt','status');
-        ?>
         <div style="display:flex;gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
             <?php $__currentLoopData = ['Pending','Confirmed','Processing','Ready','Released','Cancelled']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $st): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div style="flex:1;padding:10px;text-align:center;background:var(--surface2)">
