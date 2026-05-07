@@ -1323,8 +1323,42 @@
             </div>
         </div>
         @if(isset($specificData['medicine_inventory']) && $specificData['medicine_inventory']->count())
+        {{-- Stock Adjust Modal --}}
+        <div id="stockAdjustModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center">
+            <div style="background:#fff;border-radius:14px;width:100%;max-width:400px;padding:1.5rem;position:relative;box-shadow:0 8px 40px rgba(0,0,0,.2)">
+                <button onclick="document.getElementById('stockAdjustModal').style.display='none'" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;font-size:1rem;color:#9ca3af;cursor:pointer"><i class="fas fa-times"></i></button>
+                <div style="font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid #f0f0f0">
+                    <i class="fas fa-pills" style="color:var(--gold)"></i>&nbsp; Adjust Stock
+                </div>
+                <div id="stockMedicineName" style="font-size:.82rem;color:#6b7280;margin-bottom:1rem"></div>
+                <form id="stockAdjustForm" method="POST">
+                    @csrf
+                    <div style="margin-bottom:1rem">
+                        <label style="display:block;font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:.35rem">Transaction Type</label>
+                        <select name="adjustment_type" class="form-control" style="width:100%;padding:.5rem .8rem;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.83rem">
+                            <option value="in">📦 Stock In (received new supply)</option>
+                            <option value="out">💊 Dispense / Issue Out</option>
+                            <option value="disposed">🗑️ Disposed / Expired</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:1rem">
+                        <label style="display:block;font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:.35rem">Quantity <span style="color:var(--crimson)">*</span></label>
+                        <input type="number" name="quantity" min="1" value="1" class="form-control" style="width:100%;padding:.5rem .8rem;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.83rem" required>
+                    </div>
+                    <div style="margin-bottom:1.25rem">
+                        <label style="display:block;font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:.35rem">Reason / Notes</label>
+                        <input type="text" name="reason" placeholder="e.g. Monthly supply from DOH, dispensed to patient" class="form-control" style="width:100%;padding:.5rem .8rem;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.83rem">
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;gap:.6rem">
+                        <button type="button" onclick="document.getElementById('stockAdjustModal').style.display='none'" style="padding:.5rem 1.1rem;border-radius:6px;border:1.5px solid var(--navy);background:transparent;color:var(--navy);font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer">Cancel</button>
+                        <button type="submit" style="padding:.5rem 1.1rem;border-radius:6px;border:none;background:var(--gold);color:#fff;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer"><i class="fas fa-save"></i> Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <table>
-            <thead><tr><th>Medicine Name</th><th>Generic Name</th><th style="text-align:right">Stock</th><th>Unit</th><th>Reorder Lvl</th><th>Expiry</th><th>Supplier</th><th>Batch</th></tr></thead>
+            <thead><tr><th>Medicine Name</th><th>Generic Name</th><th style="text-align:right">Stock</th><th>Unit</th><th>Reorder Lvl</th><th>Expiry</th><th>Supplier</th><th>Actions</th></tr></thead>
             <tbody>
                 @foreach($specificData['medicine_inventory'] as $med)
                 <tr>
@@ -1341,7 +1375,17 @@
                         @if($med->isExpired()) <span style="font-size:10px">(expired)</span> @endif
                     </td>
                     <td class="td-muted">{{ $med->supplier ?? '—' }}</td>
-                    <td class="td-muted td-mono" style="font-size:11px">{{ $med->batch_number ?? '—' }}</td>
+                    <td style="white-space:nowrap">
+                        <button type="button"
+                                onclick="openStockModal({{ $med->id }}, '{{ addslashes($med->medicine_name) }}')"
+                                class="btn btn-primary btn-sm btn-icon" title="Adjust stock">
+                            <i class="fas fa-arrow-right-arrow-left"></i>
+                        </button>
+                        <form method="POST" action="{{ route('committees.destroyMedicine', [$committee['slug'], $med->id]) }}" style="display:inline" onsubmit="return confirm('Delete this medicine record?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
