@@ -4,15 +4,28 @@
 @push('styles')
 <style>
 /* ── Tab Strip ───────────────────────────────────────────── */
+.tab-strip-wrap {
+    position: relative;
+    background: var(--surface);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: 2px solid var(--border);
+}
+.tab-strip-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 2px;
+    width: 48px;
+    background: linear-gradient(to right, transparent, var(--surface) 80%);
+    pointer-events: none;
+    border-radius: 0 var(--radius-lg) 0 0;
+}
 .tab-strip {
     display: flex;
-    border-bottom: 2px solid var(--border);
     padding: 0 20px;
     gap: 2px;
     overflow-x: auto;
     scrollbar-width: none;
-    background: var(--surface);
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: transparent;
 }
 .tab-strip::-webkit-scrollbar { display: none; }
 .tab-btn {
