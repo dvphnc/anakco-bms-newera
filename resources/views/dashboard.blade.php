@@ -19,7 +19,7 @@
 .alert-link:hover { opacity:1; }
 
 /* ── Stat Cards ──────────────────────────────────────────── */
-.dash-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+.dash-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:16px; margin-bottom:24px; }
 .dash-stat-card {
     display:flex; align-items:center; gap:16px;
     background:var(--surface); border:1px solid var(--border);
