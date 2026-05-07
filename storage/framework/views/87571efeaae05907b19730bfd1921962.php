@@ -258,11 +258,15 @@
                         <?php $sc = strtolower($apt->status); ?>
                         <span class="badge badge-<?php echo e($sc); ?>"><?php echo e($apt->status); ?></span>
                     </td>
-                    <td>
+                    <td style="white-space:nowrap;display:flex;gap:.4rem">
                         <button class="btn btn-navy btn-sm"
                                 onclick="openModal(<?php echo e($apt->id); ?>, '<?php echo e($apt->appointment_number); ?>', '<?php echo e($apt->status); ?>', '<?php echo e(addslashes($apt->notes ?? '')); ?>')">
                             <i class="fas fa-pencil"></i> Update
                         </button>
+                        <form method="POST" action="<?php echo e(route('appointments.destroy', $apt)); ?>" onsubmit="return confirm('Delete appointment <?php echo e($apt->appointment_number); ?>?')">
+                            <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                            <button type="submit" class="btn btn-sm" style="background:var(--crimson-pale);color:var(--crimson);border:1.5px solid var(--crimson-border)"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
