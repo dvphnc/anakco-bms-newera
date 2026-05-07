@@ -380,6 +380,7 @@
         </button>
         @endforeach
     </div>
+    </div>{{-- end tab-strip-wrap --}}
 
     {{-- ── TAB: RECORDS ─────────────────────────────────────── --}}
     <div id="tab-records" class="tab-content active">
