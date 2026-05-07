@@ -134,6 +134,13 @@
             <p class="page-subtitle">Chairperson: <strong>{{ $committee['chair'] }}</strong></p>
         </div>
     </div>
+    @if($committee['slug'] === 'peace-order')
+    <div class="page-actions">
+        <a href="{{ route('blotter.index') }}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-gavel"></i> View Blotter Cases
+        </a>
+    </div>
+    @endif
 </div>
 
 {{-- QUICK STATS --}}
@@ -183,18 +190,29 @@
             ];
             $specificTabs = match($committee['slug']) {
                 'peace-order'    => [
-                    ['id' => 'bpso',   'label' => 'BPSO List',   'icon' => 'fas fa-shield-halved',        'count' => isset($specificData['bpso'])             ? $specificData['bpso']->count()             : 0],
-                    ['id' => 'patrol', 'label' => 'Patrol Logs', 'icon' => 'fas fa-binoculars',           'count' => isset($specificData['patrol_logs'])      ? $specificData['patrol_logs']->count()      : 0],
+                    ['id' => 'bpso',     'label' => 'BPSO List',    'icon' => 'fas fa-shield-halved',      'count' => isset($specificData['bpso'])        ? $specificData['bpso']->count()        : 0],
+                    ['id' => 'patrol',   'label' => 'Patrol Logs',  'icon' => 'fas fa-binoculars',         'count' => isset($specificData['patrol_logs']) ? $specificData['patrol_logs']->count() : 0],
+                    ['id' => 'training', 'label' => 'Trainings',    'icon' => 'fas fa-chalkboard-user',    'count' => isset($specificData['trainings'])   ? $specificData['trainings']->count()   : 0],
                 ],
-                'health'         => [['id' => 'health-records', 'label' => 'Health Records', 'icon' => 'fas fa-notes-medical',         'count' => isset($specificData['health_records'])   ? $specificData['health_records']->count()   : 0]],
-                'education'      => [['id' => 'scholars',       'label' => 'Scholars',       'icon' => 'fas fa-graduation-cap',        'count' => isset($specificData['scholars'])         ? $specificData['scholars']->count()         : 0]],
-                'infrastructure' => [['id' => 'projects',       'label' => 'Projects',       'icon' => 'fas fa-hard-hat',              'count' => isset($specificData['projects'])         ? $specificData['projects']->count()         : 0]],
-                'environment'    => [['id' => 'env-programs',   'label' => 'Programs',       'icon' => 'fas fa-leaf',                  'count' => isset($specificData['programs'])         ? $specificData['programs']->count()         : 0]],
-                'livelihood'     => [['id' => 'beneficiaries',  'label' => 'Beneficiaries',  'icon' => 'fas fa-hand-holding-heart',    'count' => isset($specificData['beneficiaries'])    ? $specificData['beneficiaries']->count()    : 0]],
-                'transport'      => [['id' => 'toda',           'label' => 'TODA Registry',  'icon' => 'fas fa-bus',                   'count' => isset($specificData['toda'])             ? $specificData['toda']->count()             : 0]],
+                'health'         => [
+                    ['id' => 'health-records', 'label' => 'Health Records', 'icon' => 'fas fa-notes-medical', 'count' => isset($specificData['health_records']) ? $specificData['health_records']->count() : 0],
+                    ['id' => 'clinic-staff',   'label' => 'Clinic Staff',   'icon' => 'fas fa-user-doctor',   'count' => isset($specificData['clinic_staff'])   ? $specificData['clinic_staff']->count()   : 0],
+                ],
+                'education'      => [['id' => 'scholars',    'label' => 'Scholars',       'icon' => 'fas fa-graduation-cap',     'count' => isset($specificData['scholars'])      ? $specificData['scholars']->count()      : 0]],
+                'infrastructure' => [
+                    ['id' => 'projects',   'label' => 'Projects',          'icon' => 'fas fa-hard-hat',          'count' => isset($specificData['projects'])   ? $specificData['projects']->count()   : 0],
+                    ['id' => 'contracts',  'label' => 'Contracts',         'icon' => 'fas fa-file-signature',    'count' => isset($specificData['contracts'])  ? $specificData['contracts']->count()  : 0],
+                    ['id' => 'financials', 'label' => 'Financial Records', 'icon' => 'fas fa-money-bill-wave',   'count' => isset($specificData['financials']) ? $specificData['financials']->count() : 0],
+                ],
+                'environment'    => [
+                    ['id' => 'env-programs', 'label' => 'Programs',        'icon' => 'fas fa-leaf',  'count' => isset($specificData['programs']) ? $specificData['programs']->count() : 0],
+                    ['id' => 'sweepers',     'label' => 'Street Sweepers', 'icon' => 'fas fa-broom', 'count' => isset($specificData['sweepers']) ? $specificData['sweepers']->count() : 0],
+                ],
+                'livelihood'     => [['id' => 'beneficiaries', 'label' => 'Beneficiaries',  'icon' => 'fas fa-hand-holding-heart',   'count' => isset($specificData['beneficiaries'])    ? $specificData['beneficiaries']->count()    : 0]],
+                'transport'      => [['id' => 'toda',           'label' => 'TODA Registry',  'icon' => 'fas fa-bus',                  'count' => isset($specificData['toda'])             ? $specificData['toda']->count()             : 0]],
                 'bdrrm'          => [
-                    ['id' => 'emergency',  'label' => 'Emergency Logs',      'icon' => 'fas fa-exclamation-triangle',  'count' => isset($specificData['emergency_logs'])     ? $specificData['emergency_logs']->count()     : 0],
-                    ['id' => 'evacuation', 'label' => 'Evacuation Centers',  'icon' => 'fas fa-house-chimney-medical', 'count' => isset($specificData['evacuation_centers']) ? $specificData['evacuation_centers']->count() : 0],
+                    ['id' => 'emergency',  'label' => 'Emergency Logs',     'icon' => 'fas fa-exclamation-triangle',  'count' => isset($specificData['emergency_logs'])     ? $specificData['emergency_logs']->count()     : 0],
+                    ['id' => 'evacuation', 'label' => 'Evacuation Centers', 'icon' => 'fas fa-house-chimney-medical', 'count' => isset($specificData['evacuation_centers']) ? $specificData['evacuation_centers']->count() : 0],
                 ],
                 default => [],
             };
@@ -1038,6 +1056,297 @@
             @endforeach
         </div>
         @else<div class="empty-state"><i class="fas fa-house-chimney-medical"></i><p>No evacuation centers yet.</p></div>@endif
+    </div>
+    @endif
+
+
+    {{-- ── TAB: TRAINING & SEMINAR RECORDS (Peace & Order) ─── --}}
+    @if($committee['slug'] === 'peace-order')
+    <div id="tab-training" class="tab-content">
+        <div class="panel-hd">
+            <span class="panel-hd-title"><i class="fas fa-chalkboard-user"></i> Training & Seminar Records</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-training', this)" data-label="Add Training">
+                <i class="fas fa-plus"></i> Add Training
+            </button>
+        </div>
+        <div id="form-training" class="form-panel">
+            <div class="form-panel-inner">
+                <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Log Training / Seminar</div>
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" enctype="multipart/form-data">
+                    @csrf <input type="hidden" name="specific_type" value="training">
+                    <div class="form-grid-3" style="gap:12px">
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control" placeholder="e.g. Anti-Drug Campaign Seminar" required></div>
+                        <div class="form-group"><label class="form-label">Type <span style="color:var(--crimson)">*</span></label><select name="training_type" class="form-control" required>@foreach(['Training','Seminar','Workshop','Drill','Other'] as $t)<option>{{ $t }}</option>@endforeach</select></div>
+                        <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="training_date" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Duration</label><input type="text" name="duration" class="form-control" placeholder="e.g. 3 days, 8 hours"></div>
+                        <div class="form-group"><label class="form-label">Venue</label><input type="text" name="venue" class="form-control"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Facilitator / Trainer</label><input type="text" name="facilitator" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Participants</label><input type="number" name="participants_count" class="form-control" min="0" value="0"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Notes</label><input type="text" name="notes" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Certificate / Attendance Sheet</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png"></div>
+                    </div>
+                    <div style="margin-top:14px;display:flex;gap:8px">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleForm('form-training', document.querySelector('[onclick*=form-training]'))">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if(isset($specificData['trainings']) && $specificData['trainings']->count())
+        <table>
+            <thead><tr><th>Title</th><th>Type</th><th>Date</th><th>Duration</th><th>Venue</th><th>Facilitator</th><th style="text-align:right">Participants</th><th>File</th></tr></thead>
+            <tbody>
+                @foreach($specificData['trainings'] as $tr)
+                <tr>
+                    <td style="font-weight:600">{{ $tr->title }}</td>
+                    <td><span class="badge badge-navy" style="font-size:10px">{{ $tr->training_type }}</span></td>
+                    <td class="td-muted">{{ $tr->training_date->format('M d, Y') }}</td>
+                    <td class="td-muted">{{ $tr->duration ?? '—' }}</td>
+                    <td class="td-muted">{{ $tr->venue ?? '—' }}</td>
+                    <td class="td-muted">{{ $tr->facilitator ?? '—' }}</td>
+                    <td style="text-align:right;font-weight:600;color:var(--navy)">{{ number_format($tr->participants_count) }}</td>
+                    <td>@if($tr->file_path)<a href="{{ asset('storage/'.$tr->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <div class="empty-state"><i class="fas fa-chalkboard-user"></i><p>No training or seminar records yet.</p></div>
+        @endif
+    </div>
+    @endif
+
+    {{-- ── TAB: CLINIC STAFF (Health) ───────────────────────── --}}
+    @if($committee['slug'] === 'health')
+    <div id="tab-clinic-staff" class="tab-content">
+        <div class="panel-hd">
+            <span class="panel-hd-title"><i class="fas fa-user-doctor"></i> Clinic Doctors & Staff</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-clinic-staff', this)" data-label="Add Staff">
+                <i class="fas fa-plus"></i> Add Staff
+            </button>
+        </div>
+        <div id="form-clinic-staff" class="form-panel">
+            <div class="form-panel-inner">
+                <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Clinic Doctor / Staff</div>
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                    @csrf <input type="hidden" name="specific_type" value="clinic-staff">
+                    <div class="form-grid-3" style="gap:12px">
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Position <span style="color:var(--crimson)">*</span></label><select name="position" class="form-control" required>@foreach(['Doctor','Nurse','Midwife','BHW','Dentist','Other'] as $p)<option>{{ $p }}</option>@endforeach</select></div>
+                        <div class="form-group"><label class="form-label">Specialization</label><input type="text" name="specialization" class="form-control" placeholder="e.g. Pediatrics"></div>
+                        <div class="form-group"><label class="form-label">Affiliation</label><input type="text" name="affiliation" class="form-control" placeholder="e.g. DOH, RHU, Private"></div>
+                        <div class="form-group"><label class="form-label">Contact Number</label><input type="text" name="contact_number" class="form-control"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Schedule</label><input type="text" name="schedule" class="form-control" placeholder="e.g. Mon–Fri 8am–5pm"></div>
+                        <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-control">@foreach(['Active','Inactive','On Leave'] as $s)<option>{{ $s }}</option>@endforeach</select></div>
+                    </div>
+                    <div style="margin-top:14px;display:flex;gap:8px">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleForm('form-clinic-staff', document.querySelector('[onclick*=form-clinic-staff]'))">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if(isset($specificData['clinic_staff']) && $specificData['clinic_staff']->count())
+        <table>
+            <thead><tr><th>Name</th><th>Position</th><th>Specialization</th><th>Affiliation</th><th>Contact</th><th>Schedule</th><th>Status</th></tr></thead>
+            <tbody>
+                @foreach($specificData['clinic_staff'] as $cs)
+                <tr>
+                    <td style="font-weight:600">{{ $cs->full_name }}</td>
+                    <td><span class="badge badge-blue" style="font-size:10px">{{ $cs->position }}</span></td>
+                    <td class="td-muted">{{ $cs->specialization ?? '—' }}</td>
+                    <td class="td-muted">{{ $cs->affiliation ?? '—' }}</td>
+                    <td class="td-muted">{{ $cs->contact_number ?? '—' }}</td>
+                    <td class="td-muted">{{ $cs->schedule ?? '—' }}</td>
+                    <td><span class="badge {{ $cs->status === 'Active' ? 'badge-green' : ($cs->status === 'On Leave' ? 'badge-yellow' : 'badge-gray') }}">{{ $cs->status }}</span></td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <div class="empty-state"><i class="fas fa-user-doctor"></i><p>No clinic doctors or staff listed yet.</p></div>
+        @endif
+    </div>
+    @endif
+
+    {{-- ── TAB: STREET SWEEPERS (Environment) ──────────────── --}}
+    @if($committee['slug'] === 'environment')
+    <div id="tab-sweepers" class="tab-content">
+        <div class="panel-hd">
+            <span class="panel-hd-title"><i class="fas fa-broom"></i> Street Sweeper Registry</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-sweepers', this)" data-label="Add Sweeper">
+                <i class="fas fa-plus"></i> Add Sweeper
+            </button>
+        </div>
+        <div id="form-sweepers" class="form-panel">
+            <div class="form-panel-inner">
+                <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Street Sweeper</div>
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                    @csrf <input type="hidden" name="specific_type" value="sweeper">
+                    <div class="form-grid-3" style="gap:12px">
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-control">@foreach(['Active','Inactive','On Leave'] as $s)<option>{{ $s }}</option>@endforeach</select></div>
+                        <div class="form-group"><label class="form-label">Assigned Zone / Area</label><input type="text" name="assigned_zone" class="form-control" placeholder="e.g. Purok 3 — Main Road"></div>
+                        <div class="form-group"><label class="form-label">Contact Number</label><input type="text" name="contact_number" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Date Assigned</label><input type="date" name="date_assigned" class="form-control"></div>
+                        <div class="form-group" style="grid-column:span 3"><label class="form-label">Schedule</label><input type="text" name="schedule" class="form-control" placeholder="e.g. Mon–Sat 6am–10am"></div>
+                    </div>
+                    <div style="margin-top:14px;display:flex;gap:8px">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleForm('form-sweepers', document.querySelector('[onclick*=form-sweepers]'))">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if(isset($specificData['sweepers']) && $specificData['sweepers']->count())
+        <table>
+            <thead><tr><th>Name</th><th>Assigned Zone</th><th>Schedule</th><th>Contact</th><th>Date Assigned</th><th>Status</th></tr></thead>
+            <tbody>
+                @foreach($specificData['sweepers'] as $sw)
+                <tr>
+                    <td style="font-weight:600">{{ $sw->full_name }}</td>
+                    <td class="td-muted">{{ $sw->assigned_zone ?? '—' }}</td>
+                    <td class="td-muted">{{ $sw->schedule ?? '—' }}</td>
+                    <td class="td-muted">{{ $sw->contact_number ?? '—' }}</td>
+                    <td class="td-muted">{{ $sw->date_assigned?->format('M d, Y') ?? '—' }}</td>
+                    <td><span class="badge {{ $sw->status === 'Active' ? 'badge-green' : ($sw->status === 'On Leave' ? 'badge-yellow' : 'badge-gray') }}">{{ $sw->status }}</span></td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <div class="empty-state"><i class="fas fa-broom"></i><p>No street sweepers registered yet.</p></div>
+        @endif
+    </div>
+    @endif
+
+    {{-- ── TAB: CONTRACTS (Infrastructure) ─────────────────── --}}
+    @if($committee['slug'] === 'infrastructure')
+    <div id="tab-contracts" class="tab-content">
+        <div class="panel-hd">
+            <span class="panel-hd-title"><i class="fas fa-file-signature"></i> Permits & Contracts</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-contracts', this)" data-label="Add Contract">
+                <i class="fas fa-plus"></i> Add Contract
+            </button>
+        </div>
+        <div id="form-contracts" class="form-panel">
+            <div class="form-panel-inner">
+                <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Permit / Contract</div>
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" enctype="multipart/form-data">
+                    @csrf <input type="hidden" name="specific_type" value="contract">
+                    <div class="form-grid-3" style="gap:12px">
+                        <div class="form-group"><label class="form-label">Contract Number</label><input type="text" name="contract_number" class="form-control" placeholder="e.g. BNE-2026-001"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Contractor / Supplier Name <span style="color:var(--crimson)">*</span></label><input type="text" name="contractor_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 3"><label class="form-label">Scope of Work</label><input type="text" name="scope_of_work" class="form-control" placeholder="Brief description of the contract"></div>
+                        <div class="form-group"><label class="form-label">Contract Amount (₱)</label><input type="number" name="contract_amount" class="form-control" min="0" step="0.01"></div>
+                        <div class="form-group"><label class="form-label">Start Date</label><input type="date" name="start_date" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">End Date</label><input type="date" name="end_date" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Status <span style="color:var(--crimson)">*</span></label><select name="status" class="form-control" required>@foreach(['Pending','Active','Completed','Terminated'] as $s)<option>{{ $s }}</option>@endforeach</select></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Contract Document</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png"></div>
+                    </div>
+                    <div style="margin-top:14px;display:flex;gap:8px">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleForm('form-contracts', document.querySelector('[onclick*=form-contracts]'))">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if(isset($specificData['contracts']) && $specificData['contracts']->count())
+        <table>
+            <thead><tr><th>Contract No.</th><th>Contractor</th><th>Scope</th><th>Amount</th><th>Duration</th><th>Status</th><th>File</th></tr></thead>
+            <tbody>
+                @foreach($specificData['contracts'] as $ct)
+                <tr>
+                    <td class="td-mono">{{ $ct->contract_number ?? '—' }}</td>
+                    <td style="font-weight:600">{{ $ct->contractor_name }}</td>
+                    <td class="td-muted" style="max-width:200px;white-space:normal">{{ $ct->scope_of_work ?? '—' }}</td>
+                    <td style="font-weight:600;color:var(--navy)">{{ $ct->contract_amount ? '₱'.number_format($ct->contract_amount, 2) : '—' }}</td>
+                    <td class="td-muted">
+                        @if($ct->start_date && $ct->end_date) {{ $ct->start_date->format('M d') }} – {{ $ct->end_date->format('M d, Y') }}
+                        @elseif($ct->start_date) From {{ $ct->start_date->format('M d, Y') }}
+                        @else —
+                        @endif
+                    </td>
+                    <td><span class="badge {{ match($ct->status) { 'Active'=>'badge-green','Completed'=>'badge-blue','Terminated'=>'badge-red',default=>'badge-yellow' } }}">{{ $ct->status }}</span></td>
+                    <td>@if($ct->file_path)<a href="{{ asset('storage/'.$ct->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <div class="empty-state"><i class="fas fa-file-signature"></i><p>No contracts or permits recorded yet.</p></div>
+        @endif
+    </div>
+
+    {{-- ── TAB: FINANCIAL RECORDS (Infrastructure) ──────────── --}}
+    <div id="tab-financials" class="tab-content">
+        <div class="panel-hd">
+            <span class="panel-hd-title"><i class="fas fa-money-bill-wave"></i> Financial Records</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-financials', this)" data-label="Add Record">
+                <i class="fas fa-plus"></i> Add Record
+            </button>
+        </div>
+        <div id="form-financials" class="form-panel">
+            <div class="form-panel-inner">
+                <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Financial Record</div>
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" enctype="multipart/form-data">
+                    @csrf <input type="hidden" name="specific_type" value="financial">
+                    <div class="form-grid-3" style="gap:12px">
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title / Description <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control" required placeholder="e.g. Road Repair Fund Utilization Q1"></div>
+                        <div class="form-group"><label class="form-label">Type <span style="color:var(--crimson)">*</span></label><select name="type" class="form-control" required>@foreach(['Budget','Utilization','Liquidation'] as $t)<option>{{ $t }}</option>@endforeach</select></div>
+                        <div class="form-group"><label class="form-label">Amount (₱) <span style="color:var(--crimson)">*</span></label><input type="number" name="amount" class="form-control" min="0" step="0.01" required></div>
+                        <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="date" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Fund Source</label><input type="text" name="fund_source" class="form-control" placeholder="e.g. LDRRMF, GAA, Barangay Fund"></div>
+                        <div class="form-group"><label class="form-label">Reference No.</label><input type="text" name="reference_number" class="form-control" placeholder="e.g. DV-2026-001"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Remarks</label><input type="text" name="remarks" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Supporting Document</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png"></div>
+                    </div>
+                    <div style="margin-top:14px;display:flex;gap:8px">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleForm('form-financials', document.querySelector('[onclick*=form-financials]'))">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if(isset($specificData['financials']) && $specificData['financials']->count())
+        @php
+            $budgetTotal      = $specificData['financials']->where('type','Budget')->sum('amount');
+            $utilizationTotal = $specificData['financials']->where('type','Utilization')->sum('amount');
+            $liquidationTotal = $specificData['financials']->where('type','Liquidation')->sum('amount');
+        @endphp
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 20px;border-bottom:1px solid var(--border)">
+            <div style="padding:14px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);text-align:center">
+                <div style="font-size:18px;font-weight:700;color:var(--navy)">₱{{ number_format($budgetTotal,2) }}</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:3px">Total Budget</div>
+            </div>
+            <div style="padding:14px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);text-align:center">
+                <div style="font-size:18px;font-weight:700;color:var(--gold)">₱{{ number_format($utilizationTotal,2) }}</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:3px">Total Utilized</div>
+            </div>
+            <div style="padding:14px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);text-align:center">
+                <div style="font-size:18px;font-weight:700;color:#16a34a">₱{{ number_format($liquidationTotal,2) }}</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:3px">Total Liquidated</div>
+            </div>
+        </div>
+        <table>
+            <thead><tr><th>Title</th><th>Type</th><th>Fund Source</th><th style="text-align:right">Amount</th><th>Date</th><th>Ref No.</th><th>File</th></tr></thead>
+            <tbody>
+                @foreach($specificData['financials'] as $fin)
+                <tr>
+                    <td style="font-weight:600">{{ $fin->title }}</td>
+                    <td><span class="badge {{ match($fin->type) { 'Budget'=>'badge-navy','Utilization'=>'badge-yellow','Liquidation'=>'badge-green' } }}" style="font-size:10px">{{ $fin->type }}</span></td>
+                    <td class="td-muted">{{ $fin->fund_source ?? '—' }}</td>
+                    <td style="text-align:right;font-weight:700;color:var(--navy)">₱{{ number_format($fin->amount, 2) }}</td>
+                    <td class="td-muted">{{ $fin->date->format('M d, Y') }}</td>
+                    <td class="td-mono">{{ $fin->reference_number ?? '—' }}</td>
+                    <td>@if($fin->file_path)<a href="{{ asset('storage/'.$fin->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <div class="empty-state"><i class="fas fa-money-bill-wave"></i><p>No financial records yet.</p></div>
+        @endif
     </div>
     @endif
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BpsoMember;
+use App\Models\ClinicStaff;
 use App\Models\CommitteeActivity;
 use App\Models\CommitteeAttendance;
 use App\Models\CommitteeInventory;
@@ -11,10 +12,14 @@ use App\Models\EmergencyLog;
 use App\Models\EnvironmentProgram;
 use App\Models\EvacuationCenter;
 use App\Models\HealthRecord;
+use App\Models\InfraContract;
+use App\Models\InfraFinancial;
 use App\Models\InfraProject;
 use App\Models\LivelihoodBeneficiary;
 use App\Models\PatrolLog;
 use App\Models\Scholar;
+use App\Models\StreetSweeper;
+use App\Models\TanodTraining;
 use App\Models\TodaVehicle;
 use Illuminate\Http\Request;
 
@@ -111,20 +116,25 @@ class CommitteeController extends Controller
     {
         return match ($slug) {
             'peace-order' => [
-                'bpso' => BpsoMember::orderBy('full_name')->get(),
+                'bpso'      => BpsoMember::orderBy('full_name')->get(),
                 'patrol_logs' => PatrolLog::latest('patrol_date')->get(),
+                'trainings' => TanodTraining::latest('training_date')->get(),
             ],
             'health' => [
                 'health_records' => HealthRecord::latest('visit_date')->get(),
+                'clinic_staff'   => ClinicStaff::orderBy('full_name')->get(),
             ],
             'education' => [
                 'scholars' => Scholar::orderBy('full_name')->get(),
             ],
             'infrastructure' => [
-                'projects' => InfraProject::latest()->get(),
+                'projects'   => InfraProject::latest()->get(),
+                'contracts'  => InfraContract::latest()->get(),
+                'financials' => InfraFinancial::latest('date')->get(),
             ],
             'environment' => [
-                'programs' => EnvironmentProgram::latest('program_date')->get(),
+                'programs'  => EnvironmentProgram::latest('program_date')->get(),
+                'sweepers'  => StreetSweeper::orderBy('full_name')->get(),
             ],
             'livelihood' => [
                 'beneficiaries' => LivelihoodBeneficiary::orderBy('full_name')->get(),
@@ -133,7 +143,7 @@ class CommitteeController extends Controller
                 'toda' => TodaVehicle::orderBy('operator_name')->get(),
             ],
             'bdrrm' => [
-                'emergency_logs' => EmergencyLog::latest('incident_date')->get(),
+                'emergency_logs'    => EmergencyLog::latest('incident_date')->get(),
                 'evacuation_centers' => EvacuationCenter::orderBy('center_name')->get(),
             ],
             default => [],
@@ -229,40 +239,70 @@ class CommitteeController extends Controller
             case 'peace-order':
                 if ($type === 'bpso') {
                     $v = $request->validate([
-                        'full_name' => 'required|string|max:255',
-                        'rank' => 'nullable|string|max:100',
-                        'badge_number' => 'nullable|string|max:50',
+                        'full_name'      => 'required|string|max:255',
+                        'rank'           => 'nullable|string|max:100',
+                        'badge_number'   => 'nullable|string|max:50',
                         'contact_number' => 'nullable|string|max:20',
-                        'assignment' => 'nullable|string|max:255',
-                        'status' => 'required|in:Active,Inactive,On Leave',
+                        'assignment'     => 'nullable|string|max:255',
+                        'status'         => 'required|in:Active,Inactive,On Leave',
                     ]);
                     BpsoMember::create($v);
+                } elseif ($type === 'training') {
+                    $v = $request->validate([
+                        'title'              => 'required|string|max:255',
+                        'training_type'      => 'required|in:Training,Seminar,Workshop,Drill,Other',
+                        'training_date'      => 'required|date',
+                        'duration'           => 'nullable|string|max:100',
+                        'venue'              => 'nullable|string|max:255',
+                        'facilitator'        => 'nullable|string|max:255',
+                        'participants_count' => 'nullable|integer|min:0',
+                        'notes'              => 'nullable|string',
+                        'file'               => 'nullable|file|max:10240',
+                    ]);
+                    if ($request->hasFile('file')) {
+                        $v['file_path'] = $request->file('file')->store('committees/peace-order/trainings', 'public');
+                    }
+                    unset($v['file']);
+                    TanodTraining::create($v);
                 } else {
                     $v = $request->validate([
-                        'patrol_date' => 'required|date',
-                        'shift' => 'nullable|string|max:50',
-                        'area_covered' => 'required|string|max:255',
+                        'patrol_date'     => 'required|date',
+                        'shift'           => 'nullable|string|max:50',
+                        'area_covered'    => 'required|string|max:255',
                         'personnel_count' => 'nullable|integer|min:0',
-                        'findings' => 'nullable|string',
-                        'reported_by' => 'nullable|string|max:255',
+                        'findings'        => 'nullable|string',
+                        'reported_by'     => 'nullable|string|max:255',
                     ]);
                     PatrolLog::create($v);
                 }
                 break;
 
             case 'health':
-                $v = $request->validate([
-                    'patient_name' => 'required|string|max:255',
-                    'age' => 'nullable|integer|min:0',
-                    'gender' => 'nullable|string|max:10',
-                    'address' => 'nullable|string|max:255',
-                    'diagnosis' => 'nullable|string|max:255',
-                    'program' => 'nullable|string|max:100',
-                    'visit_date' => 'required|date',
-                    'attended_by' => 'nullable|string|max:255',
-                    'notes' => 'nullable|string',
-                ]);
-                HealthRecord::create($v);
+                if ($type === 'clinic-staff') {
+                    $v = $request->validate([
+                        'full_name'      => 'required|string|max:255',
+                        'position'       => 'required|in:Doctor,Nurse,Midwife,BHW,Dentist,Other',
+                        'specialization' => 'nullable|string|max:100',
+                        'affiliation'    => 'nullable|string|max:255',
+                        'contact_number' => 'nullable|string|max:20',
+                        'schedule'       => 'nullable|string|max:255',
+                        'status'         => 'required|in:Active,Inactive,On Leave',
+                    ]);
+                    ClinicStaff::create($v);
+                } else {
+                    $v = $request->validate([
+                        'patient_name' => 'required|string|max:255',
+                        'age'          => 'nullable|integer|min:0',
+                        'gender'       => 'nullable|string|max:10',
+                        'address'      => 'nullable|string|max:255',
+                        'diagnosis'    => 'nullable|string|max:255',
+                        'program'      => 'nullable|string|max:100',
+                        'visit_date'   => 'required|date',
+                        'attended_by'  => 'nullable|string|max:255',
+                        'notes'        => 'nullable|string',
+                    ]);
+                    HealthRecord::create($v);
+                }
                 break;
 
             case 'education':
@@ -280,34 +320,80 @@ class CommitteeController extends Controller
                 break;
 
             case 'infrastructure':
-                $v = $request->validate([
-                    'project_name' => 'required|string|max:255',
-                    'project_type' => 'nullable|string|max:100',
-                    'location' => 'nullable|string|max:255',
-                    'budget' => 'nullable|numeric|min:0',
-                    'actual_cost' => 'nullable|numeric|min:0',
-                    'start_date' => 'nullable|date',
-                    'end_date' => 'nullable|date',
-                    'completion_percentage' => 'nullable|integer|min:0|max:100',
-                    'status' => 'required|in:Planned,Ongoing,Completed,On Hold,Cancelled',
-                    'remarks' => 'nullable|string',
-                ]);
-                InfraProject::create($v);
+                if ($type === 'contract') {
+                    $v = $request->validate([
+                        'contract_number'  => 'nullable|string|max:100',
+                        'contractor_name'  => 'required|string|max:255',
+                        'scope_of_work'    => 'nullable|string',
+                        'contract_amount'  => 'nullable|numeric|min:0',
+                        'start_date'       => 'nullable|date',
+                        'end_date'         => 'nullable|date',
+                        'status'           => 'required|in:Pending,Active,Completed,Terminated',
+                        'file'             => 'nullable|file|max:10240',
+                    ]);
+                    if ($request->hasFile('file')) {
+                        $v['file_path'] = $request->file('file')->store('committees/infrastructure/contracts', 'public');
+                    }
+                    unset($v['file']);
+                    InfraContract::create($v);
+                } elseif ($type === 'financial') {
+                    $v = $request->validate([
+                        'title'            => 'required|string|max:255',
+                        'type'             => 'required|in:Budget,Utilization,Liquidation',
+                        'fund_source'      => 'nullable|string|max:255',
+                        'amount'           => 'required|numeric|min:0',
+                        'date'             => 'required|date',
+                        'reference_number' => 'nullable|string|max:100',
+                        'remarks'          => 'nullable|string',
+                        'file'             => 'nullable|file|max:10240',
+                    ]);
+                    if ($request->hasFile('file')) {
+                        $v['file_path'] = $request->file('file')->store('committees/infrastructure/financials', 'public');
+                    }
+                    unset($v['file']);
+                    InfraFinancial::create($v);
+                } else {
+                    $v = $request->validate([
+                        'project_name'          => 'required|string|max:255',
+                        'project_type'          => 'nullable|string|max:100',
+                        'location'              => 'nullable|string|max:255',
+                        'budget'                => 'nullable|numeric|min:0',
+                        'actual_cost'           => 'nullable|numeric|min:0',
+                        'start_date'            => 'nullable|date',
+                        'end_date'              => 'nullable|date',
+                        'completion_percentage' => 'nullable|integer|min:0|max:100',
+                        'status'                => 'required|in:Planned,Ongoing,Completed,On Hold,Cancelled',
+                        'remarks'               => 'nullable|string',
+                    ]);
+                    InfraProject::create($v);
+                }
                 break;
 
             case 'environment':
-                $v = $request->validate([
-                    'program_name' => 'required|string|max:255',
-                    'program_type' => 'nullable|string|max:100',
-                    'program_date' => 'required|date',
-                    'location' => 'nullable|string|max:255',
-                    'volunteers' => 'nullable|integer|min:0',
-                    'trees_planted' => 'nullable|integer|min:0',
-                    'waste_collected_kg' => 'nullable|numeric|min:0',
-                    'status' => 'required|in:Planned,Completed,Cancelled',
-                    'notes' => 'nullable|string',
-                ]);
-                EnvironmentProgram::create($v);
+                if ($type === 'sweeper') {
+                    $v = $request->validate([
+                        'full_name'      => 'required|string|max:255',
+                        'assigned_zone'  => 'nullable|string|max:255',
+                        'contact_number' => 'nullable|string|max:20',
+                        'schedule'       => 'nullable|string|max:255',
+                        'date_assigned'  => 'nullable|date',
+                        'status'         => 'required|in:Active,Inactive,On Leave',
+                    ]);
+                    StreetSweeper::create($v);
+                } else {
+                    $v = $request->validate([
+                        'program_name'       => 'required|string|max:255',
+                        'program_type'       => 'nullable|string|max:100',
+                        'program_date'       => 'required|date',
+                        'location'           => 'nullable|string|max:255',
+                        'volunteers'         => 'nullable|integer|min:0',
+                        'trees_planted'      => 'nullable|integer|min:0',
+                        'waste_collected_kg' => 'nullable|numeric|min:0',
+                        'status'             => 'required|in:Planned,Completed,Cancelled',
+                        'notes'              => 'nullable|string',
+                    ]);
+                    EnvironmentProgram::create($v);
+                }
                 break;
 
             case 'livelihood':
