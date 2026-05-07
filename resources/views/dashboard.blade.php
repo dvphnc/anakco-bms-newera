@@ -524,10 +524,6 @@
         </div>
 
         {{-- Summary strip --}}
-        @php
-            use App\Models\DocumentAppointment;
-            $aptCounts = DocumentAppointment::selectRaw('status, count(*) as cnt')->groupBy('status')->pluck('cnt','status');
-        @endphp
         <div style="display:flex;gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
             @foreach(['Pending','Confirmed','Processing','Ready','Released','Cancelled'] as $st)
             <div style="flex:1;padding:10px;text-align:center;background:var(--surface2)">
