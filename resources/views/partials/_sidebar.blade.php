@@ -79,6 +79,12 @@
             <i class="fas fa-store"></i>
             <span>Business Permits</span>
         </a>
+
+        <a href="{{ route('appointments.index') }}"
+           class="nav-item {{ request()->routeIs('appointments.*') ? 'active' : '' }}">
+            <i class="fas fa-calendar-check"></i>
+            <span>Appointments</span>
+        </a>
         @endif
 
         {{-- Committees — all roles --}}

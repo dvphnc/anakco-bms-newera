@@ -187,6 +187,7 @@
                 ['id' => 'accomplishments', 'label' => 'Accomplishments', 'icon' => 'fas fa-trophy',        'count' => $accomplishments->count()],
                 ['id' => 'attendance',      'label' => 'Attendance',      'icon' => 'fas fa-users',         'count' => $attendances->count()],
                 ['id' => 'inventory',       'label' => 'Inventory',       'icon' => 'fas fa-boxes-stacked', 'count' => $inventory->count()],
+                ['id' => 'partnerships',    'label' => 'Partnerships',    'icon' => 'fas fa-handshake',     'count' => $partnerships->count()],
             ];
             $specificTabs = match($committee['slug']) {
                 'peace-order'    => [
