@@ -1989,15 +1989,104 @@ document.addEventListener('DOMContentLoaded', function () {
     if (hash && document.getElementById('tab-' + hash)) switchTab(hash);
 });
 
-function openStockModal(medId, medName) {
+// ── Medicine inventory JS ────────────────────────────────────
+function openStockModal(medId, medName, currentStock) {
     const baseSlug = '{{ $committee['slug'] }}';
     document.getElementById('stockAdjustForm').action = '/committees/' + baseSlug + '/medicine/' + medId + '/adjust';
-    document.getElementById('stockMedicineName').textContent = 'Medicine: ' + medName;
-    const modal = document.getElementById('stockAdjustModal');
-    modal.style.display = 'flex';
+    document.getElementById('stockMedicineName').innerHTML =
+        '<strong style="color:var(--navy)">' + medName + '</strong>' +
+        '&nbsp;<span style="color:#9ca3af">|</span>&nbsp;' +
+        'Current stock: <strong>' + currentStock + '</strong>';
+    document.getElementById('stockAdjustModal').style.display = 'flex';
 }
 document.getElementById('stockAdjustModal')?.addEventListener('click', function(e) {
     if (e.target === this) this.style.display = 'none';
 });
+
+function openMedDetails(medId) {
+    const med = (typeof __medicineData !== 'undefined') ? __medicineData[medId] : null;
+    if (!med) return;
+
+    document.getElementById('md-title').textContent      = med.medicine_name || '—';
+    document.getElementById('md-subtitle').textContent   = med.brand_name ? ('Brand: ' + med.brand_name) : (med.category || '');
+    document.getElementById('md-medicine-name').textContent = med.medicine_name || '—';
+    document.getElementById('md-brand-name').textContent    = med.brand_name   || '—';
+    document.getElementById('md-category').textContent      = med.category     || '—';
+    document.getElementById('md-dosage-form').textContent   = med.dosage_form  || '—';
+    document.getElementById('md-unit').textContent          = med.unit         || '—';
+    document.getElementById('md-barcode').textContent       = med.barcode      || '—';
+    document.getElementById('md-supplier').textContent      = med.supplier     || '—';
+    document.getElementById('md-batch-number').textContent  = med.batch_number || '—';
+    document.getElementById('md-reorder-level').textContent = med.reorder_level;
+
+    const stockEl = document.getElementById('md-current-stock');
+    stockEl.textContent = med.current_stock + ' ' + (med.unit || '');
+    stockEl.style.color = med.current_stock <= med.reorder_level ? 'var(--crimson)' : 'var(--navy)';
+
+    const expiryEl = document.getElementById('md-expiry-date');
+    expiryEl.textContent = med.expiry_date || '—';
+
+    // Populate logs
+    const tbody = document.getElementById('md-logs-tbody');
+    tbody.innerHTML = '';
+    const logs = med.logs || [];
+    if (logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:20px;font-size:.8rem">No transactions recorded yet.</td></tr>';
+    } else {
+        logs.forEach(function(log) {
+            const typeMap = { in: '📦 Stock In', out: '💊 Dispensed', disposed: '🗑️ Disposed' };
+            const clsMap  = { in: 'log-in', out: 'log-out', disposed: 'log-disposed' };
+            const note = [log.reason, log.by ? ('by ' + log.by) : ''].filter(Boolean).join(' · ');
+            tbody.innerHTML += '<tr>' +
+                '<td style="font-size:.75rem;color:#6b7280;white-space:nowrap">' + (log.date || '') + '</td>' +
+                '<td class="' + (clsMap[log.type] || '') + '" style="font-size:.78rem">' + (typeMap[log.type] || log.type) + '</td>' +
+                '<td style="text-align:right;font-size:.82rem;font-weight:700">' + log.qty + '</td>' +
+                '<td style="text-align:right;font-size:.78rem;color:#6b7280">' + log.before + '</td>' +
+                '<td style="text-align:right;font-size:.82rem;font-weight:700;color:var(--navy)">' + log.after + '</td>' +
+                '<td style="font-size:.74rem;color:#6b7280">' + (note || '—') + '</td>' +
+                '</tr>';
+        });
+    }
+
+    document.getElementById('medDetailsModal').classList.add('open');
+}
+function closeMedDetails() {
+    document.getElementById('medDetailsModal').classList.remove('open');
+}
+document.getElementById('medDetailsModal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeMedDetails();
+});
+
+// Live search + filter for medicine table
+function filterMeds() {
+    const q       = (document.getElementById('medSearch')?.value || '').toLowerCase();
+    const cat     = (document.getElementById('medCatFilter')?.value || '').toLowerCase();
+    const status  = (document.getElementById('medStatusFilter')?.value || '');
+    const rows    = document.querySelectorAll('#medTable .med-row');
+    let visible   = 0;
+
+    rows.forEach(function(row) {
+        const generic   = row.dataset.generic  || '';
+        const brand     = row.dataset.brand    || '';
+        const rowCat    = (row.dataset.category || '').toLowerCase();
+        const isLow     = row.dataset.low     === '1';
+        const isExpired = row.dataset.expired  === '1';
+        const isExpiring= row.dataset.expiring === '1';
+
+        const matchQ   = !q   || generic.includes(q) || brand.includes(q);
+        const matchCat = !cat || rowCat === cat;
+        const matchSt  = !status
+            || (status === 'low'      && isLow)
+            || (status === 'expired'  && isExpired)
+            || (status === 'expiring' && isExpiring);
+
+        const show = matchQ && matchCat && matchSt;
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+
+    const countEl = document.getElementById('medCount');
+    if (countEl) countEl.textContent = 'Showing ' + visible + ' of ' + rows.length;
+}
 </script>
 @endpush
