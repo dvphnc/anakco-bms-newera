@@ -66,10 +66,15 @@ class DashboardController extends Controller
         // Recent records
         $recentResidents = Resident::with('purok')->latest()->limit(5)->get();
         $recentDocuments = Document::with('resident')->latest()->limit(5)->get();
-        $recentBlotter = BlotterCase::latest()->limit(5)->get();
+        $recentBlotter   = BlotterCase::latest()->limit(5)->get();
 
         // Activity feed
         $recentActivity = ActivityLog::with('user')->latest()->limit(10)->get();
+
+        // Appointments
+        $recentAppointments = DocumentAppointment::orderByRaw("FIELD(status,'Pending','Confirmed','Processing','Ready','Released','Cancelled')")
+            ->orderBy('preferred_date')
+            ->limit(8)->get();
 
         return view('dashboard', compact(
             'totalResidents', 'totalActive', 'totalDeceased', 'totalTransferred',
@@ -78,7 +83,7 @@ class DashboardController extends Controller
             'totalBusinesses', 'activeBusinesses', 'expiredBusinesses',
             'pendingDocuments', 'releasedDocuments', 'totalDocuments',
             'activeBlotter', 'settledBlotter', 'totalBlotter',
-            'pendingAppointments',
+            'pendingAppointments', 'recentAppointments',
             'monthlyData', 'ageGroups', 'residentsByPurok',
             'documentsByType', 'blotterByType',
             'recentResidents', 'recentDocuments', 'recentBlotter',
