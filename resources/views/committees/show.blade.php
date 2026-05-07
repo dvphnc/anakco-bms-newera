@@ -342,7 +342,8 @@
 
     {{-- Tab Strip --}}
     <div class="tab-strip-wrap">
-    <div class="tab-strip">
+    <button class="tab-scroll-btn left" id="tabScrollLeft" onclick="tabScroll(-1)" title="Scroll left"><i class="fas fa-chevron-left"></i></button>
+    <div class="tab-strip" id="tabStrip">
         @php
             $tabs = [
                 ['id' => 'records',         'label' => 'Records',         'icon' => 'fas fa-folder-open',   'count' => $photos->count() + $reports->count() + $resolutions->count() + $otherRecords->count()],
@@ -394,6 +395,7 @@
         </button>
         @endforeach
     </div>
+    <button class="tab-scroll-btn right" id="tabScrollRight" onclick="tabScroll(1)" title="Scroll right"><i class="fas fa-chevron-right"></i></button>
     </div>{{-- end tab-strip-wrap --}}
 
     {{-- ── TAB: RECORDS ─────────────────────────────────────── --}}
