@@ -1743,30 +1743,40 @@
         </div>
 
         {{-- Embed medicine data for JS details modal --}}
+        @php
+        $medRegistry = [];
+        foreach ($meds as $m) {
+            $logs = [];
+            foreach ($m->stockLogs as $l) {
+                $logs[] = [
+                    'type'   => $l->adjustment_type,
+                    'qty'    => $l->quantity,
+                    'before' => $l->stock_before,
+                    'after'  => $l->stock_after,
+                    'reason' => $l->reason,
+                    'by'     => $l->performed_by,
+                    'date'   => $l->created_at->format('M d, Y h:i A'),
+                ];
+            }
+            $medRegistry[$m->id] = [
+                'medicine_name' => $m->medicine_name,
+                'brand_name'    => $m->brand_name,
+                'generic_name'  => $m->generic_name,
+                'category'      => $m->category,
+                'dosage_form'   => $m->dosage_form,
+                'unit'          => $m->unit,
+                'barcode'       => $m->barcode,
+                'current_stock' => $m->current_stock,
+                'reorder_level' => $m->reorder_level,
+                'expiry_date'   => $m->expiry_date?->format('M d, Y'),
+                'supplier'      => $m->supplier,
+                'batch_number'  => $m->batch_number,
+                'logs'          => $logs,
+            ];
+        }
+        @endphp
         <script>
-        const __medicineData = @json($meds->keyBy('id')->map(fn($m) => [
-            'medicine_name' => $m->medicine_name,
-            'brand_name'    => $m->brand_name,
-            'generic_name'  => $m->generic_name,
-            'category'      => $m->category,
-            'dosage_form'   => $m->dosage_form,
-            'unit'          => $m->unit,
-            'barcode'       => $m->barcode,
-            'current_stock' => $m->current_stock,
-            'reorder_level' => $m->reorder_level,
-            'expiry_date'   => $m->expiry_date?->format('M d, Y'),
-            'supplier'      => $m->supplier,
-            'batch_number'  => $m->batch_number,
-            'logs'          => $m->stockLogs->map(fn($l) => [
-                'type'   => $l->adjustment_type,
-                'qty'    => $l->quantity,
-                'before' => $l->stock_before,
-                'after'  => $l->stock_after,
-                'reason' => $l->reason,
-                'by'     => $l->performed_by,
-                'date'   => $l->created_at->format('M d, Y h:i A'),
-            ]),
-        ]));
+        const __medicineData = {!! json_encode($medRegistry) !!};
         </script>
 
         @else
