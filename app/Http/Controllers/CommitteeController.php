@@ -237,6 +237,59 @@ class CommitteeController extends Controller
         return back()->with('success', 'Item added.')->withFragment('inventory');
     }
 
+    // -------------------------------------------------------
+    // DELETE helpers
+    // -------------------------------------------------------
+    public function destroyPartnership(string $slug, int $id)
+    {
+        CommitteePartnership::where('committee_slug', $slug)->findOrFail($id)->delete();
+        return back()->with('success', 'Partnership record deleted.')->withFragment('partnerships');
+    }
+
+    public function destroyMedicine(string $slug, int $id)
+    {
+        MedicineInventory::findOrFail($id)->delete();
+        return back()->with('success', 'Medicine record deleted.')->withFragment('medicine-inventory');
+    }
+
+    public function destroyRelief(string $slug, int $id)
+    {
+        ReliefSupply::findOrFail($id)->delete();
+        return back()->with('success', 'Relief supply deleted.')->withFragment('relief-supplies');
+    }
+
+    // -------------------------------------------------------
+    // Medicine stock adjustment
+    // -------------------------------------------------------
+    public function adjustMedicine(Request $request, string $slug, int $id)
+    {
+        $medicine = MedicineInventory::findOrFail($id);
+
+        $v = $request->validate([
+            'adjustment_type' => 'required|in:in,out,disposed',
+            'quantity'        => 'required|integer|min:1',
+            'reason'          => 'nullable|string|max:255',
+        ]);
+
+        $qty = (int) $v['quantity'];
+
+        if ($v['adjustment_type'] === 'in') {
+            $medicine->current_stock += $qty;
+        } else {
+            $medicine->current_stock = max(0, $medicine->current_stock - $qty);
+        }
+
+        $medicine->save();
+
+        $label = match($v['adjustment_type']) {
+            'in'       => "Added {$qty} units",
+            'out'      => "Dispensed {$qty} units",
+            'disposed' => "Disposed {$qty} units",
+        };
+
+        return back()->with('success', "{$label} of {$medicine->medicine_name}.")->withFragment('medicine-inventory');
+    }
+
     // Partnership tab — generic, works for all committees
     public function storePartnership(Request $request, string $slug)
     {

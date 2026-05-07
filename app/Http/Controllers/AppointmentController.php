@@ -60,4 +60,14 @@ class AppointmentController extends Controller
 
         return back()->with('success', "Appointment status updated to {$validated['status']}.");
     }
+
+    public function destroy(DocumentAppointment $appointment)
+    {
+        $num = $appointment->appointment_number;
+        $appointment->delete();
+
+        $this->logActivity('deleted', $appointment);
+
+        return back()->with('success', "Appointment {$num} deleted.");
+    }
 }
