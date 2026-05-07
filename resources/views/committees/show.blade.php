@@ -327,6 +327,7 @@
 <div class="card" style="overflow:hidden">
 
     {{-- Tab Strip --}}
+    <div class="tab-strip-wrap">
     <div class="tab-strip">
         @php
             $tabs = [
