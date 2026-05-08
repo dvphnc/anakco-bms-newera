@@ -17,8 +17,8 @@ class BusinessController extends Controller
     {
         if ($request->ajax()) {
             $query = Business::select('businesses.*')
-                ->when($request->status, fn ($q) => $q->where('status', $request->status))
-                ->when($request->business_type, fn ($q) => $q->where('business_type', $request->business_type))
+                ->when($request->status, fn ($q) => $q->whereIn('status', (array) $request->status))
+                ->when($request->business_type, fn ($q) => $q->whereIn('business_type', (array) $request->business_type))
                 ->when($request->expiry_filter, function ($q) use ($request) {
                     if ($request->expiry_filter === 'expired') {
                         $q->where('expiry_date', '<', now())->where('status', 'Active');

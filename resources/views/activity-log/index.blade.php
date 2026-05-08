@@ -34,10 +34,10 @@ $routeMap = [
 {{-- Charts Toggle --}}
 <div style="margin-bottom:16px">
     <button onclick="toggleCharts()" id="charts-toggle-btn"
-            style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 16px;font-size:12.5px;font-weight:600;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:8px;font-family:'Poppins',sans-serif;transition:all 0.15s">
+            style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 18px;min-height:44px;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:8px;font-family:'Poppins',sans-serif;transition:all 0.15s">
         <i class="fas fa-chart-line" style="color:var(--gold)"></i>
         <span id="charts-toggle-label">Show Charts</span>
-        <i class="fas fa-chevron-down" id="charts-chevron" style="font-size:11px;transition:transform 0.2s"></i>
+        <i class="fas fa-chevron-down" id="charts-chevron" style="font-size:12px;transition:transform 0.2s"></i>
     </button>
 </div>
 
@@ -90,6 +90,27 @@ $routeMap = [
     </div>
     <div class="card-body">
         <canvas id="monthlyChart" height="80"></canvas>
+        @php
+            $monthlyArr = collect($monthlyData ?? []);
+            $peakMonth  = $monthlyArr->sortByDesc('total')->first();
+            $latestMonth= $monthlyArr->last();
+            $prevMonth  = $monthlyArr->count() > 1 ? $monthlyArr->reverse()->skip(1)->first() : null;
+        @endphp
+        @if($peakMonth)
+        <div class="chart-insight" style="margin-top:14px">
+            Peak month: <strong>{{ $peakMonth['label'] ?? '' }} {{ $peakMonth['year'] ?? '' }}</strong> with <strong>{{ number_format($peakMonth['total']) }}</strong> actions.
+            @if($latestMonth && $prevMonth)
+                This month so far: <strong>{{ number_format($latestMonth['total']) }}</strong>
+                @if($latestMonth['total'] > $prevMonth['total'])
+                    — <span style="color:#16a34a"><i class="fas fa-arrow-up"></i> up from {{ $prevMonth['total'] }} last month.</span>
+                @elseif($latestMonth['total'] < $prevMonth['total'])
+                    — <span style="color:var(--crimson)"><i class="fas fa-arrow-down"></i> down from {{ $prevMonth['total'] }} last month.</span>
+                @else
+                    — same as last month.
+                @endif
+            @endif
+        </div>
+        @endif
     </div>
 </div>
 
@@ -97,14 +118,27 @@ $routeMap = [
 <div class="card mb-6">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-chart-bar"></i> Activity This Week</span>
-        <div style="display:flex;gap:14px;font-size:11px;color:var(--text-muted)">
-            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#16a34a;display:inline-block"></span>Created</span>
-            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#f59e0b;display:inline-block"></span>Updated</span>
-            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#ef4444;display:inline-block"></span>Deleted</span>
+        <div style="display:flex;gap:14px;font-size:13px;color:var(--text-muted)">
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#16a34a;display:inline-block"></span>Created</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#f59e0b;display:inline-block"></span>Updated</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#ef4444;display:inline-block"></span>Deleted</span>
         </div>
     </div>
     <div class="card-body">
         <canvas id="weeklyChart" height="80"></canvas>
+        @php
+            $weeklyArr  = collect($weeklyData ?? []);
+            $totalWeek  = $weeklyArr->sum('created') + $weeklyArr->sum('updated') + $weeklyArr->sum('deleted');
+            $createdWk  = $weeklyArr->sum('created');
+            $updatedWk  = $weeklyArr->sum('updated');
+            $deletedWk  = $weeklyArr->sum('deleted');
+        @endphp
+        <div class="chart-insight" style="margin-top:14px">
+            <strong>{{ number_format($totalWeek) }}</strong> total actions this week —
+            <span style="color:#166534"><strong>{{ $createdWk }}</strong> created</span>,
+            <span style="color:#92400e"><strong>{{ $updatedWk }}</strong> updated</span>,
+            <span style="color:#991b1b"><strong>{{ $deletedWk }}</strong> deleted</span>.
+        </div>
     </div>
 </div>
 
@@ -151,17 +185,17 @@ $routeMap = [
 {{-- Module Filter Pills --}}
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="module-pills">
     <a href="{{ route('activity-log.index') }}"
-       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ !request('module') ? 'var(--navy)' : 'var(--border)' }};background:{{ !request('module') ? 'var(--navy)' : 'var(--surface)' }};color:{{ !request('module') ? '#fff' : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
-        <i class="fas fa-clock-rotate-left" style="font-size:11px"></i> All
+       style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:99px;border:1.5px solid {{ !request('module') ? 'var(--navy)' : 'var(--border)' }};background:{{ !request('module') ? 'var(--navy)' : 'var(--surface)' }};color:{{ !request('module') ? '#fff' : 'var(--text-muted)' }};font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s">
+        <i class="fas fa-clock-rotate-left" style="font-size:12px"></i> All
     </a>
     @foreach($moduleMap as $class => $info)
     @php $count = $moduleCounts[$class] ?? 0; @endphp
     @if($count > 0)
     <a href="{{ route('activity-log.index', ['module' => $info['slug']]) }}"
-       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;border:1.5px solid {{ request('module') === $info['slug'] ? $info['color'] : 'var(--border)' }};background:{{ request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)' }};color:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)' }};font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s">
-        <i class="fas {{ $info['icon'] }}" style="font-size:11px"></i>
+       style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:99px;border:1.5px solid {{ request('module') === $info['slug'] ? $info['color'] : 'var(--border)' }};background:{{ request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)' }};color:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)' }};font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s">
+        <i class="fas {{ $info['icon'] }}" style="font-size:12px"></i>
         {{ $info['label'] }}
-        <span style="background:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--surface3)' }};color:{{ request('module') === $info['slug'] ? '#fff' : 'var(--text-muted)' }};border-radius:99px;padding:0 6px;font-size:10px">{{ $count }}</span>
+        <span style="background:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--surface3)' }};color:{{ request('module') === $info['slug'] ? '#fff' : 'var(--text-muted)' }};border-radius:99px;padding:1px 7px;font-size:13px">{{ $count }}</span>
     </a>
     @endif
     @endforeach
@@ -172,7 +206,7 @@ $routeMap = [
 <div class="card" id="activity-feed">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-clock-rotate-left"></i> Activity Feed</span>
-        <span style="font-size:12px;color:var(--text-muted)">{{ $query->total() }} entries · refreshes every 60s</span>
+        <span style="font-size:13px;color:var(--text-muted)">{{ number_format($query->total()) }} entries · refreshes every 60s</span>
     </div>
 
     @forelse($query as $log)
@@ -189,16 +223,16 @@ $routeMap = [
             {{ strtoupper(substr($log->user->name ?? '?', 0, 1)) }}
         </div>
         <div style="flex:1;min-width:0">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
-                <span style="font-size:13.5px;font-weight:600;color:var(--text)">{{ $log->user->name ?? 'Unknown' }}</span>
-                <span class="badge badge-navy" style="font-size:10px">{{ $log->user->role ?? 'Staff' }}</span>
-                <span style="display:inline-flex;align-items:center;padding:1px 8px;border-radius:99px;font-size:10px;font-weight:700;background:{{ $actionBg }};color:{{ $actionColor }}">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:7px">
+                <span style="font-size:14px;font-weight:600;color:var(--text)">{{ $log->user->name ?? 'Unknown' }}</span>
+                <span class="badge badge-navy">{{ $log->user->role ?? 'Staff' }}</span>
+                <span style="display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:13px;font-weight:700;background:{{ $actionBg }};color:{{ $actionColor }}">
                     {{ strtoupper($log->action) }}
                 </span>
-                <span style="font-size:12px;font-weight:600;color:{{ $module['color'] }}">
-                    <i class="fas {{ $module['icon'] }}" style="font-size:10px"></i> {{ $module['label'] }}
+                <span style="font-size:13px;font-weight:600;color:{{ $module['color'] }}">
+                    <i class="fas {{ $module['icon'] }}" style="font-size:11px"></i> {{ $module['label'] }}
                 </span>
-                <span style="font-size:11px;color:var(--text-subtle)">#{{ $log->loggable_id }}</span>
+                <span style="font-size:13px;color:var(--text-subtle)">#{{ $log->loggable_id }}</span>
             </div>
             @if($changes->count() > 0 && $log->action === 'updated')
             <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">
@@ -216,20 +250,20 @@ $routeMap = [
                     };
                     $fieldLabel = ucwords(str_replace('_', ' ', $field));
                 @endphp
-                <div style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:11.5px">
+                <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px">
                     <span style="font-weight:600;color:var(--text-muted)">{{ $fieldLabel }}:</span>
                     <span style="color:var(--text-subtle);text-decoration:line-through">{{ $formatVal($oldVal) }}</span>
-                    <i class="fas fa-arrow-right" style="font-size:8px;color:var(--text-subtle)"></i>
+                    <i class="fas fa-arrow-right" style="font-size:9px;color:var(--text-subtle)"></i>
                     <span style="color:var(--navy);font-weight:500">{{ $formatVal($newVal) }}</span>
                 </div>
                 @endforeach
                 @if(count($log->changes ?? []) > 4)
-                <span style="font-size:11px;color:var(--text-subtle);padding:3px 0">+{{ count($log->changes) - 4 }} more</span>
+                <span style="font-size:13px;color:var(--text-subtle);padding:3px 0">+{{ count($log->changes) - 4 }} more</span>
                 @endif
             </div>
             @endif
-            <div style="font-size:11px;color:var(--text-subtle)">
-                <i class="fas fa-clock" style="font-size:9px;margin-right:3px"></i>
+            <div style="font-size:13px;color:var(--text-subtle)">
+                <i class="fas fa-clock" style="font-size:10px;margin-right:3px"></i>
                 {{ $dateStr }} at {{ $log->created_at->format('h:i A') }}
                 <span style="margin:0 5px">·</span>{{ $log->created_at->diffForHumans() }}
             </div>
@@ -246,7 +280,7 @@ $routeMap = [
 
     @if($query->hasPages())
     <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-        <span style="font-size:12px;color:var(--text-muted)">Showing {{ $query->firstItem() }}–{{ $query->lastItem() }} of {{ number_format($query->total()) }}</span>
+        <span style="font-size:13px;color:var(--text-muted)">Showing {{ $query->firstItem() }}–{{ $query->lastItem() }} of {{ number_format($query->total()) }}</span>
         {{ $query->withQueryString()->links() }}
     </div>
     @endif
@@ -279,8 +313,8 @@ function initCharts() {
             responsive: true,
             plugins: { legend: { display: false } },
             scales: {
-                x: { stacked: true, ticks: { color: '#9CA3AF', font: { size: 11 } }, grid: { display: false } },
-                y: { stacked: true, beginAtZero: true, ticks: { color: '#9CA3AF', font: { size: 11 }, stepSize: 1 }, grid: { color: '#E5E7EB' } }
+                x: { stacked: true, ticks: { color: '#9CA3AF', font: { size: 12 } }, grid: { display: false } },
+                y: { stacked: true, beginAtZero: true, ticks: { color: '#9CA3AF', font: { size: 12 }, stepSize: 1 }, grid: { color: '#E5E7EB' } }
             }
         }
     });
@@ -307,8 +341,8 @@ function initCharts() {
             responsive: true,
             plugins: { legend: { display: false } },
             scales: {
-                x: { ticks: { color: '#9CA3AF', font: { size: 11 } }, grid: { color: '#E5E7EB' } },
-                y: { beginAtZero: true, ticks: { color: '#9CA3AF', font: { size: 11 }, stepSize: 1 }, grid: { color: '#E5E7EB' } }
+                x: { ticks: { color: '#9CA3AF', font: { size: 12 } }, grid: { color: '#E5E7EB' } },
+                y: { beginAtZero: true, ticks: { color: '#9CA3AF', font: { size: 12 }, stepSize: 1 }, grid: { color: '#E5E7EB' } }
             }
         }
     });

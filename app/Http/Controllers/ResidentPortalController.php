@@ -27,7 +27,7 @@ class ResidentPortalController extends Controller
             'email'          => 'nullable|email|max:255',
             'document_type'  => 'required|string',
             'purpose'        => 'nullable|string|max:500',
-            'preferred_date' => 'required|date|after_or_equal:today',
+            'preferred_date' => 'required|date|after:today',
         ]);
 
         $validated['appointment_number'] = DocumentAppointment::generateNumber();
@@ -62,5 +62,36 @@ class ResidentPortalController extends Controller
         )->first();
 
         return view('portal.track', compact('appointment'));
+    }
+
+    public function trackLookup(Request $request)
+    {
+        $number      = strtoupper(trim($request->input('number', '')));
+        $appointment = $number
+            ? DocumentAppointment::where('appointment_number', $number)->first()
+            : null;
+
+        if (! $appointment) {
+            return response()->json(['found' => false]);
+        }
+
+        $steps     = ['Pending', 'Confirmed', 'Processing', 'Ready', 'Released'];
+        $stepIndex = array_search($appointment->status, $steps);
+
+        return response()->json([
+            'found'              => true,
+            'appointment_number' => $appointment->appointment_number,
+            'resident_name'      => $appointment->resident_name,
+            'document_type'      => $appointment->document_type,
+            'preferred_date'     => $appointment->preferred_date->format('F j, Y'),
+            'purpose'            => $appointment->purpose,
+            'notes'              => $appointment->notes,
+            'released_at'        => $appointment->released_at?->format('F j, Y g:i A'),
+            'created_at'         => $appointment->created_at->format('M d, Y'),
+            'status'             => $appointment->status,
+            'cancelled'          => $appointment->status === 'Cancelled',
+            'step_index'         => $stepIndex === false ? -1 : (int) $stepIndex,
+            'steps'              => $steps,
+        ]);
     }
 }

@@ -32,7 +32,7 @@
                 <div style="width:64px;height:64px;border-radius:50%;background:rgba(200,134,26,0.2);border:2px solid rgba(200,134,26,0.4);margin:0 auto 14px;display:flex;align-items:center;justify-content:center">
                     <i class="fas fa-gavel" style="font-size:24px;color:var(--gold-light)"></i>
                 </div>
-                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.5);margin-bottom:4px">
+                <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.5);margin-bottom:4px">
                     {{ $blotter->case_number }}
                 </div>
                 <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:10px">
@@ -54,23 +54,23 @@
             <div style="padding:14px 20px;border-top:1px solid var(--border)">
                 <div style="display:flex;flex-direction:column;gap:10px">
                     <div>
-                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Incident Date</div>
-                        <div style="font-size:13px;font-weight:500;color:var(--text)">
+                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Incident Date</div>
+                        <div style="font-size:15px;font-weight:500;color:var(--text)">
                             {{ $blotter->incident_date ? \Carbon\Carbon::parse($blotter->incident_date)->format('F d, Y') : '—' }}
                         </div>
                     </div>
                     <div>
-                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Location</div>
-                        <div style="font-size:13px;color:var(--text-muted)">{{ $blotter->incident_location ?? '—' }}</div>
+                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Location</div>
+                        <div style="font-size:15px;color:var(--text-muted)">{{ $blotter->incident_location ?? '—' }}</div>
                     </div>
                     <div>
-                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Filed By</div>
-                        <div style="font-size:13px;color:var(--text-muted)">{{ $blotter->filedBy->name ?? '—' }}</div>
+                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Filed By</div>
+                        <div style="font-size:15px;color:var(--text-muted)">{{ $blotter->filedBy->name ?? '—' }}</div>
                     </div>
                     @if($blotter->settled_at)
                     <div>
-                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Settled On</div>
-                        <div style="font-size:13px;color:var(--text-muted)">{{ $blotter->settled_at->format('F d, Y') }}</div>
+                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Settled On</div>
+                        <div style="font-size:15px;color:var(--text-muted)">{{ $blotter->settled_at->format('F d, Y') }}</div>
                     </div>
                     @endif
                 </div>
@@ -91,10 +91,10 @@
                 <div style="display:flex;align-items:center;gap:10px;{{ $isImage ? 'margin-top:10px' : '' }}">
                     <i class="fas {{ $isImage ? 'fa-image' : 'fa-file-pdf' }}" style="font-size:18px;color:var(--navy)"></i>
                     <div style="flex:1;min-width:0">
-                        <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                        <div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
                             {{ $blotter->file_original_name ?? 'Attached File' }}
                         </div>
-                        <div style="font-size:11px;color:var(--text-muted)">{{ strtoupper($blotter->file_type ?? '') }}</div>
+                        <div style="font-size:13px;color:var(--text-muted)">{{ strtoupper($blotter->file_type ?? '') }}</div>
                     </div>
                     <a href="{{ asset('storage/'.$blotter->file_path) }}" target="_blank" class="btn btn-secondary btn-sm">
                         <i class="fas fa-eye"></i> View
@@ -128,7 +128,9 @@
                 </form>
                 @endif
                 <form method="POST" action="{{ route('blotter.destroy', $blotter) }}"
-                      onsubmit="return confirm('Delete this case?')">
+                      data-confirm="Delete case {{ $blotter->case_number }}? This cannot be recovered."
+                      data-confirm-title="Delete Blotter Case"
+                      data-confirm-ok="Delete Case">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start">
                         <i class="fas fa-trash"></i> Delete Case
@@ -145,7 +147,7 @@
                 <span class="card-title"><i class="fas fa-file-lines"></i> Incident Details</span>
             </div>
             <div class="card-body">
-                <div style="font-size:13.5px;color:var(--text);line-height:1.8;white-space:pre-line">
+                <div style="font-size:15px;color:var(--text);line-height:1.8;white-space:pre-line">
                     {{ $blotter->incident_details ?? 'No details recorded.' }}
                 </div>
             </div>
@@ -164,7 +166,7 @@
                             {{ strtoupper(substr($blotter->complainantResident->first_name, 0, 1)) }}
                         </div>
                         <div>
-                            <div style="font-weight:600;font-size:13px">{{ $blotter->complainantResident->full_name }}</div>
+                            <div style="font-weight:600;font-size:14px">{{ $blotter->complainantResident->full_name }}</div>
                             <div class="td-muted">Registered Resident</div>
                         </div>
                     </a>
@@ -174,7 +176,7 @@
                             <i class="fas fa-user"></i>
                         </div>
                         <div>
-                            <div style="font-weight:600;font-size:13px">{{ $blotter->complainant_name ?? '—' }}</div>
+                            <div style="font-weight:600;font-size:14px">{{ $blotter->complainant_name ?? '—' }}</div>
                             <div class="td-muted">External</div>
                         </div>
                     </div>
@@ -182,14 +184,14 @@
                     <div style="display:flex;flex-direction:column;gap:8px">
                         @if($blotter->complainant_address)
                         <div>
-                            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Address</div>
-                            <div style="font-size:13px;color:var(--text-muted)">{{ $blotter->complainant_address }}</div>
+                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Address</div>
+                            <div style="font-size:14px;color:var(--text-muted)">{{ $blotter->complainant_address }}</div>
                         </div>
                         @endif
                         @if($blotter->complainant_contact)
                         <div>
-                            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Contact</div>
-                            <div style="font-size:13px;color:var(--text-muted)">{{ $blotter->complainant_contact }}</div>
+                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Contact</div>
+                            <div style="font-size:14px;color:var(--text-muted)">{{ $blotter->complainant_contact }}</div>
                         </div>
                         @endif
                     </div>
@@ -206,21 +208,21 @@
                             <i class="fas fa-user"></i>
                         </div>
                         <div>
-                            <div style="font-weight:600;font-size:13px">{{ $blotter->respondent_name ?? '—' }}</div>
+                            <div style="font-weight:600;font-size:14px">{{ $blotter->respondent_name ?? '—' }}</div>
                             <div class="td-muted">Respondent</div>
                         </div>
                     </div>
                     <div style="display:flex;flex-direction:column;gap:8px">
                         @if($blotter->respondent_address)
                         <div>
-                            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Address</div>
-                            <div style="font-size:13px;color:var(--text-muted)">{{ $blotter->respondent_address }}</div>
+                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Address</div>
+                            <div style="font-size:14px;color:var(--text-muted)">{{ $blotter->respondent_address }}</div>
                         </div>
                         @endif
                         @if($blotter->respondent_contact)
                         <div>
-                            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Contact</div>
-                            <div style="font-size:13px;color:var(--text-muted)">{{ $blotter->respondent_contact }}</div>
+                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Contact</div>
+                            <div style="font-size:14px;color:var(--text-muted)">{{ $blotter->respondent_contact }}</div>
                         </div>
                         @endif
                     </div>
@@ -234,7 +236,7 @@
                 <span class="card-title"><i class="fas fa-clipboard-check"></i> Resolution Notes</span>
             </div>
             <div class="card-body">
-                <div style="font-size:13.5px;color:var(--text);line-height:1.8;white-space:pre-line">
+                <div style="font-size:15px;color:var(--text);line-height:1.8;white-space:pre-line">
                     {{ $blotter->resolution_notes }}
                 </div>
             </div>

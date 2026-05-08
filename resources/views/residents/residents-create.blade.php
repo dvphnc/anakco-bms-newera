@@ -31,68 +31,92 @@
         <div class="form-section-title">Full Name</div>
         <div class="form-grid-3 mb-6">
             <div class="form-group">
-                <label class="form-label">Last Name <span style="color:var(--crimson-mid)">*</span></label>
-                <input type="text" name="last_name" class="form-control"
+                <label class="form-label">Last Name <span style="color:var(--crimson)">*</span></label>
+                <input type="text" name="last_name" class="form-control @error('last_name') is-invalid @enderror"
                        value="{{ old('last_name') }}" placeholder="e.g. Santos" required>
+                @error('last_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">First Name <span style="color:var(--crimson-mid)">*</span></label>
-                <input type="text" name="first_name" class="form-control"
+                <label class="form-label">First Name <span style="color:var(--crimson)">*</span></label>
+                <input type="text" name="first_name" class="form-control @error('first_name') is-invalid @enderror"
                        value="{{ old('first_name') }}" placeholder="e.g. Juan" required>
+                @error('first_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Middle Name</label>
-                <input type="text" name="middle_name" class="form-control"
+                <label class="form-label">
+                    Middle Name
+                    <span class="help-icon" data-tippy-content="Enter the middle name as it appears on official IDs. Leave blank if the resident has none (e.g., illegitimate).">?</span>
+                </label>
+                <input type="text" name="middle_name" class="form-control @error('middle_name') is-invalid @enderror"
                        value="{{ old('middle_name') }}" placeholder="e.g. Dela Cruz">
+                @error('middle_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
         </div>
 
         <div class="form-section-title">Basic Information</div>
         <div class="form-grid-3 mb-6">
             <div class="form-group">
-                <label class="form-label">Date of Birth <span style="color:var(--crimson-mid)">*</span></label>
-                <input type="date" name="birthdate" class="form-control"
+                <label class="form-label">Date of Birth <span style="color:var(--crimson)">*</span></label>
+                <input type="date" name="birthdate" class="form-control @error('birthdate') is-invalid @enderror"
                        value="{{ old('birthdate') }}" required>
+                @error('birthdate')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Gender <span style="color:var(--crimson-mid)">*</span></label>
-                <select name="gender" class="form-control" required>
+                <label class="form-label">Gender <span style="color:var(--crimson)">*</span></label>
+                <select name="gender" class="form-control @error('gender') is-invalid @enderror" required>
                     <option value="">Select Gender</option>
                     <option value="Male"   {{ old('gender') === 'Male'   ? 'selected' : '' }}>Male</option>
                     <option value="Female" {{ old('gender') === 'Female' ? 'selected' : '' }}>Female</option>
                 </select>
+                @error('gender')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Civil Status <span style="color:var(--crimson-mid)">*</span></label>
-                <select name="civil_status" class="form-control" required>
+                <label class="form-label">
+                    Civil Status <span style="color:var(--crimson)">*</span>
+                    <span class="help-icon" data-tippy-content="Current marital status. 'Annulled' means a marriage was legally voided by court. This affects eligibility for some barangay programs.">?</span>
+                </label>
+                <select name="civil_status" class="form-control @error('civil_status') is-invalid @enderror" required>
                     <option value="">Select Status</option>
                     @foreach(['Single','Married','Widowed','Separated','Annulled'] as $s)
                         <option value="{{ $s }}" {{ old('civil_status') === $s ? 'selected' : '' }}>{{ $s }}</option>
                     @endforeach
                 </select>
+                @error('civil_status')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Nationality</label>
-                <input type="text" name="nationality" class="form-control"
+                <input type="text" name="nationality" class="form-control @error('nationality') is-invalid @enderror"
                        value="{{ old('nationality', 'Filipino') }}" placeholder="Filipino">
+                @error('nationality')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Religion</label>
-                <input type="text" name="religion" class="form-control"
+                <input type="text" name="religion" class="form-control @error('religion') is-invalid @enderror"
                        value="{{ old('religion') }}" placeholder="e.g. Roman Catholic">
+                @error('religion')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Contact Number</label>
-                <input type="text" name="contact_number" class="form-control"
+                <input type="text" name="contact_number" class="form-control @error('contact_number') is-invalid @enderror"
                        value="{{ old('contact_number') }}" placeholder="09XX XXX XXXX">
+                @error('contact_number')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email_address" class="form-control @error('email_address') is-invalid @enderror"
+                       value="{{ old('email_address') }}" placeholder="e.g. juan@email.com">
+                @error('email_address')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
         </div>
 
         <div class="form-section-title">Address</div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
-                <label class="form-label">Purok <span style="color:var(--crimson-mid)">*</span></label>
-                <select name="purok_id" class="form-control" required>
+                <label class="form-label">
+                    Purok <span style="color:var(--crimson)">*</span>
+                    <span class="help-icon" data-tippy-content="Select the zone or neighborhood (Purok) where this resident currently lives. Contact the Barangay Secretary if you are unsure which Purok applies.">?</span>
+                </label>
+                <select name="purok_id" class="form-control @error('purok_id') is-invalid @enderror" required>
                     <option value="">Select Purok</option>
                     @foreach($puroks as $purok)
                         <option value="{{ $purok->id }}" {{ old('purok_id') == $purok->id ? 'selected' : '' }}>
@@ -100,10 +124,14 @@
                         </option>
                     @endforeach
                 </select>
+                @error('purok_id')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Household</label>
-                <select name="household_id" class="form-control">
+                <label class="form-label">
+                    Household
+                    <span class="help-icon" data-tippy-content="Optional. Link this resident to a registered household. This automatically updates the household's family size count. You can skip this and add it later.">?</span>
+                </label>
+                <select name="household_id" class="form-control @error('household_id') is-invalid @enderror">
                     <option value="">Select Household (optional)</option>
                     @foreach($households as $hh)
                         <option value="{{ $hh->id }}" {{ old('household_id') == $hh->id ? 'selected' : '' }}>
@@ -111,34 +139,45 @@
                         </option>
                     @endforeach
                 </select>
+                @error('household_id')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group" style="grid-column:span 2">
-                <label class="form-label">Full Address <span style="color:var(--crimson-mid)">*</span></label>
-                <input type="text" name="address" class="form-control"
+                <label class="form-label">Full Address <span style="color:var(--crimson)">*</span></label>
+                <input type="text" name="address" class="form-control @error('address') is-invalid @enderror"
                        value="{{ old('address') }}"
                        placeholder="House No., Street, Barangay New Era, QC" required>
+                @error('address')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
         </div>
 
         <div class="form-section-title">Residency</div>
         <div class="form-grid-3 mb-6">
             <div class="form-group">
-                <label class="form-label">Residency Status</label>
-                <select name="residency_status" class="form-control">
+                <label class="form-label">
+                    Residency Status
+                    <span class="help-icon" data-tippy-content="'Active' = currently living here. 'Transferred' = moved to another address. 'Deceased' = passed away. Only Active residents appear in document requests.">?</span>
+                </label>
+                <select name="residency_status" class="form-control @error('residency_status') is-invalid @enderror">
                     @foreach(['Active','Deceased','Transferred'] as $s)
                         <option value="{{ $s }}" {{ old('residency_status', 'Active') === $s ? 'selected' : '' }}>{{ $s }}</option>
                     @endforeach
                 </select>
+                @error('residency_status')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Years of Residency</label>
-                <input type="number" name="years_of_residency" class="form-control"
+                <label class="form-label">
+                    Years of Residency
+                    <span class="help-icon" data-tippy-content="How many years this person has been continuously living in Barangay New Era. Used for residency certificates. Enter 0 if newly arrived.">?</span>
+                </label>
+                <input type="number" name="years_of_residency" class="form-control @error('years_of_residency') is-invalid @enderror"
                        value="{{ old('years_of_residency') }}" min="0" placeholder="0">
+                @error('years_of_residency')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Occupation</label>
-                <input type="text" name="occupation" class="form-control"
+                <input type="text" name="occupation" class="form-control @error('occupation') is-invalid @enderror"
                        value="{{ old('occupation') }}" placeholder="e.g. Teacher, Vendor">
+                @error('occupation')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
         </div>
 
@@ -149,9 +188,10 @@
 <div class="card mb-6">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-tags"></i> Classifications</span>
+        <span class="help-icon" data-tippy-content="Check all that apply. Classifications help generate targeted reports and identify eligible residents for government programs like OSCA, PWD, and 4Ps benefits." style="font-size:13px;width:22px;height:22px">?</span>
     </div>
     <div class="card-body">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
             <label class="form-check">
                 <input type="checkbox" name="is_voter" value="1" {{ old('is_voter') ? 'checked' : '' }}>
                 <span><strong>Registered Voter</strong></span>
@@ -185,8 +225,8 @@
         <div class="form-group" style="max-width:360px">
             <label class="form-label">Upload Photo (optional)</label>
             <input type="file" name="photo_path" class="form-control" accept="image/*">
-            <div style="font-size:11px;color:var(--text-subtle);margin-top:4px">
-                JPG, PNG or WEBP. Max 2MB.
+            <div style="font-size:13px;color:var(--text-subtle);margin-top:6px">
+                <i class="fas fa-circle-info" style="color:var(--navy);opacity:0.5"></i> JPG, PNG or WEBP — max 2MB. A clear, front-facing photo is recommended.
             </div>
         </div>
     </div>

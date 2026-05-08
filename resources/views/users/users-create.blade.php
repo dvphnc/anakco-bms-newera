@@ -37,7 +37,7 @@
                 <input type="email" name="email" class="form-control"
                        value="{{ old('email') }}" placeholder="user@bms.gov.ph" required>
                 @error('email')
-                    <span style="font-size:11px;color:var(--crimson)">{{ $message }}</span>
+                    <span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                 @enderror
             </div>
         </div>
@@ -55,7 +55,7 @@
 
         {{-- Role guide --}}
         <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--navy);margin-bottom:12px">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--navy);margin-bottom:12px">
                 <i class="fas fa-info-circle" style="color:var(--gold);margin-right:6px"></i> Role Permissions
             </div>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
@@ -68,8 +68,8 @@
                 @endphp
                 @foreach($roleGuide as $rg)
                 <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px">
-                    <div style="font-size:11px;font-weight:700;color:{{ $rg['color'] }};margin-bottom:5px">{{ $rg['role'] }}</div>
-                    <div style="font-size:11.5px;color:var(--text-muted);line-height:1.5">{{ $rg['desc'] }}</div>
+                    <div style="font-size:13px;font-weight:700;color:{{ $rg['color'] }};margin-bottom:5px">{{ $rg['role'] }}</div>
+                    <div style="font-size:13px;color:var(--text-muted);line-height:1.5">{{ $rg['desc'] }}</div>
                 </div>
                 @endforeach
             </div>

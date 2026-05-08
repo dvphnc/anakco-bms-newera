@@ -26,10 +26,13 @@
             <div class="form-group">
                 <label class="form-label">Household Head <span style="color:var(--crimson)">*</span></label>
                 <input type="text" name="household_head" id="household_head" class="form-control" value="{{ old('household_head') }}" placeholder="Full name of household head" required>
-                @error('household_head')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
+                @error('household_head')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Link to Resident <span style="font-size:10px;color:var(--text-subtle)">(optional — auto-fills head name)</span></label>
+                <label class="form-label">
+                    Link to Resident
+                    <span class="help-icon" data-tippy-content="Optional. Search for the household head in the resident registry. Selecting a resident will auto-fill their name and address. Useful for tracking which resident leads each household.">?</span>
+                </label>
                 <select name="head_resident_id" id="head_resident_id" class="select2-resident" style="width:100%" data-placeholder="Search registered resident...">
                     <option value=""></option>
                 </select>
@@ -44,7 +47,7 @@
                         <option value="{{ $purok->id }}" {{ old('purok_id') == $purok->id ? 'selected' : '' }}>{{ $purok->name }}</option>
                     @endforeach
                 </select>
-                @error('purok_id')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
+                @error('purok_id')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Family Size <span style="color:var(--crimson)">*</span></label>
@@ -55,7 +58,7 @@
         <div class="form-group mb-6">
             <label class="form-label">Address <span style="color:var(--crimson)">*</span></label>
             <input type="text" name="address" id="hh_address" class="form-control" value="{{ old('address') }}" placeholder="Full address" required>
-            @error('address')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
+            @error('address')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
         </div>
 
         <div class="form-group">

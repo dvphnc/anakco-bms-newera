@@ -187,8 +187,6 @@
         }
         .btn-outline:hover { background: var(--navy-pale); }
         .btn-lg { padding: .8rem 2rem; font-size: .95rem; }
-
-        @stack('styles')
     </style>
     @stack('styles')
 </head>

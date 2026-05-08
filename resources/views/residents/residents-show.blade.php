@@ -39,10 +39,10 @@
                         </span>
                     @endif
                 </div>
-                <div style="font-size:17px;font-weight:700;color:#fff;line-height:1.2">
+                <div style="font-size:18px;font-weight:700;color:#fff;line-height:1.2">
                     {{ $resident->full_name }}
                 </div>
-                <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px">
+                <div style="font-size:14px;color:rgba(255,255,255,0.7);margin-top:5px">
                     {{ $resident->purok->name ?? '—' }}
                 </div>
                 <div style="margin-top:12px">
@@ -60,7 +60,7 @@
 
             {{-- Classifications --}}
             <div style="padding:16px 20px;border-top:1px solid var(--border)">
-                <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:10px">
+                <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:10px">
                     Classifications
                 </div>
                 <div style="display:flex;flex-wrap:wrap;gap:6px">
@@ -70,20 +70,20 @@
                     @if($resident->is_solo_parent) <span class="badge badge-orange">Solo Parent</span> @endif
                     @if($resident->is_4ps)         <span class="badge badge-gold">4Ps</span>           @endif
                     @if(!$resident->is_voter && !$resident->is_senior && !$resident->is_pwd && !$resident->is_solo_parent && !$resident->is_4ps)
-                        <span style="font-size:12px;color:var(--text-subtle)">None</span>
+                        <span style="font-size:13px;color:var(--text-subtle)">None</span>
                     @endif
                 </div>
             </div>
 
             {{-- Quick stats --}}
             <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)">
-                <div style="padding:14px 16px;text-align:center;border-right:1px solid var(--border)">
-                    <div style="font-size:20px;font-weight:700;color:var(--navy)">{{ $resident->age ?? '—' }}</div>
-                    <div style="font-size:11px;color:var(--text-muted)">Age</div>
+                <div style="padding:16px;text-align:center;border-right:1px solid var(--border)">
+                    <div style="font-size:22px;font-weight:700;color:var(--navy)">{{ $resident->age ?? '—' }}</div>
+                    <div style="font-size:13px;color:var(--text-muted);margin-top:3px">Age</div>
                 </div>
-                <div style="padding:14px 16px;text-align:center">
-                    <div style="font-size:20px;font-weight:700;color:var(--navy)">{{ $resident->years_of_residency ?? '—' }}</div>
-                    <div style="font-size:11px;color:var(--text-muted)">Yrs. Residency</div>
+                <div style="padding:16px;text-align:center">
+                    <div style="font-size:22px;font-weight:700;color:var(--navy)">{{ $resident->years_of_residency ?? '—' }}</div>
+                    <div style="font-size:13px;color:var(--text-muted);margin-top:3px">Yrs. Residency</div>
                 </div>
             </div>
         </div>
@@ -110,7 +110,9 @@
                     Edit Profile
                 </a>
                 <form method="POST" action="{{ route('residents.destroy', $resident) }}"
-                      onsubmit="return confirm('Delete this resident?')">
+                      data-confirm="Delete {{ $resident->full_name }}? This action cannot be undone."
+                      data-confirm-title="Delete Resident"
+                      data-confirm-ok="Delete Permanently">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start">
                         <i class="fas fa-trash"></i> Delete Record
@@ -136,7 +138,7 @@
                     <button class="tab-btn" onclick="switchTab(event,'tab-documents')">
                         Documents
                         @if($resident->documents->count())
-                            <span style="background:var(--gold);color:#fff;border-radius:99px;padding:1px 7px;font-size:10px;margin-left:4px">
+                            <span style="background:var(--gold);color:#fff;border-radius:99px;padding:2px 8px;font-size:13px;margin-left:5px">
                                 {{ $resident->documents->count() }}
                             </span>
                         @endif
@@ -144,7 +146,7 @@
                     <button class="tab-btn" onclick="switchTab(event,'tab-blotter')">
                         Blotter
                         @if($resident->blotterCases->count())
-                            <span style="background:var(--crimson-mid);color:#fff;border-radius:99px;padding:1px 7px;font-size:10px;margin-left:4px">
+                            <span style="background:var(--crimson-mid);color:#fff;border-radius:99px;padding:2px 8px;font-size:13px;margin-left:5px">
                                 {{ $resident->blotterCases->count() }}
                             </span>
                         @endif
@@ -172,14 +174,15 @@
                                 ['label' => 'Address',         'value' => $resident->address],
                                 ['label' => 'Yrs of Residency','value' => $resident->years_of_residency ? $resident->years_of_residency . ' years' : '—'],
                                 ['label' => 'Registered',      'value' => $resident->created_at->format('F d, Y')],
+                                ['label' => 'Last Updated',     'value' => $resident->updated_at->format('F d, Y')],
                             ];
                         @endphp
                         @foreach($details as $detail)
-                        <div style="padding:10px 0;border-bottom:1px solid var(--border);{{ $loop->iteration % 2 === 0 ? 'padding-left:24px' : '' }}">
-                            <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">
+                        <div style="padding:12px 0;border-bottom:1px solid var(--border);{{ $loop->iteration % 2 === 0 ? 'padding-left:24px' : '' }}">
+                            <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-subtle);margin-bottom:3px">
                                 {{ $detail['label'] }}
                             </div>
-                            <div style="font-size:13.5px;color:var(--text);font-weight:500">
+                            <div style="font-size:15px;color:var(--text);font-weight:500;line-height:1.4">
                                 {{ $detail['value'] }}
                             </div>
                         </div>
@@ -190,11 +193,11 @@
                 {{-- Documents Tab --}}
                 <div class="tab-pane" id="tab-documents">
                     @forelse($resident->documents as $doc)
-                    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border)">
                         <div>
                             <div class="td-mono">{{ $doc->doc_number }}</div>
-                            <div style="font-weight:600;font-size:13px">{{ $doc->document_type }}</div>
-                            <div class="td-muted">{{ $doc->created_at->format('M d, Y') }}</div>
+                            <div style="font-weight:600;font-size:14px;margin-top:2px">{{ $doc->document_type }}</div>
+                            <div class="td-muted" style="margin-top:2px">{{ $doc->created_at->format('M d, Y') }}</div>
                         </div>
                         <div style="display:flex;align-items:center;gap:10px">
                             @php
@@ -222,11 +225,11 @@
                 {{-- Blotter Tab --}}
                 <div class="tab-pane" id="tab-blotter">
                     @forelse($resident->blotterCases as $case)
-                    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border)">
                         <div>
                             <div class="td-mono">{{ $case->case_number }}</div>
-                            <div style="font-weight:600;font-size:13px">{{ $case->incident_type }}</div>
-                            <div class="td-muted">{{ $case->incident_date?->format('M d, Y') }}</div>
+                            <div style="font-weight:600;font-size:14px;margin-top:2px">{{ $case->incident_type }}</div>
+                            <div class="td-muted" style="margin-top:2px">{{ $case->incident_date?->format('M d, Y') }}</div>
                         </div>
                         <div style="display:flex;align-items:center;gap:10px">
                             <span class="badge {{ $case->status_badge }}">{{ $case->status }}</span>

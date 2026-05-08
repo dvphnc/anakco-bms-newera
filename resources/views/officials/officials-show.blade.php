@@ -37,7 +37,7 @@
                     @endif
                 </div>
                 <div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">{{ $official->full_name }}</div>
-                <div style="font-size:12px;color:rgba(229,160,32,0.85);font-weight:500;margin-bottom:10px">{{ $official->position }}</div>
+                <div style="font-size:13px;color:rgba(229,160,32,0.85);font-weight:500;margin-bottom:10px">{{ $official->position }}</div>
                 <span class="badge {{ $official->is_active ? 'badge-green' : 'badge-gray' }}">{{ $official->is_active ? 'Active' : 'Inactive' }}</span>
             </div>
             @if($official->term_start && $official->term_end)
@@ -47,11 +47,11 @@
                 $tPct   = round((min($tStart->diffInDays(now()), $tStart->diffInDays($tEnd)) / max(1,$tStart->diffInDays($tEnd))) * 100);
             @endphp
             <div style="padding:14px 16px;border-top:1px solid var(--border)">
-                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-subtle);margin-bottom:6px">
+                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-subtle);margin-bottom:6px">
                     <span>{{ $tStart->format('Y') }}</span><span>{{ $tEnd->format('Y') }}</span>
                 </div>
                 <div class="progress-bar-wrap"><div class="progress-bar" style="width:{{ $tPct }}%;background:var(--gold)"></div></div>
-                <div style="font-size:10px;color:var(--text-subtle);margin-top:5px;text-align:center">{{ $tPct }}% of term served</div>
+                <div style="font-size:13px;color:var(--text-subtle);margin-top:5px;text-align:center">{{ $tPct }}% of term served</div>
             </div>
             @endif
         </div>
@@ -64,7 +64,10 @@
                 <a href="{{ route('officials.edit', $official) }}" class="btn btn-secondary" style="justify-content:flex-start">
                     <i class="fas fa-pen" style="color:var(--navy)"></i> Edit Profile
                 </a>
-                <form method="POST" action="{{ route('officials.destroy', $official) }}" onsubmit="return confirm('Delete this official?')">
+                <form method="POST" action="{{ route('officials.destroy', $official) }}"
+                      data-confirm="Delete {{ $official->full_name }}? This will remove their profile and ID card."
+                      data-confirm-title="Delete Official"
+                      data-confirm-ok="Delete">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start"><i class="fas fa-trash"></i> Delete</button>
                 </form>
@@ -87,8 +90,8 @@
                 ]; @endphp
                 @foreach($details as $d)
                 <div style="padding:10px 0;border-bottom:1px solid var(--border);{{ $loop->even ? 'padding-left:24px' : '' }}">
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">{{ $d['label'] }}</div>
-                    <div style="font-size:13.5px;color:var(--text);font-weight:500">{{ $d['value'] }}</div>
+                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">{{ $d['label'] }}</div>
+                    <div style="font-size:15px;color:var(--text);font-weight:500">{{ $d['value'] }}</div>
                 </div>
                 @endforeach
             </div>

@@ -8,10 +8,13 @@
         <p class="page-subtitle">Manage database backups for Barangay New Era BMS</p>
     </div>
     <div class="page-actions">
-        <form method="POST" action="{{ route('backup.create') }}">
+        <form method="POST" action="{{ route('backup.create') }}"
+              data-confirm="Create a new database backup now? The previous backup will not be deleted."
+              data-confirm-title="Create Backup"
+              data-confirm-ok="Create Backup"
+              data-confirm-type="safe">
             @csrf
-            <button type="submit" class="btn btn-primary"
-                    onclick="return confirm('Create a new database backup now?')">
+            <button type="submit" class="btn btn-primary">
                 <i class="fas fa-database"></i> Backup Now
             </button>
         </form>
@@ -31,7 +34,7 @@
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-history"></i> Backup History</span>
-            <span style="font-size:11px;color:var(--text-muted)">Last 10 backups kept automatically</span>
+            <span style="font-size:13px;color:var(--text-muted)">Last 10 backups kept automatically</span>
         </div>
         @if($files->count())
         <table>
@@ -52,13 +55,13 @@
                                 <i class="fas fa-file-code" style="color:{{ $i === 0 ? '#16a34a' : 'var(--text-muted)' }};font-size:13px"></i>
                             </div>
                             <div>
-                                <div style="font-size:12.5px;font-weight:600;font-family:monospace;color:var(--text)">{{ $file['name'] }}</div>
-                                @if($i === 0)<span class="badge badge-green" style="font-size:9px">Latest</span>@endif
+                                <div style="font-size:14px;font-weight:600;font-family:monospace;color:var(--text)">{{ $file['name'] }}</div>
+                                @if($i === 0)<span class="badge badge-green">Latest</span>@endif
                             </div>
                         </div>
                     </td>
-                    <td style="font-size:12px;color:var(--text-muted)">{{ $file['size'] }}</td>
-                    <td style="font-size:12px;color:var(--text-muted)">{{ $file['created'] }}</td>
+                    <td style="color:var(--text-muted)">{{ $file['size'] }}</td>
+                    <td style="color:var(--text-muted)">{{ $file['created'] }}</td>
                     <td>
                         <div style="display:flex;gap:6px">
                             <a href="{{ route('backup.download', $file['name']) }}"
@@ -66,7 +69,9 @@
                                 <i class="fas fa-download"></i>
                             </a>
                             <form method="POST" action="{{ route('backup.restore') }}"
-                                  onsubmit="return confirm('⚠️ Restore from {{ $file['name'] }}? This will overwrite all current data!')">
+                                  data-confirm="Restore from {{ $file['name'] }}? This will OVERWRITE all current data and cannot be undone."
+                                  data-confirm-title="Restore Database"
+                                  data-confirm-ok="Yes, Restore">
                                 @csrf
                                 <input type="hidden" name="filename" value="{{ $file['name'] }}">
                                 <button type="submit" class="btn btn-secondary btn-sm btn-icon" title="Restore" style="color:var(--gold)">
@@ -74,7 +79,9 @@
                                 </button>
                             </form>
                             <form method="POST" action="{{ route('backup.delete', $file['name']) }}"
-                                  onsubmit="return confirm('Delete this backup file?')">
+                                  data-confirm="Delete backup file {{ $file['name'] }}? This cannot be recovered."
+                                  data-confirm-title="Delete Backup"
+                                  data-confirm-ok="Delete">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete">
                                     <i class="fas fa-trash"></i>
@@ -103,7 +110,7 @@
                 <span class="card-title"><i class="fas fa-upload"></i> Upload & Restore</span>
             </div>
             <div class="card-body">
-                <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px">
+                <p style="font-size:14px;color:var(--text-muted);margin-bottom:14px">
                     Upload a <code>.sql</code> backup file from your computer to restore it.
                 </p>
                 <form method="POST" action="{{ route('backup.upload') }}" enctype="multipart/form-data">
@@ -112,8 +119,7 @@
                         <label class="form-label">SQL Backup File</label>
                         <input type="file" name="backup_file" class="form-control" accept=".sql,.txt" required>
                     </div>
-                    <button type="submit" class="btn btn-secondary" style="width:100%"
-                            onclick="return confirm('Upload this file? You can restore it after uploading.')">
+                    <button type="submit" class="btn btn-secondary" style="width:100%">
                         <i class="fas fa-upload"></i> Upload File
                     </button>
                 </form>
@@ -141,16 +147,16 @@
                             <i class="fas {{ $item['icon'] }}" style="font-size:12px"></i>
                         </div>
                         <div>
-                            <div style="font-size:10px;color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.06em">{{ $item['label'] }}</div>
-                            <div style="font-size:12px;font-weight:600;color:var(--text);font-family:monospace">{{ $item['value'] }}</div>
+                            <div style="font-size:11px;color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.06em">{{ $item['label'] }}</div>
+                            <div style="font-size:13px;font-weight:600;color:var(--text);font-family:monospace">{{ $item['value'] }}</div>
                         </div>
                     </div>
                     @endforeach
                 </div>
 
                 <div style="margin-top:16px;padding:10px;background:#fef9c3;border:1px solid #fde047;border-radius:var(--radius-sm)">
-                    <div style="font-size:11px;color:#854d0e;font-weight:600;margin-bottom:4px"><i class="fas fa-exclamation-triangle" style="margin-right:4px"></i> Warning</div>
-                    <div style="font-size:11px;color:#854d0e">Restoring a backup will <strong>overwrite all current data</strong>. Always create a fresh backup before restoring.</div>
+                    <div style="font-size:13px;color:#854d0e;font-weight:600;margin-bottom:4px"><i class="fas fa-exclamation-triangle" style="margin-right:4px"></i> Warning</div>
+                    <div style="font-size:13px;color:#854d0e">Restoring a backup will <strong>overwrite all current data</strong>. Always create a fresh backup before restoring.</div>
                 </div>
             </div>
         </div>

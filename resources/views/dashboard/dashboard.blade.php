@@ -44,10 +44,10 @@
             🎂
         </div>
         <div style="flex:1">
-            <div style="font-size:12.5px;font-weight:700;color:#6b21a8;margin-bottom:2px">
+            <div style="font-size:14px;font-weight:700;color:#6b21a8;margin-bottom:2px">
                 Senior Citizen Birthdays Today ({{ $seniorBdays->count() }})
             </div>
-            <div style="font-size:12px;color:#7c3aed">
+            <div style="font-size:13px;color:#7c3aed">
                 {{ $seniorBdays->map(fn($r) => $r->first_name.' '.$r->last_name.' ('.$r->age.')')->implode(', ') }}
             </div>
         </div>
@@ -62,10 +62,10 @@
             🎉
         </div>
         <div style="flex:1">
-            <div style="font-size:12.5px;font-weight:700;color:#c2410c;margin-bottom:2px">
+            <div style="font-size:14px;font-weight:700;color:#c2410c;margin-bottom:2px">
                 Resident Birthdays Today ({{ $regularBdays->count() }})
             </div>
-            <div style="font-size:12px;color:#f97316">
+            <div style="font-size:13px;color:#f97316">
                 {{ $regularBdays->map(fn($r) => $r->first_name.' '.$r->last_name.' ('.$r->age.')')->implode(', ') }}
             </div>
         </div>
@@ -79,10 +79,10 @@
             ⚠️
         </div>
         <div style="flex:1">
-            <div style="font-size:12.5px;font-weight:700;color:#991b1b;margin-bottom:2px">
+            <div style="font-size:14px;font-weight:700;color:#991b1b;margin-bottom:2px">
                 {{ $expiringPermits->count() }} Business Permit{{ $expiringPermits->count() > 1 ? 's' : '' }} Expiring Within 30 Days
             </div>
-            <div style="font-size:12px;color:#ef4444">
+            <div style="font-size:13px;color:#ef4444">
                 {{ $expiringPermits->map(fn($b) => $b->business_name.' (expires '.\Carbon\Carbon::parse($b->expiry_date)->format('M d').')')->take(3)->implode(', ') }}
                 @if($expiringPermits->count() > 3) and {{ $expiringPermits->count() - 3 }} more... @endif
             </div>
@@ -163,8 +163,8 @@
             @php $pct = $totalResidents > 0 ? round(($d['value'] / $totalResidents) * 100) : 0; @endphp
             <div style="margin-bottom:14px">
                 <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-                    <span style="font-size:12.5px;color:var(--text)">{{ $d['label'] }}</span>
-                    <span style="font-size:12px;color:var(--text-muted)">{{ number_format($d['value']) }} <span style="color:var(--text-subtle)">({{ $pct }}%)</span></span>
+                    <span style="font-size:14px;color:var(--text)">{{ $d['label'] }}</span>
+                    <span style="font-size:13px;color:var(--text-muted)">{{ number_format($d['value']) }} <span style="color:var(--text-subtle)">({{ $pct }}%)</span></span>
                 </div>
                 <div class="progress-bar-wrap">
                     <div class="progress-bar" style="width:{{ $pct }}%;background:{{ $d['color'] }}"></div>
@@ -179,7 +179,7 @@
                     @foreach($statuses as [$label,$val,$color])
                     <div style="text-align:center;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
                         <div style="font-size:18px;font-weight:700;color:{{ $color }}">{{ number_format($val) }}</div>
-                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">{{ $label }}</div>
+                        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">{{ $label }}</div>
                     </div>
                     @endforeach
                 </div>
@@ -193,11 +193,11 @@
                     <div style="width:{{ 100-$mPct }}%;background:var(--gold)"></div>
                 </div>
                 <div style="display:flex;gap:20px">
-                    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)">
+                    <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted)">
                         <div style="width:10px;height:10px;border-radius:50%;background:var(--navy)"></div>
                         Male — {{ number_format($totalMale) }} ({{ $mPct }}%)
                     </div>
-                    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)">
+                    <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted)">
                         <div style="width:10px;height:10px;border-radius:50%;background:var(--gold)"></div>
                         Female — {{ number_format($totalFemale) }} ({{ 100-$mPct }}%)
                     </div>
@@ -226,7 +226,7 @@
                             </div>
                         </td>
                         <td style="text-align:right;font-weight:600;color:var(--navy)">{{ number_format($purok->residents_count) }}</td>
-                        <td style="text-align:right;color:var(--text-muted);font-size:12px">{{ $pct }}%</td>
+                        <td style="text-align:right;color:var(--text-muted);font-size:13px">{{ $pct }}%</td>
                     </tr>
                     @empty
                     <tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text-muted)">No purok data yet</td></tr>
@@ -256,7 +256,7 @@
                     <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $r->last_name }}, {{ $r->first_name }}</div>
                     <div style="font-size:11px;color:var(--text-muted)">{{ $r->purok->name ?? '—' }}</div>
                 </div>
-                <span class="badge {{ $r->residency_status === 'Active' ? 'badge-green' : 'badge-gray' }}" style="font-size:10px">{{ $r->residency_status }}</span>
+                <span class="badge {{ $r->residency_status === 'Active' ? 'badge-green' : 'badge-gray' }}">{{ $r->residency_status }}</span>
             </a>
             @empty
             <div class="empty-state" style="padding:24px"><i class="fas fa-users"></i><p>No residents yet</p></div>
@@ -277,10 +277,10 @@
                     <i class="fas fa-file-alt" style="color:#f59e0b;font-size:14px"></i>
                 </div>
                 <div style="flex:1;min-width:0">
-                    <div style="font-size:12px;font-weight:600;color:var(--text);font-family:monospace">{{ $d->doc_number }}</div>
+                    <div style="font-size:13px;font-weight:600;color:var(--text);font-family:monospace">{{ $d->doc_number }}</div>
                     <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $d->resident->full_name ?? '—' }}</div>
                 </div>
-                <span class="badge {{ $d->status === 'Released' ? 'badge-green' : ($d->status === 'Pending' ? 'badge-yellow' : 'badge-blue') }}" style="font-size:10px">{{ $d->status }}</span>
+                <span class="badge {{ $d->status === 'Released' ? 'badge-green' : ($d->status === 'Pending' ? 'badge-yellow' : 'badge-blue') }}">{{ $d->status }}</span>
             </a>
             @empty
             <div class="empty-state" style="padding:24px"><i class="fas fa-file-alt"></i><p>No documents yet</p></div>
@@ -301,10 +301,10 @@
                     <i class="fas fa-gavel" style="color:#ef4444;font-size:14px"></i>
                 </div>
                 <div style="flex:1;min-width:0">
-                    <div style="font-size:12px;font-weight:600;color:var(--text);font-family:monospace">{{ $b->case_number }}</div>
+                    <div style="font-size:13px;font-weight:600;color:var(--text);font-family:monospace">{{ $b->case_number }}</div>
                     <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $b->incident_type }}</div>
                 </div>
-                <span class="badge {{ $b->status === 'Settled' ? 'badge-green' : ($b->status === 'Active' ? 'badge-red' : 'badge-gray') }}" style="font-size:10px">{{ $b->status }}</span>
+                <span class="badge {{ $b->status === 'Settled' ? 'badge-green' : ($b->status === 'Active' ? 'badge-red' : 'badge-gray') }}">{{ $b->status }}</span>
             </a>
             @empty
             <div class="empty-state" style="padding:24px"><i class="fas fa-gavel"></i><p>No blotter cases yet</p></div>
@@ -322,7 +322,7 @@
             <table><thead><tr><th>Type</th><th style="text-align:right">Count</th></tr></thead>
             <tbody>
                 @forelse($documentsByType as $type => $count)
-                <tr><td style="font-size:12.5px">{{ $type }}</td><td style="text-align:right;font-weight:600;color:var(--navy)">{{ number_format($count) }}</td></tr>
+                <tr><td style="font-size:14px">{{ $type }}</td><td style="text-align:right;font-weight:600;color:var(--navy)">{{ number_format($count) }}</td></tr>
                 @empty
                 <tr><td colspan="2" style="text-align:center;padding:20px;color:var(--text-muted)">No data</td></tr>
                 @endforelse
@@ -331,11 +331,11 @@
         <div style="padding:12px 16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
                 <div style="font-size:15px;font-weight:700;color:var(--gold)">{{ number_format($pendingDocuments) }}</div>
-                <div style="font-size:10px;color:var(--text-subtle)">Pending</div>
+                <div style="font-size:11px;color:var(--text-subtle)">Pending</div>
             </div>
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
                 <div style="font-size:15px;font-weight:700;color:#16a34a">{{ number_format($releasedDocuments) }}</div>
-                <div style="font-size:10px;color:var(--text-subtle)">Released</div>
+                <div style="font-size:11px;color:var(--text-subtle)">Released</div>
             </div>
         </div>
     </div>
@@ -346,7 +346,7 @@
             <table><thead><tr><th>Incident Type</th><th style="text-align:right">Count</th></tr></thead>
             <tbody>
                 @forelse($blotterByType as $type => $count)
-                <tr><td style="font-size:12.5px">{{ $type }}</td><td style="text-align:right;font-weight:600;color:var(--crimson)">{{ number_format($count) }}</td></tr>
+                <tr><td style="font-size:14px">{{ $type }}</td><td style="text-align:right;font-weight:600;color:var(--crimson)">{{ number_format($count) }}</td></tr>
                 @empty
                 <tr><td colspan="2" style="text-align:center;padding:20px;color:var(--text-muted)">No data</td></tr>
                 @endforelse
@@ -355,11 +355,11 @@
         <div style="padding:12px 16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
                 <div style="font-size:15px;font-weight:700;color:var(--crimson)">{{ number_format($activeBlotter) }}</div>
-                <div style="font-size:10px;color:var(--text-subtle)">Active</div>
+                <div style="font-size:11px;color:var(--text-subtle)">Active</div>
             </div>
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
                 <div style="font-size:15px;font-weight:700;color:#16a34a">{{ number_format($settledBlotter) }}</div>
-                <div style="font-size:10px;color:var(--text-subtle)">Settled</div>
+                <div style="font-size:11px;color:var(--text-subtle)">Settled</div>
             </div>
         </div>
     </div>
@@ -372,8 +372,8 @@
             @php $pct = $totalBusinesses > 0 ? round(($val/$totalBusinesses)*100) : 0; @endphp
             <div style="margin-bottom:14px">
                 <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-                    <span style="font-size:12.5px">{{ $label }}</span>
-                    <span style="font-size:12px;color:var(--text-muted)">{{ number_format($val) }} ({{ $pct }}%)</span>
+                    <span style="font-size:14px">{{ $label }}</span>
+                    <span style="font-size:13px;color:var(--text-muted)">{{ number_format($val) }} ({{ $pct }}%)</span>
                 </div>
                 <div class="progress-bar-wrap"><div class="progress-bar" style="width:{{ $pct }}%;background:{{ $color }}"></div></div>
             </div>
@@ -408,14 +408,14 @@
                     <i class="fas {{ $icon }}"></i>
                 </div>
                 <div style="flex:1;min-width:0">
-                    <div style="font-size:12.5px;color:var(--text)">
+                    <div style="font-size:14px;color:var(--text)">
                         <strong>{{ $log->user->name ?? 'System' }}</strong>
                         {{ $log->action }}
                         a {{ strtolower(class_basename($log->loggable_type ?? '')) }}
                     </div>
                     <div style="font-size:11px;color:var(--text-muted);margin-top:2px">{{ $log->created_at->diffForHumans() }}</div>
                 </div>
-                <span class="badge badge-gray" style="font-size:9px;flex-shrink:0">{{ class_basename($log->loggable_type ?? 'System') }}</span>
+                <span class="badge badge-gray" style="flex-shrink:0">{{ class_basename($log->loggable_type ?? 'System') }}</span>
             </div>
             @empty
             <div class="empty-state" style="padding:32px"><i class="fas fa-clock-rotate-left"></i><p>No activity yet</p></div>
@@ -449,7 +449,7 @@
                     <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:{{ $l['color'] }}18;display:flex;align-items:center;justify-content:center;color:{{ $l['color'] }};font-size:17px">
                         <i class="fas {{ $l['icon'] }}"></i>
                     </div>
-                    <span style="font-size:11.5px;font-weight:600;color:var(--text)">{{ $l['label'] }}</span>
+                    <span style="font-size:13px;font-weight:600;color:var(--text)">{{ $l['label'] }}</span>
                 </a>
                 @endforeach
             </div>

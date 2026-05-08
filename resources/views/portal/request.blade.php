@@ -72,6 +72,10 @@
         padding-top: 1.25rem;
         border-top: 1px solid #f0f0f0;
     }
+    @media (max-width: 600px) {
+        .form-actions { flex-direction: column; }
+        .form-actions .btn { width: 100%; justify-content: center; }
+    }
     .disclaimer {
         font-size: .75rem;
         color: #9ca3af;

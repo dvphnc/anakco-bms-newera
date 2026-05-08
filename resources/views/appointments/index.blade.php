@@ -71,6 +71,7 @@
         border-bottom: 1px solid #f3f4f6;
         vertical-align: middle;
         color: #374151;
+        font-size: 14px;
     }
     .apt-table tr:last-child td { border-bottom: none; }
     .apt-table tr:hover td { background: #fafafa; }
@@ -246,15 +247,15 @@
             </thead>
             <tbody>
                 @foreach($appointments as $apt)
-                <tr>
+                <tr data-id="{{ $apt->id }}">
                     <td><span class="apt-num">{{ $apt->appointment_number }}</span></td>
                     <td>
                         <div class="apt-name">{{ $apt->resident_name }}</div>
-                        <div style="font-size:.74rem;color:#9ca3af">{{ $apt->contact_number }}</div>
+                        <div style="font-size:13px;color:#9ca3af">{{ $apt->contact_number }}</div>
                     </td>
                     <td><div class="apt-doc">{{ $apt->document_type }}</div></td>
                     <td>{{ $apt->preferred_date->format('M d, Y') }}</td>
-                    <td style="font-size:.78rem;color:#9ca3af">{{ $apt->created_at->format('M d, Y') }}</td>
+                    <td style="color:#9ca3af">{{ $apt->created_at->format('M d, Y') }}</td>
                     <td>
                         @php $sc = strtolower($apt->status); @endphp
                         <span class="badge badge-{{ $sc }}">{{ $apt->status }}</span>
@@ -264,7 +265,10 @@
                                 onclick="openModal({{ $apt->id }}, '{{ $apt->appointment_number }}', '{{ $apt->status }}', '{{ addslashes($apt->notes ?? '') }}')">
                             <i class="fas fa-pencil"></i> Update
                         </button>
-                        <form method="POST" action="{{ route('appointments.destroy', $apt) }}" onsubmit="return confirm('Delete appointment {{ $apt->appointment_number }}?')">
+                        <form method="POST" action="{{ route('appointments.destroy', $apt) }}"
+                              data-confirm="Delete appointment {{ $apt->appointment_number }}? This cannot be undone."
+                              data-confirm-title="Delete Appointment"
+                              data-confirm-ok="Delete">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-sm" style="background:var(--crimson-pale);color:var(--crimson);border:1.5px solid var(--crimson-border)"><i class="fas fa-trash"></i></button>
                         </form>
@@ -292,7 +296,7 @@
             @csrf
             @method('PATCH')
 
-            <div style="font-size:.78rem;color:#6b7280;margin-bottom:1rem">
+            <div style="font-size:13px;color:#6b7280;margin-bottom:1rem">
                 Appointment: <strong id="modalAptNum" style="color:var(--navy)"></strong>
             </div>
 
@@ -311,9 +315,10 @@
                           placeholder="e.g., Please confirm your preferred date, document is ready for pick-up, etc."></textarea>
             </div>
 
+            <div id="statusError" style="display:none;color:var(--crimson);font-size:13px;margin-bottom:.75rem;padding:.5rem .75rem;background:#fef2f2;border-radius:6px;border:1px solid #fca5a5"></div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
-                <button type="submit" class="btn btn-gold"><i class="fas fa-save"></i> Save Status</button>
+                <button type="submit" id="statusSubmitBtn" class="btn btn-gold"><i class="fas fa-save"></i> Save Status</button>
             </div>
         </form>
     </div>
@@ -322,19 +327,65 @@
 
 @push('scripts')
 <script>
+    let _updateAptId = null;
+
     function openModal(id, aptNum, currentStatus, currentNotes) {
-        document.getElementById('statusForm').action = '/appointments/' + id + '/status';
+        _updateAptId = id;
         document.getElementById('modalAptNum').textContent = aptNum;
-        document.getElementById('modalStatus').value = currentStatus;
-        document.getElementById('modalNotes').value = currentNotes;
+        document.getElementById('modalStatus').value  = currentStatus;
+        document.getElementById('modalNotes').value   = currentNotes;
+        document.getElementById('statusError').style.display = 'none';
         document.getElementById('statusModal').classList.add('open');
     }
     function closeModal() {
         document.getElementById('statusModal').classList.remove('open');
     }
-    // Close on backdrop click
     document.getElementById('statusModal').addEventListener('click', function(e) {
         if (e.target === this) closeModal();
+    });
+
+    const badgeClasses = ['badge-pending','badge-confirmed','badge-processing','badge-ready','badge-released','badge-cancelled'];
+
+    document.getElementById('statusForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!_updateAptId) return;
+
+        const btn    = document.getElementById('statusSubmitBtn');
+        const errDiv = document.getElementById('statusError');
+        const status = document.getElementById('modalStatus').value;
+        const notes  = document.getElementById('modalNotes').value;
+        const url    = '/appointments/' + _updateAptId + '/status';
+
+        errDiv.style.display = 'none';
+        btn.disabled    = true;
+        btn.innerHTML   = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+
+        axios.patch(url, { status: status, notes: notes })
+            .then(function(res) {
+                const row = document.querySelector('tr[data-id="' + _updateAptId + '"]');
+                if (row) {
+                    const badge = row.querySelector('.badge');
+                    if (badge) {
+                        badge.classList.remove(...badgeClasses);
+                        badge.classList.add('badge-' + status.toLowerCase());
+                        badge.textContent = status;
+                    }
+                }
+                closeModal();
+                bmsToast(res.data.message, 'success');
+            })
+            .catch(function(err) {
+                const data = err.response?.data;
+                const msg  = data?.errors
+                    ? Object.values(data.errors).flat().join(' ')
+                    : (data?.message || 'Failed to update status.');
+                errDiv.textContent   = msg;
+                errDiv.style.display = 'block';
+            })
+            .finally(function() {
+                btn.disabled  = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Status';
+            });
     });
 </script>
 @endpush

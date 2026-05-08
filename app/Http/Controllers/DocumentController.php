@@ -16,7 +16,7 @@ class DocumentController extends Controller
     {
         if ($request->ajax()) {
             $query = Document::with(['resident.purok'])
-                ->when($request->document_type, fn ($q) => $q->where('document_type', $request->document_type))
+                ->when($request->document_type, fn ($q) => $q->whereIn('document_type', (array) $request->document_type))
                 ->when($request->status, fn ($q) => $q->where('status', $request->status))
                 ->select('documents.*');
 
@@ -95,15 +95,27 @@ class DocumentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'resident_id' => 'required|exists:residents,id',
+            'resident_id'   => 'required|exists:residents,id',
             'document_type' => 'required|string',
-            'purpose' => 'required|string|max:500',
-            'fee_paid' => 'nullable|numeric|min:0',
-            'status' => 'required|in:Pending,Processing,Released,Cancelled',
+            'purpose'       => 'required|string|max:500',
+            'fee_paid'      => 'nullable|numeric|min:0',
+            'or_number'     => 'nullable|string|max:100',
+            'released_at'   => 'nullable|date',
+            'status'        => 'required|in:Pending,Processing,Released,Cancelled',
+        ], [
+            'resident_id.required'   => 'Please select a resident.',
+            'resident_id.exists'     => 'The selected resident was not found. Please search again.',
+            'document_type.required' => 'Please select a document type.',
+            'purpose.required'       => 'Please describe the purpose of this document (e.g. Employment, Loan).',
+            'purpose.max'            => 'Purpose must not exceed 500 characters.',
+            'fee_paid.numeric'       => 'Fee must be a valid number.',
+            'fee_paid.min'           => 'Fee cannot be a negative amount.',
+            'or_number.max'          => 'OR Number must not exceed 100 characters.',
+            'released_at.date'       => 'Please enter a valid release date.',
         ]);
         $validated['doc_number'] = Document::generateDocNumber();
-        $validated['issued_by'] = auth()->id();
-        if ($validated['status'] === 'Released') {
+        $validated['issued_by']  = auth()->id();
+        if ($validated['status'] === 'Released' && empty($validated['released_at'])) {
             $validated['released_at'] = now();
         }
         $record = Document::create($validated);
@@ -136,6 +148,14 @@ class DocumentController extends Controller
             'or_number' => 'nullable|string|max:100',
             'released_at' => 'nullable|date',
             'status' => 'required|in:Pending,Processing,Released,Cancelled',
+        ], [
+            'document_type.required' => 'Please select a document type.',
+            'purpose.required'       => 'Please describe the purpose of this document (e.g. Employment, Loan).',
+            'purpose.max'            => 'Purpose must not exceed 500 characters.',
+            'fee_paid.numeric'       => 'Fee must be a valid number.',
+            'fee_paid.min'           => 'Fee cannot be a negative amount.',
+            'or_number.max'          => 'OR Number must not exceed 100 characters.',
+            'released_at.date'       => 'Please enter a valid release date.',
         ]);
         if ($validated['status'] === 'Released' && $document->status !== 'Released' && empty($validated['released_at'])) {
             $validated['released_at'] = now();

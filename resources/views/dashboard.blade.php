@@ -5,15 +5,15 @@
 <style>
 /* ── Alert Strip ─────────────────────────────────────────── */
 .alert-strip { display:flex; flex-direction:column; gap:8px; margin-bottom:24px; }
-.alert-item  { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:var(--radius); font-size:13px; }
+.alert-item  { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:var(--radius); font-size:14px; }
 .alert-item i { flex-shrink:0; font-size:14px; }
 .alert-item > span { flex:1; line-height:1.5; }
 .alert-senior  { background:var(--gold-pale);    border:1px solid var(--gold-border);    border-left:4px solid var(--gold);    color:#78450a; }
 .alert-birthday{ background:var(--navy-pale);    border:1px solid var(--navy-border);    border-left:4px solid var(--navy);    color:var(--navy); }
 .alert-permit  { background:var(--crimson-pale); border:1px solid var(--crimson-border); border-left:4px solid var(--crimson); color:var(--crimson); }
 .alert-link {
-    font-size:11.5px; font-weight:600; color:inherit; opacity:.8;
-    text-decoration:none; padding:3px 12px; border:1px solid currentColor;
+    font-size:13px; font-weight:600; color:inherit; opacity:.85;
+    text-decoration:none; padding:5px 14px; border:1px solid currentColor;
     border-radius:99px; white-space:nowrap; flex-shrink:0;
 }
 .alert-link:hover { opacity:1; }
@@ -30,8 +30,8 @@
     width: fit-content;
 }
 .dash-tab-btn {
-    padding: 8px 20px;
-    font-size: 12.5px;
+    padding: 9px 22px;
+    font-size: 13.5px;
     font-weight: 600;
     color: var(--text-muted);
     background: none;
@@ -48,7 +48,7 @@
 .dash-tab-btn:hover { color: var(--navy); background: var(--surface2); }
 .dash-tab-btn.active { background: var(--navy); color: #fff; }
 .dash-tab-btn .tab-badge {
-    font-size: 10px; font-weight: 700;
+    font-size: 11px; font-weight: 700;
     padding: 1px 6px; border-radius: 99px;
     background: rgba(255,255,255,.25);
     color: inherit;
@@ -73,8 +73,8 @@
     display:flex; align-items:center; justify-content:center;
     font-size:20px; flex-shrink:0;
 }
-.dash-stat-number { font-size:26px; font-weight:700; color:var(--text); line-height:1.1; }
-.dash-stat-label  { font-size:12px; color:var(--text-muted); margin-top:3px; }
+.dash-stat-number { font-size:28px; font-weight:700; color:var(--text); line-height:1.1; }
+.dash-stat-label  { font-size:14px; color:var(--text-muted); margin-top:4px; }
 
 /* ── Mid Row: Chart + Quick Access ───────────────────────── */
 .dash-mid { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px; }
@@ -88,7 +88,7 @@
 }
 .quick-item:hover { background:var(--navy-pale); border-color:var(--qa-color, var(--navy)); }
 .quick-icon { width:38px; height:38px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:16px; }
-.quick-label { font-size:11px; font-weight:600; color:var(--text); text-align:center; }
+.quick-label { font-size:13px; font-weight:600; color:var(--text); text-align:center; }
 
 /* ── Bottom 2-col ────────────────────────────────────────── */
 .dash-bottom { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
@@ -103,8 +103,8 @@
 .feed-row:hover { background:var(--navy-pale); }
 .feed-icon { width:36px; height:36px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; }
 .feed-body { flex:1; min-width:0; }
-.feed-title { font-size:12.5px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.feed-sub   { font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+.feed-title { font-size:14px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.feed-sub   { font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
 
 /* ── Analytics Tab ───────────────────────────────────────── */
 .analytics-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
@@ -114,12 +114,12 @@
     border-radius:var(--radius); padding:14px 16px; text-align:center;
 }
 .demog-num { font-size:22px; font-weight:700; color:var(--navy); line-height:1.1; }
-.demog-lbl { font-size:11px; color:var(--text-muted); margin-top:3px; }
+.demog-lbl { font-size:13px; color:var(--text-muted); margin-top:4px; }
 
 /* ── Appointment Status Badges (dashboard) ───────────────── */
 .apt-badge {
     display:inline-block; padding:2px 8px; border-radius:999px;
-    font-size:10px; font-weight:700; border:1.5px solid;
+    font-size:11px; font-weight:700; border:1.5px solid;
 }
 .apt-pending    { background:var(--gold-pale);    color:#78450a; border-color:var(--gold-border); }
 .apt-confirmed  { background:var(--navy-pale);    color:var(--navy); border-color:var(--navy-border); }
@@ -136,9 +136,12 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Dashboard</h1>
-        <p class="page-subtitle">Welcome back, {{ auth()->user()->name }} — {{ now()->format('l, F d, Y') }}</p>
+        <p class="page-subtitle">Welcome back, <strong style="color:var(--navy)">{{ auth()->user()->name }}</strong> — {{ now()->format('l, F d, Y') }}</p>
     </div>
     <div class="page-actions no-print">
+        <button id="startTourBtn" class="btn btn-secondary btn-sm" data-tippy-content="Take a guided tour of the Dashboard to learn about each section.">
+            <i class="fas fa-map" style="color:var(--gold)"></i> Take Tour
+        </button>
         <a href="{{ route('residents.create') }}"  class="btn btn-secondary btn-sm"><i class="fas fa-user-plus"></i> New Resident</a>
         <a href="{{ route('documents.create') }}"  class="btn btn-secondary btn-sm"><i class="fas fa-file-plus"></i> New Document</a>
         <a href="{{ route('blotter.create') }}"    class="btn btn-secondary btn-sm"><i class="fas fa-gavel"></i> New Blotter</a>
@@ -147,25 +150,8 @@
 </div>
 
 {{-- ALERTS STRIP --}}
-@php
-    $today        = now()->format('m-d');
-    $birthdays    = \App\Models\Resident::where('residency_status', 'Active')
-        ->whereRaw("DATE_FORMAT(birthdate,'%m-%d') = ?", [$today])
-        ->orderBy('last_name')->get();
-    $seniorBdays  = $birthdays->filter(fn($r) => $r->age >= 60);
-    $regularBdays = $birthdays->filter(fn($r) => $r->age < 60);
-
-    $expiringPermits = \App\Models\Business::where('status', 'Active')
-        ->whereBetween('expiry_date', [now(), now()->addDays(30)])
-        ->orderBy('expiry_date')->get();
-
-    $pendingAppointments = \App\Models\DocumentAppointment::where('status', 'Pending')->count();
-
-    $lowStockMeds = \App\Models\MedicineInventory::whereColumn('current_stock', '<=', 'reorder_level')->get();
-@endphp
-
 @if($birthdays->count() || $expiringPermits->count() || $pendingAppointments || $lowStockMeds->count())
-<div class="alert-strip">
+<div class="alert-strip" id="tour-alerts">
 
     @if($seniorBdays->count())
     <div class="alert-item alert-senior">
@@ -245,7 +231,7 @@
 <div id="dpanel-overview" class="dash-panel active">
 
     {{-- STAT CARDS --}}
-    <div class="dash-stats">
+    <div class="dash-stats" id="tour-statcards">
         <a href="{{ route('residents.index') }}" class="dash-stat-card">
             <div class="dash-stat-icon" style="background:#eef2ff;color:#4f46e5"><i class="fas fa-users"></i></div>
             <div>
@@ -265,6 +251,11 @@
             <div>
                 <div class="dash-stat-number">{{ number_format($activeBlotter) }}</div>
                 <div class="dash-stat-label">Active Blotter Cases</div>
+                @if($overdueBlotter > 0)
+                <div style="font-size:13px;color:var(--crimson);margin-top:3px;font-weight:600">
+                    <i class="fas fa-fire"></i> {{ $overdueBlotter }} overdue 30+ days
+                </div>
+                @endif
             </div>
         </a>
         <a href="{{ route('businesses.index') }}" class="dash-stat-card">
@@ -287,16 +278,33 @@
 
     {{-- CHART + QUICK ACCESS --}}
     <div class="dash-mid">
-        <div class="card">
+        <div class="card" id="tour-chart">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-chart-bar"></i> Documents Issued — {{ date('Y') }}</span>
             </div>
             <div class="card-body">
                 <canvas id="monthlyDocChart" height="105"></canvas>
+                @php
+                    $thisMonth = $monthlyData[now()->month] ?? 0;
+                    $yearTotal = array_sum($monthlyData);
+                    $prevMonth = $monthlyData[now()->subMonth()->month] ?? 0;
+                    $trend = $thisMonth > $prevMonth ? 'up' : ($thisMonth < $prevMonth ? 'down' : 'the same as');
+                @endphp
+                <div class="chart-insight">
+                    <strong>{{ number_format($yearTotal) }}</strong> documents issued so far in {{ date('Y') }}.
+                    This month: <strong>{{ $thisMonth }}</strong> —
+                    @if($thisMonth > $prevMonth)
+                        <span style="color:#16a34a"><i class="fas fa-arrow-up"></i> up from {{ $prevMonth }} last month.</span>
+                    @elseif($thisMonth < $prevMonth)
+                        <span style="color:var(--crimson)"><i class="fas fa-arrow-down"></i> down from {{ $prevMonth }} last month.</span>
+                    @else
+                        same as last month ({{ $prevMonth }}).
+                    @endif
+                </div>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="tour-quickaccess">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-bolt"></i> Quick Access</span>
             </div>
@@ -341,10 +349,13 @@
                         <div class="feed-title">{{ $d->doc_number }}</div>
                         <div class="feed-sub">{{ $d->resident->full_name ?? '—' }} · {{ $d->document_type }}</div>
                     </div>
-                    <span class="badge {{ $d->status === 'Released' ? 'badge-green' : ($d->status === 'Pending' ? 'badge-yellow' : 'badge-blue') }}" style="font-size:10px">{{ $d->status }}</span>
+                    <span class="badge {{ $d->status === 'Released' ? 'badge-green' : ($d->status === 'Pending' ? 'badge-yellow' : 'badge-blue') }}">{{ $d->status }}</span>
                 </a>
                 @empty
-                <div class="empty-state" style="padding:32px"><i class="fas fa-file-alt"></i><p>No documents yet</p></div>
+                <div class="empty-state" style="padding:32px">
+                    <i class="fas fa-file-alt"></i>
+                    <p>No documents yet. <a href="{{ route('documents.create') }}" style="color:var(--navy);font-weight:600">Issue one now</a></p>
+                </div>
                 @endforelse
             </div>
         </div>
@@ -356,16 +367,33 @@
             </div>
             <div class="card-body" style="padding:0">
                 @forelse($recentBlotter as $b)
+                @php
+                    $bIsOpen   = in_array($b->status, ['Active', 'Under Investigation']);
+                    $bDaysOpen = $bIsOpen && $b->incident_date
+                        ? \Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
+                @endphp
                 <a href="{{ route('blotter.show', $b->id) }}" class="feed-row">
-                    <div class="feed-icon" style="background:#fef2f2"><i class="fas fa-gavel" style="color:#dc2626"></i></div>
+                    <div class="feed-icon" style="background:#fef2f2{{ $bIsOpen && $bDaysOpen >= 30 ? ';outline:2px solid #dc2626;outline-offset:-2px' : '' }}">
+                        <i class="fas fa-gavel" style="color:#dc2626"></i>
+                    </div>
                     <div class="feed-body">
                         <div class="feed-title">{{ $b->case_number }}</div>
-                        <div class="feed-sub">{{ $b->incident_type }}</div>
+                        <div class="feed-sub">{{ $b->incident_type }}{{ $b->complainant_name ? ' · ' . $b->complainant_name : '' }}</div>
                     </div>
-                    <span class="badge {{ $b->status === 'Settled' ? 'badge-green' : ($b->status === 'Active' ? 'badge-red' : 'badge-gray') }}" style="font-size:10px">{{ $b->status }}</span>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
+                        <span class="badge {{ $b->status === 'Settled' ? 'badge-green' : ($b->status === 'Active' ? 'badge-red' : 'badge-gray') }}">{{ $b->status }}</span>
+                        @if($bIsOpen && $bDaysOpen >= 30)
+                        <span style="font-size:11px;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:99px;white-space:nowrap;font-weight:700">
+                            <i class="fas fa-fire"></i> {{ $bDaysOpen }}d
+                        </span>
+                        @endif
+                    </div>
                 </a>
                 @empty
-                <div class="empty-state" style="padding:32px"><i class="fas fa-gavel"></i><p>No blotter cases yet</p></div>
+                <div class="empty-state" style="padding:32px">
+                    <i class="fas fa-gavel"></i>
+                    <p>No blotter cases yet. <a href="{{ route('blotter.create') }}" style="color:var(--navy);font-weight:600">File a case</a></p>
+                </div>
                 @endforelse
             </div>
         </div>
@@ -435,15 +463,22 @@
                     <canvas id="ageChart"></canvas>
                 </div>
                 <div style="flex:1">
-                    @php $ageColors = ['#4f46e5','#C8861A','#16a34a','#dc2626']; $ai=0; @endphp
+                    @php
+                        $ageColors = ['#4f46e5','#C8861A','#16a34a','#dc2626']; $ai=0;
+                        $largestAgeGroup = $ageGroups->sortDesc()->keys()->first();
+                        $largestAgeCount = $ageGroups->max();
+                    @endphp
                     @foreach($ageGroups as $label => $count)
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                         <div style="width:10px;height:10px;border-radius:2px;background:{{ $ageColors[$ai] }};flex-shrink:0"></div>
-                        <div style="flex:1;font-size:12px;color:var(--text)">{{ $label }}</div>
-                        <div style="font-size:12px;font-weight:700;color:var(--navy)">{{ number_format($count) }}</div>
+                        <div style="flex:1;font-size:13px;color:var(--text)">{{ $label }}</div>
+                        <div style="font-size:13px;font-weight:700;color:var(--navy)">{{ number_format($count) }}</div>
                     </div>
                     @php $ai++; @endphp
                     @endforeach
+                    <div class="chart-insight" style="margin-top:10px">
+                        Largest group: <strong>{{ $largestAgeGroup }}</strong> with <strong>{{ number_format($largestAgeCount) }}</strong> residents.
+                    </div>
                 </div>
             </div>
         </div>
@@ -458,15 +493,24 @@
                     <canvas id="docTypeChart"></canvas>
                 </div>
                 <div style="flex:1">
-                    @php $dtColors = ['#0D2144','#C8861A','#4f46e5','#16a34a','#dc2626','#0891b2']; $di=0; @endphp
+                    @php
+                        $dtColors = ['#0D2144','#C8861A','#4f46e5','#16a34a','#dc2626','#0891b2']; $di=0;
+                        $topDocType = $documentsByType->sortDesc()->keys()->first();
+                        $topDocCount = $documentsByType->max();
+                    @endphp
                     @foreach($documentsByType as $type => $count)
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
                         <div style="width:10px;height:10px;border-radius:2px;background:{{ $dtColors[$di % count($dtColors)] }};flex-shrink:0"></div>
-                        <div style="flex:1;font-size:11px;color:var(--text)">{{ $type }}</div>
-                        <div style="font-size:11px;font-weight:700;color:var(--navy)">{{ number_format($count) }}</div>
+                        <div style="flex:1;font-size:13px;color:var(--text)">{{ $type }}</div>
+                        <div style="font-size:13px;font-weight:700;color:var(--navy)">{{ number_format($count) }}</div>
                     </div>
                     @php $di++; @endphp
                     @endforeach
+                    @if($topDocType)
+                    <div class="chart-insight" style="margin-top:10px">
+                        Most requested: <strong>{{ $topDocType }}</strong> ({{ number_format($topDocCount) }} issued).
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -492,12 +536,12 @@
         <div class="card-body">
             @php $maxBlotter = $blotterByType->max() ?: 1; @endphp
             @foreach($blotterByType->sortDesc() as $type => $count)
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-                <div style="width:130px;font-size:11.5px;color:var(--text);flex-shrink:0">{{ $type }}</div>
-                <div style="flex:1;background:#f3f4f6;border-radius:99px;height:8px;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+                <div style="width:150px;font-size:13px;color:var(--text);flex-shrink:0;line-height:1.4">{{ $type }}</div>
+                <div style="flex:1;background:#f3f4f6;border-radius:99px;height:9px;overflow:hidden">
                     <div style="height:100%;border-radius:99px;background:var(--crimson);width:{{ round(($count/$maxBlotter)*100) }}%"></div>
                 </div>
-                <div style="font-size:11.5px;font-weight:700;color:var(--crimson);width:28px;text-align:right">{{ $count }}</div>
+                <div style="font-size:13px;font-weight:700;color:var(--crimson);width:30px;text-align:right">{{ $count }}</div>
             </div>
             @endforeach
         </div>
@@ -526,9 +570,9 @@
         {{-- Summary strip --}}
         <div style="display:flex;gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
             @foreach(['Pending','Confirmed','Processing','Ready','Released','Cancelled'] as $st)
-            <div style="flex:1;padding:10px;text-align:center;background:var(--surface2)">
-                <div style="font-size:17px;font-weight:700;color:var(--navy)">{{ $aptCounts[$st] ?? 0 }}</div>
-                <div style="font-size:10px;color:var(--text-muted);margin-top:2px">{{ $st }}</div>
+            <div style="flex:1;padding:12px 8px;text-align:center;background:var(--surface2)">
+                <div style="font-size:18px;font-weight:700;color:var(--navy)">{{ $aptCounts[$st] ?? 0 }}</div>
+                <div style="font-size:13px;color:var(--text-muted);margin-top:3px;font-weight:500">{{ $st }}</div>
             </div>
             @endforeach
         </div>
@@ -546,7 +590,7 @@
                     <div class="feed-sub">{{ $apt->resident_name }} · {{ $apt->document_type }} · {{ $apt->preferred_date->format('M d, Y') }}</div>
                 </div>
                 <a href="{{ route('appointments.index') }}?search={{ $apt->appointment_number }}"
-                   class="btn btn-secondary btn-sm" style="flex-shrink:0;font-size:11px">Update</a>
+                   class="btn btn-secondary btn-sm" style="flex-shrink:0;font-size:13px">Update</a>
             </div>
             @empty
             <div class="empty-state" style="padding:40px"><i class="fas fa-calendar-check"></i><p>No appointments yet</p></div>
@@ -555,7 +599,7 @@
 
         @if($recentAppointments->count() >= 8)
         <div style="padding:.75rem 1rem;border-top:1px solid var(--border);text-align:center">
-            <a href="{{ route('appointments.index') }}" style="font-size:.8rem;color:var(--navy);font-weight:600">
+            <a href="{{ route('appointments.index') }}" style="font-size:13px;color:var(--navy);font-weight:600">
                 View all appointments <i class="fas fa-arrow-right" style="font-size:10px"></i>
             </a>
         </div>
@@ -577,6 +621,83 @@ function switchDashTab(id) {
     document.getElementById('dpanel-' + id).classList.add('active');
     document.getElementById('dtab-' + id).classList.add('active');
 }
+
+// ── Shepherd.js Onboarding Tour ────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof Shepherd === 'undefined') return;
+
+    const tour = new Shepherd.Tour({
+        useModalOverlay: true,
+        defaultStepOptions: {
+            cancelIcon: { enabled: true },
+            scrollTo: { behavior: 'smooth', block: 'center' },
+            popperOptions: { modifiers: [{ name: 'offset', options: { offset: [0, 14] } }] }
+        }
+    });
+
+    const btn = (label, type, action) => ({ text: label, classes: 'shepherd-button-' + type, action });
+
+    tour.addStep({
+        id: 'welcome',
+        title: 'Welcome to the Dashboard',
+        text: 'This is your Command Center — a real-time summary of everything happening in Barangay New Era. This short tour will show you the most important parts.',
+        buttons: [btn('Skip Tour', 'secondary', tour.cancel), btn('Start Tour →', 'primary', tour.next)]
+    });
+
+    @if($birthdays->count() || $expiringPermits->count() || $pendingAppointments || $lowStockMeds->count())
+    tour.addStep({
+        id: 'alerts',
+        title: 'Alert Strip — Urgent Items',
+        text: 'These colored banners appear when something needs your attention right now: birthdays today, expiring business permits, pending appointments, or low medicine stock. Click the links to act immediately.',
+        attachTo: { element: '#tour-alerts', on: 'bottom' },
+        buttons: [btn('← Back', 'secondary', tour.back), btn('Next →', 'primary', tour.next)]
+    });
+    @endif
+
+    tour.addStep({
+        id: 'statcards',
+        title: 'Key Numbers at a Glance',
+        text: 'These cards show your most important counts — Total Residents, Pending Documents, Active Blotter Cases, and more. Click any card to go directly to that module.',
+        attachTo: { element: '#tour-statcards', on: 'bottom' },
+        buttons: [btn('← Back', 'secondary', tour.back), btn('Next →', 'primary', tour.next)]
+    });
+
+    tour.addStep({
+        id: 'chart',
+        title: 'Monthly Documents Chart',
+        text: 'This bar chart shows how many barangay documents were issued each month. The insight below the chart summarizes the trend in plain language — no need to analyze the numbers yourself.',
+        attachTo: { element: '#tour-chart', on: 'right' },
+        buttons: [btn('← Back', 'secondary', tour.back), btn('Next →', 'primary', tour.next)]
+    });
+
+    tour.addStep({
+        id: 'quickaccess',
+        title: 'Quick Access — Go Anywhere Fast',
+        text: 'Use these shortcut buttons to jump to any module instantly: Residents, Documents, Blotter, Businesses, Committees, and more. No need to use the sidebar.',
+        attachTo: { element: '#tour-quickaccess', on: 'left' },
+        buttons: [btn('← Back', 'secondary', tour.back), btn('Next →', 'primary', tour.next)]
+    });
+
+    tour.addStep({
+        id: 'tabs',
+        title: 'Dashboard Tabs',
+        text: 'Switch between <strong>Overview</strong> (today\'s summary), <strong>Analytics</strong> (charts and demographics), and <strong>Appointments</strong> (document requests from residents). The orange number on Appointments shows pending items.',
+        attachTo: { element: '.dash-tabs', on: 'bottom' },
+        buttons: [btn('← Back', 'secondary', tour.back), btn('Finish Tour ✓', 'primary', function () {
+            tour.complete();
+            sessionStorage.setItem('bms_tour_done', '1');
+        })]
+    });
+
+    // Start tour button
+    const startBtn = document.getElementById('startTourBtn');
+    if (startBtn) startBtn.addEventListener('click', function () { tour.start(); });
+
+    // Auto-start on first visit
+    if (!sessionStorage.getItem('bms_tour_done')) {
+        setTimeout(function () { tour.start(); }, 800);
+    }
+});
 
 // Monthly documents bar chart (Overview tab)
 new Chart(document.getElementById('monthlyDocChart').getContext('2d'), {
