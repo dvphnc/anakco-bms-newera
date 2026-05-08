@@ -32,13 +32,13 @@
                 <div style="width:64px;height:64px;border-radius:var(--radius);background:rgba(200,134,26,0.2);border:2px solid rgba(200,134,26,0.4);margin:0 auto 14px;display:flex;align-items:center;justify-content:center">
                     <i class="fas fa-store" style="font-size:24px;color:var(--gold-light)"></i>
                 </div>
-                <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:4px">
+                <div style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:4px">
                     {{ $business->permit_number }}
                 </div>
                 <div style="font-size:15px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:6px">
                     {{ $business->business_name }}
                 </div>
-                <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:12px">
+                <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:12px">
                     {{ $business->business_type }}
                 </div>
                 @php
@@ -55,7 +55,7 @@
 
             {{-- QR Code --}}
             <div style="padding:16px 20px;border-top:1px solid var(--border);text-align:center">
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">
                     QR Code
                 </div>
                 <a href="{{ url('/verify/business/' . $business->permit_number) }}" target="_blank" title="Click to verify this permit">
@@ -63,7 +63,7 @@
                         url('/verify/business/' . $business->permit_number)
                     ) !!}
                 </a>
-                <div style="font-size:10px;color:var(--text-muted);margin-top:6px">
+                <div style="font-size:13px;color:var(--text-muted);margin-top:6px">
                     Scan to verify &nbsp;·&nbsp;
                     <a href="{{ url('/verify/business/' . $business->permit_number) }}" target="_blank" style="color:var(--navy);font-weight:600">
                         Open link <i class="fas fa-arrow-up-right-from-square" style="font-size:9px"></i>
@@ -82,7 +82,7 @@
                 $color   = $pct >= 90 ? 'var(--crimson)' : ($pct >= 70 ? 'var(--gold)' : '#16a34a');
             @endphp
             <div style="padding:14px 16px;border-top:1px solid var(--border)">
-                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-subtle);margin-bottom:6px">
+                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-subtle);margin-bottom:6px">
                     <span>Validity</span>
                     <span>{{ $end->isPast() ? 'Expired' : $end->diffForHumans() }}</span>
                 </div>
@@ -118,7 +118,9 @@
                 </form>
                 @endif
                 <form method="POST" action="{{ route('businesses.destroy', $business) }}"
-                      onsubmit="return confirm('Delete this business permit?')">
+                      data-confirm="Delete permit for {{ $business->business_name }}? This cannot be undone."
+                      data-confirm-title="Delete Business Permit"
+                      data-confirm-ok="Delete">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start">
                         <i class="fas fa-trash"></i> Delete
@@ -151,27 +153,27 @@
                 @endphp
                 @foreach($details as $d)
                 <div style="padding:10px 0;border-bottom:1px solid var(--border);{{ $loop->even ? 'padding-left:24px' : '' }}">
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">
+                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">
                         {{ $d['label'] }}
                     </div>
-                    <div style="font-size:13.5px;color:var(--text);font-weight:500">{{ $d['value'] }}</div>
+                    <div style="font-size:15px;color:var(--text);font-weight:500">{{ $d['value'] }}</div>
                 </div>
                 @endforeach
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:4px">Business Address</div>
-                <div style="font-size:13.5px;color:var(--text)">{{ $business->business_address }}</div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:4px">Business Address</div>
+                <div style="font-size:15px;color:var(--text)">{{ $business->business_address }}</div>
             </div>
             @if($business->ownerResident)
             <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Linked Resident</div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Linked Resident</div>
                 <a href="{{ route('residents.show', $business->ownerResident) }}"
                    style="display:flex;align-items:center;gap:10px;color:var(--navy)">
                     <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px;flex-shrink:0">
                         {{ strtoupper(substr($business->ownerResident->first_name, 0, 1)) }}
                     </div>
                     <div>
-                        <div style="font-weight:600;font-size:13px">{{ $business->ownerResident->full_name }}</div>
+                        <div style="font-weight:600;font-size:14px">{{ $business->ownerResident->full_name }}</div>
                         <div class="td-muted">View resident profile →</div>
                     </div>
                 </a>

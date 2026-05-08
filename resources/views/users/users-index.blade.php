@@ -51,7 +51,7 @@
 <div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-user-shield"></i> System Users</span>
-        <span style="font-size:12px;color:var(--text-muted)">{{ number_format($users->total()) }} users</span>
+        <span style="font-size:13px;color:var(--text-muted)">{{ number_format($users->total()) }} users</span>
     </div>
     <div class="table-responsive">
         <table>
@@ -74,9 +74,9 @@
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
                             <div>
-                                <div style="font-weight:600;font-size:13.5px">{{ $user->name }}</div>
+                                <div style="font-weight:600;font-size:14px">{{ $user->name }}</div>
                                 @if($user->id === auth()->id())
-                                    <span style="font-size:10px;color:var(--gold);font-weight:600">You</span>
+                                    <span style="font-size:13px;color:var(--gold);font-weight:600">You</span>
                                 @endif
                             </div>
                         </div>
@@ -95,7 +95,7 @@
                     </td>
                     <td>
                         @if($user->email_verified_at)
-                            <span class="badge badge-green"><i class="fas fa-check" style="font-size:9px;margin-right:3px"></i> Verified</span>
+                            <span class="badge badge-green"><i class="fas fa-check" style="margin-right:3px"></i> Verified</span>
                         @else
                             <span class="badge badge-gray">Unverified</span>
                         @endif
@@ -108,7 +108,9 @@
                             </a>
                             @if($user->id !== auth()->id())
                             <form method="POST" action="{{ route('users.destroy', $user) }}"
-                                  onsubmit="return confirm('Delete this user permanently?')">
+                                  data-confirm="Delete {{ $user->name }}? This will permanently remove their account."
+                                  data-confirm-title="Delete User"
+                                  data-confirm-ok="Delete Permanently">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete">
                                     <i class="fas fa-trash"></i>
@@ -133,7 +135,7 @@
     </div>
     @if($users->hasPages())
     <div style="padding:16px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-        <span style="font-size:12px;color:var(--text-muted)">
+        <span style="font-size:13px;color:var(--text-muted)">
             Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ number_format($users->total()) }}
         </span>
         {{ $users->withQueryString()->links() }}

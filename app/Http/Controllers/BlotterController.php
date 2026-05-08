@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BlotterCase;
 use App\Models\Resident;
 use App\Traits\LogsActivity;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -16,8 +17,8 @@ class BlotterController extends Controller
     {
         if ($request->ajax()) {
             $query = BlotterCase::select('blotter_cases.*')
-                ->when($request->status, fn ($q) => $q->where('status', $request->status))
-                ->when($request->incident_type, fn ($q) => $q->where('incident_type', $request->incident_type))
+                ->when($request->status, fn ($q) => $q->whereIn('status', (array) $request->status))
+                ->when($request->incident_type, fn ($q) => $q->whereIn('incident_type', (array) $request->incident_type))
                 ->when($request->date_from, fn ($q) => $q->whereDate('incident_date', '>=', $request->date_from))
                 ->when($request->date_to, fn ($q) => $q->whereDate('incident_date', '<=', $request->date_to));
 
@@ -29,30 +30,44 @@ class BlotterController extends Controller
                 ->addColumn('date_col', fn ($c) => '<span class="td-muted">'.($c->incident_date ? \Carbon\Carbon::parse($c->incident_date)->format('M d, Y') : '—').'</span>')
                 ->addColumn('status_col', function ($c) {
                     $cls = match ($c->status) {
-                        'Active' => 'badge-red',
-                        'Under Investigation' => 'badge-yellow',
-                        'Mediated' => 'badge-blue',
-                        'Settled' => 'badge-green',
-                        'Closed' => 'badge-gray',
-                        'Referred to Higher Authority' => 'badge-orange',
-                        default => 'badge-gray'
+                        'Active'                      => 'badge-red',
+                        'Under Investigation'         => 'badge-yellow',
+                        'Mediated'                    => 'badge-blue',
+                        'Settled'                     => 'badge-green',
+                        'Closed'                      => 'badge-gray',
+                        'Referred to Higher Authority'=> 'badge-orange',
+                        default                       => 'badge-gray'
                     };
 
-                    return '<span class="badge '.$cls.'">'.$c->status.'</span>';
+                    $out = '<span class="badge '.$cls.'">'.$c->status.'</span>';
+
+                    $isOpen = in_array($c->status, ['Active', 'Under Investigation']);
+                    if ($isOpen && $c->incident_date) {
+                        $days = Carbon::parse($c->incident_date)->diffInDays(now());
+                        if ($days >= 30) {
+                            $out .= ' <span class="badge badge-red" style="font-size:10px;gap:3px" title="Open for '.$days.' days">'.
+                                    '<i class="fas fa-fire"></i> '.$days.'d overdue</span>';
+                        }
+                    }
+
+                    return $out;
                 })
                 ->addColumn('actions', function ($c) {
-                    $show = route('blotter.show', $c);
-                    $edit = route('blotter.edit', $c);
+                    $show   = route('blotter.show', $c);
+                    $edit   = route('blotter.edit', $c);
                     $delete = route('blotter.destroy', $c);
 
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
-                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-eye"></i></a>
-                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-pen"></i></a>
-                            <form method="POST" action="'.$delete.'" onsubmit="return confirm(\'Delete this case?\')">
+                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View Case"><i class="fas fa-eye"></i></a>
+                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
+                            <form method="POST" action="'.$delete.'"
+                                  data-confirm="Delete Case '.e($c->case_number).'? This will permanently remove the record and any attachments."
+                                  data-confirm-title="Delete Blotter Case"
+                                  data-confirm-ok="Delete Case">
                                 <input type="hidden" name="_token" value="'.csrf_token().'">
                                 <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
                             </form>
                         </div>';
                 })

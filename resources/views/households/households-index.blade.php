@@ -107,14 +107,16 @@
 
 @endsection
 
-@push('scripts')
+@push('styles')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+@endpush
+
+@push('scripts')
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
 #householdsTable_wrapper .dataTables_length,
 #householdsTable_wrapper .dataTables_filter { display:none; }
-#householdsTable_wrapper .dataTables_info { font-size:12px;color:var(--text-muted);padding:12px 20px; }
+#householdsTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
 #householdsTable_wrapper .dataTables_paginate { padding:12px 20px; }
 #householdsTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
 #householdsTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }

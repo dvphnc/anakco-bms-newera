@@ -25,7 +25,7 @@
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-location-dot"></i> {{ $purok->name }}</span>
-            <span style="font-size:12px;color:var(--text-muted)">{{ $purok->residents_count }} residents</span>
+            <span style="font-size:13px;color:var(--text-muted)">{{ $purok->residents_count }} residents</span>
         </div>
         <div class="card-body">
 
@@ -45,7 +45,7 @@
                         </option>
                     @endforeach
                 </select>
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px">
+                <div style="font-size:13px;color:var(--text-muted);margin-top:4px">
                     Only active residents of this purok are shown
                 </div>
             </div>
@@ -57,7 +57,7 @@
                         {{ $purok->leader ? strtoupper(substr($purok->leader->first_name, 0, 1)) : '' }}
                     </div>
                     <div>
-                        <div style="font-weight:600;font-size:13.5px" id="leaderName">
+                        <div style="font-weight:600;font-size:14px" id="leaderName">
                             {{ $purok->leader?->full_name ?? '' }}
                         </div>
                         <div class="td-muted" id="leaderContact">
@@ -91,13 +91,13 @@
                     {{ strtoupper(substr($r->first_name, 0, 1)) }}
                 </div>
                 <div style="flex:1;min-width:0">
-                    <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                    <div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
                         {{ $r->full_name }}
                         @if($purok->leader_id == $r->id)
-                            <span class="badge badge-gold" style="font-size:9px;margin-left:4px">Leader</span>
+                            <span class="badge badge-gold" style="margin-left:4px">Leader</span>
                         @endif
                     </div>
-                    <div class="td-muted" style="font-size:11px">{{ $r->contact_number ?? '—' }}</div>
+                    <div class="td-muted" style="font-size:13px">{{ $r->contact_number ?? '—' }}</div>
                 </div>
             </div>
             @empty

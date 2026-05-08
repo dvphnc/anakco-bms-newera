@@ -28,7 +28,7 @@
                 <div style="width:64px;height:64px;border-radius:50%;background:rgba(200,134,26,0.2);border:2px solid rgba(200,134,26,0.4);margin:0 auto 14px;display:flex;align-items:center;justify-content:center">
                     <i class="fas fa-house" style="font-size:24px;color:var(--gold-light)"></i>
                 </div>
-                <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.1em">
+                <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.1em">
                     {{ $household->household_number }}
                 </div>
                 <div style="font-size:16px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:6px">
@@ -45,13 +45,13 @@
                     <div style="font-size:22px;font-weight:700;color:var(--navy)">
                         {{ $household->residents->count() }}
                     </div>
-                    <div style="font-size:11px;color:var(--text-muted)">Members</div>
+                    <div style="font-size:13px;color:var(--text-muted)">Members</div>
                 </div>
                 <div style="padding:14px 16px;text-align:center">
                     <div style="font-size:22px;font-weight:700;color:var(--navy)">
                         {{ $household->family_size ?? 0 }}
                     </div>
-                    <div style="font-size:11px;color:var(--text-muted)">Family Size</div>
+                    <div style="font-size:13px;color:var(--text-muted)">Family Size</div>
                 </div>
             </div>
         </div>
@@ -66,7 +66,9 @@
                     <i class="fas fa-pen" style="color:var(--navy)"></i> Edit Household
                 </a>
                 <form method="POST" action="{{ route('households.destroy', $household) }}"
-                      onsubmit="return confirm('Delete this household?')">
+                      data-confirm="Delete household {{ $household->household_number }}? This cannot be undone."
+                      data-confirm-title="Delete Household"
+                      data-confirm-ok="Delete">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start">
                         <i class="fas fa-trash"></i> Delete
@@ -97,16 +99,16 @@
                     @endphp
                     @foreach($details as $d)
                     <div style="padding:10px 0;border-bottom:1px solid var(--border);{{ $loop->even ? 'padding-left:24px' : '' }}">
-                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">
+                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">
                             {{ $d['label'] }}
                         </div>
-                        <div style="font-size:13.5px;color:var(--text);font-weight:500">{{ $d['value'] }}</div>
+                        <div style="font-size:15px;color:var(--text);font-weight:500">{{ $d['value'] }}</div>
                     </div>
                     @endforeach
                 </div>
                 <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:4px">Address</div>
-                    <div style="font-size:13.5px;color:var(--text)">{{ $household->address }}</div>
+                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:4px">Address</div>
+                    <div style="font-size:15px;color:var(--text)">{{ $household->address }}</div>
                 </div>
             </div>
         </div>
@@ -115,7 +117,7 @@
         <div class="card">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-users"></i> Household Members</span>
-                <span style="font-size:12px;color:var(--text-muted)">{{ $household->residents->count() }} member(s)</span>
+                <span style="font-size:13px;color:var(--text-muted)">{{ $household->residents->count() }} member(s)</span>
             </div>
             <div class="table-responsive">
                 <table>
@@ -132,7 +134,7 @@
                         @forelse($household->residents as $resident)
                         <tr>
                             <td>
-                                <div style="font-weight:600;font-size:13px">{{ $resident->full_name }}</div>
+                                <div style="font-weight:600;font-size:14px">{{ $resident->full_name }}</div>
                                 <div class="td-muted">{{ $resident->civil_status }}</div>
                             </td>
                             <td>{{ $resident->age ?? '—' }}</td>

@@ -32,7 +32,7 @@
                 <div style="width:64px;height:64px;border-radius:50%;background:rgba(200,134,26,0.2);border:2px solid rgba(200,134,26,0.4);margin:0 auto 14px;display:flex;align-items:center;justify-content:center">
                     <i class="fas fa-file-alt" style="font-size:24px;color:var(--gold-light)"></i>
                 </div>
-                <div class="td-mono" style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:4px">{{ $document->doc_number }}</div>
+                <div class="td-mono" style="color:rgba(255,255,255,0.5);font-size:12px;margin-bottom:4px">{{ $document->doc_number }}</div>
                 <div style="font-size:15px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:10px">{{ $document->document_type }}</div>
                 @php
                     $cls = match($document->status) {
@@ -46,14 +46,14 @@
                 <span class="badge {{ $cls }}">{{ $document->status }}</span>
             </div>
             <div style="padding:16px 20px;border-top:1px solid var(--border)">
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Resident</div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Resident</div>
                 <a href="{{ route('residents.show', $document->resident) }}"
                    style="display:flex;align-items:center;gap:10px;color:var(--navy)">
                     <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:#fff;font-size:13px">
                         {{ strtoupper(substr($document->resident->first_name ?? 'R', 0, 1)) }}
                     </div>
                     <div>
-                        <div style="font-weight:600;font-size:13px">{{ $document->resident->full_name ?? '—' }}</div>
+                        <div style="font-weight:600;font-size:14px">{{ $document->resident->full_name ?? '—' }}</div>
                         <div class="td-muted">{{ $document->resident->purok->name ?? '' }}</div>
                     </div>
                 </a>
@@ -81,7 +81,9 @@
                 </form>
                 @endif
                 <form method="POST" action="{{ route('documents.destroy', $document) }}"
-                      onsubmit="return confirm('Delete this document?')">
+                      data-confirm="Delete document {{ $document->doc_number }}? This cannot be recovered."
+                      data-confirm-title="Delete Document"
+                      data-confirm-ok="Delete">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start">
                         <i class="fas fa-trash"></i> Delete
@@ -113,8 +115,8 @@
                 @endphp
                 @foreach($details as $d)
                 <div style="padding:10px 0;border-bottom:1px solid var(--border);{{ $loop->even ? 'padding-left:24px' : '' }}">
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">{{ $d['label'] }}</div>
-                    <div style="font-size:13.5px;color:var(--text);font-weight:500">{{ $d['value'] }}</div>
+                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">{{ $d['label'] }}</div>
+                    <div style="font-size:15px;color:var(--text);font-weight:500">{{ $d['value'] }}</div>
                 </div>
                 @endforeach
             </div>

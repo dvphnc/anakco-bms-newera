@@ -27,23 +27,26 @@
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Resident <span style="color:var(--crimson)">*</span></label>
-                <select name="resident_id" id="resident_id" class="select2-resident" required style="width:100%" data-placeholder="Search resident by name...">
+                <select name="resident_id" id="resident_id" class="select2-resident @error('resident_id') is-invalid @enderror" required style="width:100%" data-placeholder="Search resident by name...">
                     @if($document->resident)
                         <option value="{{ $document->resident_id }}" selected>
                             {{ $document->resident->last_name }}, {{ $document->resident->first_name }} — {{ $document->resident->address }}
                         </option>
                     @endif
                 </select>
-                @error('resident_id')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
+                @error('resident_id')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Document Type <span style="color:var(--crimson)">*</span></label>
-                <select name="document_type" class="form-control" required>
+                <label class="form-label">
+                    Document Type <span style="color:var(--crimson)">*</span>
+                    <span class="help-icon" data-tippy-content="Each type generates a different certificate layout. 'Barangay Clearance' is the most common. Choose the type that matches what the resident is requesting.">?</span>
+                </label>
+                <select name="document_type" class="form-control @error('document_type') is-invalid @enderror" required>
                     @foreach(['Barangay Clearance','Certificate of Residency','Certificate of Indigency','Good Moral Character','Business Clearance','Certificate of Live Birth','Other'] as $t)
                         <option value="{{ $t }}" {{ old('document_type', $document->document_type) === $t ? 'selected' : '' }}>{{ $t }}</option>
                     @endforeach
                 </select>
-                @error('document_type')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
+                @error('document_type')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
         </div>
 
@@ -51,28 +54,44 @@
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Purpose <span style="color:var(--crimson)">*</span></label>
-                <input type="text" name="purpose" class="form-control" value="{{ old('purpose', $document->purpose) }}" required>
-                @error('purpose')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
+                <input type="text" name="purpose" class="form-control @error('purpose') is-invalid @enderror" value="{{ old('purpose', $document->purpose) }}" required>
+                @error('purpose')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Status</label>
-                <select name="status" class="form-control">
+                <label class="form-label">
+                    Status
+                    <span class="help-icon" data-tippy-content="'Pending' = not yet processed. 'Processing' = being prepared. 'Released' = given to the resident (fill in Date Released and OR Number). 'Cancelled' = request withdrawn.">?</span>
+                </label>
+                <select name="status" class="form-control @error('status') is-invalid @enderror">
                     @foreach(['Pending','Processing','Released','Cancelled'] as $s)
                         <option value="{{ $s }}" {{ old('status', $document->status) === $s ? 'selected' : '' }}>{{ $s }}</option>
                     @endforeach
                 </select>
+                @error('status')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Fee (₱)</label>
-                <input type="number" name="fee_paid" class="form-control" value="{{ old('fee_paid', $document->fee_paid ?? 0) }}" min="0" step="0.01">
+                <label class="form-label">
+                    Fee (₱)
+                    <span class="help-icon" data-tippy-content="Enter 0 for indigent residents or free certificates. The amount will appear on the certificate's OR stub.">?</span>
+                </label>
+                <input type="number" name="fee_paid" class="form-control @error('fee_paid') is-invalid @enderror" value="{{ old('fee_paid', $document->fee_paid ?? 0) }}" min="0" step="0.01">
+                @error('fee_paid')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">OR Number</label>
-                <input type="text" name="or_number" class="form-control" placeholder="e.g. OR-2026-00001" value="{{ old('or_number', $document->or_number) }}">
+                <label class="form-label">
+                    OR Number
+                    <span class="help-icon" data-tippy-content="Official Receipt number from the cashier. Fill this in when the fee has been paid and the document is being released.">?</span>
+                </label>
+                <input type="text" name="or_number" class="form-control @error('or_number') is-invalid @enderror" placeholder="e.g. OR-2026-00001" value="{{ old('or_number', $document->or_number) }}">
+                @error('or_number')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Date Released</label>
-                <input type="date" name="released_at" class="form-control" value="{{ old('released_at', $document->released_at?->format('Y-m-d')) }}">
+                <label class="form-label">
+                    Date Released
+                    <span class="help-icon" data-tippy-content="The date the document was physically given to the resident. Filling this in automatically sets the Status to Released when saved.">?</span>
+                </label>
+                <input type="date" name="released_at" class="form-control @error('released_at') is-invalid @enderror" value="{{ old('released_at', $document->released_at?->format('Y-m-d')) }}">
+                @error('released_at')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
         </div>
 

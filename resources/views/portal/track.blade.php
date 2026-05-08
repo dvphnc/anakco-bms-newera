@@ -161,21 +161,26 @@
         <p>Enter your appointment number (e.g., <code>APT-20260507-AB12</code>) to check the status of your request.</p>
     </div>
 
-    <form method="POST" action="{{ route('portal.track.post') }}">
+    <form id="trackForm" method="POST" action="{{ route('portal.track.post') }}">
         @csrf
         <div class="search-row">
-            <input type="text" name="appointment_number" class="form-control"
+            <input type="text" name="appointment_number" id="trackInput" class="form-control"
                    placeholder="APT-YYYYMMDD-XXXX"
                    value="{{ request('apt') ?? old('appointment_number') ?? (isset($appointment) ? $appointment->appointment_number : '') }}"
                    style="text-transform:uppercase;letter-spacing:.08em"
+                   autocomplete="off"
                    required>
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" id="trackBtn" class="btn btn-primary">
                 <i class="fas fa-search"></i> Track
             </button>
         </div>
         @error('appointment_number') <div class="form-error" style="margin-top:.4rem">{{ $message }}</div> @enderror
     </form>
 
+    {{-- Axios result container (hidden until search) --}}
+    <div id="trackResult" style="display:none"></div>
+
+    {{-- Server-side result fallback (shown when JS is unavailable / direct POST) --}}
     @if(isset($appointment))
         @if($appointment)
             @php
@@ -185,7 +190,7 @@
                 $stepIndex = array_search($current, $steps);
             @endphp
 
-            <div class="result-card">
+            <div class="result-card" id="serverResult">
                 <div class="result-header">
                     <div>
                         <div style="font-size:.72rem;opacity:.7;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem">Appointment Number</div>
@@ -196,60 +201,23 @@
                         <div style="font-size:.85rem">{{ $appointment->created_at->format('M d, Y') }}</div>
                     </div>
                 </div>
-
                 <div class="result-body">
                     <table class="detail-table">
-                        <tr>
-                            <td>Name</td>
-                            <td>{{ $appointment->resident_name }}</td>
-                        </tr>
-                        <tr>
-                            <td>Document</td>
-                            <td>{{ $appointment->document_type }}</td>
-                        </tr>
-                        <tr>
-                            <td>Preferred Date</td>
-                            <td>{{ $appointment->preferred_date->format('F j, Y') }}</td>
-                        </tr>
-                        @if($appointment->purpose)
-                        <tr>
-                            <td>Purpose</td>
-                            <td>{{ $appointment->purpose }}</td>
-                        </tr>
-                        @endif
-                        @if($appointment->notes)
-                        <tr>
-                            <td>Staff Notes</td>
-                            <td>{{ $appointment->notes }}</td>
-                        </tr>
-                        @endif
-                        @if($appointment->released_at)
-                        <tr>
-                            <td>Released On</td>
-                            <td>{{ $appointment->released_at->format('F j, Y g:i A') }}</td>
-                        </tr>
-                        @endif
+                        <tr><td>Name</td><td>{{ $appointment->resident_name }}</td></tr>
+                        <tr><td>Document</td><td>{{ $appointment->document_type }}</td></tr>
+                        <tr><td>Preferred Date</td><td>{{ $appointment->preferred_date->format('F j, Y') }}</td></tr>
+                        @if($appointment->purpose)<tr><td>Purpose</td><td>{{ $appointment->purpose }}</td></tr>@endif
+                        @if($appointment->notes)<tr><td>Staff Notes</td><td>{{ $appointment->notes }}</td></tr>@endif
+                        @if($appointment->released_at)<tr><td>Released On</td><td>{{ $appointment->released_at->format('F j, Y g:i A') }}</td></tr>@endif
                     </table>
-
                     @if(!$cancelled)
                     <div class="progress-section">
                         <h4>Progress</h4>
                         <div class="progress-steps">
                             @foreach($steps as $i => $step)
-                                @php
-                                    $isDone    = $stepIndex !== false && $i < $stepIndex;
-                                    $isCurrent = $current === $step;
-                                @endphp
+                                @php $isDone = $stepIndex !== false && $i < $stepIndex; $isCurrent = $current === $step; @endphp
                                 <div class="prog-step {{ $isDone ? 'done' : '' }} {{ $isCurrent ? 'current' : '' }}">
-                                    <div class="prog-dot">
-                                        @if($isDone)
-                                            <i class="fas fa-check"></i>
-                                        @elseif($isCurrent)
-                                            <i class="fas fa-circle-dot"></i>
-                                        @else
-                                            {{ $i + 1 }}
-                                        @endif
-                                    </div>
+                                    <div class="prog-dot">@if($isDone)<i class="fas fa-check"></i>@elseif($isCurrent)<i class="fas fa-circle-dot"></i>@else{{ $i + 1 }}@endif</div>
                                     <div class="prog-label">{{ $step }}</div>
                                 </div>
                             @endforeach
@@ -265,7 +233,7 @@
                 </div>
             </div>
         @else
-            <div class="not-found">
+            <div class="not-found" id="serverResult">
                 <div class="nf-icon"><i class="fas fa-circle-xmark"></i></div>
                 <h3>Appointment Not Found</h3>
                 <p>No record found for that appointment number. Please double-check and try again.</p>
@@ -274,3 +242,118 @@
     @endif
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+(function () {
+    const form      = document.getElementById('trackForm');
+    const input     = document.getElementById('trackInput');
+    const btn       = document.getElementById('trackBtn');
+    const resultDiv = document.getElementById('trackResult');
+    const serverRes = document.getElementById('serverResult');
+
+    if (!form) return;
+
+    // Hide server-side result when JS is available — we'll render via Axios instead
+    if (serverRes) serverRes.style.display = 'none';
+
+    // If the page loaded with a pre-filled value (query param), trigger a search
+    if (input.value.trim()) {
+        doSearch(input.value.trim());
+    }
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        doSearch(input.value.trim());
+    });
+
+    function doSearch(number) {
+        if (!number) return;
+
+        btn.disabled  = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching…';
+        resultDiv.style.display = 'none';
+
+        axios.get('/portal/track/lookup', { params: { number: number.toUpperCase() } })
+            .then(function (res) {
+                resultDiv.innerHTML = renderResult(res.data);
+                resultDiv.style.display = 'block';
+            })
+            .catch(function () {
+                resultDiv.innerHTML = '<div class="not-found"><div class="nf-icon"><i class="fas fa-wifi"></i></div><h3>Connection Error</h3><p>Could not reach the server. Please try again.</p></div>';
+                resultDiv.style.display = 'block';
+            })
+            .finally(function () {
+                btn.disabled  = false;
+                btn.innerHTML = '<i class="fas fa-search"></i> Track';
+            });
+    }
+
+    function esc(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function row(label, value) {
+        if (!value) return '';
+        return '<tr><td>' + label + '</td><td>' + esc(value) + '</td></tr>';
+    }
+
+    function renderResult(d) {
+        if (!d.found) {
+            return '<div class="not-found">' +
+                '<div class="nf-icon"><i class="fas fa-circle-xmark"></i></div>' +
+                '<h3>Appointment Not Found</h3>' +
+                '<p>No record found for that appointment number. Please double-check and try again.</p>' +
+                '</div>';
+        }
+
+        var details = '<table class="detail-table">' +
+            row('Name', d.resident_name) +
+            row('Document', d.document_type) +
+            row('Preferred Date', d.preferred_date) +
+            row('Purpose', d.purpose) +
+            row('Staff Notes', d.notes) +
+            row('Released On', d.released_at) +
+            '</table>';
+
+        var progress = '';
+        if (!d.cancelled) {
+            var steps = d.steps || [];
+            var dots  = steps.map(function (step, i) {
+                var cls = i < d.step_index ? 'done' : (d.status === step ? 'current' : '');
+                var icon = i < d.step_index
+                    ? '<i class="fas fa-check"></i>'
+                    : (d.status === step ? '<i class="fas fa-circle-dot"></i>' : (i + 1));
+                return '<div class="prog-step ' + cls + '">' +
+                    '<div class="prog-dot">' + icon + '</div>' +
+                    '<div class="prog-label">' + esc(step) + '</div>' +
+                    '</div>';
+            }).join('');
+            progress = '<div class="progress-section"><h4>Progress</h4><div class="progress-steps">' + dots + '</div></div>';
+        } else {
+            var cancelNote = d.notes ? ' ' + esc(d.notes) : '';
+            progress = '<div style="margin-top:1.25rem;padding:.75rem 1rem;background:var(--crimson-pale);border-radius:var(--radius-sm);border-left:4px solid var(--crimson);font-size:.83rem;color:var(--crimson)">' +
+                '<i class="fas fa-ban"></i> This appointment has been <strong>cancelled</strong>.' + cancelNote +
+                ' Please visit the barangay hall or submit a new request.' +
+                '</div>';
+        }
+
+        return '<div class="result-card">' +
+            '<div class="result-header">' +
+                '<div>' +
+                    '<div style="font-size:.72rem;opacity:.7;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem">Appointment Number</div>' +
+                    '<div class="apt-num">' + esc(d.appointment_number) + '</div>' +
+                '</div>' +
+                '<div style="text-align:right">' +
+                    '<div style="font-size:.72rem;opacity:.7;margin-bottom:.2rem">Submitted</div>' +
+                    '<div style="font-size:.85rem">' + esc(d.created_at) + '</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="result-body">' + details + progress + '</div>' +
+            '</div>';
+    }
+})();
+</script>
+@endpush

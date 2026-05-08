@@ -23,6 +23,24 @@ class ResidentController extends Controller
                 ->when($request->gender, fn ($q) => $q->where('gender', $request->gender))
                 ->when($request->status, fn ($q) => $q->where('residency_status', $request->status))
                 ->when($request->purok_id, fn ($q) => $q->where('purok_id', $request->purok_id))
+                ->when($request->civil_status, fn ($q) => $q->where('civil_status', $request->civil_status))
+                ->when($request->age_min, fn ($q) => $q->whereRaw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) >= ?', [(int) $request->age_min]))
+                ->when($request->age_max, fn ($q) => $q->whereRaw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) <= ?', [(int) $request->age_max]))
+                ->when($request->tags, function ($q) use ($request) {
+                    $tags = (array) $request->tags;
+                    $q->where(function ($sub) use ($tags) {
+                        foreach ($tags as $tag) {
+                            match ($tag) {
+                                'voter'       => $sub->orWhere('is_voter', true),
+                                'senior'      => $sub->orWhere('is_senior', true),
+                                'pwd'         => $sub->orWhere('is_pwd', true),
+                                'solo_parent' => $sub->orWhere('is_solo_parent', true),
+                                '4ps'         => $sub->orWhere('is_4ps', true),
+                                default       => null,
+                            };
+                        }
+                    });
+                })
                 ->select('residents.*');
 
             return DataTables::of($query)
@@ -83,15 +101,22 @@ class ResidentController extends Controller
                     return '<span class="badge '.$cls.'">'.$r->residency_status.'</span>';
                 })
                 ->addColumn('actions', function ($r) {
-                    $show = route('residents.show', $r);
-                    $edit = route('residents.edit', $r);
-                    $delete = route('residents.destroy', $r);
+                    $show      = route('residents.show', $r);
+                    $edit      = route('residents.edit', $r);
+                    $delete    = route('residents.destroy', $r);
+                    $clearance = route('documents.create').'?resident_id='.$r->id;
 
                     return '
-                        <div style="display:flex;justify-content:flex-end;gap:6px">
-                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View"><i class="fas fa-eye"></i></a>
+                        <div style="display:flex;justify-content:flex-end;gap:6px;flex-wrap:nowrap">
+                            <a href="'.$clearance.'" class="btn btn-gold btn-sm" title="Issue Barangay Clearance" style="white-space:nowrap">
+                                <i class="fas fa-file-circle-check"></i> Clearance
+                            </a>
+                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View Profile"><i class="fas fa-eye"></i></a>
                             <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
-                            <form method="POST" action="'.$delete.'" onsubmit="return confirm(\'Delete this resident?\')">
+                            <form method="POST" action="'.$delete.'"
+                                  data-confirm="Permanently delete '.e($r->full_name).'? All linked records will remain but the resident profile will be removed."
+                                  data-confirm-title="Delete Resident"
+                                  data-confirm-ok="Delete">
                                 <input type="hidden" name="_token" value="'.csrf_token().'">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
@@ -116,6 +141,58 @@ class ResidentController extends Controller
         $puroks = Purok::orderBy('name')->get();
 
         return view('residents.residents-index', compact('puroks'));
+    }
+
+    private function residentRules(): array
+    {
+        return [
+            'last_name'        => 'required|string|max:100',
+            'first_name'       => 'required|string|max:100',
+            'middle_name'      => 'nullable|string|max:100',
+            'suffix'           => 'nullable|string|max:10',
+            'birthdate'        => 'required|date|before:today',
+            'gender'           => 'required|in:Male,Female',
+            'civil_status'     => 'nullable|in:Single,Married,Widowed,Separated,Annulled',
+            'birthplace'       => 'nullable|string|max:255',
+            'nationality'      => 'nullable|string|max:100',
+            'religion'         => 'nullable|string|max:100',
+            'occupation'       => 'nullable|string|max:100',
+            'contact_number'   => 'nullable|string|max:20',
+            'email_address'    => 'nullable|email|max:255',
+            'address'          => 'required|string|max:255',
+            'purok_id'         => 'required|exists:puroks,id',
+            'household_id'     => 'nullable|exists:households,id',
+            'is_voter'         => 'boolean',
+            'is_pwd'           => 'boolean',
+            'is_senior'        => 'boolean',
+            'is_solo_parent'   => 'boolean',
+            'is_4ps'           => 'boolean',
+            'residency_status' => 'required|in:Active,Deceased,Transferred',
+            'photo_path'       => 'nullable|image|max:2048',
+        ];
+    }
+
+    private function residentMessages(): array
+    {
+        return [
+            'last_name.required'        => 'Please enter the resident\'s last name.',
+            'last_name.max'             => 'Last name must not exceed 100 characters.',
+            'first_name.required'       => 'Please enter the resident\'s first name.',
+            'first_name.max'            => 'First name must not exceed 100 characters.',
+            'birthdate.required'        => 'Please enter the resident\'s date of birth.',
+            'birthdate.date'            => 'Please enter a valid date of birth.',
+            'birthdate.before'          => 'Date of birth must be a date in the past.',
+            'gender.required'           => 'Please select the resident\'s gender.',
+            'address.required'          => 'Please enter the resident\'s full address.',
+            'address.max'               => 'Address must not exceed 255 characters.',
+            'purok_id.required'         => 'Please select a Purok.',
+            'purok_id.exists'           => 'The selected Purok is not valid. Please choose from the list.',
+            'email_address.email'       => 'Please enter a valid email address (e.g. juan@gmail.com).',
+            'contact_number.max'        => 'Contact number must not exceed 20 characters.',
+            'residency_status.required' => 'Please select a residency status.',
+            'photo_path.image'          => 'The photo must be an image file (JPG, PNG, GIF, etc.).',
+            'photo_path.max'            => 'Photo is too large. Maximum allowed size is 2MB.',
+        ];
     }
 
     private function avatarHtml($r): string
@@ -144,31 +221,7 @@ class ResidentController extends Controller
     // -------------------------------------------------------
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'last_name' => 'required|string|max:100',
-            'first_name' => 'required|string|max:100',
-            'middle_name' => 'nullable|string|max:100',
-            'suffix' => 'nullable|string|max:10',
-            'birthdate' => 'required|date|before:today',
-            'gender' => 'required|in:Male,Female',
-            'civil_status' => 'nullable|in:Single,Married,Widowed,Separated,Annulled',
-            'birthplace' => 'nullable|string|max:255',
-            'nationality' => 'nullable|string|max:100',
-            'religion' => 'nullable|string|max:100',
-            'occupation' => 'nullable|string|max:100',
-            'contact_number' => 'nullable|string|max:20',
-            'email_address' => 'nullable|email|max:255',
-            'address' => 'required|string|max:255',
-            'purok_id' => 'required|exists:puroks,id',
-            'household_id' => 'nullable|exists:households,id',
-            'is_voter' => 'boolean',
-            'is_pwd' => 'boolean',
-            'is_senior' => 'boolean',
-            'is_solo_parent' => 'boolean',
-            'is_4ps' => 'boolean',
-            'residency_status' => 'required|in:Active,Deceased,Transferred',
-            'photo_path' => 'nullable|image|max:2048',
-        ]);
+        $validated = $request->validate($this->residentRules(), $this->residentMessages());
 
         if ($request->hasFile('photo_path')) {
             $validated['photo_path'] = $request->file('photo_path')->store('residents', 'public');
@@ -212,31 +265,7 @@ class ResidentController extends Controller
     // -------------------------------------------------------
     public function update(Request $request, Resident $resident)
     {
-        $validated = $request->validate([
-            'last_name' => 'required|string|max:100',
-            'first_name' => 'required|string|max:100',
-            'middle_name' => 'nullable|string|max:100',
-            'suffix' => 'nullable|string|max:10',
-            'birthdate' => 'required|date|before:today',
-            'gender' => 'required|in:Male,Female',
-            'civil_status' => 'nullable|in:Single,Married,Widowed,Separated,Annulled',
-            'birthplace' => 'nullable|string|max:255',
-            'nationality' => 'nullable|string|max:100',
-            'religion' => 'nullable|string|max:100',
-            'occupation' => 'nullable|string|max:100',
-            'contact_number' => 'nullable|string|max:20',
-            'email_address' => 'nullable|email|max:255',
-            'address' => 'required|string|max:255',
-            'purok_id' => 'required|exists:puroks,id',
-            'household_id' => 'nullable|exists:households,id',
-            'is_voter' => 'boolean',
-            'is_pwd' => 'boolean',
-            'is_senior' => 'boolean',
-            'is_solo_parent' => 'boolean',
-            'is_4ps' => 'boolean',
-            'residency_status' => 'required|in:Active,Deceased,Transferred',
-            'photo_path' => 'nullable|image|max:2048',
-        ]);
+        $validated = $request->validate($this->residentRules(), $this->residentMessages());
 
         if ($request->hasFile('photo_path')) {
             $validated['photo_path'] = $request->file('photo_path')->store('residents', 'public');

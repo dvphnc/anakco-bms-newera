@@ -61,7 +61,7 @@
             </div>
             <div style="min-width:0">
                 <div style="font-size:15px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $purok->name }}</div>
-                <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px">
+                <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:2px">
                     {{ $purok->residents_count }} {{ Str::plural('resident', $purok->residents_count) }}
                 </div>
             </div>
@@ -76,7 +76,7 @@
         <div style="padding:16px 20px">
             {{-- Leader --}}
             <div style="margin-bottom:12px">
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">
                     Purok Leader
                 </div>
                 @if($purok->leader)
@@ -89,10 +89,10 @@
                             @endif
                         </div>
                         <div>
-                            <div style="font-weight:600;font-size:13.5px">{{ $purok->leader->full_name }}</div>
+                            <div style="font-weight:600;font-size:14px">{{ $purok->leader->full_name }}</div>
                             <div class="td-muted">{{ $purok->leader->contact_number ?? 'No contact' }}</div>
                         </div>
-                        <span class="badge badge-green" style="margin-left:auto;font-size:10px">Assigned</span>
+                        <span class="badge badge-green" style="margin-left:auto">Assigned</span>
                     </div>
                 @else
                     <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);border:1px dashed var(--border)">
@@ -100,8 +100,8 @@
                             <i class="fas fa-user-slash" style="font-size:14px"></i>
                         </div>
                         <div>
-                            <div style="font-size:13px;color:var(--text-muted)">No leader assigned</div>
-                            <a href="{{ route('puroks.edit', $purok) }}" style="font-size:11px;color:var(--navy)">
+                            <div style="font-size:14px;color:var(--text-muted)">No leader assigned</div>
+                            <a href="{{ route('puroks.edit', $purok) }}" style="font-size:13px;color:var(--navy)">
                                 Assign now →
                             </a>
                         </div>
@@ -111,7 +111,7 @@
 
             {{-- Description --}}
             @if($purok->description)
-            <div style="font-size:12px;color:var(--text-muted);padding-top:10px;border-top:1px solid var(--border)">
+            <div style="font-size:13px;color:var(--text-muted);padding-top:10px;border-top:1px solid var(--border)">
                 {{ $purok->description }}
             </div>
             @endif

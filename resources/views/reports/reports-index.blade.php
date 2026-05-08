@@ -10,7 +10,7 @@
         <p class="page-subtitle">Barangay New Era — population & services overview</p>
     </div>
     <div class="page-actions">
-        <span style="font-size:12px;color:var(--text-muted);padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm)">
+        <span style="font-size:13px;color:var(--text-muted);padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm)">
             <i class="fas fa-clock" style="color:var(--gold);margin-right:6px"></i>
             As of {{ now()->format('F d, Y') }}
         </span>
@@ -30,7 +30,7 @@
 <div class="card mb-6">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-download"></i> Export Data</span>
-        <span style="font-size:11px;color:var(--text-muted)">Download records as PDF or Excel</span>
+        <span style="font-size:13px;color:var(--text-muted)">Download records as PDF or Excel</span>
     </div>
     <div class="card-body">
         <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
@@ -52,20 +52,20 @@
                         <i class="fas {{ $m['icon'] }}"></i>
                     </div>
                     <div>
-                        <div style="font-size:13px;font-weight:700;color:var(--text)">{{ $m['label'] }}</div>
-                        <div style="font-size:10px;color:var(--text-muted)">All records</div>
+                        <div style="font-size:14px;font-weight:700;color:var(--text)">{{ $m['label'] }}</div>
+                        <div style="font-size:13px;color:var(--text-muted)">All records</div>
                     </div>
                 </div>
                 {{-- Export buttons --}}
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
                     <a href="{{ route('export.pdf', $m['key']) }}"
-                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:12px;font-weight:600;color:#dc2626;background:#fff;border-right:1px solid var(--border);text-decoration:none;transition:background 0.15s"
+                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#dc2626;background:#fff;border-right:1px solid var(--border);text-decoration:none;transition:background 0.15s"
                        onmouseover="this.style.background='#fee2e2'"
                        onmouseout="this.style.background='#fff'">
                         <i class="fas fa-file-pdf"></i> PDF
                     </a>
                     <a href="{{ route('export.excel', $m['key']) }}"
-                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:12px;font-weight:600;color:#16a34a;background:#fff;text-decoration:none;transition:background 0.15s"
+                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#16a34a;background:#fff;text-decoration:none;transition:background 0.15s"
                        onmouseover="this.style.background='#dcfce7'"
                        onmouseout="this.style.background='#fff'">
                         <i class="fas fa-file-excel"></i> Excel
@@ -125,6 +125,26 @@
         </div>
         <div class="card-body">
             <canvas id="monthlyDocChart" height="110"></canvas>
+            @php
+                $yearTotal  = array_sum($monthlyData);
+                $thisMonthR = $monthlyData[now()->month] ?? 0;
+                $prevMonthR = $monthlyData[now()->subMonth()->month] ?? 0;
+                $peakVal    = max($monthlyData);
+                $peakNum    = array_search($peakVal, $monthlyData);
+                $months     = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            @endphp
+            <div class="chart-insight" style="margin-top:14px">
+                <strong>{{ number_format($yearTotal) }}</strong> documents issued in {{ date('Y') }}.
+                Busiest month: <strong>{{ $months[$peakNum] ?? '' }}</strong> ({{ number_format($peakVal) }} docs).
+                This month: <strong>{{ $thisMonthR }}</strong>
+                @if($thisMonthR > $prevMonthR)
+                    — <span style="color:#16a34a"><i class="fas fa-arrow-up"></i> up {{ $thisMonthR - $prevMonthR }} from last month.</span>
+                @elseif($thisMonthR < $prevMonthR)
+                    — <span style="color:var(--crimson)"><i class="fas fa-arrow-down"></i> down {{ $prevMonthR - $thisMonthR }} from last month.</span>
+                @else
+                    — same as last month.
+                @endif
+            </div>
         </div>
     </div>
     <div class="card">
@@ -133,6 +153,19 @@
         </div>
         <div class="card-body">
             <canvas id="ageChart" height="160"></canvas>
+            @php
+                $largestGroup = '';
+                $largestCount = 0;
+                foreach ($ageGroups as $grp => $cnt) {
+                    if ($cnt > $largestCount) { $largestCount = $cnt; $largestGroup = $grp; }
+                }
+            @endphp
+            @if($largestCount > 0)
+            <div class="chart-insight" style="margin-top:12px">
+                Largest age group: <strong>{{ $largestGroup }}</strong> with <strong>{{ number_format($largestCount) }}</strong> residents
+                ({{ $totalActive > 0 ? round(($largestCount / $totalActive) * 100) : 0 }}% of active population).
+            </div>
+            @endif
         </div>
     </div>
 </div>
@@ -157,8 +190,8 @@
             @php $pct = $totalActive > 0 ? round(($d['value'] / $totalActive) * 100) : 0; @endphp
             <div style="margin-bottom:14px">
                 <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-                    <span style="font-size:12.5px;color:var(--text)">{{ $d['label'] }}</span>
-                    <span style="font-size:12px;color:var(--text-muted)">
+                    <span style="font-size:14px;color:var(--text)">{{ $d['label'] }}</span>
+                    <span style="font-size:13px;color:var(--text-muted)">
                         {{ number_format($d['value']) }} <span style="color:var(--text-subtle)">({{ $pct }}%)</span>
                     </span>
                 </div>
@@ -169,7 +202,7 @@
             @endforeach
 
             <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
-                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">Residency Status</div>
+                <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">Residency Status</div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
                     @php
                         $statuses = [
@@ -181,14 +214,14 @@
                     @foreach($statuses as $s)
                     <div style="text-align:center;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
                         <div style="font-size:18px;font-weight:700;color:{{ $s['color'] }}">{{ number_format($s['value']) }}</div>
-                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">{{ $s['label'] }}</div>
+                        <div style="font-size:13px;color:var(--text-muted);margin-top:2px">{{ $s['label'] }}</div>
                     </div>
                     @endforeach
                 </div>
             </div>
 
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">Gender Split</div>
+                <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:10px">Gender Split</div>
                 @php
                     $total = $totalMale + $totalFemale;
                     $malePct   = $total > 0 ? round(($totalMale   / $total) * 100) : 50;
@@ -199,11 +232,11 @@
                     <div style="width:{{ $femalePct }}%;background:var(--gold)"></div>
                 </div>
                 <div style="display:flex;gap:20px">
-                    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)">
+                    <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted)">
                         <div style="width:10px;height:10px;border-radius:50%;background:var(--navy)"></div>
                         Male — {{ number_format($totalMale) }} ({{ $malePct }}%)
                     </div>
-                    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)">
+                    <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted)">
                         <div style="width:10px;height:10px;border-radius:50%;background:var(--gold)"></div>
                         Female — {{ number_format($totalFemale) }} ({{ $femalePct }}%)
                     </div>
@@ -238,7 +271,7 @@
                             </div>
                         </td>
                         <td style="text-align:right;font-weight:600;color:var(--navy)">{{ number_format($purok->residents_count) }}</td>
-                        <td style="text-align:right;color:var(--text-muted);font-size:12px">{{ $pct }}%</td>
+                        <td style="text-align:right;color:var(--text-muted);font-size:13px">{{ $pct }}%</td>
                     </tr>
                     @empty
                     <tr>
@@ -268,7 +301,7 @@
                 <tbody>
                     @forelse($documentsByType as $type => $count)
                     <tr>
-                        <td style="font-size:12.5px">{{ $type }}</td>
+                        <td>{{ $type }}</td>
                         <td style="text-align:right;font-weight:600;color:var(--navy)">{{ number_format($count) }}</td>
                     </tr>
                     @empty
@@ -280,11 +313,11 @@
         <div style="padding:12px 16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
                 <div style="font-size:15px;font-weight:700;color:var(--gold)">{{ number_format($pendingDocuments) }}</div>
-                <div style="font-size:10px;color:var(--text-subtle)">Pending</div>
+                <div style="font-size:13px;color:var(--text-subtle)">Pending</div>
             </div>
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
                 <div style="font-size:15px;font-weight:700;color:#16a34a">{{ number_format($releasedDocuments) }}</div>
-                <div style="font-size:10px;color:var(--text-subtle)">Released</div>
+                <div style="font-size:13px;color:var(--text-subtle)">Released</div>
             </div>
         </div>
     </div>
@@ -304,7 +337,7 @@
                 <tbody>
                     @forelse($blotterByType as $type => $count)
                     <tr>
-                        <td style="font-size:12.5px">{{ $type }}</td>
+                        <td>{{ $type }}</td>
                         <td style="text-align:right;font-weight:600;color:var(--crimson)">{{ number_format($count) }}</td>
                     </tr>
                     @empty
@@ -316,11 +349,11 @@
         <div style="padding:12px 16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
                 <div style="font-size:15px;font-weight:700;color:var(--crimson)">{{ number_format($activeBlotter) }}</div>
-                <div style="font-size:10px;color:var(--text-subtle)">Active</div>
+                <div style="font-size:13px;color:var(--text-subtle)">Active</div>
             </div>
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
                 <div style="font-size:15px;font-weight:700;color:#16a34a">{{ number_format($settledBlotter) }}</div>
-                <div style="font-size:10px;color:var(--text-subtle)">Settled/Closed</div>
+                <div style="font-size:13px;color:var(--text-subtle)">Settled/Closed</div>
             </div>
         </div>
     </div>
@@ -341,8 +374,8 @@
             @php $pct = $totalBusinesses > 0 ? round(($b['value'] / $totalBusinesses) * 100) : 0; @endphp
             <div style="margin-bottom:14px">
                 <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-                    <span style="font-size:12.5px;color:var(--text)">{{ $b['label'] }}</span>
-                    <span style="font-size:12px;color:var(--text-muted)">{{ number_format($b['value']) }} ({{ $pct }}%)</span>
+                    <span style="font-size:14px;color:var(--text)">{{ $b['label'] }}</span>
+                    <span style="font-size:13px;color:var(--text-muted)">{{ number_format($b['value']) }} ({{ $pct }}%)</span>
                 </div>
                 <div class="progress-bar-wrap">
                     <div class="progress-bar" style="width:{{ $pct }}%;background:{{ $b['color'] }}"></div>
@@ -351,7 +384,7 @@
             @endforeach
             <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);text-align:center">
                 <div style="font-size:22px;font-weight:700;color:var(--navy)">{{ number_format($totalBusinesses) }}</div>
-                <div style="font-size:11px;color:var(--text-subtle)">Total Registered Businesses</div>
+                <div style="font-size:13px;color:var(--text-subtle)">Total Registered Businesses</div>
             </div>
         </div>
     </div>
@@ -382,7 +415,7 @@
                 <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:{{ $l['color'] }}18;display:flex;align-items:center;justify-content:center;color:{{ $l['color'] }};font-size:17px">
                     <i class="{{ $l['icon'] }}"></i>
                 </div>
-                <span style="font-size:11.5px;font-weight:600;color:var(--text)">{{ $l['label'] }}</span>
+                <span style="font-size:13px;font-weight:600;color:var(--text)">{{ $l['label'] }}</span>
             </a>
             @endforeach
         </div>
@@ -416,8 +449,8 @@
             responsive: true,
             plugins: { legend: { display: false } },
             scales: {
-                x: { ticks: { color: '#9CA3AF', font: { size: 10 } }, grid: { color: '#E5E7EB' } },
-                y: { ticks: { color: '#9CA3AF', font: { size: 10 }, stepSize: 1 }, grid: { color: '#E5E7EB' }, beginAtZero: true }
+                x: { ticks: { color: '#9CA3AF', font: { size: 12 } }, grid: { color: '#E5E7EB' } },
+                y: { ticks: { color: '#9CA3AF', font: { size: 12 }, stepSize: 1 }, grid: { color: '#E5E7EB' }, beginAtZero: true }
             }
         }
     });
@@ -439,7 +472,7 @@
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: { font: { size: 11 }, padding: 10, color: '#4B5563' }
+                    labels: { font: { size: 12 }, padding: 10, color: '#4B5563' }
                 }
             }
         }

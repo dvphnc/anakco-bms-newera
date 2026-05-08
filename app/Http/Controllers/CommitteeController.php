@@ -253,8 +253,14 @@ class CommitteeController extends Controller
     public function destroyMedicine(string $slug, int $id)
     {
         $medicine = MedicineInventory::findOrFail($id);
+        $name     = $medicine->medicine_name;
         $this->logActivity('deleted', $medicine);
         $medicine->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => "{$name} removed from inventory."]);
+        }
+
         return back()->with('success', 'Medicine record deleted.')->withFragment('medicine-inventory');
     }
 
@@ -308,6 +314,25 @@ class CommitteeController extends Controller
             'out'      => "Dispensed {$qty} units",
             'disposed' => "Disposed {$qty} units",
         };
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success'       => true,
+                'message'       => "{$label} of {$medicine->medicine_name}.",
+                'new_stock'     => $medicine->current_stock,
+                'reorder_level' => $medicine->reorder_level,
+                'is_low_stock'  => $medicine->isLowStock(),
+                'log_entry'     => [
+                    'type'   => $v['adjustment_type'],
+                    'qty'    => $qty,
+                    'before' => $stockBefore,
+                    'after'  => $medicine->current_stock,
+                    'reason' => $v['reason'] ?? null,
+                    'by'     => auth()->user()->name,
+                    'date'   => now()->format('M d, Y h:i A'),
+                ],
+            ]);
+        }
 
         return back()->with('success', "{$label} of {$medicine->medicine_name}.")->withFragment('medicine-inventory');
     }

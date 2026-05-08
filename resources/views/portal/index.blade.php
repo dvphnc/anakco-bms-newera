@@ -37,6 +37,10 @@
         justify-content: center;
         flex-wrap: wrap;
     }
+    @media (max-width: 480px) {
+        .hero-actions { flex-direction: column; align-items: stretch; }
+        .hero-actions .btn { justify-content: center; }
+    }
 
     .services-grid {
         display: grid;

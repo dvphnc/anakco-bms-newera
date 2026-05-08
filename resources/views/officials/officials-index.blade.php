@@ -60,7 +60,7 @@
 <div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-user-tie"></i> Officials List</span>
-        <span style="font-size:12px;color:var(--text-muted)">{{ $officials->count() }} officials</span>
+        <span style="font-size:13px;color:var(--text-muted)">{{ $officials->count() }} officials</span>
     </div>
     <div class="table-responsive">
         <table>
@@ -116,7 +116,9 @@
                                 <i class="fas fa-pen"></i>
                             </a>
                             <form method="POST" action="{{ route('officials.destroy', $official) }}"
-                                  onsubmit="return confirm('Delete this official?')">
+                                  data-confirm="Delete {{ $official->full_name }}? This cannot be undone."
+                                  data-confirm-title="Delete Official"
+                                  data-confirm-ok="Delete">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete">
                                     <i class="fas fa-trash"></i>

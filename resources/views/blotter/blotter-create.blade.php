@@ -23,21 +23,27 @@
         <div class="form-section-title">Incident Information</div>
         <div class="form-grid-3 mb-6">
             <div class="form-group">
-                <label class="form-label">Incident Type <span style="color:var(--crimson)">*</span></label>
+                <label class="form-label">
+                    Incident Type <span style="color:var(--crimson)">*</span>
+                    <span class="help-icon" data-tippy-content="Select the category that best describes the complaint or incident. Choose 'Other' if none of the options fit, and describe fully in the Incident Details field below.">?</span>
+                </label>
                 <select name="incident_type" class="form-control" required>
                     <option value="">Select Type</option>
                     @foreach(['Noise Complaint','Physical Assault','Verbal Abuse','Theft','Trespassing','Domestic Dispute','Property Damage','Threat','Other'] as $t)
                         <option value="{{ $t }}" {{ old('incident_type') === $t ? 'selected' : '' }}>{{ $t }}</option>
                     @endforeach
                 </select>
-                @error('incident_type')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
+                @error('incident_type')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Incident Date <span style="color:var(--crimson)">*</span></label>
                 <input type="date" name="incident_date" class="form-control" value="{{ old('incident_date', date('Y-m-d')) }}" required>
             </div>
             <div class="form-group">
-                <label class="form-label">Status</label>
+                <label class="form-label">
+                    Status
+                    <span class="help-icon" data-tippy-content="'Active' = newly filed. 'Under Investigation' = Barangay is looking into it. 'Mediated' = parties have met. 'Settled' = issue resolved. 'Referred' = escalated to police or court.">?</span>
+                </label>
                 <select name="status" class="form-control">
                     @foreach(['Active','Under Investigation','Mediated','Settled','Closed','Referred to Higher Authority'] as $s)
                         <option value="{{ $s }}" {{ old('status','Active') === $s ? 'selected' : '' }}>{{ $s }}</option>
@@ -46,11 +52,17 @@
             </div>
         </div>
         <div class="form-group mb-6">
-            <label class="form-label">Incident Location <span style="color:var(--crimson)">*</span></label>
+            <label class="form-label">
+                Incident Location <span style="color:var(--crimson)">*</span>
+                <span class="help-icon" data-tippy-content="Be as specific as possible. Include the Purok number and a landmark. Example: 'Purok 3, in front of Aling Nena's store near the basketball court.'">?</span>
+            </label>
             <input type="text" name="incident_location" class="form-control" value="{{ old('incident_location') }}" placeholder="e.g. Purok 3, near the basketball court" required>
         </div>
         <div class="form-group">
-            <label class="form-label">Incident Details <span style="color:var(--crimson)">*</span></label>
+            <label class="form-label">
+                Incident Details <span style="color:var(--crimson)">*</span>
+                <span class="help-icon" data-tippy-content="Write a factual, detailed account of what happened. Include the date and time, what was said or done, and who was present. This becomes the official record.">?</span>
+            </label>
             <textarea name="incident_details" class="form-control" rows="5" placeholder="Describe what happened in detail..." required>{{ old('incident_details') }}</textarea>
         </div>
     </div>
@@ -66,10 +78,10 @@
             <div class="form-group">
                 <label class="form-label">Complainant Name <span style="color:var(--crimson)">*</span></label>
                 <input type="text" name="complainant_name" id="complainant_name" class="form-control" value="{{ old('complainant_name') }}" placeholder="Full name" required>
-                @error('complainant_name')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
+                @error('complainant_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Linked Resident <span style="font-size:10px;color:var(--text-subtle)">(optional — auto-fills name)</span></label>
+                <label class="form-label">Linked Resident <span style="font-size:12px;color:var(--text-subtle)">(optional — auto-fills name)</span></label>
                 <select name="complainant_resident_id" id="complainant_resident_id" class="select2-resident" style="width:100%" data-placeholder="Search registered resident...">
                     <option value=""></option>
                     @if(old('complainant_resident_id'))
@@ -93,10 +105,10 @@
             <div class="form-group">
                 <label class="form-label">Respondent Name <span style="color:var(--crimson)">*</span></label>
                 <input type="text" name="respondent_name" id="respondent_name" class="form-control" value="{{ old('respondent_name') }}" placeholder="Full name" required>
-                @error('respondent_name')<span style="font-size:11px;color:var(--crimson);margin-top:4px;display:block">{{ $message }}</span>@enderror
+                @error('respondent_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Linked Resident <span style="font-size:10px;color:var(--text-subtle)">(optional — auto-fills name)</span></label>
+                <label class="form-label">Linked Resident <span style="font-size:12px;color:var(--text-subtle)">(optional — auto-fills name)</span></label>
                 <select name="respondent_resident_id" id="respondent_resident_id" class="select2-resident" style="width:100%" data-placeholder="Search registered resident...">
                     <option value=""></option>
                     @if(old('respondent_resident_id'))
@@ -123,21 +135,27 @@
     </div>
     <div class="card-body">
         <div class="form-group mb-6">
-            <label class="form-label">Resolution Notes</label>
+            <label class="form-label">
+                Resolution Notes
+                <span class="help-icon" data-tippy-content="Describe what action was taken: who mediated, what the parties agreed to, or why the case was referred. Leave blank if the case is newly filed.">?</span>
+            </label>
             <textarea name="resolution_notes" class="form-control" rows="3" placeholder="Describe the action taken or resolution...">{{ old('resolution_notes') }}</textarea>
         </div>
         <div class="form-group">
-            <label class="form-label">Supporting Document</label>
+            <label class="form-label">
+                Supporting Document
+                <span class="help-icon" data-tippy-content="Attach any evidence: photos, screenshots, or a written complaint letter. Accepted: JPG, PNG, PDF, DOC — Max 5MB.">?</span>
+            </label>
             <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer" id="dropZone">
-                <i class="fas fa-cloud-arrow-up" style="font-size:28px;color:var(--text-muted);margin-bottom:8px;display:block"></i>
-                <div style="font-size:13px;color:var(--text-muted);margin-bottom:6px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
-                <div style="font-size:11px;color:var(--text-subtle)">JPG, PNG, PDF, DOC — Max 5MB</div>
+                <i class="fas fa-cloud-arrow-up" style="font-size:30px;color:var(--text-muted);margin-bottom:10px;display:block"></i>
+                <div style="font-size:14px;color:var(--text-muted);margin-bottom:6px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
+                <div style="font-size:13px;color:var(--text-subtle)">JPG, PNG, PDF, DOC — Max 5MB</div>
                 <input type="file" id="fileInput" name="attachment" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" style="display:none">
             </div>
-            <div id="filePreview" style="display:none;margin-top:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);align-items:center;gap:10px">
-                <i class="fas fa-file" style="color:var(--navy);font-size:18px"></i>
-                <div style="flex:1"><div id="fileName" style="font-size:13px;font-weight:600"></div><div id="fileSize" style="font-size:11px;color:var(--text-muted)"></div></div>
-                <button type="button" onclick="clearFile()" style="background:none;border:none;color:var(--text-muted);cursor:pointer"><i class="fas fa-times"></i></button>
+            <div id="filePreview" style="display:none;margin-top:10px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);align-items:center;gap:12px">
+                <i class="fas fa-file" style="color:var(--navy);font-size:20px"></i>
+                <div style="flex:1"><div id="fileName" style="font-size:14px;font-weight:600"></div><div id="fileSize" style="font-size:13px;color:var(--text-muted);margin-top:2px"></div></div>
+                <button type="button" onclick="clearFile()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px"><i class="fas fa-times"></i></button>
             </div>
         </div>
     </div>

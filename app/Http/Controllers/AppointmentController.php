@@ -58,6 +58,14 @@ class AppointmentController extends Controller
 
         $this->logActivity('updated', $appointment, $old, $appointment->fresh()->toArray());
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Status updated to {$validated['status']}.",
+                'status'  => $validated['status'],
+            ]);
+        }
+
         return back()->with('success', "Appointment status updated to {$validated['status']}.");
     }
 

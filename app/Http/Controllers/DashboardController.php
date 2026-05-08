@@ -10,6 +10,7 @@ use App\Models\DocumentAppointment;
 use App\Models\Household;
 use App\Models\Purok;
 use App\Models\Resident;
+use Illuminate\Support\Collection;
 
 class DashboardController extends Controller
 {
@@ -34,7 +35,10 @@ class DashboardController extends Controller
         $pendingDocuments = Document::where('status', 'Pending')->count();
         $releasedDocuments = Document::where('status', 'Released')->count();
         $totalDocuments = Document::count();
-        $activeBlotter = BlotterCase::where('status', 'Active')->count();
+        $activeBlotter   = BlotterCase::where('status', 'Active')->count();
+        $overdueBlotter  = BlotterCase::whereIn('status', ['Active', 'Under Investigation'])
+            ->where('incident_date', '<=', now()->subDays(30))
+            ->count();
         $pendingAppointments = DocumentAppointment::where('status', 'Pending')->count();
         $aptCounts = DocumentAppointment::selectRaw('status, count(*) as cnt')->groupBy('status')->pluck('cnt', 'status');
         $settledBlotter = BlotterCase::whereIn('status', ['Settled', 'Closed'])->count();
@@ -77,18 +81,36 @@ class DashboardController extends Controller
             ->orderBy('preferred_date')
             ->limit(8)->get();
 
+        // Alert strip data
+        $today        = now()->format('m-d');
+        $birthdays    = Resident::where('residency_status', 'Active')
+            ->whereRaw("DATE_FORMAT(birthdate,'%m-%d') = ?", [$today])
+            ->orderBy('last_name')->get();
+        $seniorBdays  = $birthdays->filter(fn($r) => $r->age >= 60);
+        $regularBdays = $birthdays->filter(fn($r) => $r->age < 60);
+
+        $expiringPermits = Business::where('status', 'Active')
+            ->whereBetween('expiry_date', [now(), now()->addDays(30)])
+            ->orderBy('expiry_date')->get();
+
+        $lowStockMeds = class_exists(\App\Models\MedicineInventory::class)
+            ? \App\Models\MedicineInventory::whereColumn('current_stock', '<=', 'reorder_level')->get()
+            : new Collection();
+
         return view('dashboard', compact(
             'totalResidents', 'totalActive', 'totalDeceased', 'totalTransferred',
             'totalMale', 'totalFemale', 'totalHouseholds',
             'totalVoters', 'totalSeniors', 'totalPwd', 'totalSoloParent', 'total4ps',
             'totalBusinesses', 'activeBusinesses', 'expiredBusinesses',
             'pendingDocuments', 'releasedDocuments', 'totalDocuments',
-            'activeBlotter', 'settledBlotter', 'totalBlotter',
+            'activeBlotter', 'overdueBlotter', 'settledBlotter', 'totalBlotter',
             'pendingAppointments', 'aptCounts', 'recentAppointments',
             'monthlyData', 'ageGroups', 'residentsByPurok',
             'documentsByType', 'blotterByType',
             'recentResidents', 'recentDocuments', 'recentBlotter',
-            'recentActivity'
+            'recentActivity',
+            'birthdays', 'seniorBdays', 'regularBdays',
+            'expiringPermits', 'lowStockMeds'
         ));
     }
 }

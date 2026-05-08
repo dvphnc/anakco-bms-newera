@@ -30,7 +30,10 @@
                 <input type="text" name="household_head" id="household_head" class="form-control" value="{{ old('household_head', $household->household_head) }}">
             </div>
             <div class="form-group">
-                <label class="form-label">Link to Resident <span style="font-size:10px;color:var(--text-subtle)">(optional)</span></label>
+                <label class="form-label">
+                    Link to Resident
+                    <span class="help-icon" data-tippy-content="Optional. Search for the household head in the resident registry. Selecting a resident will auto-fill their name. Useful for tracking which resident leads each household.">?</span>
+                </label>
                 <select name="head_resident_id" id="head_resident_id" class="select2-resident" style="width:100%" data-placeholder="Search registered resident...">
                     <option value=""></option>
                 </select>

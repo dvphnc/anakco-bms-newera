@@ -44,7 +44,7 @@
 .tab-strip::-webkit-scrollbar { display: none; }
 .tab-btn {
     padding: 13px 16px;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--text-muted);
     background: none;
@@ -62,7 +62,7 @@
 .tab-btn:hover  { color: var(--navy); }
 .tab-btn.active { color: var(--navy); border-bottom-color: var(--gold); }
 .tab-btn .tab-count {
-    font-size: 10px; font-weight: 700;
+    font-size: 11px; font-weight: 700;
     padding: 1px 6px; border-radius: 99px;
     background: var(--surface3);
     color: var(--text-muted);
@@ -116,7 +116,7 @@
 }
 .photo-thumb { border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); }
 .photo-thumb img { width: 100%; height: 90px; object-fit: cover; display: block; }
-.photo-thumb-label { padding: 6px 8px; font-size: 11px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.photo-thumb-label { padding: 6px 8px; font-size: 12px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ── Accomplishment Cards ────────────────────────────────── */
 .acc-list { padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
@@ -127,7 +127,7 @@
     border-left: 4px solid var(--committee-color, var(--gold));
     border-radius: var(--radius-sm);
 }
-.acc-card-title { font-weight: 600; font-size: 13.5px; margin-bottom: 3px; }
+.acc-card-title { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
 .acc-card-meta  { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
 .acc-card-meta span { font-size: 11px; color: var(--text-subtle); }
 
@@ -181,7 +181,7 @@
 }
 .med-stat:last-child { border-right: none; }
 .med-stat-num { font-size: 1.15rem; font-weight: 700; color: var(--navy); line-height: 1; }
-.med-stat-lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
+.med-stat-lbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
 .med-stat.warn .med-stat-num { color: #b45309; }
 .med-stat.danger .med-stat-num { color: var(--crimson); }
 
@@ -466,7 +466,7 @@
                 @foreach($docRecords as $rec)
                 <tr>
                     <td style="font-weight:600">{{ $rec->title }}</td>
-                    <td><span class="badge badge-navy" style="font-size:10px">{{ $rec->record_type }}</span></td>
+                    <td><span class="badge badge-navy">{{ $rec->record_type }}</span></td>
                     <td class="td-muted">{{ $rec->description ?? '—' }}</td>
                     <td class="td-muted">{{ $rec->created_at->format('M d, Y') }}</td>
                     <td>
@@ -576,7 +576,7 @@
                 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
                     <div style="flex:1;min-width:0">
                         <div class="acc-card-title">{{ $acc->title }}</div>
-                        @if($acc->description)<div class="td-muted" style="font-size:12.5px;margin-bottom:4px">{{ $acc->description }}</div>@endif
+                        @if($acc->description)<div class="td-muted" style="font-size:14px;margin-bottom:4px">{{ $acc->description }}</div>@endif
                         <div class="acc-card-meta">
                             <span><i class="fas fa-calendar-alt" style="margin-right:4px"></i>{{ \Carbon\Carbon::parse($acc->activity_date)->format('M d, Y') }}</span>
                             @if($acc->location)<span><i class="fas fa-location-dot" style="margin-right:4px"></i>{{ $acc->location }}</span>@endif
@@ -733,17 +733,20 @@
                         <div style="font-weight:600;color:var(--navy)">{{ $p->partner_name }}</div>
                         @if($p->description)<div style="font-size:11px;color:var(--text-muted);margin-top:2px">{{ Str::limit($p->description, 60) }}</div>@endif
                     </td>
-                    <td><span class="badge badge-navy" style="font-size:10px">{{ $p->partner_type }}</span></td>
+                    <td><span class="badge badge-navy">{{ $p->partner_type }}</span></td>
                     <td class="td-muted">{{ $p->mou_date?->format('M d, Y') ?? '—' }}</td>
                     <td class="{{ $p->validity_date && $p->validity_date->isPast() ? 'td-danger' : 'td-muted' }}">
                         {{ $p->validity_date?->format('M d, Y') ?? '—' }}
-                        @if($p->validity_date && $p->validity_date->isPast()) <span style="font-size:10px">(expired)</span> @endif
+                        @if($p->validity_date && $p->validity_date->isPast()) <span style="font-size:11px">(expired)</span> @endif
                     </td>
                     <td class="td-muted">{{ $p->contact_person ?? '—' }}</td>
                     <td class="td-muted">{{ $p->contact_number ?? '—' }}</td>
                     <td>@if($p->file_path)<a href="{{ asset('storage/'.$p->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
                     <td>
-                        <form method="POST" action="{{ route('committees.destroyPartnership', [$committee['slug'], $p->id]) }}" onsubmit="return confirm('Delete this partnership record?')">
+                        <form method="POST" action="{{ route('committees.destroyPartnership', [$committee['slug'], $p->id]) }}"
+                              data-confirm="Delete this partnership record? This cannot be undone."
+                              data-confirm-title="Delete Partnership"
+                              data-confirm-ok="Delete">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
                         </form>
@@ -843,7 +846,7 @@
                 @foreach($specificData['patrol_logs'] as $p)
                 <tr>
                     <td class="td-muted">{{ $p->patrol_date->format('M d, Y') }}</td>
-                    <td><span class="badge badge-navy" style="font-size:10px">{{ $p->shift ?? '—' }}</span></td>
+                    <td><span class="badge badge-navy">{{ $p->shift ?? '—' }}</span></td>
                     <td style="font-weight:600">{{ $p->area_covered }}</td>
                     <td style="font-weight:600;color:var(--navy)">{{ $p->personnel_count }}</td>
                     <td class="td-muted">{{ $p->findings ?? '—' }}</td>
@@ -897,7 +900,7 @@
                     <td style="font-weight:600">{{ $h->patient_name }}</td>
                     <td>{{ $h->age ?? '—' }}</td>
                     <td>{{ $h->gender ?? '—' }}</td>
-                    <td><span class="badge badge-blue" style="font-size:10px">{{ $h->program ?? '—' }}</span></td>
+                    <td><span class="badge badge-blue">{{ $h->program ?? '—' }}</span></td>
                     <td class="td-muted">{{ $h->diagnosis ?? '—' }}</td>
                     <td class="td-muted">{{ $h->attended_by ?? '—' }}</td>
                     <td class="td-muted">{{ $h->visit_date->format('M d, Y') }}</td>
@@ -1273,7 +1276,7 @@
                     </div>
                     <span class="badge {{ match($ec->status) { 'Available'=>'badge-green','Active'=>'badge-blue','Full'=>'badge-red',default=>'badge-gray' } }}">{{ $ec->status }}</span>
                 </div>
-                <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:6px">
+                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:6px">
                     <span>Occupancy</span>
                     <span><strong>{{ $ec->current_occupancy }}</strong> / {{ $ec->capacity }}</span>
                 </div>
@@ -1328,7 +1331,7 @@
                 @foreach($specificData['relief_supplies'] as $rs)
                 <tr>
                     <td style="font-weight:600;color:var(--navy)">{{ $rs->item_name }}</td>
-                    <td><span class="badge badge-navy" style="font-size:10px">{{ $rs->category }}</span></td>
+                    <td><span class="badge badge-navy">{{ $rs->category }}</span></td>
                     <td style="text-align:right;font-weight:700;color:var(--navy)">{{ number_format($rs->quantity) }}</td>
                     <td class="td-muted">{{ $rs->unit ?? '—' }}</td>
                     <td class="td-muted">{{ $rs->source ?? '—' }}</td>
@@ -1336,7 +1339,10 @@
                     <td><span class="badge {{ match($rs->status) { 'Available'=>'badge-green','Distributed'=>'badge-yellow',default=>'badge-gray' } }}">{{ $rs->status }}</span></td>
                     <td class="td-muted">{{ $rs->remarks ?? '—' }}</td>
                     <td>
-                        <form method="POST" action="{{ route('committees.destroyRelief', [$committee['slug'], $rs->id]) }}" onsubmit="return confirm('Delete this item?')">
+                        <form method="POST" action="{{ route('committees.destroyRelief', [$committee['slug'], $rs->id]) }}"
+                              data-confirm="Delete this relief supply record? This cannot be undone."
+                              data-confirm-title="Delete Relief Record"
+                              data-confirm-ok="Delete">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
                         </form>
@@ -1391,7 +1397,7 @@
                 @foreach($specificData['trainings'] as $tr)
                 <tr>
                     <td style="font-weight:600">{{ $tr->title }}</td>
-                    <td><span class="badge badge-navy" style="font-size:10px">{{ $tr->training_type }}</span></td>
+                    <td><span class="badge badge-navy">{{ $tr->training_type }}</span></td>
                     <td class="td-muted">{{ $tr->training_date->format('M d, Y') }}</td>
                     <td class="td-muted">{{ $tr->duration ?? '—' }}</td>
                     <td class="td-muted">{{ $tr->venue ?? '—' }}</td>
@@ -1445,7 +1451,7 @@
                 @foreach($specificData['clinic_staff'] as $cs)
                 <tr>
                     <td style="font-weight:600">{{ $cs->full_name }}</td>
-                    <td><span class="badge badge-blue" style="font-size:10px">{{ $cs->position }}</span></td>
+                    <td><span class="badge badge-blue">{{ $cs->position }}</span></td>
                     <td class="td-muted">{{ $cs->specialization ?? '—' }}</td>
                     <td class="td-muted">{{ $cs->affiliation ?? '—' }}</td>
                     <td class="td-muted">{{ $cs->contact_number ?? '—' }}</td>
@@ -1565,35 +1571,36 @@
                 <option value="expired">Expired</option>
                 <option value="expiring">Expiring Soon</option>
             </select>
-            <span id="medCount" style="font-size:.76rem;color:var(--text-muted);white-space:nowrap"></span>
+            <span id="medCount" style="font-size:13px;color:var(--text-muted);white-space:nowrap"></span>
         </div>
 
         {{-- Stock Adjust Modal --}}
         <div id="stockAdjustModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1050;align-items:center;justify-content:center">
             <div style="background:#fff;border-radius:var(--radius-lg);width:100%;max-width:420px;padding:1.5rem;position:relative;box-shadow:0 12px 50px rgba(0,0,0,.25)">
-                <button onclick="document.getElementById('stockAdjustModal').style.display='none'" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;font-size:1rem;color:#9ca3af;cursor:pointer"><i class="fas fa-times"></i></button>
-                <div style="font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.5rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)">
+                <button onclick="document.getElementById('stockAdjustModal').style.display='none'" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;font-size:18px;color:#9ca3af;cursor:pointer"><i class="fas fa-times"></i></button>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:.5rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)">
                     <i class="fas fa-arrow-right-arrow-left" style="color:var(--gold)"></i>&nbsp; Adjust Stock
                 </div>
-                <div id="stockMedicineName" style="font-size:.82rem;margin-bottom:1rem"></div>
+                <div id="stockMedicineName" style="font-size:14px;margin-bottom:1rem;line-height:1.5"></div>
                 <form id="stockAdjustForm" method="POST">
                     @csrf
                     <div style="margin-bottom:.9rem">
-                        <label style="display:block;font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:.35rem">Transaction Type</label>
-                        <select name="adjustment_type" style="width:100%;padding:.5rem .8rem;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.83rem">
+                        <label style="display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.45rem">Transaction Type</label>
+                        <select name="adjustment_type" style="width:100%;padding:.65rem .9rem;min-height:44px;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:14px">
                             <option value="in">📦 Stock In — received new supply</option>
                             <option value="out">💊 Dispense / Issue Out</option>
                             <option value="disposed">🗑️ Disposed / Expired removal</option>
                         </select>
                     </div>
                     <div style="margin-bottom:.9rem">
-                        <label style="display:block;font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:.35rem">Quantity <span style="color:var(--crimson)">*</span></label>
-                        <input type="number" name="quantity" min="1" value="1" style="width:100%;padding:.5rem .8rem;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.83rem" required>
+                        <label style="display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.45rem">Quantity <span style="color:var(--crimson)">*</span></label>
+                        <input type="number" name="quantity" min="1" value="1" style="width:100%;padding:.65rem .9rem;min-height:44px;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:14px" required>
                     </div>
                     <div style="margin-bottom:1.25rem">
-                        <label style="display:block;font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:.35rem">Reason / Notes</label>
-                        <input type="text" name="reason" placeholder="e.g. Monthly DOH supply, dispensed to patient…" style="width:100%;padding:.5rem .8rem;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.83rem">
+                        <label style="display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.45rem">Reason / Notes</label>
+                        <input type="text" name="reason" placeholder="e.g. Monthly DOH supply, dispensed to patient…" style="width:100%;padding:.65rem .9rem;min-height:44px;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:14px">
                     </div>
+                    <div id="stockAdjustError" style="display:none;color:var(--crimson);font-size:13px;margin-bottom:.75rem;padding:.6rem .9rem;background:#fef2f2;border-radius:6px;border:1px solid #fca5a5"></div>
                     <div style="display:flex;justify-content:flex-end;gap:.6rem">
                         <button type="button" onclick="document.getElementById('stockAdjustModal').style.display='none'" class="btn btn-secondary btn-sm">Cancel</button>
                         <button type="submit" class="btn btn-gold btn-sm"><i class="fas fa-save"></i> Save Transaction</button>
@@ -1687,15 +1694,15 @@
 
         {{-- Medicine table --}}
         <div style="overflow-x:auto">
-        <table id="medTable" style="width:100%;border-collapse:collapse;font-size:.83rem">
+        <table id="medTable" style="width:100%;border-collapse:collapse;font-size:13px">
             <thead>
                 <tr>
-                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:left;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Medicine (Generic / Brand)</th>
-                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:left;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Category</th>
-                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:left;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Dosage</th>
-                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:right;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Stock</th>
-                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:left;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Expiry</th>
-                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:center;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Actions</th>
+                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Medicine (Generic / Brand)</th>
+                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Category</th>
+                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Dosage</th>
+                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:right;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Stock</th>
+                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Expiry</th>
+                    <th style="background:var(--navy);color:rgba(255,255,255,.85);padding:.65rem 1rem;text-align:center;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -1719,6 +1726,7 @@
                     $expiryClass = $med->isExpired() ? 'td-danger' : ($med->isExpiringSoon() ? '' : 'td-muted');
                 @endphp
                 <tr class="med-row"
+                    data-id="{{ $med->id }}"
                     data-generic="{{ strtolower($med->medicine_name) }}"
                     data-brand="{{ strtolower($med->brand_name ?? '') }}"
                     data-category="{{ $med->category }}"
@@ -1762,10 +1770,11 @@
                                 class="btn btn-secondary btn-sm btn-icon" title="View details & history">
                             <i class="fas fa-eye"></i>
                         </button>
-                        <form method="POST" action="{{ route('committees.destroyMedicine', [$committee['slug'], $med->id]) }}" style="display:inline" onsubmit="return confirm('Delete {{ addslashes($med->medicine_name) }}?')">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
-                        </form>
+                        <button type="button"
+                                onclick="deleteMedicine({{ $med->id }}, '{{ addslashes($med->medicine_name) }}', '{{ $committee['slug'] }}')"
+                                class="btn btn-danger btn-sm btn-icon" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 @endforeach
@@ -1981,7 +1990,7 @@
                 @foreach($specificData['financials'] as $fin)
                 <tr>
                     <td style="font-weight:600">{{ $fin->title }}</td>
-                    <td><span class="badge {{ match($fin->type) { 'Budget'=>'badge-navy','Utilization'=>'badge-yellow','Liquidation'=>'badge-green' } }}" style="font-size:10px">{{ $fin->type }}</span></td>
+                    <td><span class="badge {{ match($fin->type) { 'Budget'=>'badge-navy','Utilization'=>'badge-yellow','Liquidation'=>'badge-green' } }}">{{ $fin->type }}</span></td>
                     <td class="td-muted">{{ $fin->fund_source ?? '—' }}</td>
                     <td style="text-align:right;font-weight:700;color:var(--navy)">₱{{ number_format($fin->amount, 2) }}</td>
                     <td class="td-muted">{{ $fin->date->format('M d, Y') }}</td>
@@ -2052,18 +2061,93 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // ── Medicine inventory JS ────────────────────────────────────
+let _adjustMedId = null;
 function openStockModal(medId, medName, currentStock) {
-    const baseSlug = '{{ $committee['slug'] }}';
-    document.getElementById('stockAdjustForm').action = '/committees/' + baseSlug + '/medicine/' + medId + '/adjust';
+    _adjustMedId = medId;
     document.getElementById('stockMedicineName').innerHTML =
         '<strong style="color:var(--navy)">' + medName + '</strong>' +
         '&nbsp;<span style="color:#9ca3af">|</span>&nbsp;' +
         'Current stock: <strong>' + currentStock + '</strong>';
+    document.getElementById('stockAdjustError').style.display = 'none';
+    document.getElementById('stockAdjustForm').reset();
     document.getElementById('stockAdjustModal').style.display = 'flex';
 }
 document.getElementById('stockAdjustModal')?.addEventListener('click', function(e) {
     if (e.target === this) this.style.display = 'none';
 });
+
+document.getElementById('stockAdjustForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!_adjustMedId) return;
+
+    const form     = this;
+    const btn      = form.querySelector('[type="submit"]');
+    const errDiv   = document.getElementById('stockAdjustError');
+    const baseSlug = '{{ $committee['slug'] }}';
+    const url      = '/committees/' + baseSlug + '/medicine/' + _adjustMedId + '/adjust';
+
+    errDiv.style.display = 'none';
+    btn.disabled    = true;
+    btn.innerHTML   = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+
+    axios.post(url, new FormData(form))
+        .then(function(res) {
+            const d   = res.data;
+            const row = document.querySelector('#medTable tr.med-row[data-id="' + _adjustMedId + '"]');
+            if (row) {
+                const stockEl = row.querySelector('.stock-num');
+                if (stockEl) {
+                    stockEl.textContent = Number(d.new_stock).toLocaleString();
+                    stockEl.className   = 'stock-num ' + (d.is_low_stock ? 'stock-low' : 'stock-ok');
+                }
+                const existingLow = row.querySelector('.low-badge');
+                if (d.is_low_stock && !existingLow && stockEl) {
+                    stockEl.insertAdjacentHTML('afterend', '<span class="low-badge">Low</span>');
+                } else if (!d.is_low_stock && existingLow) {
+                    existingLow.remove();
+                }
+                row.dataset.low = d.is_low_stock ? '1' : '0';
+            }
+            if (typeof __medicineData !== 'undefined' && __medicineData[_adjustMedId]) {
+                __medicineData[_adjustMedId].current_stock = d.new_stock;
+                if (d.log_entry) __medicineData[_adjustMedId].logs.unshift(d.log_entry);
+            }
+            document.getElementById('stockAdjustModal').style.display = 'none';
+            bmsToast(d.message, 'success');
+        })
+        .catch(function(err) {
+            const data = err.response?.data;
+            const msg  = data?.errors
+                ? Object.values(data.errors).flat().join(' ')
+                : (data?.message || 'Failed to save transaction.');
+            errDiv.textContent    = msg;
+            errDiv.style.display  = 'block';
+        })
+        .finally(function() {
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fas fa-save"></i> Save Transaction';
+        });
+});
+
+function deleteMedicine(medId, medName, slug) {
+    bmsConfirm({
+        title:   'Delete Medicine',
+        message: 'Delete ' + medName + '? This cannot be undone.',
+        ok:      'Delete',
+        type:    'danger',
+    }, function() {
+        axios.delete('/committees/' + slug + '/medicine/' + medId)
+            .then(function(res) {
+                const row = document.querySelector('#medTable tr.med-row[data-id="' + medId + '"]');
+                if (row) row.remove();
+                if (typeof __medicineData !== 'undefined') delete __medicineData[medId];
+                bmsToast(res.data.message, 'success');
+            })
+            .catch(function() {
+                bmsToast('Failed to delete medicine.', 'error');
+            });
+    });
+}
 
 function openMedDetails(medId) {
     const med = (typeof __medicineData !== 'undefined') ? __medicineData[medId] : null;
@@ -2093,19 +2177,19 @@ function openMedDetails(medId) {
     tbody.innerHTML = '';
     const logs = med.logs || [];
     if (logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:20px;font-size:.8rem">No transactions recorded yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:20px;font-size:13px">No transactions recorded yet.</td></tr>';
     } else {
         logs.forEach(function(log) {
             const typeMap = { in: '📦 Stock In', out: '💊 Dispensed', disposed: '🗑️ Disposed' };
             const clsMap  = { in: 'log-in', out: 'log-out', disposed: 'log-disposed' };
             const note = [log.reason, log.by ? ('by ' + log.by) : ''].filter(Boolean).join(' · ');
             tbody.innerHTML += '<tr>' +
-                '<td style="font-size:.75rem;color:#6b7280;white-space:nowrap">' + (log.date || '') + '</td>' +
-                '<td class="' + (clsMap[log.type] || '') + '" style="font-size:.78rem">' + (typeMap[log.type] || log.type) + '</td>' +
-                '<td style="text-align:right;font-size:.82rem;font-weight:700">' + log.qty + '</td>' +
-                '<td style="text-align:right;font-size:.78rem;color:#6b7280">' + log.before + '</td>' +
-                '<td style="text-align:right;font-size:.82rem;font-weight:700;color:var(--navy)">' + log.after + '</td>' +
-                '<td style="font-size:.74rem;color:#6b7280">' + (note || '—') + '</td>' +
+                '<td style="font-size:13px;color:#6b7280;white-space:nowrap">' + (log.date || '') + '</td>' +
+                '<td class="' + (clsMap[log.type] || '') + '" style="font-size:14px">' + (typeMap[log.type] || log.type) + '</td>' +
+                '<td style="text-align:right;font-size:14px;font-weight:700">' + log.qty + '</td>' +
+                '<td style="text-align:right;font-size:13px;color:#6b7280">' + log.before + '</td>' +
+                '<td style="text-align:right;font-size:14px;font-weight:700;color:var(--navy)">' + log.after + '</td>' +
+                '<td style="font-size:13px;color:#6b7280">' + (note || '—') + '</td>' +
                 '</tr>';
         });
     }

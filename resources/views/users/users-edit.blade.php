@@ -38,7 +38,7 @@
                 <input type="text" name="name" class="form-control"
                        value="{{ old('name', $user->name) }}" required>
                 @error('name')
-                    <span style="font-size:11px;color:var(--crimson)">{{ $message }}</span>
+                    <span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                 @enderror
             </div>
             <div class="form-group">
@@ -46,7 +46,7 @@
                 <input type="email" name="email" class="form-control"
                        value="{{ old('email', $user->email) }}" required>
                 @error('email')
-                    <span style="font-size:11px;color:var(--crimson)">{{ $message }}</span>
+                    <span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                 @enderror
             </div>
         </div>
@@ -62,8 +62,8 @@
             </select>
             @if($user->id === auth()->id())
                 <input type="hidden" name="role" value="{{ $user->role }}">
-                <span style="font-size:11px;color:var(--text-subtle);margin-top:4px;display:block">
-                    <i class="fas fa-lock" style="font-size:10px"></i> You cannot change your own role.
+                <span style="font-size:13px;color:var(--text-subtle);margin-top:4px;display:block">
+                    <i class="fas fa-lock"></i> You cannot change your own role.
                 </span>
             @endif
             @error('role')
@@ -71,14 +71,14 @@
             @enderror
         </div>
 
-        <div class="form-section-title">Change Password <span style="font-size:11px;color:var(--text-subtle);text-transform:none;font-weight:400;letter-spacing:0">(leave blank to keep current)</span></div>
+        <div class="form-section-title">Change Password <span style="font-size:13px;color:var(--text-subtle);text-transform:none;font-weight:400;letter-spacing:0">(leave blank to keep current)</span></div>
         <div class="form-grid-2">
             <div class="form-group">
                 <label class="form-label">New Password</label>
                 <input type="password" name="password" class="form-control"
                        placeholder="Min. 8 characters" autocomplete="new-password">
                 @error('password')
-                    <span style="font-size:11px;color:var(--crimson)">{{ $message }}</span>
+                    <span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                 @enderror
             </div>
             <div class="form-group">
@@ -91,15 +91,15 @@
         {{-- Account info strip --}}
         <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:24px;flex-wrap:wrap">
             <div>
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Verified</div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Verified</div>
                 <div style="font-size:13px;color:var(--text);margin-top:6px;display:flex;align-items:center;gap:8px">
                     @if($user->email_verified_at)
                         <span class="badge badge-green"><i class="fas fa-check" style="margin-right:4px"></i>Verified</span>
-                        <span style="font-size:11px;color:var(--text-subtle)">{{ $user->email_verified_at->format('M d, Y') }}</span>
+                        <span style="font-size:13px;color:var(--text-subtle)">{{ $user->email_verified_at->format('M d, Y') }}</span>
                         @if(auth()->user()->role === 'Admin')
                         <button type="button" class="btn btn-secondary btn-sm"
-                                onclick="if(confirm('Remove verification?')) document.getElementById('unverify-form').submit()"
-                                style="font-size:11px;padding:3px 10px">
+                                onclick="document.getElementById('unverify-form').submit()"
+                                style="font-size:13px;padding:5px 12px">
                             <i class="fas fa-times"></i> Unverify
                         </button>
                         @endif
@@ -108,7 +108,7 @@
                         @if(auth()->user()->role === 'Admin')
                         <button type="button" class="btn btn-primary btn-sm"
                                 onclick="document.getElementById('verify-form').submit()"
-                                style="font-size:11px;padding:3px 10px">
+                                style="font-size:13px;padding:5px 12px">
                             <i class="fas fa-check"></i> Mark as Verified
                         </button>
                         @endif
@@ -116,12 +116,12 @@
                 </div>
             </div>
             <div>
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Member Since</div>
-                <div style="font-size:13px;color:var(--text);margin-top:2px">{{ $user->created_at->format('F d, Y') }}</div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Member Since</div>
+                <div style="font-size:14px;color:var(--text);margin-top:2px">{{ $user->created_at->format('F d, Y') }}</div>
             </div>
             <div>
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Last Updated</div>
-                <div style="font-size:13px;color:var(--text);margin-top:2px">{{ $user->updated_at->format('F d, Y') }}</div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Last Updated</div>
+                <div style="font-size:14px;color:var(--text);margin-top:2px">{{ $user->updated_at->format('F d, Y') }}</div>
             </div>
         </div>
 
@@ -136,8 +136,7 @@
     @if($user->id !== auth()->id())
     {{-- Delete button triggers separate form outside main form --}}
     <button type="button" class="btn btn-danger" style="margin-left:auto"
-            onclick="document.getElementById('delete-user-form').submit()"
-            onmousedown="return confirm('Permanently delete {{ $user->name }}? This cannot be undone.')">
+            onclick="document.getElementById('delete-user-form').submit()">
         <i class="fas fa-trash"></i> Delete User
     </button>
     @endif
@@ -147,7 +146,10 @@
 
 {{-- Delete form is OUTSIDE the edit form to prevent nesting --}}
 @if($user->id !== auth()->id())
-<form method="POST" action="{{ route('users.destroy', $user) }}" id="delete-user-form">
+<form method="POST" action="{{ route('users.destroy', $user) }}" id="delete-user-form"
+      data-confirm="Permanently delete {{ $user->name }}? This cannot be undone."
+      data-confirm-title="Delete User"
+      data-confirm-ok="Delete Permanently">
     @csrf @method('DELETE')
 </form>
 @endif
@@ -156,7 +158,10 @@
 <form method="POST" action="{{ route('users.verify', $user) }}" id="verify-form">
     @csrf
 </form>
-<form method="POST" action="{{ route('users.unverify', $user) }}" id="unverify-form">
+<form method="POST" action="{{ route('users.unverify', $user) }}" id="unverify-form"
+      data-confirm="Remove email verification for {{ $user->name }}?"
+      data-confirm-title="Remove Verification"
+      data-confirm-ok="Remove">
     @csrf
 </form>
 

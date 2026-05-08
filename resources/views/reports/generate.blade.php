@@ -100,8 +100,8 @@
                                    id="type-card-{{ $val }}" onclick="selectType('{{ $val }}')">
                                 <input type="radio" name="report_type" value="{{ $val }}" style="display:none" {{ $val==='monthly'?'checked':'' }}>
                                 <i class="fas {{ $icon }}" style="font-size:16px;color:var(--navy)"></i>
-                                <span style="font-size:11.5px;font-weight:700;color:var(--text)">{{ $lbl }}</span>
-                                <span style="font-size:10px;color:var(--text-muted)">{{ $sub }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--text)">{{ $lbl }}</span>
+                                <span style="font-size:11px;color:var(--text-muted)">{{ $sub }}</span>
                             </label>
                             @endforeach
                         </div>
@@ -174,9 +174,9 @@
                     <input type="hidden" name="year"          value="{{ $q['year'] }}">
                     @if(isset($q['month']))   <input type="hidden" name="month"   value="{{ $q['month'] }}"> @endif
                     @if(isset($q['quarter'])) <input type="hidden" name="quarter" value="{{ $q['quarter'] }}"> @endif
-                    <button type="submit" class="btn btn-secondary" style="width:100%;justify-content:flex-start;padding:8px 12px;font-size:12px;gap:8px">
-                        <i class="fas fa-file-pdf" style="color:#ef4444;font-size:11px;flex-shrink:0"></i>
-                        <span style="flex:1;text-align:left">{{ $q['label'] }}</span>
+                    <button type="submit" class="btn btn-secondary" style="width:100%;justify-content:flex-start;padding:8px 12px;font-size:13px;gap:8px">
+                        <i class="fas fa-file-pdf" style="color:#ef4444;font-size:13px;flex-shrink:0"></i>
+                        <span style="flex:1;text-align:left;font-size:13px">{{ $q['label'] }}</span>
                     </button>
                 </form>
                 @endforeach
@@ -195,10 +195,10 @@
         <div class="card" id="snapshot-card" style="width:100%">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-calendar-day" style="color:var(--gold)"></i> Snapshot</span>
-                <span style="font-size:11px;color:var(--text-muted)">{{ now()->format('M d, Y') }}</span>
+                <span style="font-size:12px;color:var(--text-muted)">{{ now()->format('M d, Y') }}</span>
             </div>
             <div class="card-body" style="padding:10px 16px">
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Today</div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Today</div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
                     @php $todayItems = [
                         ['label'=>'Documents', 'value'=>$todayDocs,      'color'=>'#f59e0b','bg'=>'#fffbeb'],
@@ -208,11 +208,11 @@
                     @foreach($todayItems as $t)
                     <div style="text-align:center;padding:8px 6px;background:{{ $t['bg'] }};border-radius:var(--radius-sm)">
                         <div style="font-size:20px;font-weight:800;color:{{ $t['color'] }}">{{ $t['value'] }}</div>
-                        <div style="font-size:10px;color:var(--text-muted)">{{ $t['label'] }}</div>
+                        <div style="font-size:11px;color:var(--text-muted)">{{ $t['label'] }}</div>
                     </div>
                     @endforeach
                 </div>
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">This Month — {{ now()->format('F') }}</div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">This Month — {{ now()->format('F') }}</div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
                     @php $monthItems = [
                         ['label'=>'Documents', 'value'=>$thisMonthDocs, 'color'=>'#f59e0b','bg'=>'#fffbeb'],
@@ -222,7 +222,7 @@
                     @foreach($monthItems as $t)
                     <div style="text-align:center;padding:8px 6px;background:{{ $t['bg'] }};border-radius:var(--radius-sm)">
                         <div style="font-size:20px;font-weight:800;color:{{ $t['color'] }}">{{ $t['value'] }}</div>
-                        <div style="font-size:10px;color:var(--text-muted)">{{ $t['label'] }}</div>
+                        <div style="font-size:11px;color:var(--text-muted)">{{ $t['label'] }}</div>
                     </div>
                     @endforeach
                 </div>
@@ -238,7 +238,7 @@
         <div class="card">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-chart-bar" style="color:var(--gold)"></i> {{ $currentYear }} Monthly Trend</span>
-                <div style="display:flex;gap:14px;font-size:11.5px;color:var(--text-muted)">
+                <div style="display:flex;gap:14px;font-size:13px;color:var(--text-muted)">
                     <span style="display:flex;align-items:center;gap:5px">
                         <span style="width:12px;height:3px;background:#0D2144;display:inline-block;border-radius:2px"></span> Documents
                     </span>
@@ -297,8 +297,8 @@
                     @php $pct = round(($d['value'] / $maxDemo) * 100); @endphp
                     <div>
                         <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-                            <span style="font-size:12.5px;color:var(--text)">{{ $d['label'] }}</span>
-                            <span style="font-size:12.5px;font-weight:700;color:var(--text)">{{ number_format($d['value']) }}</span>
+                            <span style="font-size:14px;color:var(--text)">{{ $d['label'] }}</span>
+                            <span style="font-size:14px;font-weight:700;color:var(--text)">{{ number_format($d['value']) }}</span>
                         </div>
                         <div class="progress-bar-wrap">
                             <div class="progress-bar" style="width:{{ $pct }}%;background:{{ $d['color'] }}"></div>
@@ -315,11 +315,11 @@
                         <div style="width:{{ $femalePct }}%;background:#ec4899"></div>
                     </div>
                     <div style="display:flex;gap:20px">
-                        <span style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
+                        <span style="font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
                             <span style="width:10px;height:10px;border-radius:50%;background:#3b82f6;display:inline-block"></span>
                             Male — {{ number_format($totalMale) }} ({{ $malePct }}%)
                         </span>
-                        <span style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
+                        <span style="font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
                             <span style="width:10px;height:10px;border-radius:50%;background:#ec4899;display:inline-block"></span>
                             Female — {{ number_format($totalFemale) }} ({{ $femalePct }}%)
                         </span>
@@ -352,8 +352,8 @@
                     @endphp
                     <div style="background:{{ $c['bg'] }};border:1px solid {{ $c['border'] }};border-radius:var(--radius-sm);padding:12px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
                         <div style="font-size:22px;font-weight:800;color:{{ $c['num'] }}">{{ $purok->residents_count }}</div>
-                        <div style="display:inline-block;background:{{ $c['badge'] }};color:{{ $c['text'] }};font-size:10px;font-weight:700;padding:1px 7px;border-radius:99px;margin:3px 0">{{ $pct }}%</div>
-                        <div style="font-size:11px;font-weight:600;color:{{ $c['text'] }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">{{ $purok->name }}</div>
+                        <div style="display:inline-block;background:{{ $c['badge'] }};color:{{ $c['text'] }};font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;margin:3px 0">{{ $pct }}%</div>
+                        <div style="font-size:12px;font-weight:600;color:{{ $c['text'] }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">{{ $purok->name }}</div>
                     </div>
                     @endforeach
                 </div>

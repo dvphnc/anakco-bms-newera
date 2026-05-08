@@ -29,13 +29,15 @@
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label>
-                <input type="text" name="full_name" class="form-control"
+                <input type="text" name="full_name" class="form-control @error('full_name') is-invalid @enderror"
                        value="{{ old('full_name') }}" placeholder="e.g. Juan dela Cruz" required>
+                @error('full_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Contact Number</label>
-                <input type="text" name="contact_number" class="form-control"
+                <input type="text" name="contact_number" class="form-control @error('contact_number') is-invalid @enderror"
                        value="{{ old('contact_number') }}" placeholder="09XX XXX XXXX">
+                @error('contact_number')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
         </div>
 
@@ -43,21 +45,23 @@
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Position <span style="color:var(--crimson)">*</span></label>
-                <select name="position" class="form-control" required>
+                <select name="position" class="form-control @error('position') is-invalid @enderror" required>
                     <option value="">Select Position</option>
                     @foreach($positions as $p)
                         <option value="{{ $p }}" {{ old('position') === $p ? 'selected' : '' }}>{{ $p }}</option>
                     @endforeach
                 </select>
+                @error('position')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Committee</label>
-                <select name="committee" class="form-control">
+                <select name="committee" class="form-control @error('committee') is-invalid @enderror">
                     <option value="">None / N/A</option>
                     @foreach($committees as $c)
                         <option value="{{ $c }}" {{ old('committee') === $c ? 'selected' : '' }}>{{ $c }}</option>
                     @endforeach
                 </select>
+                @error('committee')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
         </div>
 
@@ -65,13 +69,15 @@
         <div class="form-grid-3 mb-6">
             <div class="form-group">
                 <label class="form-label">Term Start <span style="color:var(--crimson)">*</span></label>
-                <input type="date" name="term_start" class="form-control"
+                <input type="date" name="term_start" class="form-control @error('term_start') is-invalid @enderror"
                        value="{{ old('term_start') }}" required>
+                @error('term_start')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Term End <span style="color:var(--crimson)">*</span></label>
-                <input type="date" name="term_end" class="form-control"
+                <input type="date" name="term_end" class="form-control @error('term_end') is-invalid @enderror"
                        value="{{ old('term_end') }}" required>
+                @error('term_end')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group" style="justify-content:flex-end;padding-bottom:4px">
                 <label class="form-label">&nbsp;</label>
@@ -86,7 +92,7 @@
         <div class="form-group">
             <label class="form-label">Official Photo</label>
             <input type="file" name="photo_path" class="form-control" accept="image/*">
-            <span style="font-size:11px;color:var(--text-subtle);margin-top:3px">JPG, PNG. Max 2MB.</span>
+            <span style="font-size:13px;color:var(--text-subtle);margin-top:3px"><i class="fas fa-circle-info" style="color:var(--navy);opacity:0.5"></i> JPG, PNG. Max 2MB.</span>
         </div>
 
     </div>
