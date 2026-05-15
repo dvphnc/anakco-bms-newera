@@ -124,11 +124,11 @@
     letter-spacing:.1em; color:var(--text-subtle); margin-right:4px; flex-shrink:0;
 }
 .cmd-bar-btn {
-    display:inline-flex; align-items:center; gap:7px;
-    padding:8px 16px; border-radius:var(--radius-sm); min-height:40px;
-    font-size:13.5px; font-weight:600; font-family:'Poppins',sans-serif;
+    display:inline-flex; align-items:center; gap:6px;
+    padding:7px 13px; border-radius:var(--radius-sm); min-height:36px;
+    font-size:13px; font-weight:600; font-family:'Poppins',sans-serif;
     cursor:pointer; transition:all .15s; border:1px solid transparent;
-    text-decoration:none; white-space:nowrap;
+    text-decoration:none; white-space:nowrap; flex-shrink:0;
 }
 .cmd-bar-btn-primary {
     background:var(--navy); color:#fff; border-color:var(--navy);
@@ -246,7 +246,7 @@
             </div>
         </div>
 
-{{-- Right: User greeting + actions --}}
+{{-- Right: User greeting + live clock + actions --}}
         <div style="text-align:right">
             <div style="display:inline-flex;align-items:center;gap:7px;
                         background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.13);
@@ -260,11 +260,18 @@
                 <span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.85);
                              letter-spacing:0.04em">{{ auth()->user()->role ?? 'Staff' }}</span>
             </div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.45);font-weight:300">
+            {{-- Live Clock --}}
+            <div id="cc-clock-date"
+                 style="font-size:12px;color:rgba(255,255,255,0.50);font-weight:400;letter-spacing:0.02em">
                 {{ now()->format('l, F d, Y') }}
             </div>
-            <div style="font-size:15px;font-weight:600;color:#fff;margin-top:2px">
-                {{ auth()->user()->name }}
+            <div id="cc-clock-time"
+                 style="font-size:20px;font-weight:700;color:#fff;letter-spacing:0.04em;
+                        font-family:monospace;margin-top:1px;line-height:1.2">
+            </div>
+            {{-- Welcome greeting --}}
+            <div style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.55);margin-top:4px">
+                Welcome back, <span style="color:rgba(255,255,255,0.85);font-weight:600">{{ auth()->user()->name }}</span>
             </div>
             <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
                 <button id="startTourBtn"
