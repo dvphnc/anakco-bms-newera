@@ -693,6 +693,10 @@
         }
         .footer-pb strong { color: rgba(255,255,255,.75); }
 
+        @media (max-width: 1100px) {
+            .footer-inner { grid-template-columns: 1.7fr 1fr 1fr 1.2fr; }
+            .footer-republic { display: none; }
+        }
         @media (max-width: 900px) {
             .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
         }
@@ -818,10 +822,27 @@
 </main>
 
 {{-- ═══ FOOTER ═══ --}}
+@php
+    /* System Health — sampled once per page render */
+    $ftrDbOk = true;
+    try { \DB::connection()->getPdo(); } catch (\Exception $e) { $ftrDbOk = false; }
+
+    $ftrBackupDir = storage_path('app/backups');
+    $ftrFiles     = array_merge(
+        glob($ftrBackupDir . '/*.sql') ?: [],
+        glob($ftrBackupDir . '/*.gz')  ?: []
+    );
+    $ftrLastTs    = $ftrFiles ? max(array_map('filemtime', $ftrFiles)) : null;
+    $ftrBackupAgo = $ftrLastTs
+        ? \Carbon\Carbon::createFromTimestamp($ftrLastTs)->diffForHumans()
+        : 'No backup found';
+    $ftrBackupOk  = $ftrLastTs && (time() - $ftrLastTs < 86400 * 7);
+@endphp
+
 <footer class="portal-footer" aria-label="Site footer">
     <div class="footer-inner">
 
-        {{-- Brand column --}}
+        {{-- ① Brand + Contact ──────────────────── --}}
         <div class="footer-brand">
             <div class="footer-brand-top">
                 <div class="footer-seal-sm">
@@ -836,13 +857,24 @@
                 Serving our residents with transparency, efficiency, and integrity.
                 Your trusted barangay government — now digital.
             </p>
-            <div class="footer-legal-badge">
+            {{-- Contact snippet --}}
+            <div style="margin-top:.65rem;display:flex;flex-direction:column;gap:.3rem">
+                <span style="font-size:.75rem;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:.45rem">
+                    <i class="fas fa-map-marker-alt" style="color:var(--gold);width:12px"></i>
+                    New Era, District VI, Quezon City
+                </span>
+                <span style="font-size:.75rem;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:.45rem">
+                    <i class="fas fa-clock" style="color:var(--gold);width:12px"></i>
+                    Mon–Fri &nbsp;8:00 AM – 5:00 PM
+                </span>
+            </div>
+            <div class="footer-legal-badge" style="margin-top:.85rem">
                 <i class="fas fa-shield-halved"></i>
                 RA 10173 Compliant · Data Privacy Act
             </div>
         </div>
 
-        {{-- Services --}}
+        {{-- ② Services ───────────────────────────── --}}
         <div class="footer-col">
             <h4>Services</h4>
             <a href="{{ route('portal.request') }}?type=Barangay+Clearance">
@@ -859,10 +891,10 @@
             </a>
         </div>
 
-        {{-- Links --}}
+        {{-- ③ Official Links ──────────────────────── --}}
         <div class="footer-col">
-            <h4>Portal</h4>
-            <a href="{{ route('portal.index') }}"><i class="fas fa-home"></i> Home</a>
+            <h4>Official Links</h4>
+            <a href="{{ route('portal.index') }}"><i class="fas fa-home"></i> Portal Home</a>
             <a href="{{ route('portal.request') }}"><i class="fas fa-file-plus"></i> Request a Document</a>
             <a href="{{ route('portal.track') }}"><i class="fas fa-search"></i> Track My Status</a>
             @auth
@@ -870,19 +902,47 @@
             @else
                 <a href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i> Staff Login</a>
             @endauth
+            <a href="{{ route('portal.index') }}#faq"><i class="fas fa-circle-question"></i> FAQ</a>
         </div>
 
-        {{-- Republic seal --}}
+        {{-- ④ System Health ────────────────────────── --}}
+        <div class="footer-health">
+            <h4>System Health</h4>
+
+            <div class="health-row">
+                <div class="health-dot {{ $ftrDbOk ? 'ok' : 'offline' }}"></div>
+                <div>
+                    <span class="health-label">Database</span><br>
+                    <span>{{ $ftrDbOk ? 'Online &amp; Connected' : 'Connection Error' }}</span>
+                </div>
+            </div>
+
+            <div class="health-row">
+                <div class="health-dot {{ $ftrBackupOk ? 'ok' : 'warn' }}"></div>
+                <div>
+                    <span class="health-label">Last Backup</span><br>
+                    <span>{{ $ftrBackupAgo }}</span>
+                </div>
+            </div>
+
+            <div class="health-row">
+                <div class="health-dot ok"></div>
+                <div>
+                    <span class="health-label">Portal</span><br>
+                    <span>Operational</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- ⑤ Republika Seal — visual anchor ─────────── --}}
         <div class="footer-republic">
             <img src="{{ asset('images/republika-seal.png') }}"
                  alt="Seal of the Republic of the Philippines"
-                 width="80" height="80"
-                 style="object-fit:contain;filter:brightness(0) invert(1);opacity:.55;">
-            <p>Republic of the Philippines</p>
+                 class="footer-republic-img">
         </div>
     </div>
 
-    <div class="footer-bottom">
+    <div class="footer-bottom" style="max-width:1200px">
         <span>&copy; {{ date('Y') }} Barangay New Era, District VI, Quezon City. All rights reserved.</span>
         <div class="footer-pb">
             <i class="fas fa-user-tie" style="color:var(--gold);font-size:.8rem"></i>
@@ -1048,4 +1108,5 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 @stack('scripts')
-</bo
+</body>
+</html>
