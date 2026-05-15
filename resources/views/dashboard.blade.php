@@ -743,64 +743,6 @@
 
 </div>{{-- end #dpanel-analytics --}}
 
-{{-- ═══════════ TAB 3: APPOINTMENTS ═══════════ --}}
-@if(in_array(auth()->user()->role, ['Admin','Secretary']))
-<div id="dpanel-appointments" class="dash-panel">
-
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title"><i class="fas fa-calendar-check"></i> Document Appointments</span>
-            <div style="display:flex;gap:.5rem">
-                <a href="{{ route('portal.index') }}" target="_blank" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-globe"></i> View Portal
-                </a>
-                <a href="{{ route('appointments.index') }}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-list"></i> Manage All
-                </a>
-            </div>
-        </div>
-
-        {{-- Summary strip --}}
-        <div style="display:flex;gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
-            @foreach(['Pending','Confirmed','Processing','Ready','Released','Cancelled'] as $st)
-            <div style="flex:1;padding:12px 8px;text-align:center;background:var(--surface2)">
-                <div style="font-size:18px;font-weight:700;color:var(--navy)">{{ $aptCounts[$st] ?? 0 }}</div>
-                <div style="font-size:13px;color:var(--text-muted);margin-top:3px;font-weight:500">{{ $st }}</div>
-            </div>
-            @endforeach
-        </div>
-
-        <div class="card-body" style="padding:0">
-            @forelse($recentAppointments as $apt)
-            @php $sc = strtolower($apt->status); @endphp
-            <div class="feed-row" style="text-decoration:none">
-                <div class="feed-icon"><i class="fas fa-calendar"></i></div>
-                <div class="feed-body">
-                    <div style="display:flex;align-items:center;gap:8px">
-                        <span class="feed-title">{{ $apt->appointment_number }}</span>
-                        <span class="apt-badge apt-{{ $sc }}">{{ $apt->status }}</span>
-                    </div>
-                    <div class="feed-sub">{{ $apt->resident_name }} · {{ $apt->document_type }} · {{ $apt->preferred_date->format('M d, Y') }}</div>
-                </div>
-                <a href="{{ route('appointments.index') }}?search={{ $apt->appointment_number }}"
-                   class="btn btn-secondary btn-sm" style="flex-shrink:0;font-size:13px">Update</a>
-            </div>
-            @empty
-            <div class="empty-state" style="padding:40px"><i class="fas fa-calendar-check"></i><p>No appointments yet</p></div>
-            @endforelse
-        </div>
-
-        @if($recentAppointments->count() >= 8)
-        <div style="padding:.75rem 1rem;border-top:1px solid var(--border);text-align:center">
-            <a href="{{ route('appointments.index') }}" style="font-size:13px;color:var(--navy);font-weight:600">
-                View all appointments <i class="fas fa-arrow-right" style="font-size:10px"></i>
-            </a>
-        </div>
-        @endif
-    </div>
-
-</div>{{-- end #dpanel-appointments --}}
-@endif
 
 @endsection
 
