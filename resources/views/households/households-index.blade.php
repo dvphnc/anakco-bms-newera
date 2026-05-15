@@ -29,14 +29,14 @@
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-people-roof"></i></div>
+        <div class="stat-icon" style="background:#F1F5F9;color:var(--navy)"><i class="fas fa-people-roof"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format(\App\Models\Resident::where('residency_status','Active')->count()) }}</div>
             <div class="stat-label">Active Residents</div>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-location-dot"></i></div>
+        <div class="stat-icon" style="background:#F1F5F9;color:var(--navy)"><i class="fas fa-location-dot"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format(\App\Models\Purok::count()) }}</div>
             <div class="stat-label">Total Puroks</div>
@@ -68,8 +68,8 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Purok</label>
-                <select id="purokFilter" class="form-control">
-                    <option value="">All Puroks</option>
+                <select id="purokFilter">
+                    <option value=""></option>
                     @foreach($puroks as $purok)
                         <option value="{{ $purok->id }}">{{ $purok->name }}</option>
                     @endforeach
