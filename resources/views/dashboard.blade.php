@@ -398,8 +398,9 @@
     </div>
 
     {{-- Session / Uptime --}}
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-                padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)">
+    <div style="background:#fff;border:none;border-radius:var(--radius-lg);
+                padding:16px 20px;display:flex;align-items:center;gap:14px;
+                box-shadow:0 2px 10px rgba(13,33,68,0.07)">
         <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
                     background:rgba(13,33,68,0.07);display:flex;align-items:center;justify-content:center">
             <i class="fas fa-circle-check" style="color:var(--navy);font-size:16px"></i>
