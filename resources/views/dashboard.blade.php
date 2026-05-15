@@ -714,8 +714,9 @@
                 <div style="flex:1">
                     @php
                         $ageColors = ['#4f46e5','#C8861A','#16a34a','#dc2626']; $ai=0;
-                        $largestAgeGroup = $ageGroups->sortDesc()->keys()->first();
-                        $largestAgeCount = $ageGroups->max();
+                        $ageCollection   = collect($ageGroups);
+                        $largestAgeGroup = $ageCollection->sortDesc()->keys()->first();
+                        $largestAgeCount = $ageCollection->max();
                     @endphp
                     @foreach($ageGroups as $label => $count)
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
