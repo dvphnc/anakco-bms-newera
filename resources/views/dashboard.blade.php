@@ -30,8 +30,9 @@
     width: fit-content;
 }
 .dash-tab-btn {
-    padding: 9px 22px;
-    font-size: 13.5px;
+    padding: 10px 22px;
+    min-height: 44px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text-muted);
     background: none;
@@ -132,21 +133,269 @@
 
 @section('content')
 
-{{-- PAGE HEADER --}}
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-subtitle">Welcome back, <strong style="color:var(--navy)">{{ auth()->user()->name }}</strong> — {{ now()->format('l, F d, Y') }}</p>
+{{-- ═══════════ COMMAND CENTER WELCOME BANNER ═══════════ --}}
+<div class="cc-banner no-print" style="
+    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1a3a6e 100%);
+    border-radius:var(--radius-lg); padding:28px 32px; margin-bottom:20px;
+    position:relative; overflow:hidden; box-shadow:0 8px 32px rgba(13,33,68,0.22)">
+
+    {{-- Decorative radial glow --}}
+    <div style="position:absolute;top:-80px;right:-80px;width:320px;height:320px;
+                background:radial-gradient(circle, rgba(200,134,26,0.12) 0%, transparent 65%);
+                pointer-events:none"></div>
+    <div style="position:absolute;bottom:-60px;left:-40px;width:260px;height:260px;
+                background:radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+                pointer-events:none"></div>
+
+    <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;
+                gap:24px;flex-wrap:wrap">
+
+        {{-- Left: Barangay Identity --}}
+        <div style="display:flex;align-items:center;gap:16px">
+            <div style="width:56px;height:56px;border-radius:50%;border:2px solid rgba(200,134,26,0.5);
+                        background:#fff;overflow:hidden;flex-shrink:0;
+                        box-shadow:0 0 0 4px rgba(200,134,26,0.1)">
+                <img src="{{ asset('images/bne-logo.png') }}" alt="BNE Logo"
+                     style="width:100%;height:100%;object-fit:cover"
+                     onerror="this.style.display='none';this.parentNode.style.background='linear-gradient(135deg,var(--gold),var(--gold-light))'">
+            </div>
+            <div>
+                <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+                            color:rgba(229,160,32,0.9);margin-bottom:2px">
+                    Command Center
+                </div>
+                <div style="font-size:20px;font-weight:800;color:#fff;line-height:1.15;letter-spacing:-0.01em">
+                    Barangay New Era
+                </div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300;margin-top:1px">
+                    District VI, Quezon City
+                </div>
+            </div>
+        </div>
+
+        {{-- Center: Punong Barangay Card --}}
+        <div style="display:flex;align-items:center;gap:12px;
+                    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);
+                    border-radius:var(--radius);padding:12px 18px;backdrop-filter:blur(8px)">
+            <div style="width:40px;height:40px;border-radius:50%;
+                        background:linear-gradient(135deg,var(--gold),var(--gold-light));
+                        display:flex;align-items:center;justify-content:center;
+                        font-size:15px;font-weight:800;color:var(--navy);flex-shrink:0">
+                R
+            </div>
+            <div>
+                <div style="font-size:10px;font-weight:600;letter-spacing:0.1em;
+                            text-transform:uppercase;color:rgba(229,160,32,0.8);margin-bottom:2px">
+                    Punong Barangay
+                </div>
+                <div style="font-size:15px;font-weight:700;color:#fff;line-height:1.2">
+                    Robert S. Romano
+                </div>
+            </div>
+        </div>
+
+        {{-- Right: User greeting + actions --}}
+        <div style="text-align:right">
+            <div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300">
+                {{ now()->format('l, F d, Y') }}
+            </div>
+            <div style="font-size:16px;font-weight:600;color:#fff;margin-top:2px">
+                Welcome back, <span style="color:var(--gold-light)">{{ auth()->user()->name }}</span>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+                <button id="startTourBtn"
+                        class="btn btn-sm"
+                        data-tippy-content="Take a guided tour of the Dashboard"
+                        style="background:rgba(255,255,255,0.10);color:#fff;border:1px solid rgba(255,255,255,0.20);
+                               min-height:34px;font-size:12px;padding:6px 14px">
+                    <i class="fas fa-map" style="color:var(--gold-light)"></i> Take Tour
+                </button>
+                <a href="{{ route('residents.create') }}"
+                   style="background:rgba(255,255,255,0.10);color:#fff;border:1px solid rgba(255,255,255,0.20);
+                          min-height:34px;font-size:12px;padding:6px 14px"
+                   class="btn btn-sm">
+                    <i class="fas fa-user-plus"></i> New Resident
+                </a>
+                <a href="{{ route('documents.create') }}"
+                   style="background:var(--gold);color:#fff;border:none;
+                          min-height:34px;font-size:12px;padding:6px 14px"
+                   class="btn btn-sm">
+                    <i class="fas fa-file-plus"></i> New Document
+                </a>
+            </div>
+        </div>
     </div>
-    <div class="page-actions no-print">
-        <button id="startTourBtn" class="btn btn-secondary btn-sm" data-tippy-content="Take a guided tour of the Dashboard to learn about each section.">
-            <i class="fas fa-map" style="color:var(--gold)"></i> Take Tour
-        </button>
-        <a href="{{ route('residents.create') }}"  class="btn btn-secondary btn-sm"><i class="fas fa-user-plus"></i> New Resident</a>
-        <a href="{{ route('documents.create') }}"  class="btn btn-secondary btn-sm"><i class="fas fa-file-plus"></i> New Document</a>
-        <a href="{{ route('blotter.create') }}"    class="btn btn-secondary btn-sm"><i class="fas fa-gavel"></i> New Blotter</a>
-        <a href="{{ route('businesses.create') }}" class="btn btn-secondary btn-sm"><i class="fas fa-store"></i> New Permit</a>
+
+    {{-- Bottom action row --}}
+    <div style="position:relative;margin-top:20px;padding-top:16px;
+                border-top:1px solid rgba(255,255,255,0.08);
+                display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+                     color:rgba(255,255,255,0.35);margin-right:4px">Quick Add</span>
+        <a href="{{ route('blotter.create') }}"
+           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
+                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
+                  font-size:12px;padding:5px 14px"
+           class="btn btn-sm">
+            <i class="fas fa-gavel"></i> Blotter Case
+        </a>
+        <a href="{{ route('businesses.create') }}"
+           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
+                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
+                  font-size:12px;padding:5px 14px"
+           class="btn btn-sm">
+            <i class="fas fa-store"></i> Business Permit
+        </a>
+        <a href="{{ route('households.create') }}"
+           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
+                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
+                  font-size:12px;padding:5px 14px"
+           class="btn btn-sm">
+            <i class="fas fa-house-circle-plus"></i> Household
+        </a>
+        @if(auth()->user()->role === 'Admin')
+        <a href="{{ route('officials.create') }}"
+           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
+                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
+                  font-size:12px;padding:5px 14px"
+           class="btn btn-sm">
+            <i class="fas fa-user-tie"></i> Official
+        </a>
+        @endif
+        <div style="flex:1"></div>
+        <span style="font-size:12px;color:rgba(255,255,255,0.30);display:flex;align-items:center;gap:6px">
+            <kbd style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);
+                        border-radius:4px;padding:2px 7px;font-family:monospace;font-size:10px;
+                        color:rgba(255,255,255,0.55)">Ctrl+K</kbd>
+            Global Search
+        </span>
     </div>
+</div>
+
+{{-- ═══════════ SYSTEM HEALTH WIDGET ═══════════ --}}
+@php
+    $diskTotal = @disk_total_space(storage_path()) ?: 1;
+    $diskFree  = @disk_free_space(storage_path()) ?: $diskTotal;
+    $diskUsed  = $diskTotal - $diskFree;
+    $diskPct   = round(($diskUsed / $diskTotal) * 100);
+    $diskUsedGB = round($diskUsed / 1073741824, 1);
+    $diskTotalGB= round($diskTotal / 1073741824, 1);
+
+    // Last backup file
+    $backupDir = storage_path('app/backups');
+    $lastBackupTs = null;
+    if (is_dir($backupDir)) {
+        $files = glob($backupDir . '/*.sql') ?: [];
+        $files = array_merge($files, glob($backupDir . '/*.gz') ?: []);
+        if ($files) {
+            usort($files, fn($a,$b) => filemtime($b) - filemtime($a));
+            $lastBackupTs = filemtime($files[0]);
+        }
+    }
+    $lastBackupLabel = $lastBackupTs
+        ? \Carbon\Carbon::createFromTimestamp($lastBackupTs)->diffForHumans()
+        : 'No backups yet';
+    $backupOk = $lastBackupTs && (time() - $lastBackupTs < 86400 * 7); // within 7 days
+@endphp
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px" class="no-print">
+
+    {{-- Database --}}
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+                padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)">
+        <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
+                    background:rgba(22,101,52,0.1);display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-database" style="color:#16a34a;font-size:16px"></i>
+        </div>
+        <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                        color:var(--text-subtle);margin-bottom:2px">Database</div>
+            <div style="font-size:15px;font-weight:700;color:#14532d;display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;
+                             display:inline-block;box-shadow:0 0 0 3px rgba(34,197,94,0.2)"></span>
+                Online
+            </div>
+        </div>
+    </div>
+
+    {{-- Last Backup --}}
+    <div style="background:var(--surface);border:1px solid {{ $backupOk ? 'var(--border)' : 'var(--gold-border)' }};
+                border-radius:var(--radius-lg);padding:16px 20px;display:flex;align-items:center;
+                gap:14px;box-shadow:var(--shadow-sm)">
+        <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
+                    background:{{ $backupOk ? 'rgba(13,33,68,0.07)' : 'var(--gold-pale)' }};
+                    display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-shield-halved"
+               style="color:{{ $backupOk ? 'var(--navy)' : 'var(--gold)' }};font-size:16px"></i>
+        </div>
+        <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                        color:var(--text-subtle);margin-bottom:2px">Last Backup</div>
+            <div style="font-size:14px;font-weight:700;color:{{ $backupOk ? 'var(--navy)' : '#92600A' }}">
+                {{ $lastBackupLabel }}
+            </div>
+            @if(!$backupOk)
+            <div style="font-size:11px;color:var(--gold);font-weight:600;margin-top:1px">
+                <a href="{{ route('backup.index') }}" style="color:var(--gold)">
+                    <i class="fas fa-arrow-right" style="font-size:9px"></i> Back up now
+                </a>
+            </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- Storage --}}
+    <div style="background:var(--surface);border:1px solid {{ $diskPct > 85 ? 'var(--crimson-border)' : 'var(--border)' }};
+                border-radius:var(--radius-lg);padding:16px 20px;box-shadow:var(--shadow-sm)">
+        <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
+                        background:{{ $diskPct > 85 ? 'var(--crimson-pale)' : 'rgba(13,33,68,0.07)' }};
+                        display:flex;align-items:center;justify-content:center">
+                <i class="fas fa-hard-drive"
+                   style="color:{{ $diskPct > 85 ? 'var(--crimson)' : 'var(--navy)' }};font-size:16px"></i>
+            </div>
+            <div style="flex:1;min-width:0">
+                <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                            color:var(--text-subtle);margin-bottom:4px">Storage</div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                    <span style="font-size:14px;font-weight:700;
+                                 color:{{ $diskPct > 85 ? 'var(--crimson)' : 'var(--navy)' }}">
+                        {{ $diskPct }}% used
+                    </span>
+                    <span style="font-size:12px;color:var(--text-muted)">
+                        {{ $diskUsedGB }} / {{ $diskTotalGB }} GB
+                    </span>
+                </div>
+                <div style="background:var(--surface3);border-radius:99px;height:6px;overflow:hidden">
+                    <div style="height:100%;border-radius:99px;transition:width .6s;
+                                background:{{ $diskPct > 85 ? 'var(--crimson)' : ($diskPct > 65 ? 'var(--gold)' : 'var(--navy)') }};
+                                width:{{ $diskPct }}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Session / Uptime --}}
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+                padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)">
+        <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
+                    background:rgba(13,33,68,0.07);display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-circle-check" style="color:var(--navy);font-size:16px"></i>
+        </div>
+        <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                        color:var(--text-subtle);margin-bottom:2px">System</div>
+            <div style="font-size:15px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;
+                             display:inline-block;box-shadow:0 0 0 3px rgba(34,197,94,0.2)"></span>
+                All Services Up
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:1px">
+                {{ config('app.name', 'BMS') }} v1.0
+            </div>
+        </div>
+    </div>
+
 </div>
 
 {{-- ALERTS STRIP --}}

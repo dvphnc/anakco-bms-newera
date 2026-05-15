@@ -37,6 +37,7 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/confirmation/{number}',    [ResidentPortalController::class, 'confirmation'])->name('confirmation');
     Route::get('/track',                    [ResidentPortalController::class, 'trackForm'])->name('track');
     Route::post('/track',                   [ResidentPortalController::class, 'track'])->name('track.post');
+    Route::get('/track/lookup',             [ResidentPortalController::class, 'trackLookup'])->name('track.lookup');
 });
 
 // -------------------------------------------------------
@@ -59,6 +60,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Residents — Admin + Secretary only
     // ---------------------------------------------------
     Route::resource('residents', ResidentController::class)
+        ->middleware('role:Admin,Secretary');
+    Route::get('residents/{resident}/quick-view', [ResidentController::class, 'quickView'])
+        ->name('residents.quick-view')
         ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------

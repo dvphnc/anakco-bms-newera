@@ -384,5 +384,141 @@ $(document).ready(function () {
         saveToUrl(); table.ajax.reload();
     });
 });
+
+/* ── Resident Quick View Panel ──────────────────────────────────────── */
+window.residentQuickView = function (id, url) {
+    const panel = document.getElementById('qvPanel');
+    const body  = document.getElementById('qvBody');
+
+    // Show loading state
+    panel.style.display = 'flex';
+    requestAnimationFrame(() => { panel.style.opacity = '1'; });
+    body.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+                    height:200px;gap:12px">
+            <i class="fas fa-spinner fa-spin" style="font-size:24px;color:var(--gold)"></i>
+            <span style="font-size:13px;color:var(--text-muted)">Loading resident…</span>
+        </div>`;
+
+    axios.get(url)
+        .then(({ data: r }) => {
+            const badgeMap = { Active:'badge-green', Deceased:'badge-gray', Transferred:'badge-blue' };
+            const tags = [
+                r.is_voter       ? '<span class="badge badge-navy">Voter</span>'       : '',
+                r.is_senior      ? '<span class="badge badge-gold">Senior</span>'      : '',
+                r.is_pwd         ? '<span class="badge badge-blue">PWD</span>'         : '',
+                r.is_solo_parent ? '<span class="badge badge-yellow">Solo Parent</span>': '',
+                r.is_4ps         ? '<span class="badge badge-orange">4Ps</span>'        : '',
+            ].filter(Boolean).join(' ');
+
+            body.innerHTML = `
+                {{-- Avatar + name --}}
+                <div style="display:flex;align-items:center;gap:14px;padding:20px 20px 16px;
+                            border-bottom:1px solid var(--border)">
+                    <div style="width:56px;height:56px;border-radius:50%;flex-shrink:0;overflow:hidden;
+                                border:2px solid var(--border2)">
+                        ${r.photo_url
+                            ? `<img src="${r.photo_url}" style="width:100%;height:100%;object-fit:cover">`
+                            : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+                                          display:flex;align-items:center;justify-content:center;
+                                          font-size:20px;font-weight:800;color:#fff">${r.initials}</div>`
+                        }
+                    </div>
+                    <div style="flex:1;min-width:0">
+                        <div style="font-size:17px;font-weight:700;color:var(--text);line-height:1.2">${r.full_name}</div>
+                        <div style="font-size:13px;color:var(--text-muted);margin-top:3px">
+                            ${r.age} yrs · ${r.gender} · ${r.civil_status}
+                        </div>
+                        <div style="margin-top:7px;display:flex;flex-wrap:wrap;gap:4px">
+                            <span class="badge ${badgeMap[r.residency_status] || 'badge-gray'}">${r.residency_status}</span>
+                            ${tags}
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Details grid --}}
+                <div style="padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px 18px">
+                    ${qvField('fa-location-dot','Purok',r.purok)}
+                    ${qvField('fa-house','Household',r.household !== '—' ? 'HH-' + r.household : '—')}
+                    ${qvField('fa-phone','Contact',r.contact_number)}
+                    ${qvField('fa-envelope','Email',r.email_address)}
+                    ${qvField('fa-briefcase','Occupation',r.occupation)}
+                    ${qvField('fa-cake-candles','Birthday',r.birthdate)}
+                    <div style="grid-column:1/-1">${qvField('fa-map-pin','Address',r.address)}</div>
+                </div>
+
+                {{-- Action row --}}
+                <div style="padding:14px 20px;border-top:1px solid var(--border);
+                            display:flex;gap:8px;background:var(--surface2)">
+                    <a href="${r.profile_url}" class="btn btn-primary btn-sm" style="flex:1;justify-content:center">
+                        <i class="fas fa-eye"></i> Full Profile
+                    </a>
+                    <a href="${r.clearance_url}" class="btn btn-gold btn-sm" style="flex:1;justify-content:center">
+                        <i class="fas fa-file-circle-check"></i> Clearance
+                    </a>
+                    <a href="${r.edit_url}" class="btn btn-secondary btn-sm btn-icon" title="Edit">
+                        <i class="fas fa-pen"></i>
+                    </a>
+                </div>`;
+        })
+        .catch(() => {
+            body.innerHTML = `<div style="padding:32px;text-align:center;color:var(--crimson)">
+                <i class="fas fa-exclamation-circle" style="font-size:28px;opacity:.5;display:block;margin-bottom:10px"></i>
+                Could not load resident data.
+            </div>`;
+        });
+};
+
+function qvField(icon, label, value) {
+    return `<div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;
+                    color:var(--text-subtle);display:flex;align-items:center;gap:5px;margin-bottom:3px">
+            <i class="fas ${icon}" style="font-size:10px"></i> ${label}
+        </div>
+        <div style="font-size:14px;font-weight:500;color:var(--text)">${value || '—'}</div>
+    </div>`;
+}
+
+window.closeQvPanel = function () {
+    const panel = document.getElementById('qvPanel');
+    panel.style.opacity = '0';
+    setTimeout(() => { panel.style.display = 'none'; }, 200);
+};
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeQvPanel();
+});
 </script>
+
+{{-- Quick View Slide Panel --}}
+<div id="qvPanel"
+     style="display:none;opacity:0;position:fixed;inset:0;z-index:9500;
+            align-items:flex-start;justify-content:flex-end;
+            background:rgba(9,20,40,0.45);backdrop-filter:blur(3px);
+            transition:opacity .2s"
+     onclick="if(event.target===this) closeQvPanel()">
+    <div style="width:380px;max-width:95vw;height:100vh;background:var(--surface);
+                overflow-y:auto;box-shadow:-8px 0 40px rgba(0,0,0,0.22);
+                display:flex;flex-direction:column;animation:qvSlideIn .2s ease">
+        <div style="display:flex;align-items:center;justify-content:space-between;
+                    padding:16px 20px;border-bottom:1px solid var(--border);
+                    background:var(--navy);flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:10px">
+                <i class="fas fa-id-card" style="color:var(--gold);font-size:14px"></i>
+                <span style="font-size:14px;font-weight:700;color:#fff">Resident Quick View</span>
+            </div>
+            <button onclick="closeQvPanel()"
+                    style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);
+                           border-radius:var(--radius-sm);width:30px;height:30px;
+                           display:flex;align-items:center;justify-content:center;
+                           color:rgba(255,255,255,0.7);cursor:pointer;font-size:13px">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div id="qvBody" style="flex:1"></div>
+    </div>
+</div>
+<style>
+@keyframes qvSlideIn { from { transform:translateX(32px); opacity:0; } to { transform:translateX(0); opacity:1; } }
+</style>
 @endpush
