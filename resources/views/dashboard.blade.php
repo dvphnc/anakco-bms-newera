@@ -332,6 +332,7 @@
 
 
 {{-- ═══════════ COMMAND BAR ═══════════ --}}
+@if(in_array(auth()->user()->role, ['Admin', 'Secretary']))
 <div class="cmd-bar no-print">
     <span class="cmd-bar-label">Actions</span>
 
@@ -371,6 +372,7 @@
                     padding:1px 6px;font-family:monospace;font-size:10px;color:var(--text-subtle)">Ctrl K</kbd>
     </button>
 </div>
+@endif
 
 {{-- ALERTS TRAY --}}
 @php
@@ -482,19 +484,21 @@
                 <div class="dash-stat-label">Pending Documents</div>
             </div>
         </a>
-        <a href="{{ route('blotter.index') }}" class="dash-stat-card">
+        <a href="{{ route('blotter.index') }}" class="dash-stat-card" style="position:relative">
+            @if($overdueBlotter > 0)
+            <span style="position:absolute;top:10px;right:12px;
+                         background:var(--crimson);color:#fff;
+                         font-size:10px;font-weight:700;line-height:1;
+                         padding:3px 7px;border-radius:99px;
+                         pointer-events:none"
+                  title="{{ $overdueBlotter }} case{{ $overdueBlotter > 1 ? 's' : '' }} overdue 30+ days">
+                {{ $overdueBlotter }} overdue
+            </span>
+            @endif
             <div class="dash-stat-icon"><i class="fas fa-gavel"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($activeBlotter) }}</div>
                 <div class="dash-stat-label">Active Blotter Cases</div>
-                @if($overdueBlotter > 0)
-                <div style="font-size:12px;color:var(--crimson);margin-top:4px;font-weight:600;
-                            display:flex;align-items:center;gap:4px">
-                    <span style="width:6px;height:6px;border-radius:50%;background:var(--crimson);
-                                 display:inline-block"></span>
-                    {{ $overdueBlotter }} overdue 30+ days
-                </div>
-                @endif
             </div>
         </a>
         <a href="{{ route('businesses.index') }}" class="dash-stat-card">
