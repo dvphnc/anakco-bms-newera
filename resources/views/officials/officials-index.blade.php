@@ -11,7 +11,7 @@
     </div>
     <div class="page-actions">
         <a href="{{ route('officials.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Add Official
+            <i class="fas fa-user-plus"></i> Add Official
         </a>
     </div>
 </div>
@@ -52,6 +52,36 @@
         <div class="stat-info">
             <div class="stat-number">{{ date('Y') }}</div>
             <div class="stat-label">Current Term Year</div>
+        </div>
+    </div>
+</div>
+
+{{-- Inline search + filter --}}
+<div class="card mb-6">
+    <div class="card-body" style="padding:14px 20px">
+        <div class="filter-bar">
+            <div class="form-group flex-1">
+                <label class="form-label">Search</label>
+                <div style="position:relative">
+                    <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none"></i>
+                    <input type="text" id="officialSearch" class="form-control" style="padding-left:32px"
+                           placeholder="Name, position, committee...">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select id="officialStatusFilter">
+                    <option value="">All</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="form-group" style="justify-content:flex-end">
+                <label class="form-label">&nbsp;</label>
+                <button id="officialResetBtn" class="btn btn-secondary">
+                    <i class="fas fa-xmark"></i> Reset
+                </button>
+            </div>
         </div>
     </div>
 </div>
