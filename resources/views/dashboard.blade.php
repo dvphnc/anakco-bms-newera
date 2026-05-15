@@ -130,13 +130,19 @@
 .quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
 .quick-item {
     display:flex; flex-direction:column; align-items:center; gap:7px;
-    padding:14px 6px; background:var(--surface2);
+    padding:14px 6px; background:#fff;
     border:1px solid var(--border); border-radius:var(--radius);
-    text-decoration:none; transition:all .15s;
+    text-decoration:none; transition:all .2s;
 }
-.quick-item:hover { background:var(--navy-pale); border-color:var(--qa-color, var(--navy)); }
-.quick-icon { width:38px; height:38px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:16px; }
-.quick-label { font-size:13px; font-weight:600; color:var(--text); text-align:center; }
+.quick-item:hover { background:var(--navy-pale); border-color:var(--navy-border); }
+.quick-item:hover .quick-icon { background:var(--navy) !important; color:#fff !important; }
+.quick-icon {
+    width:40px; height:40px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:15px;
+    background:#F1F5F9; color:var(--navy);
+    transition:background .2s, color .2s;
+}
+.quick-label { font-size:12.5px; font-weight:600; color:var(--text); text-align:center; line-height:1.3; }
 
 /* ── Bottom 2-col ────────────────────────────────────────── */
 .dash-bottom { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
@@ -149,7 +155,7 @@
 }
 .feed-row:last-child { border-bottom:none; }
 .feed-row:hover { background:var(--navy-pale); }
-.feed-icon { width:36px; height:36px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; }
+.feed-icon { width:36px; height:36px; border-radius:50%; background:#F1F5F9; color:var(--navy); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px; }
 .feed-body { flex:1; min-width:0; }
 .feed-title { font-size:14px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .feed-sub   { font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
@@ -550,45 +556,56 @@
 
     {{-- STAT CARDS --}}
     <div class="dash-stats" id="tour-statcards">
-        <a href="{{ route('residents.index') }}" class="dash-stat-card" style="--stat-accent:#4f46e5">
-            <div class="dash-stat-icon" style="background:#eef2ff;color:#4f46e5"><i class="fas fa-users"></i></div>
+        <a href="{{ route('residents.index') }}" class="dash-stat-card">
+            <div class="dash-stat-icon"><i class="fas fa-users"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($totalResidents) }}</div>
                 <div class="dash-stat-label">Total Residents</div>
             </div>
         </a>
-        <a href="{{ route('documents.index') }}" class="dash-stat-card" style="--stat-accent:#d97706">
-            <div class="dash-stat-icon" style="background:#fffbeb;color:#d97706"><i class="fas fa-file-alt"></i></div>
+        <a href="{{ route('documents.index') }}" class="dash-stat-card">
+            <div class="dash-stat-icon"><i class="fas fa-file-alt"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($pendingDocuments) }}</div>
                 <div class="dash-stat-label">Pending Documents</div>
             </div>
         </a>
-        <a href="{{ route('blotter.index') }}" class="dash-stat-card" style="--stat-accent:#dc2626">
-            <div class="dash-stat-icon" style="background:#fef2f2;color:#dc2626"><i class="fas fa-gavel"></i></div>
+        <a href="{{ route('blotter.index') }}" class="dash-stat-card">
+            <div class="dash-stat-icon"><i class="fas fa-gavel"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($activeBlotter) }}</div>
                 <div class="dash-stat-label">Active Blotter Cases</div>
                 @if($overdueBlotter > 0)
-                <div style="font-size:13px;color:var(--crimson);margin-top:4px;font-weight:600">
-                    <i class="fas fa-fire"></i> {{ $overdueBlotter }} overdue 30+ days
+                <div style="font-size:12px;color:var(--crimson);margin-top:4px;font-weight:600;
+                            display:flex;align-items:center;gap:4px">
+                    <span style="width:6px;height:6px;border-radius:50%;background:var(--crimson);
+                                 display:inline-block"></span>
+                    {{ $overdueBlotter }} overdue 30+ days
                 </div>
                 @endif
             </div>
         </a>
-        <a href="{{ route('businesses.index') }}" class="dash-stat-card" style="--stat-accent:#16a34a">
-            <div class="dash-stat-icon" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-store"></i></div>
+        <a href="{{ route('businesses.index') }}" class="dash-stat-card">
+            <div class="dash-stat-icon"><i class="fas fa-store"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($activeBusinesses) }}</div>
                 <div class="dash-stat-label">Active Businesses</div>
             </div>
         </a>
         @if(in_array(auth()->user()->role, ['Admin','Secretary']))
-        <a href="{{ route('appointments.index') }}" class="dash-stat-card" style="--stat-accent:var(--gold)">
-            <div class="dash-stat-icon" style="background:var(--gold-pale);color:var(--gold)"><i class="fas fa-calendar-check"></i></div>
+        <a href="{{ route('appointments.index') }}" class="dash-stat-card">
+            <div class="dash-stat-icon"><i class="fas fa-calendar-check"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($pendingAppointments) }}</div>
                 <div class="dash-stat-label">Pending Appointments</div>
+                @if($pendingAppointments > 0)
+                <div style="font-size:12px;color:var(--gold);margin-top:4px;font-weight:600;
+                            display:flex;align-items:center;gap:4px">
+                    <span style="width:6px;height:6px;border-radius:50%;background:var(--gold);
+                                 display:inline-block"></span>
+                    Needs review
+                </div>
+                @endif
             </div>
         </a>
         @endif
