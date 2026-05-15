@@ -60,22 +60,64 @@
 .dash-panel.active { display: block; }
 
 /* ── Stat Cards ──────────────────────────────────────────── */
-.dash-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:16px; margin-bottom:24px; }
+.dash-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:24px; }
 .dash-stat-card {
-    display:flex; align-items:center; gap:16px;
-    background:var(--surface); border:1px solid var(--border);
-    border-radius:var(--radius-lg); padding:20px 22px;
-    text-decoration:none; box-shadow:var(--shadow-sm);
-    transition:box-shadow .15s, transform .15s;
+    display:flex; align-items:center; gap:18px;
+    background:#fff; border:none;
+    border-radius:var(--radius-lg); padding:22px 24px;
+    text-decoration:none;
+    box-shadow:0 2px 12px rgba(13,33,68,0.08), 0 1px 3px rgba(0,0,0,0.04);
+    transition:box-shadow .2s, transform .2s;
+    position:relative; overflow:hidden;
 }
-.dash-stat-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+.dash-stat-card::before {
+    content:''; position:absolute; left:0; top:0; bottom:0;
+    width:4px; border-radius:4px 0 0 4px;
+    background:var(--stat-accent, var(--navy));
+}
+.dash-stat-card:hover {
+    box-shadow:0 8px 28px rgba(13,33,68,0.13), 0 2px 8px rgba(0,0,0,0.06);
+    transform:translateY(-3px);
+}
 .dash-stat-icon {
-    width:48px; height:48px; border-radius:var(--radius);
+    width:52px; height:52px; border-radius:var(--radius);
     display:flex; align-items:center; justify-content:center;
-    font-size:20px; flex-shrink:0;
+    font-size:22px; flex-shrink:0;
 }
-.dash-stat-number { font-size:28px; font-weight:700; color:var(--text); line-height:1.1; }
-.dash-stat-label  { font-size:14px; color:var(--text-muted); margin-top:4px; }
+.dash-stat-number { font-size:32px; font-weight:800; color:var(--navy); line-height:1.05; letter-spacing:-0.01em; }
+.dash-stat-label  { font-size:16px; color:var(--text-muted); margin-top:5px; font-weight:400; line-height:1.4; }
+
+/* ── Command Bar ─────────────────────────────────────────── */
+.cmd-bar {
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background:#fff; border-radius:var(--radius-lg);
+    padding:14px 20px; margin-bottom:20px;
+    box-shadow:0 1px 6px rgba(13,33,68,0.07);
+}
+.cmd-bar-label {
+    font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.1em; color:var(--text-subtle); margin-right:4px; flex-shrink:0;
+}
+.cmd-bar-btn {
+    display:inline-flex; align-items:center; gap:7px;
+    padding:8px 16px; border-radius:var(--radius-sm); min-height:40px;
+    font-size:13.5px; font-weight:600; font-family:'Poppins',sans-serif;
+    cursor:pointer; transition:all .15s; border:1px solid transparent;
+    text-decoration:none; white-space:nowrap;
+}
+.cmd-bar-btn-primary {
+    background:var(--navy); color:#fff; border-color:var(--navy);
+}
+.cmd-bar-btn-primary:hover { background:var(--navy-mid); box-shadow:0 4px 14px rgba(13,33,68,0.22); }
+.cmd-bar-btn-gold {
+    background:var(--gold); color:#fff; border-color:var(--gold);
+}
+.cmd-bar-btn-gold:hover { background:var(--gold-light); box-shadow:var(--shadow-gold); }
+.cmd-bar-btn-ghost {
+    background:var(--surface2); color:var(--text-muted); border-color:var(--border);
+}
+.cmd-bar-btn-ghost:hover { background:var(--navy-pale); color:var(--navy); border-color:var(--navy-border); }
+.cmd-bar-divider { width:1px; height:26px; background:var(--border); flex-shrink:0; margin:0 4px; }
 
 /* ── Mid Row: Chart + Quick Access ───────────────────────── */
 .dash-mid { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px; }
