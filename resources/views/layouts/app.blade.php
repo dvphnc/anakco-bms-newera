@@ -109,10 +109,25 @@
         .nav-item i { width:16px; text-align:center; font-size:12px; flex-shrink:0; opacity:0.75; }
         .nav-item.active i { opacity:1; }
         .sidebar-footer {
-            padding:13px 18px; border-top:1px solid rgba(255,255,255,0.07);
+            padding:0; border-top:1px solid rgba(255,255,255,0.07);
             flex-shrink:0; background:rgba(0,0,0,0.18); position:relative; z-index:1;
         }
-        .sidebar-user { display:flex; align-items:center; gap:10px; }
+        .sidebar-health {
+            padding:9px 18px 8px; border-bottom:1px solid rgba(255,255,255,0.06);
+            display:flex; flex-direction:column; gap:4px;
+        }
+        .sh-label {
+            font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:.06em;
+            color:rgba(255,255,255,0.28); margin-bottom:2px;
+        }
+        .sh-row { display:flex; align-items:center; gap:6px; font-size:10.5px; color:rgba(255,255,255,0.45); }
+        .sh-dot {
+            width:6px; height:6px; border-radius:50%; flex-shrink:0;
+        }
+        .sh-dot.ok    { background:#22c55e; box-shadow:0 0 5px rgba(34,197,94,.55); }
+        .sh-dot.warn  { background:#f59e0b; box-shadow:0 0 5px rgba(245,158,11,.45); }
+        .sh-dot.offline { background:#ef4444; box-shadow:0 0 5px rgba(239,68,68,.5); }
+        .sidebar-user { display:flex; align-items:center; gap:10px; padding:10px 18px; }
         .user-avatar {
             width:33px; height:33px; border-radius:50%;
             background:linear-gradient(135deg, var(--gold), var(--gold-light));
