@@ -55,7 +55,7 @@
             font-family:'Poppins', sans-serif;
             background:var(--bg);
             color:var(--text);
-            font-size:16px;
+            font-size:14px;
             line-height:1.6;
             display:flex;
             overflow:hidden;

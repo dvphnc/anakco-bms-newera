@@ -957,42 +957,6 @@
 </div>{{-- end #dpanel-appointments --}}
 @endif
 
-{{-- ═══════════ NATIONAL SEAL FOOTER ═══════════ --}}
-<div class="no-print" style="
-    margin-top:40px; padding:24px 0 8px;
-    border-top:1px solid var(--border);
-    display:flex; align-items:center; justify-content:space-between; gap:24px;
-    flex-wrap:wrap">
-
-    <div>
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;
-                    letter-spacing:.14em;color:var(--text-subtle);margin-bottom:6px">
-            Official Records &amp; Management System
-        </div>
-        <div style="font-size:14px;font-weight:600;color:var(--navy);line-height:1.5">
-            Barangay New Era &nbsp;·&nbsp; District VI, Quezon City
-        </div>
-        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">
-            Data Privacy Act of 2012 (RA 10173) Compliant
-        </div>
-    </div>
-
-    <div style="display:flex;align-items:center;gap:20px">
-        <div style="text-align:right">
-            <div style="font-size:11px;color:var(--text-subtle);font-weight:500">Powered by</div>
-            <div style="font-size:13px;font-weight:700;color:var(--navy)">BMS v1.0</div>
-        </div>
-        <img src="{{ asset('images/republika-seal.png') }}"
-             alt="Seal of the Republic of the Philippines"
-             style="width:128px;height:128px;object-fit:contain;
-                    opacity:0.22;filter:grayscale(0.2);
-                    transition:opacity .3s"
-             onmouseover="this.style.opacity='.38'"
-             onmouseout="this.style.opacity='.22'"
-             loading="lazy">
-    </div>
-</div>
-
 @endsection
 
 @push('scripts')
