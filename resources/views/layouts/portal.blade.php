@@ -834,32 +834,10 @@
 
         {{-- Republic seal --}}
         <div class="footer-republic">
-            <svg viewBox="0 0 100 100" width="80" height="80" xmlns="http://www.w3.org/2000/svg" aria-label="Seal of the Republic of the Philippines">
-                <!-- Outer white ring -->
-                <circle cx="50" cy="50" r="48" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-                <!-- Sun body -->
-                <circle cx="50" cy="50" r="16" fill="#FCD116" opacity="0.85"/>
-                <!-- 8 primary sun rays -->
-                <g stroke="#FCD116" stroke-width="2.5" opacity="0.75" stroke-linecap="round">
-                    <line x1="50" y1="28" x2="50" y2="20"/>
-                    <line x1="50" y1="72" x2="50" y2="80"/>
-                    <line x1="28" y1="50" x2="20" y2="50"/>
-                    <line x1="72" y1="50" x2="80" y2="50"/>
-                    <line x1="34.4" y1="34.4" x2="28.9" y2="28.9"/>
-                    <line x1="65.6" y1="65.6" x2="71.1" y2="71.1"/>
-                    <line x1="65.6" y1="34.4" x2="71.1" y2="28.9"/>
-                    <line x1="34.4" y1="65.6" x2="28.9" y2="71.1"/>
-                </g>
-                <!-- 3 stars (Luzon, Visayas, Mindanao) -->
-                <!-- Top star -->
-                <polygon points="50,12 51.5,16.5 56.5,16.5 52.5,19 54,23.5 50,21 46,23.5 47.5,19 43.5,16.5 48.5,16.5" fill="#FCD116" opacity="0.8"/>
-                <!-- Bottom-left star -->
-                <polygon points="27,71 28.5,75.5 33.5,75.5 29.5,78 31,82.5 27,80 23,82.5 24.5,78 20.5,75.5 25.5,75.5" fill="#FCD116" opacity="0.8"/>
-                <!-- Bottom-right star -->
-                <polygon points="73,71 74.5,75.5 79.5,75.5 75.5,78 77,82.5 73,80 69,82.5 70.5,78 66.5,75.5 71.5,75.5" fill="#FCD116" opacity="0.8"/>
-                <!-- Center dot -->
-                <circle cx="50" cy="50" r="4" fill="rgba(255,255,255,0.6)"/>
-            </svg>
+            <img src="{{ asset('images/republika-seal.png') }}"
+                 alt="Seal of the Republic of the Philippines"
+                 width="80" height="80"
+                 style="object-fit:contain;filter:brightness(0) invert(1);opacity:.55;">
             <p>Republic of the Philippines</p>
         </div>
     </div>
