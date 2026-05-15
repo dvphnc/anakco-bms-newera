@@ -174,6 +174,26 @@
 
     {{-- Sidebar Footer --}}
     <div class="sidebar-footer">
+        @php
+            $sbDbOk  = true;
+            try { \DB::connection()->getPdo(); } catch (\Exception $e) { $sbDbOk = false; }
+            $sbDir   = storage_path('app/backups');
+            $sbFiles = array_merge(glob($sbDir.'/*.sql') ?: [], glob($sbDir.'/*.gz') ?: []);
+            $sbTs    = $sbFiles ? max(array_map('filemtime', $sbFiles)) : null;
+            $sbAgo   = $sbTs ? \Carbon\Carbon::createFromTimestamp($sbTs)->diffForHumans() : 'No backup';
+            $sbBkOk  = $sbTs && (time() - $sbTs < 86400 * 7);
+        @endphp
+        <div class="sidebar-health">
+            <div class="sh-label">System Status</div>
+            <div class="sh-row">
+                <span class="sh-dot {{ $sbDbOk ? 'ok' : 'offline' }}"></span>
+                <span>{{ $sbDbOk ? 'Database Online' : 'Database Error' }}</span>
+            </div>
+            <div class="sh-row">
+                <span class="sh-dot {{ $sbBkOk ? 'ok' : 'warn' }}"></span>
+                <span>Backup: {{ $sbAgo }}</span>
+            </div>
+        </div>
         <div class="sidebar-user">
             <div class="user-avatar">
                 {{ strtoupper(substr(auth()->user()?->name ?? 'User', 0, 1)) }}
