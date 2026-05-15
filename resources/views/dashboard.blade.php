@@ -392,29 +392,6 @@
     <a href="{{ route('businesses.create') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
         <i class="fas fa-store"></i> New Permit
     </a>
-
-    <div class="cmd-bar-divider"></div>
-
-    <a href="{{ route('appointments.index') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
-        <i class="fas fa-calendar-check"></i> Appointments
-        @if($pendingAppointments)
-        <span style="background:var(--gold);color:#fff;font-size:10px;font-weight:700;
-                     padding:1px 6px;border-radius:99px;margin-left:2px">{{ $pendingAppointments }}</span>
-        @endif
-    </a>
-    <a href="{{ route('portal.index') }}" target="_blank" class="cmd-bar-btn cmd-bar-btn-ghost">
-        <i class="fas fa-globe"></i> Resident Portal
-    </a>
-
-    <div class="cmd-bar-divider"></div>
-
-    <button onclick="openCmdPalette()" class="cmd-bar-btn cmd-bar-btn-ghost"
-            title="Global search (Ctrl+K)">
-        <i class="fas fa-magnifying-glass"></i>
-        <span>Search</span>
-        <kbd style="background:var(--surface3);border:1px solid var(--border);border-radius:4px;
-                    padding:1px 6px;font-family:monospace;font-size:10px;color:var(--text-subtle)">Ctrl+K</kbd>
-    </button>
 </div>
 @endif
 
@@ -426,12 +403,6 @@
     <button class="dash-tab-btn" onclick="switchDashTab('analytics')" id="dtab-analytics">
         <i class="fas fa-chart-pie"></i> Analytics
     </button>
-    @if(in_array(auth()->user()->role, ['Admin','Secretary']))
-    <button class="dash-tab-btn" onclick="switchDashTab('appointments')" id="dtab-appointments">
-        <i class="fas fa-calendar-check"></i> Appointments
-        @if($pendingAppointments) <span class="tab-badge">{{ $pendingAppointments }}</span> @endif
-    </button>
-    @endif
 </div>
 
 {{-- ═══════════ TAB 1: OVERVIEW ═══════════ --}}
