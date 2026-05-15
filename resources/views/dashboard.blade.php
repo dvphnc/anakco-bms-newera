@@ -189,7 +189,7 @@
                 background:radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
                 pointer-events:none"></div>
 
-    <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;
+    <div style="position:relative;display:flex;align-items:center;justify-content:space-between;
                 gap:24px;flex-wrap:wrap">
 
         {{-- Left: Barangay Identity --}}
@@ -322,8 +322,9 @@
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px" class="no-print">
 
     {{-- Database --}}
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-                padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)">
+    <div style="background:#fff;border:none;border-radius:var(--radius-lg);
+                padding:16px 20px;display:flex;align-items:center;gap:14px;
+                box-shadow:0 2px 10px rgba(13,33,68,0.07)">
         <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
                     background:rgba(22,101,52,0.1);display:flex;align-items:center;justify-content:center">
             <i class="fas fa-database" style="color:#16a34a;font-size:16px"></i>
@@ -340,9 +341,9 @@
     </div>
 
     {{-- Last Backup --}}
-    <div style="background:var(--surface);border:1px solid {{ $backupOk ? 'var(--border)' : 'var(--gold-border)' }};
+    <div style="background:#fff;border:none;
                 border-radius:var(--radius-lg);padding:16px 20px;display:flex;align-items:center;
-                gap:14px;box-shadow:var(--shadow-sm)">
+                gap:14px;box-shadow:0 2px 10px rgba(13,33,68,0.07)">
         <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
                     background:{{ $backupOk ? 'rgba(13,33,68,0.07)' : 'var(--gold-pale)' }};
                     display:flex;align-items:center;justify-content:center">
@@ -366,8 +367,8 @@
     </div>
 
     {{-- Storage --}}
-    <div style="background:var(--surface);border:1px solid {{ $diskPct > 85 ? 'var(--crimson-border)' : 'var(--border)' }};
-                border-radius:var(--radius-lg);padding:16px 20px;box-shadow:var(--shadow-sm)">
+    <div style="background:#fff;border:none;
+                border-radius:var(--radius-lg);padding:16px 20px;box-shadow:0 2px 10px rgba(13,33,68,0.07)">
         <div style="display:flex;align-items:center;gap:14px">
             <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
                         background:{{ $diskPct > 85 ? 'var(--crimson-pale)' : 'rgba(13,33,68,0.07)' }};
