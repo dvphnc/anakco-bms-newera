@@ -6,6 +6,14 @@
 </div>
 <?php endif; ?>
 
+<?php if(session('warning')): ?>
+<div class="alert alert-warning mb-4">
+    <i class="fas fa-triangle-exclamation alert-icon"></i>
+    <div class="alert-message"><?php echo e(session('warning')); ?></div>
+    <button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+</div>
+<?php endif; ?>
+
 <?php if(session('error')): ?>
 <div class="alert alert-error mb-4">
     <i class="fas fa-exclamation-circle alert-icon"></i>

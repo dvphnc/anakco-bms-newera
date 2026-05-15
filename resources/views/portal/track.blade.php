@@ -151,10 +151,46 @@
     }
     .not-found h3 { font-size: 1rem; color: var(--navy); margin-bottom: .35rem; }
     .not-found p { font-size: .82rem; color: #6b7280; }
+
+    /* ── Mobile: vertical timeline for progress steps ── */
+    @media (max-width: 600px) {
+        .search-row { flex-direction: column; }
+        .search-row .btn { width: 100%; justify-content: center; }
+
+        .progress-steps {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0;
+            padding-left: .5rem;
+        }
+        .prog-step {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            flex: none;
+            width: 100%;
+            padding: .3rem 0;
+            text-align: left;
+        }
+        /* Vertical connector: runs downward from each dot */
+        .prog-step::before {
+            top: 28px;
+            left: 13px;
+            right: auto;
+            width: 2px;
+            height: calc(100% + 2px);
+            background: #e5e7eb;
+        }
+        .prog-step:last-child::before { display: none; }
+        .prog-step.done::before { background: var(--navy); }
+        .prog-dot { flex-shrink: 0; margin: 0; }
+        .prog-label { font-size: .82rem; margin-top: 0; }
+    }
 </style>
 @endpush
 
 @section('content')
+<div class="portal-wrap">
 <div class="p-card">
     <div class="track-hd">
         <h2><i class="fas fa-search" style="color:var(--gold)"></i>&nbsp; Track Your Appointment</h2>
@@ -240,7 +276,8 @@
             </div>
         @endif
     @endif
-</div>
+</div>{{-- /.p-card --}}
+</div>{{-- /.portal-wrap --}}
 @endsection
 
 @push('scripts')

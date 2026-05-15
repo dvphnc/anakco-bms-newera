@@ -31,6 +31,7 @@ echo ""
 cd "$PROJECT_DIR" || { echo -e "${RED}ERROR: Project folder not found!${NC}"; exit 1; }
 
 LAST_HASH=$(git diff HEAD | md5sum)
+LAST_WT_HASH=""   # ← add this line
 LAST_LOG_SIZE=0
 [ -f "$LOG_FILE" ] && LAST_LOG_SIZE=$(wc -c < "$LOG_FILE")
 
@@ -387,13 +388,11 @@ check_laravel_log() {
     echo "$error_line" | grep -qi "ViewException"  && error_type="Blade View Error"
     echo "$error_line" | grep -qi "ModelNotFound"  && error_type="Model Not Found"
 
-    # Extract file and line number from error
     local error_location=$(echo "$new_content" | grep -oE '[A-Za-z0-9/_-]+\.php:[0-9]+' | head -1)
     local error_basename=$(echo "$error_location" | grep -oE '[A-Za-z0-9_-]+\.php:[0-9]+' | head -1)
     [ -z "$error_basename" ] && error_basename="unknown location"
 
-    # Extract the actual error message (clean it up)
-    local error_msg=$(echo "$error_line" |         sed "s/\[.*\] //g" |         sed "s/production\.ERROR://g" |         sed "s/local\.ERROR://g" |         sed "s/^ *//g" |         cut -c1-70)
+    local error_msg=$(echo "$error_line" | sed "s/\[.*\] //g" | sed "s/production\.ERROR://g" | sed "s/local\.ERROR://g" | sed "s/^ *//g" | cut -c1-70)
 
     local title="[BUG] $error_type at $error_basename — $error_msg"
 
@@ -468,9 +467,38 @@ echo -e "${BLUE}💡 TIP — Custom commit message:${NC}"
 echo -e "   ${YELLOW}BMS_COMMIT='fixes #12 added export feature' bash watch-sync.sh${NC}"
 echo ""
 
+LAST_WT_HASH=""
+
 while true; do
 
     check_laravel_log
+
+    # ── Sync worktree → main ──────────────────────────────────
+    WORKTREE="$PROJECT_DIR/.claude/worktrees/festive-lovelace-684745"
+    if [ -d "$WORKTREE" ]; then
+        cd "$WORKTREE"
+        WT_CURRENT=$(git diff HEAD | md5sum)
+        WT_NEW=$(git ls-files --others --exclude-standard | head -1)
+        if [ "$WT_CURRENT" != "$LAST_WT_HASH" ] || [ -n "$WT_NEW" ]; then
+            git add -A
+            WT_FILES=$(git diff --cached --name-only)
+            if [ -n "$WT_FILES" ]; then
+                WT_MSG="auto: $(generate_smart_title "$WT_FILES" "")"
+                git commit -m "$WT_MSG" --quiet
+                echo -e "${CYAN}[$(date '+%H:%M:%S')]${NC} 🔀 Worktree committed: $WT_MSG"
+            fi
+            LAST_WT_HASH=$(git diff HEAD | md5sum)
+        fi
+        cd "$PROJECT_DIR"
+        WT_AHEAD=$(git log main..claude/festive-lovelace-684745 --oneline 2>/dev/null | wc -l)
+        if [ "$WT_AHEAD" -gt 0 ]; then
+            git stash --quiet 2>/dev/null
+            git merge claude/festive-lovelace-684745 --no-edit --quiet 2>/dev/null
+            git stash pop --quiet 2>/dev/null || true
+            echo -e "${GREEN}[$(date '+%H:%M:%S')]${NC} ✅ Worktree merged into main"
+        fi
+    fi
+    # ─────────────────────────────────────────────────────────
 
     CURRENT_HASH=$(git diff HEAD | md5sum)
     NEW_FILES=$(git ls-files --others --exclude-standard | head -1)
@@ -482,7 +510,6 @@ while true; do
         git add -A
         CHANGED_FILES=$(git diff --cached --name-only)
 
-        # Determine commit message
         if [ -n "$BMS_COMMIT" ]; then
             COMMIT_MSG="$BMS_COMMIT"
             unset BMS_COMMIT

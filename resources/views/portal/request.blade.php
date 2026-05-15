@@ -87,6 +87,7 @@
 @endpush
 
 @section('content')
+<div class="portal-wrap">
 <div class="p-card">
     <div class="step-indicator">
         <div class="step-dot active"><div class="dot">1</div> Fill Form</div>
@@ -174,5 +175,6 @@
             Processing time is 1–3 business days. You will need to present a valid ID when claiming.
         </p>
     </form>
-</div>
+</div>{{-- /.p-card --}}
+</div>{{-- /.portal-wrap --}}
 @endsection

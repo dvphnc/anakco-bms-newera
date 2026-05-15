@@ -15,10 +15,20 @@
             <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:13px;pointer-events:none"></i>
             <input type="text" id="global-search-input" placeholder="Search residents, documents, blotter, businesses..."
                    autocomplete="off"
-                   style="width:100%;padding:8px 12px 8px 36px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12.5px;font-family:'Poppins',sans-serif;color:var(--text);outline:none;transition:all 0.15s"
+                   style="width:100%;padding:8px 12px 8px 36px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Poppins',sans-serif;color:var(--text);outline:none;transition:all 0.15s"
                    onfocus="this.style.borderColor='var(--navy)';this.style.background='#fff';this.style.boxShadow='0 0 0 3px var(--navy-pale)'"
                    onblur="setTimeout(()=>{this.style.borderColor='var(--border)';this.style.background='var(--surface2)';this.style.boxShadow='none';hideSearch()},200)">
-            <kbd style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--surface3);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--text-subtle);font-family:monospace">/</kbd>
+            <button onclick="openCmdPalette()" title="Command palette (Ctrl+K)"
+                    style="position:absolute;right:8px;top:50%;transform:translateY(-50%);
+                           background:var(--surface3);border:1px solid var(--border);
+                           border-radius:6px;padding:2px 7px;font-size:10px;
+                           color:var(--text-subtle);font-family:monospace;cursor:pointer;
+                           display:flex;align-items:center;gap:3px;line-height:1.5;
+                           white-space:nowrap;transition:all .15s"
+                    onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
+                    onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-subtle)'">
+                <span style="font-size:9px;opacity:.7">⌃</span>K
+            </button>
         </div>
 
         
@@ -59,7 +69,7 @@
     border-bottom:1px solid var(--border);
 }
 .search-empty { padding:24px;text-align:center;font-size:13px;color:var(--text-muted); }
-.search-loading { padding:16px;text-align:center;font-size:12px;color:var(--text-muted); }
+.search-loading { padding:16px;text-align:center;font-size:13px;color:var(--text-muted); }
 </style>
 
 <script>
@@ -72,6 +82,7 @@ document.addEventListener('keydown', (e) => {
     if (e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
         e.preventDefault(); searchInput.focus();
     }
+    // Ctrl+K is handled globally in app.blade.php — no duplicate here
     if (e.key === 'Escape') { searchInput.blur(); hideSearch(); }
 });
 
@@ -117,11 +128,11 @@ function renderResults(data) {
                     <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.title}</div>
                     <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.subtitle}</div>
                 </div>
-                <span class="badge ${item.badge_class}" style="font-size:10px;flex-shrink:0">${item.badge}</span>
+                <span class="badge ${item.badge_class}" style="flex-shrink:0">${item.badge}</span>
             </a>`;
         });
     }
-    html += `<div style="padding:8px 14px;font-size:11px;color:var(--text-subtle);background:var(--surface2);border-top:1px solid var(--border);text-align:center">${data.total} result${data.total !== 1 ? 's' : ''} for "<strong style="color:var(--text)">${data.query}</strong>" &nbsp;·&nbsp; Press <kbd style="background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:0 4px;font-size:10px">Esc</kbd> to close</div>`;
+    html += `<div style="padding:8px 14px;font-size:12px;color:var(--text-subtle);background:var(--surface2);border-top:1px solid var(--border);text-align:center">${data.total} result${data.total !== 1 ? 's' : ''} for "<strong style="color:var(--text)">${data.query}</strong>" &nbsp;·&nbsp; Press <kbd style="background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:0 4px">Esc</kbd> to close</div>`;
     searchInner.innerHTML = html;
 }
 </script><?php /**PATH D:\laragon\www\anakco_bms\resources\views/partials/_topbar.blade.php ENDPATH**/ ?>

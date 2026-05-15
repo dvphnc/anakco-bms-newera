@@ -102,6 +102,7 @@
 @endpush
 
 @section('content')
+<div class="portal-wrap portal-wrap-sm">
 <div class="p-card">
     <div class="confirm-wrap">
         <div class="confirm-icon"><i class="fas fa-check"></i></div>
@@ -152,5 +153,6 @@
             <strong>Tip:</strong> Screenshot or note down your appointment number. Staff will confirm your schedule within 1–2 business days. Bring a valid ID when claiming your document.
         </div>
     </div>
-</div>
+</div>{{-- /.p-card --}}
+</div>{{-- /.portal-wrap-sm --}}
 @endsection

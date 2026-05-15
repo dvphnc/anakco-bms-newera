@@ -4,15 +4,15 @@
 <style>
 /* ── Alert Strip ─────────────────────────────────────────── */
 .alert-strip { display:flex; flex-direction:column; gap:8px; margin-bottom:24px; }
-.alert-item  { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:var(--radius); font-size:13px; }
+.alert-item  { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:var(--radius); font-size:14px; }
 .alert-item i { flex-shrink:0; font-size:14px; }
 .alert-item > span { flex:1; line-height:1.5; }
 .alert-senior  { background:var(--gold-pale);    border:1px solid var(--gold-border);    border-left:4px solid var(--gold);    color:#78450a; }
 .alert-birthday{ background:var(--navy-pale);    border:1px solid var(--navy-border);    border-left:4px solid var(--navy);    color:var(--navy); }
 .alert-permit  { background:var(--crimson-pale); border:1px solid var(--crimson-border); border-left:4px solid var(--crimson); color:var(--crimson); }
 .alert-link {
-    font-size:11.5px; font-weight:600; color:inherit; opacity:.8;
-    text-decoration:none; padding:3px 12px; border:1px solid currentColor;
+    font-size:13px; font-weight:600; color:inherit; opacity:.85;
+    text-decoration:none; padding:5px 14px; border:1px solid currentColor;
     border-radius:99px; white-space:nowrap; flex-shrink:0;
 }
 .alert-link:hover { opacity:1; }
@@ -29,8 +29,9 @@
     width: fit-content;
 }
 .dash-tab-btn {
-    padding: 8px 20px;
-    font-size: 12.5px;
+    padding: 10px 22px;
+    min-height: 44px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text-muted);
     background: none;
@@ -47,7 +48,7 @@
 .dash-tab-btn:hover { color: var(--navy); background: var(--surface2); }
 .dash-tab-btn.active { background: var(--navy); color: #fff; }
 .dash-tab-btn .tab-badge {
-    font-size: 10px; font-weight: 700;
+    font-size: 11px; font-weight: 700;
     padding: 1px 6px; border-radius: 99px;
     background: rgba(255,255,255,.25);
     color: inherit;
@@ -72,8 +73,8 @@
     display:flex; align-items:center; justify-content:center;
     font-size:20px; flex-shrink:0;
 }
-.dash-stat-number { font-size:26px; font-weight:700; color:var(--text); line-height:1.1; }
-.dash-stat-label  { font-size:12px; color:var(--text-muted); margin-top:3px; }
+.dash-stat-number { font-size:28px; font-weight:700; color:var(--text); line-height:1.1; }
+.dash-stat-label  { font-size:14px; color:var(--text-muted); margin-top:4px; }
 
 /* ── Mid Row: Chart + Quick Access ───────────────────────── */
 .dash-mid { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px; }
@@ -87,7 +88,7 @@
 }
 .quick-item:hover { background:var(--navy-pale); border-color:var(--qa-color, var(--navy)); }
 .quick-icon { width:38px; height:38px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:16px; }
-.quick-label { font-size:11px; font-weight:600; color:var(--text); text-align:center; }
+.quick-label { font-size:13px; font-weight:600; color:var(--text); text-align:center; }
 
 /* ── Bottom 2-col ────────────────────────────────────────── */
 .dash-bottom { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
@@ -102,8 +103,8 @@
 .feed-row:hover { background:var(--navy-pale); }
 .feed-icon { width:36px; height:36px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; }
 .feed-body { flex:1; min-width:0; }
-.feed-title { font-size:12.5px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.feed-sub   { font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+.feed-title { font-size:14px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.feed-sub   { font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
 
 /* ── Analytics Tab ───────────────────────────────────────── */
 .analytics-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
@@ -113,12 +114,12 @@
     border-radius:var(--radius); padding:14px 16px; text-align:center;
 }
 .demog-num { font-size:22px; font-weight:700; color:var(--navy); line-height:1.1; }
-.demog-lbl { font-size:11px; color:var(--text-muted); margin-top:3px; }
+.demog-lbl { font-size:13px; color:var(--text-muted); margin-top:4px; }
 
 /* ── Appointment Status Badges (dashboard) ───────────────── */
 .apt-badge {
     display:inline-block; padding:2px 8px; border-radius:999px;
-    font-size:10px; font-weight:700; border:1.5px solid;
+    font-size:11px; font-weight:700; border:1.5px solid;
 }
 .apt-pending    { background:var(--gold-pale);    color:#78450a; border-color:var(--gold-border); }
 .apt-confirmed  { background:var(--navy-pale);    color:var(--navy); border-color:var(--navy-border); }
@@ -132,39 +133,275 @@
 <?php $__env->startSection('content'); ?>
 
 
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-subtitle">Welcome back, <?php echo e(auth()->user()->name); ?> — <?php echo e(now()->format('l, F d, Y')); ?></p>
+<div class="cc-banner no-print" style="
+    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1a3a6e 100%);
+    border-radius:var(--radius-lg); padding:28px 32px; margin-bottom:20px;
+    position:relative; overflow:hidden; box-shadow:0 8px 32px rgba(13,33,68,0.22)">
+
+    
+    <div style="position:absolute;top:-80px;right:-80px;width:320px;height:320px;
+                background:radial-gradient(circle, rgba(200,134,26,0.12) 0%, transparent 65%);
+                pointer-events:none"></div>
+    <div style="position:absolute;bottom:-60px;left:-40px;width:260px;height:260px;
+                background:radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+                pointer-events:none"></div>
+
+    <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;
+                gap:24px;flex-wrap:wrap">
+
+        
+        <div style="display:flex;align-items:center;gap:16px">
+            <div style="width:56px;height:56px;border-radius:50%;border:2px solid rgba(200,134,26,0.5);
+                        background:#fff;overflow:hidden;flex-shrink:0;
+                        box-shadow:0 0 0 4px rgba(200,134,26,0.1)">
+                <img src="<?php echo e(asset('images/bne-logo.png')); ?>" alt="BNE Logo"
+                     style="width:100%;height:100%;object-fit:cover"
+                     onerror="this.style.display='none';this.parentNode.style.background='linear-gradient(135deg,var(--gold),var(--gold-light))'">
+            </div>
+            <div>
+                <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+                            color:rgba(229,160,32,0.9);margin-bottom:2px">
+                    Command Center
+                </div>
+                <div style="font-size:20px;font-weight:800;color:#fff;line-height:1.15;letter-spacing:-0.01em">
+                    Barangay New Era
+                </div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300;margin-top:1px">
+                    District VI, Quezon City
+                </div>
+            </div>
+        </div>
+
+        
+        <div style="display:flex;align-items:center;gap:12px;
+                    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);
+                    border-radius:var(--radius);padding:12px 18px;backdrop-filter:blur(8px)">
+            <div style="width:40px;height:40px;border-radius:50%;
+                        background:linear-gradient(135deg,var(--gold),var(--gold-light));
+                        display:flex;align-items:center;justify-content:center;
+                        font-size:15px;font-weight:800;color:var(--navy);flex-shrink:0">
+                R
+            </div>
+            <div>
+                <div style="font-size:10px;font-weight:600;letter-spacing:0.1em;
+                            text-transform:uppercase;color:rgba(229,160,32,0.8);margin-bottom:2px">
+                    Punong Barangay
+                </div>
+                <div style="font-size:15px;font-weight:700;color:#fff;line-height:1.2">
+                    Robert S. Romano
+                </div>
+            </div>
+        </div>
+
+        
+        <div style="text-align:right">
+            <div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300">
+                <?php echo e(now()->format('l, F d, Y')); ?>
+
+            </div>
+            <div style="font-size:16px;font-weight:600;color:#fff;margin-top:2px">
+                Welcome back, <span style="color:var(--gold-light)"><?php echo e(auth()->user()->name); ?></span>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+                <button id="startTourBtn"
+                        class="btn btn-sm"
+                        data-tippy-content="Take a guided tour of the Dashboard"
+                        style="background:rgba(255,255,255,0.10);color:#fff;border:1px solid rgba(255,255,255,0.20);
+                               min-height:34px;font-size:12px;padding:6px 14px">
+                    <i class="fas fa-map" style="color:var(--gold-light)"></i> Take Tour
+                </button>
+                <a href="<?php echo e(route('residents.create')); ?>"
+                   style="background:rgba(255,255,255,0.10);color:#fff;border:1px solid rgba(255,255,255,0.20);
+                          min-height:34px;font-size:12px;padding:6px 14px"
+                   class="btn btn-sm">
+                    <i class="fas fa-user-plus"></i> New Resident
+                </a>
+                <a href="<?php echo e(route('documents.create')); ?>"
+                   style="background:var(--gold);color:#fff;border:none;
+                          min-height:34px;font-size:12px;padding:6px 14px"
+                   class="btn btn-sm">
+                    <i class="fas fa-file-plus"></i> New Document
+                </a>
+            </div>
+        </div>
     </div>
-    <div class="page-actions no-print">
-        <a href="<?php echo e(route('residents.create')); ?>"  class="btn btn-secondary btn-sm"><i class="fas fa-user-plus"></i> New Resident</a>
-        <a href="<?php echo e(route('documents.create')); ?>"  class="btn btn-secondary btn-sm"><i class="fas fa-file-plus"></i> New Document</a>
-        <a href="<?php echo e(route('blotter.create')); ?>"    class="btn btn-secondary btn-sm"><i class="fas fa-gavel"></i> New Blotter</a>
-        <a href="<?php echo e(route('businesses.create')); ?>" class="btn btn-secondary btn-sm"><i class="fas fa-store"></i> New Permit</a>
+
+    
+    <div style="position:relative;margin-top:20px;padding-top:16px;
+                border-top:1px solid rgba(255,255,255,0.08);
+                display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+                     color:rgba(255,255,255,0.35);margin-right:4px">Quick Add</span>
+        <a href="<?php echo e(route('blotter.create')); ?>"
+           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
+                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
+                  font-size:12px;padding:5px 14px"
+           class="btn btn-sm">
+            <i class="fas fa-gavel"></i> Blotter Case
+        </a>
+        <a href="<?php echo e(route('businesses.create')); ?>"
+           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
+                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
+                  font-size:12px;padding:5px 14px"
+           class="btn btn-sm">
+            <i class="fas fa-store"></i> Business Permit
+        </a>
+        <a href="<?php echo e(route('households.create')); ?>"
+           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
+                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
+                  font-size:12px;padding:5px 14px"
+           class="btn btn-sm">
+            <i class="fas fa-house-circle-plus"></i> Household
+        </a>
+        <?php if(auth()->user()->role === 'Admin'): ?>
+        <a href="<?php echo e(route('officials.create')); ?>"
+           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
+                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
+                  font-size:12px;padding:5px 14px"
+           class="btn btn-sm">
+            <i class="fas fa-user-tie"></i> Official
+        </a>
+        <?php endif; ?>
+        <div style="flex:1"></div>
+        <span style="font-size:12px;color:rgba(255,255,255,0.30);display:flex;align-items:center;gap:6px">
+            <kbd style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);
+                        border-radius:4px;padding:2px 7px;font-family:monospace;font-size:10px;
+                        color:rgba(255,255,255,0.55)">Ctrl+K</kbd>
+            Global Search
+        </span>
     </div>
 </div>
 
 
 <?php
-    $today        = now()->format('m-d');
-    $birthdays    = \App\Models\Resident::where('residency_status', 'Active')
-        ->whereRaw("DATE_FORMAT(birthdate,'%m-%d') = ?", [$today])
-        ->orderBy('last_name')->get();
-    $seniorBdays  = $birthdays->filter(fn($r) => $r->age >= 60);
-    $regularBdays = $birthdays->filter(fn($r) => $r->age < 60);
+    $diskTotal = @disk_total_space(storage_path()) ?: 1;
+    $diskFree  = @disk_free_space(storage_path()) ?: $diskTotal;
+    $diskUsed  = $diskTotal - $diskFree;
+    $diskPct   = round(($diskUsed / $diskTotal) * 100);
+    $diskUsedGB = round($diskUsed / 1073741824, 1);
+    $diskTotalGB= round($diskTotal / 1073741824, 1);
 
-    $expiringPermits = \App\Models\Business::where('status', 'Active')
-        ->whereBetween('expiry_date', [now(), now()->addDays(30)])
-        ->orderBy('expiry_date')->get();
-
-    $pendingAppointments = \App\Models\DocumentAppointment::where('status', 'Pending')->count();
-
-    $lowStockMeds = \App\Models\MedicineInventory::whereColumn('current_stock', '<=', 'reorder_level')->get();
+    // Last backup file
+    $backupDir = storage_path('app/backups');
+    $lastBackupTs = null;
+    if (is_dir($backupDir)) {
+        $files = glob($backupDir . '/*.sql') ?: [];
+        $files = array_merge($files, glob($backupDir . '/*.gz') ?: []);
+        if ($files) {
+            usort($files, fn($a,$b) => filemtime($b) - filemtime($a));
+            $lastBackupTs = filemtime($files[0]);
+        }
+    }
+    $lastBackupLabel = $lastBackupTs
+        ? \Carbon\Carbon::createFromTimestamp($lastBackupTs)->diffForHumans()
+        : 'No backups yet';
+    $backupOk = $lastBackupTs && (time() - $lastBackupTs < 86400 * 7); // within 7 days
 ?>
 
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px" class="no-print">
+
+    
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+                padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)">
+        <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
+                    background:rgba(22,101,52,0.1);display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-database" style="color:#16a34a;font-size:16px"></i>
+        </div>
+        <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                        color:var(--text-subtle);margin-bottom:2px">Database</div>
+            <div style="font-size:15px;font-weight:700;color:#14532d;display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;
+                             display:inline-block;box-shadow:0 0 0 3px rgba(34,197,94,0.2)"></span>
+                Online
+            </div>
+        </div>
+    </div>
+
+    
+    <div style="background:var(--surface);border:1px solid <?php echo e($backupOk ? 'var(--border)' : 'var(--gold-border)'); ?>;
+                border-radius:var(--radius-lg);padding:16px 20px;display:flex;align-items:center;
+                gap:14px;box-shadow:var(--shadow-sm)">
+        <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
+                    background:<?php echo e($backupOk ? 'rgba(13,33,68,0.07)' : 'var(--gold-pale)'); ?>;
+                    display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-shield-halved"
+               style="color:<?php echo e($backupOk ? 'var(--navy)' : 'var(--gold)'); ?>;font-size:16px"></i>
+        </div>
+        <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                        color:var(--text-subtle);margin-bottom:2px">Last Backup</div>
+            <div style="font-size:14px;font-weight:700;color:<?php echo e($backupOk ? 'var(--navy)' : '#92600A'); ?>">
+                <?php echo e($lastBackupLabel); ?>
+
+            </div>
+            <?php if(!$backupOk): ?>
+            <div style="font-size:11px;color:var(--gold);font-weight:600;margin-top:1px">
+                <a href="<?php echo e(route('backup.index')); ?>" style="color:var(--gold)">
+                    <i class="fas fa-arrow-right" style="font-size:9px"></i> Back up now
+                </a>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    
+    <div style="background:var(--surface);border:1px solid <?php echo e($diskPct > 85 ? 'var(--crimson-border)' : 'var(--border)'); ?>;
+                border-radius:var(--radius-lg);padding:16px 20px;box-shadow:var(--shadow-sm)">
+        <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
+                        background:<?php echo e($diskPct > 85 ? 'var(--crimson-pale)' : 'rgba(13,33,68,0.07)'); ?>;
+                        display:flex;align-items:center;justify-content:center">
+                <i class="fas fa-hard-drive"
+                   style="color:<?php echo e($diskPct > 85 ? 'var(--crimson)' : 'var(--navy)'); ?>;font-size:16px"></i>
+            </div>
+            <div style="flex:1;min-width:0">
+                <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                            color:var(--text-subtle);margin-bottom:4px">Storage</div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                    <span style="font-size:14px;font-weight:700;
+                                 color:<?php echo e($diskPct > 85 ? 'var(--crimson)' : 'var(--navy)'); ?>">
+                        <?php echo e($diskPct); ?>% used
+                    </span>
+                    <span style="font-size:12px;color:var(--text-muted)">
+                        <?php echo e($diskUsedGB); ?> / <?php echo e($diskTotalGB); ?> GB
+                    </span>
+                </div>
+                <div style="background:var(--surface3);border-radius:99px;height:6px;overflow:hidden">
+                    <div style="height:100%;border-radius:99px;transition:width .6s;
+                                background:<?php echo e($diskPct > 85 ? 'var(--crimson)' : ($diskPct > 65 ? 'var(--gold)' : 'var(--navy)')); ?>;
+                                width:<?php echo e($diskPct); ?>%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+                padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)">
+        <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
+                    background:rgba(13,33,68,0.07);display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-circle-check" style="color:var(--navy);font-size:16px"></i>
+        </div>
+        <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                        color:var(--text-subtle);margin-bottom:2px">System</div>
+            <div style="font-size:15px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;
+                             display:inline-block;box-shadow:0 0 0 3px rgba(34,197,94,0.2)"></span>
+                All Services Up
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:1px">
+                <?php echo e(config('app.name', 'BMS')); ?> v1.0
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
 <?php if($birthdays->count() || $expiringPermits->count() || $pendingAppointments || $lowStockMeds->count()): ?>
-<div class="alert-strip">
+<div class="alert-strip" id="tour-alerts">
 
     <?php if($seniorBdays->count()): ?>
     <div class="alert-item alert-senior">
@@ -248,7 +485,7 @@
 <div id="dpanel-overview" class="dash-panel active">
 
     
-    <div class="dash-stats">
+    <div class="dash-stats" id="tour-statcards">
         <a href="<?php echo e(route('residents.index')); ?>" class="dash-stat-card">
             <div class="dash-stat-icon" style="background:#eef2ff;color:#4f46e5"><i class="fas fa-users"></i></div>
             <div>
@@ -268,6 +505,11 @@
             <div>
                 <div class="dash-stat-number"><?php echo e(number_format($activeBlotter)); ?></div>
                 <div class="dash-stat-label">Active Blotter Cases</div>
+                <?php if($overdueBlotter > 0): ?>
+                <div style="font-size:13px;color:var(--crimson);margin-top:3px;font-weight:600">
+                    <i class="fas fa-fire"></i> <?php echo e($overdueBlotter); ?> overdue 30+ days
+                </div>
+                <?php endif; ?>
             </div>
         </a>
         <a href="<?php echo e(route('businesses.index')); ?>" class="dash-stat-card">
@@ -290,16 +532,33 @@
 
     
     <div class="dash-mid">
-        <div class="card">
+        <div class="card" id="tour-chart">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-chart-bar"></i> Documents Issued — <?php echo e(date('Y')); ?></span>
             </div>
             <div class="card-body">
                 <canvas id="monthlyDocChart" height="105"></canvas>
+                <?php
+                    $thisMonth = $monthlyData[now()->month] ?? 0;
+                    $yearTotal = array_sum($monthlyData);
+                    $prevMonth = $monthlyData[now()->subMonth()->month] ?? 0;
+                    $trend = $thisMonth > $prevMonth ? 'up' : ($thisMonth < $prevMonth ? 'down' : 'the same as');
+                ?>
+                <div class="chart-insight">
+                    <strong><?php echo e(number_format($yearTotal)); ?></strong> documents issued so far in <?php echo e(date('Y')); ?>.
+                    This month: <strong><?php echo e($thisMonth); ?></strong> —
+                    <?php if($thisMonth > $prevMonth): ?>
+                        <span style="color:#16a34a"><i class="fas fa-arrow-up"></i> up from <?php echo e($prevMonth); ?> last month.</span>
+                    <?php elseif($thisMonth < $prevMonth): ?>
+                        <span style="color:var(--crimson)"><i class="fas fa-arrow-down"></i> down from <?php echo e($prevMonth); ?> last month.</span>
+                    <?php else: ?>
+                        same as last month (<?php echo e($prevMonth); ?>).
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="tour-quickaccess">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-bolt"></i> Quick Access</span>
             </div>
@@ -344,10 +603,13 @@
                         <div class="feed-title"><?php echo e($d->doc_number); ?></div>
                         <div class="feed-sub"><?php echo e($d->resident->full_name ?? '—'); ?> · <?php echo e($d->document_type); ?></div>
                     </div>
-                    <span class="badge <?php echo e($d->status === 'Released' ? 'badge-green' : ($d->status === 'Pending' ? 'badge-yellow' : 'badge-blue')); ?>" style="font-size:10px"><?php echo e($d->status); ?></span>
+                    <span class="badge <?php echo e($d->status === 'Released' ? 'badge-green' : ($d->status === 'Pending' ? 'badge-yellow' : 'badge-blue')); ?>"><?php echo e($d->status); ?></span>
                 </a>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                <div class="empty-state" style="padding:32px"><i class="fas fa-file-alt"></i><p>No documents yet</p></div>
+                <div class="empty-state" style="padding:32px">
+                    <i class="fas fa-file-alt"></i>
+                    <p>No documents yet. <a href="<?php echo e(route('documents.create')); ?>" style="color:var(--navy);font-weight:600">Issue one now</a></p>
+                </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -359,16 +621,33 @@
             </div>
             <div class="card-body" style="padding:0">
                 <?php $__empty_1 = true; $__currentLoopData = $recentBlotter; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <?php
+                    $bIsOpen   = in_array($b->status, ['Active', 'Under Investigation']);
+                    $bDaysOpen = $bIsOpen && $b->incident_date
+                        ? \Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
+                ?>
                 <a href="<?php echo e(route('blotter.show', $b->id)); ?>" class="feed-row">
-                    <div class="feed-icon" style="background:#fef2f2"><i class="fas fa-gavel" style="color:#dc2626"></i></div>
+                    <div class="feed-icon" style="background:#fef2f2<?php echo e($bIsOpen && $bDaysOpen >= 30 ? ';outline:2px solid #dc2626;outline-offset:-2px' : ''); ?>">
+                        <i class="fas fa-gavel" style="color:#dc2626"></i>
+                    </div>
                     <div class="feed-body">
                         <div class="feed-title"><?php echo e($b->case_number); ?></div>
-                        <div class="feed-sub"><?php echo e($b->incident_type); ?></div>
+                        <div class="feed-sub"><?php echo e($b->incident_type); ?><?php echo e($b->complainant_name ? ' · ' . $b->complainant_name : ''); ?></div>
                     </div>
-                    <span class="badge <?php echo e($b->status === 'Settled' ? 'badge-green' : ($b->status === 'Active' ? 'badge-red' : 'badge-gray')); ?>" style="font-size:10px"><?php echo e($b->status); ?></span>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
+                        <span class="badge <?php echo e($b->status === 'Settled' ? 'badge-green' : ($b->status === 'Active' ? 'badge-red' : 'badge-gray')); ?>"><?php echo e($b->status); ?></span>
+                        <?php if($bIsOpen && $bDaysOpen >= 30): ?>
+                        <span style="font-size:11px;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:99px;white-space:nowrap;font-weight:700">
+                            <i class="fas fa-fire"></i> <?php echo e($bDaysOpen); ?>d
+                        </span>
+                        <?php endif; ?>
+                    </div>
                 </a>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                <div class="empty-state" style="padding:32px"><i class="fas fa-gavel"></i><p>No blotter cases yet</p></div>
+                <div class="empty-state" style="padding:32px">
+                    <i class="fas fa-gavel"></i>
+                    <p>No blotter cases yet. <a href="<?php echo e(route('blotter.create')); ?>" style="color:var(--navy);font-weight:600">File a case</a></p>
+                </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -438,15 +717,23 @@
                     <canvas id="ageChart"></canvas>
                 </div>
                 <div style="flex:1">
-                    <?php $ageColors = ['#4f46e5','#C8861A','#16a34a','#dc2626']; $ai=0; ?>
+                    <?php
+                        $ageColors = ['#4f46e5','#C8861A','#16a34a','#dc2626']; $ai=0;
+                        $ageCollection   = collect($ageGroups);
+                        $largestAgeGroup = $ageCollection->sortDesc()->keys()->first();
+                        $largestAgeCount = $ageCollection->max();
+                    ?>
                     <?php $__currentLoopData = $ageGroups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $label => $count): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                         <div style="width:10px;height:10px;border-radius:2px;background:<?php echo e($ageColors[$ai]); ?>;flex-shrink:0"></div>
-                        <div style="flex:1;font-size:12px;color:var(--text)"><?php echo e($label); ?></div>
-                        <div style="font-size:12px;font-weight:700;color:var(--navy)"><?php echo e(number_format($count)); ?></div>
+                        <div style="flex:1;font-size:13px;color:var(--text)"><?php echo e($label); ?></div>
+                        <div style="font-size:13px;font-weight:700;color:var(--navy)"><?php echo e(number_format($count)); ?></div>
                     </div>
                     <?php $ai++; ?>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <div class="chart-insight" style="margin-top:10px">
+                        Largest group: <strong><?php echo e($largestAgeGroup); ?></strong> with <strong><?php echo e(number_format($largestAgeCount)); ?></strong> residents.
+                    </div>
                 </div>
             </div>
         </div>
@@ -461,15 +748,24 @@
                     <canvas id="docTypeChart"></canvas>
                 </div>
                 <div style="flex:1">
-                    <?php $dtColors = ['#0D2144','#C8861A','#4f46e5','#16a34a','#dc2626','#0891b2']; $di=0; ?>
+                    <?php
+                        $dtColors = ['#0D2144','#C8861A','#4f46e5','#16a34a','#dc2626','#0891b2']; $di=0;
+                        $topDocType = $documentsByType->sortDesc()->keys()->first();
+                        $topDocCount = $documentsByType->max();
+                    ?>
                     <?php $__currentLoopData = $documentsByType; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type => $count): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
                         <div style="width:10px;height:10px;border-radius:2px;background:<?php echo e($dtColors[$di % count($dtColors)]); ?>;flex-shrink:0"></div>
-                        <div style="flex:1;font-size:11px;color:var(--text)"><?php echo e($type); ?></div>
-                        <div style="font-size:11px;font-weight:700;color:var(--navy)"><?php echo e(number_format($count)); ?></div>
+                        <div style="flex:1;font-size:13px;color:var(--text)"><?php echo e($type); ?></div>
+                        <div style="font-size:13px;font-weight:700;color:var(--navy)"><?php echo e(number_format($count)); ?></div>
                     </div>
                     <?php $di++; ?>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php if($topDocType): ?>
+                    <div class="chart-insight" style="margin-top:10px">
+                        Most requested: <strong><?php echo e($topDocType); ?></strong> (<?php echo e(number_format($topDocCount)); ?> issued).
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -495,12 +791,12 @@
         <div class="card-body">
             <?php $maxBlotter = $blotterByType->max() ?: 1; ?>
             <?php $__currentLoopData = $blotterByType->sortDesc(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type => $count): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-                <div style="width:130px;font-size:11.5px;color:var(--text);flex-shrink:0"><?php echo e($type); ?></div>
-                <div style="flex:1;background:#f3f4f6;border-radius:99px;height:8px;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+                <div style="width:150px;font-size:13px;color:var(--text);flex-shrink:0;line-height:1.4"><?php echo e($type); ?></div>
+                <div style="flex:1;background:#f3f4f6;border-radius:99px;height:9px;overflow:hidden">
                     <div style="height:100%;border-radius:99px;background:var(--crimson);width:<?php echo e(round(($count/$maxBlotter)*100)); ?>%"></div>
                 </div>
-                <div style="font-size:11.5px;font-weight:700;color:var(--crimson);width:28px;text-align:right"><?php echo e($count); ?></div>
+                <div style="font-size:13px;font-weight:700;color:var(--crimson);width:30px;text-align:right"><?php echo e($count); ?></div>
             </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
@@ -529,9 +825,9 @@
         
         <div style="display:flex;gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
             <?php $__currentLoopData = ['Pending','Confirmed','Processing','Ready','Released','Cancelled']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $st): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div style="flex:1;padding:10px;text-align:center;background:var(--surface2)">
-                <div style="font-size:17px;font-weight:700;color:var(--navy)"><?php echo e($aptCounts[$st] ?? 0); ?></div>
-                <div style="font-size:10px;color:var(--text-muted);margin-top:2px"><?php echo e($st); ?></div>
+            <div style="flex:1;padding:12px 8px;text-align:center;background:var(--surface2)">
+                <div style="font-size:18px;font-weight:700;color:var(--navy)"><?php echo e($aptCounts[$st] ?? 0); ?></div>
+                <div style="font-size:13px;color:var(--text-muted);margin-top:3px;font-weight:500"><?php echo e($st); ?></div>
             </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
@@ -549,7 +845,7 @@
                     <div class="feed-sub"><?php echo e($apt->resident_name); ?> · <?php echo e($apt->document_type); ?> · <?php echo e($apt->preferred_date->format('M d, Y')); ?></div>
                 </div>
                 <a href="<?php echo e(route('appointments.index')); ?>?search=<?php echo e($apt->appointment_number); ?>"
-                   class="btn btn-secondary btn-sm" style="flex-shrink:0;font-size:11px">Update</a>
+                   class="btn btn-secondary btn-sm" style="flex-shrink:0;font-size:13px">Update</a>
             </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
             <div class="empty-state" style="padding:40px"><i class="fas fa-calendar-check"></i><p>No appointments yet</p></div>
@@ -558,7 +854,7 @@
 
         <?php if($recentAppointments->count() >= 8): ?>
         <div style="padding:.75rem 1rem;border-top:1px solid var(--border);text-align:center">
-            <a href="<?php echo e(route('appointments.index')); ?>" style="font-size:.8rem;color:var(--navy);font-weight:600">
+            <a href="<?php echo e(route('appointments.index')); ?>" style="font-size:13px;color:var(--navy);font-weight:600">
                 View all appointments <i class="fas fa-arrow-right" style="font-size:10px"></i>
             </a>
         </div>
@@ -580,6 +876,83 @@ function switchDashTab(id) {
     document.getElementById('dpanel-' + id).classList.add('active');
     document.getElementById('dtab-' + id).classList.add('active');
 }
+
+// ── Shepherd.js Onboarding Tour ────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof Shepherd === 'undefined') return;
+
+    const tour = new Shepherd.Tour({
+        useModalOverlay: true,
+        defaultStepOptions: {
+            cancelIcon: { enabled: true },
+            scrollTo: { behavior: 'smooth', block: 'center' },
+            popperOptions: { modifiers: [{ name: 'offset', options: { offset: [0, 14] } }] }
+        }
+    });
+
+    const btn = (label, type, action) => ({ text: label, classes: 'shepherd-button-' + type, action });
+
+    tour.addStep({
+        id: 'welcome',
+        title: 'Welcome to the Dashboard',
+        text: 'This is your Command Center — a real-time summary of everything happening in Barangay New Era. This short tour will show you the most important parts.',
+        buttons: [btn('Skip Tour', 'secondary', tour.cancel), btn('Start Tour →', 'primary', tour.next)]
+    });
+
+    <?php if($birthdays->count() || $expiringPermits->count() || $pendingAppointments || $lowStockMeds->count()): ?>
+    tour.addStep({
+        id: 'alerts',
+        title: 'Alert Strip — Urgent Items',
+        text: 'These colored banners appear when something needs your attention right now: birthdays today, expiring business permits, pending appointments, or low medicine stock. Click the links to act immediately.',
+        attachTo: { element: '#tour-alerts', on: 'bottom' },
+        buttons: [btn('← Back', 'secondary', tour.back), btn('Next →', 'primary', tour.next)]
+    });
+    <?php endif; ?>
+
+    tour.addStep({
+        id: 'statcards',
+        title: 'Key Numbers at a Glance',
+        text: 'These cards show your most important counts — Total Residents, Pending Documents, Active Blotter Cases, and more. Click any card to go directly to that module.',
+        attachTo: { element: '#tour-statcards', on: 'bottom' },
+        buttons: [btn('← Back', 'secondary', tour.back), btn('Next →', 'primary', tour.next)]
+    });
+
+    tour.addStep({
+        id: 'chart',
+        title: 'Monthly Documents Chart',
+        text: 'This bar chart shows how many barangay documents were issued each month. The insight below the chart summarizes the trend in plain language — no need to analyze the numbers yourself.',
+        attachTo: { element: '#tour-chart', on: 'right' },
+        buttons: [btn('← Back', 'secondary', tour.back), btn('Next →', 'primary', tour.next)]
+    });
+
+    tour.addStep({
+        id: 'quickaccess',
+        title: 'Quick Access — Go Anywhere Fast',
+        text: 'Use these shortcut buttons to jump to any module instantly: Residents, Documents, Blotter, Businesses, Committees, and more. No need to use the sidebar.',
+        attachTo: { element: '#tour-quickaccess', on: 'left' },
+        buttons: [btn('← Back', 'secondary', tour.back), btn('Next →', 'primary', tour.next)]
+    });
+
+    tour.addStep({
+        id: 'tabs',
+        title: 'Dashboard Tabs',
+        text: 'Switch between <strong>Overview</strong> (today\'s summary), <strong>Analytics</strong> (charts and demographics), and <strong>Appointments</strong> (document requests from residents). The orange number on Appointments shows pending items.',
+        attachTo: { element: '.dash-tabs', on: 'bottom' },
+        buttons: [btn('← Back', 'secondary', tour.back), btn('Finish Tour ✓', 'primary', function () {
+            tour.complete();
+            sessionStorage.setItem('bms_tour_done', '1');
+        })]
+    });
+
+    // Start tour button
+    const startBtn = document.getElementById('startTourBtn');
+    if (startBtn) startBtn.addEventListener('click', function () { tour.start(); });
+
+    // Auto-start on first visit
+    if (!sessionStorage.getItem('bms_tour_done')) {
+        setTimeout(function () { tour.start(); }, 800);
+    }
+});
 
 // Monthly documents bar chart (Overview tab)
 new Chart(document.getElementById('monthlyDocChart').getContext('2d'), {
