@@ -3,6 +3,10 @@
 
 @push('styles')
 <style>
+/* ── Plain card-header (no gold bar) ────────────────────── */
+.card-header-plain { border-left:none; background:var(--surface); padding-bottom:12px; }
+.card-header-plain .card-title i { color:var(--text-subtle); }
+
 /* ── Alert Tray ──────────────────────────────────────────── */
 .alert-tray  { margin-bottom:18px;border-radius:var(--radius);overflow:hidden;
                border:1px solid var(--gold-border);background:var(--gold-pale); }
@@ -556,7 +560,7 @@
         </div>
 
         <div class="card" id="tour-quickaccess">
-            <div class="card-header">
+            <div class="card-header card-header-plain">
                 <span class="card-title"><i class="fas fa-bolt"></i> Quick Access</span>
             </div>
             <div class="card-body">
