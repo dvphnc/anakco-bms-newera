@@ -356,23 +356,24 @@
                 border-radius:var(--radius-lg);padding:16px 20px;display:flex;align-items:center;
                 gap:14px;box-shadow:0 2px 10px rgba(13,33,68,0.07)">
         <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
-                    background:{{ $backupOk ? 'rgba(13,33,68,0.07)' : 'var(--gold-pale)' }};
-                    display:flex;align-items:center;justify-content:center">
-            <i class="fas fa-shield-halved"
-               style="color:{{ $backupOk ? 'var(--navy)' : 'var(--gold)' }};font-size:16px"></i>
+                    background:#F1F5F9;display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-shield-halved" style="color:var(--navy);font-size:15px"></i>
         </div>
         <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
-                        color:var(--text-subtle);margin-bottom:2px">Last Backup</div>
-            <div style="font-size:14px;font-weight:700;color:{{ $backupOk ? 'var(--navy)' : '#92600A' }}">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                        color:var(--text-subtle);margin-bottom:3px">Last Backup</div>
+            <div style="font-size:14px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:7px">
+                <span style="width:7px;height:7px;border-radius:50%;
+                             background:{{ $backupOk ? '#22c55e' : 'var(--gold)' }};
+                             display:inline-block;
+                             box-shadow:0 0 0 3px {{ $backupOk ? 'rgba(34,197,94,0.18)' : 'rgba(200,134,26,0.18)' }}"></span>
                 {{ $lastBackupLabel }}
             </div>
             @if(!$backupOk)
-            <div style="font-size:11px;color:var(--gold);font-weight:600;margin-top:1px">
-                <a href="{{ route('backup.index') }}" style="color:var(--gold)">
-                    <i class="fas fa-arrow-right" style="font-size:9px"></i> Back up now
-                </a>
-            </div>
+            <a href="{{ route('backup.index') }}"
+               style="font-size:11px;color:var(--gold);font-weight:600;margin-top:2px;display:block;text-decoration:none">
+                Back up now →
+            </a>
             @endif
         </div>
     </div>
@@ -382,13 +383,11 @@
                 border-radius:var(--radius-lg);padding:16px 20px;box-shadow:0 2px 10px rgba(13,33,68,0.07)">
         <div style="display:flex;align-items:center;gap:14px">
             <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
-                        background:{{ $diskPct > 85 ? 'var(--crimson-pale)' : 'rgba(13,33,68,0.07)' }};
-                        display:flex;align-items:center;justify-content:center">
-                <i class="fas fa-hard-drive"
-                   style="color:{{ $diskPct > 85 ? 'var(--crimson)' : 'var(--navy)' }};font-size:16px"></i>
+                        background:#F1F5F9;display:flex;align-items:center;justify-content:center">
+                <i class="fas fa-hard-drive" style="color:var(--navy);font-size:15px"></i>
             </div>
             <div style="flex:1;min-width:0">
-                <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
                             color:var(--text-subtle);margin-bottom:4px">Storage</div>
                 <div style="display:flex;justify-content:space-between;margin-bottom:5px">
                     <span style="font-size:14px;font-weight:700;
