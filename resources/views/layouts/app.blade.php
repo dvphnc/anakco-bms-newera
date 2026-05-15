@@ -28,7 +28,7 @@
             --crimson-mid:   #9B1C1C;
             --crimson-pale:  rgba(155,28,28,0.07);
             --crimson-border:rgba(155,28,28,0.18);
-            --bg:            #EEF1F6;
+            --bg:            #F3F5F8;
             --surface:       #FFFFFF;
             --surface2:      #F7F9FB;
             --surface3:      #ECF0F5;

@@ -228,11 +228,23 @@
 
 {{-- Right: User greeting + actions --}}
         <div style="text-align:right">
-            <div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300">
+            <div style="display:inline-flex;align-items:center;gap:7px;
+                        background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.13);
+                        border-radius:99px;padding:4px 12px 4px 7px;margin-bottom:8px">
+                <span style="width:22px;height:22px;border-radius:50%;
+                              background:var(--gold);color:var(--navy);
+                              display:flex;align-items:center;justify-content:center;
+                              font-size:10px;font-weight:800;flex-shrink:0">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                </span>
+                <span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.85);
+                             letter-spacing:0.04em">{{ auth()->user()->role ?? 'Staff' }}</span>
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.45);font-weight:300">
                 {{ now()->format('l, F d, Y') }}
             </div>
-            <div style="font-size:16px;font-weight:600;color:#fff;margin-top:2px">
-                Welcome back, <span style="color:var(--gold-light)">{{ auth()->user()->name }}</span>
+            <div style="font-size:15px;font-weight:600;color:#fff;margin-top:2px">
+                {{ auth()->user()->name }}
             </div>
             <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
                 <button id="startTourBtn"
@@ -972,8 +984,11 @@
         </div>
         <img src="{{ asset('images/republika-seal.png') }}"
              alt="Seal of the Republic of the Philippines"
-             style="width:96px;height:96px;object-fit:contain;
-                    opacity:0.18;filter:grayscale(0.4)"
+             style="width:128px;height:128px;object-fit:contain;
+                    opacity:0.22;filter:grayscale(0.2);
+                    transition:opacity .3s"
+             onmouseover="this.style.opacity='.38'"
+             onmouseout="this.style.opacity='.22'"
              loading="lazy">
     </div>
 </div>
