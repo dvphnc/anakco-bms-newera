@@ -40,7 +40,7 @@
                            white-space:nowrap;transition:all .15s"
                     onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
                     onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-subtle)'">
-                <span style="font-size:9px;opacity:.7">⌃</span>K
+                Ctrl+K
             </button>
         </div>
 
