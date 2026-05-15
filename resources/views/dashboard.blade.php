@@ -267,7 +267,8 @@
             {{-- Date + Live Clock on one supporting line --}}
             <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:4px">
                 <span id="cc-clock-date"
-                      style="font-size:12px;color:rgba(255,255,255,0.45);font-weight:400">
+                      style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);
+                             font-family:monospace;letter-spacing:0.05em">
                     {{ now()->format('l, F d, Y') }}
                 </span>
                 <span style="color:rgba(255,255,255,0.2);font-size:11px">·</span>
