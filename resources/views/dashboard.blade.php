@@ -707,8 +707,9 @@
                         ? \Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
                 @endphp
                 <a href="{{ route('blotter.show', $b->id) }}" class="feed-row">
-                    <div class="feed-icon" style="background:#fef2f2{{ $bIsOpen && $bDaysOpen >= 30 ? ';outline:2px solid #dc2626;outline-offset:-2px' : '' }}">
-                        <i class="fas fa-gavel" style="color:#dc2626"></i>
+                    <div class="feed-icon"
+                         style="{{ $bIsOpen && $bDaysOpen >= 30 ? 'outline:2px solid var(--crimson);outline-offset:-2px;' : '' }}">
+                        <i class="fas fa-gavel"></i>
                     </div>
                     <div class="feed-body">
                         <div class="feed-title">{{ $b->case_number }}</div>
@@ -916,7 +917,7 @@
             @forelse($recentAppointments as $apt)
             @php $sc = strtolower($apt->status); @endphp
             <div class="feed-row" style="text-decoration:none">
-                <div class="feed-icon" style="background:var(--gold-pale)"><i class="fas fa-calendar" style="color:var(--gold)"></i></div>
+                <div class="feed-icon"><i class="fas fa-calendar"></i></div>
                 <div class="feed-body">
                     <div style="display:flex;align-items:center;gap:8px">
                         <span class="feed-title">{{ $apt->appointment_number }}</span>
