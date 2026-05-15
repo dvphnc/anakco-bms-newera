@@ -880,6 +880,26 @@
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
+// Live Clock
+(function() {
+    const timeEl = document.getElementById('cc-clock-time');
+    const dateEl = document.getElementById('cc-clock-date');
+    if (!timeEl) return;
+    const days  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    function pad(n) { return String(n).padStart(2,'0'); }
+    function tick() {
+        const now = new Date();
+        const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12  = h % 12 || 12;
+        timeEl.textContent = `${pad(h12)}:${pad(m)}:${pad(s)} ${ampm}`;
+        if (dateEl) dateEl.textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+    }
+    tick();
+    setInterval(tick, 1000);
+})();
+
 // Tab switching
 function switchDashTab(id) {
     document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
