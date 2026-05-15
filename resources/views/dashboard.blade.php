@@ -372,65 +372,78 @@
     </button>
 </div>
 
-{{-- ALERTS STRIP --}}
-@if($birthdays->count() || $expiringPermits->count() || $pendingAppointments || $lowStockMeds->count())
-<div class="alert-strip" id="tour-alerts">
-
-    @if($seniorBdays->count())
-    <div class="alert-item alert-senior">
-        <i class="fas fa-star"></i>
-        <span>
-            <strong>Senior Citizen {{ $seniorBdays->count() === 1 ? 'Birthday' : 'Birthdays' }} Today ({{ $seniorBdays->count() }}) —</strong>
-            {{ $seniorBdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ', ' . $r->age . ' yrs')->take(4)->implode(' · ') }}{{ $seniorBdays->count() > 4 ? ' +' . ($seniorBdays->count() - 4) . ' more' : '' }}
-        </span>
-        <a href="{{ route('residents.index') }}" class="alert-link">View All</a>
+{{-- ALERTS TRAY --}}
+@php
+    $alertCount = $seniorBdays->count() + $regularBdays->count()
+                + ($expiringPermits->count() ? 1 : 0)
+                + ($pendingAppointments ? 1 : 0)
+                + ($lowStockMeds->count() ? 1 : 0);
+@endphp
+@if($alertCount)
+<div class="alert-tray no-print" id="tour-alerts" data-alerts="{{ $alertCount }}">
+    <div class="alert-tray-hdr" onclick="this.closest('.alert-tray').classList.toggle('open')">
+        <i class="fas fa-bell tray-icon"></i>
+        <span>{{ $alertCount }} Notice{{ $alertCount > 1 ? 's' : '' }} — Birthdays, Permits & More</span>
+        <i class="fas fa-chevron-down tray-caret"></i>
     </div>
-    @endif
+    <div class="alert-tray-body">
 
-    @if($regularBdays->count())
-    <div class="alert-item alert-birthday">
-        <i class="fas fa-birthday-cake"></i>
-        <span>
-            <strong>{{ $regularBdays->count() === 1 ? 'Birthday' : 'Birthdays' }} Today ({{ $regularBdays->count() }}) —</strong>
-            {{ $regularBdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ', ' . $r->age . ' yrs')->take(4)->implode(' · ') }}{{ $regularBdays->count() > 4 ? ' +' . ($regularBdays->count() - 4) . ' more' : '' }}
-        </span>
-    </div>
-    @endif
-
-    @if($expiringPermits->count())
-    <div class="alert-item alert-permit">
-        <i class="fas fa-triangle-exclamation"></i>
-        <span>
-            <strong>{{ $expiringPermits->count() }} Business Permit{{ $expiringPermits->count() > 1 ? 's' : '' }} Expiring Within 30 Days —</strong>
-            {{ $expiringPermits->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(' · ') }}{{ $expiringPermits->count() > 3 ? ' +' . ($expiringPermits->count() - 3) . ' more' : '' }}
-        </span>
-        <a href="{{ route('businesses.index') }}" class="alert-link">View All</a>
-    </div>
-    @endif
-
-    @if($pendingAppointments)
-    <div class="alert-item alert-birthday">
-        <i class="fas fa-calendar-clock"></i>
-        <span>
-            <strong>{{ $pendingAppointments }} Pending Document Appointment{{ $pendingAppointments > 1 ? 's' : '' }}</strong> — waiting for staff confirmation.
-        </span>
-        @if(in_array(auth()->user()->role, ['Admin','Secretary']))
-        <a href="{{ route('appointments.index') }}?status=Pending" class="alert-link">Review</a>
+        @if($seniorBdays->count())
+        <div class="alert-item alert-senior">
+            <i class="fas fa-star"></i>
+            <span>
+                <strong>Senior Citizen {{ $seniorBdays->count() === 1 ? 'Birthday' : 'Birthdays' }} Today ({{ $seniorBdays->count() }}) —</strong>
+                {{ $seniorBdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ', ' . $r->age . ' yrs')->take(4)->implode(' · ') }}{{ $seniorBdays->count() > 4 ? ' +' . ($seniorBdays->count() - 4) . ' more' : '' }}
+            </span>
+            <a href="{{ route('residents.index') }}" class="alert-link">View All</a>
+        </div>
         @endif
-    </div>
-    @endif
 
-    @if($lowStockMeds->count())
-    <div class="alert-item alert-permit">
-        <i class="fas fa-pills"></i>
-        <span>
-            <strong>{{ $lowStockMeds->count() }} Medicine{{ $lowStockMeds->count() > 1 ? 's' : '' }} Low on Stock —</strong>
-            {{ $lowStockMeds->map(fn($m) => $m->medicine_name . ' (' . $m->current_stock . ' ' . $m->unit . ')')->take(3)->implode(' · ') }}{{ $lowStockMeds->count() > 3 ? ' +' . ($lowStockMeds->count() - 3) . ' more' : '' }}
-        </span>
-        <a href="{{ route('committees.show', 'health') }}#medicine-inventory" class="alert-link">View</a>
-    </div>
-    @endif
+        @if($regularBdays->count())
+        <div class="alert-item alert-birthday">
+            <i class="fas fa-birthday-cake"></i>
+            <span>
+                <strong>{{ $regularBdays->count() === 1 ? 'Birthday' : 'Birthdays' }} Today ({{ $regularBdays->count() }}) —</strong>
+                {{ $regularBdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ', ' . $r->age . ' yrs')->take(4)->implode(' · ') }}{{ $regularBdays->count() > 4 ? ' +' . ($regularBdays->count() - 4) . ' more' : '' }}
+            </span>
+        </div>
+        @endif
 
+        @if($expiringPermits->count())
+        <div class="alert-item alert-permit">
+            <i class="fas fa-triangle-exclamation"></i>
+            <span>
+                <strong>{{ $expiringPermits->count() }} Business Permit{{ $expiringPermits->count() > 1 ? 's' : '' }} Expiring Within 30 Days —</strong>
+                {{ $expiringPermits->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(' · ') }}{{ $expiringPermits->count() > 3 ? ' +' . ($expiringPermits->count() - 3) . ' more' : '' }}
+            </span>
+            <a href="{{ route('businesses.index') }}" class="alert-link">View All</a>
+        </div>
+        @endif
+
+        @if($pendingAppointments)
+        <div class="alert-item alert-birthday">
+            <i class="fas fa-calendar-clock"></i>
+            <span>
+                <strong>{{ $pendingAppointments }} Pending Document Appointment{{ $pendingAppointments > 1 ? 's' : '' }}</strong> — waiting for staff confirmation.
+            </span>
+            @if(in_array(auth()->user()->role, ['Admin','Secretary']))
+            <a href="{{ route('appointments.index') }}?status=Pending" class="alert-link">Review</a>
+            @endif
+        </div>
+        @endif
+
+        @if($lowStockMeds->count())
+        <div class="alert-item alert-permit">
+            <i class="fas fa-pills"></i>
+            <span>
+                <strong>{{ $lowStockMeds->count() }} Medicine{{ $lowStockMeds->count() > 1 ? 's' : '' }} Low on Stock —</strong>
+                {{ $lowStockMeds->map(fn($m) => $m->medicine_name . ' (' . $m->current_stock . ' ' . $m->unit . ')')->take(3)->implode(' · ') }}{{ $lowStockMeds->count() > 3 ? ' +' . ($lowStockMeds->count() - 3) . ' more' : '' }}
+            </span>
+            <a href="{{ route('committees.show', 'health') }}#medicine-inventory" class="alert-link">View</a>
+        </div>
+        @endif
+
+    </div>
 </div>
 @endif
 
