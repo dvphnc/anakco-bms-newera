@@ -72,20 +72,25 @@
 }
 .dash-stat-card::before {
     content:''; position:absolute; left:0; top:0; bottom:0;
-    width:4px; border-radius:4px 0 0 4px;
-    background:var(--stat-accent, var(--navy));
+    width:3px; border-radius:4px 0 0 4px;
+    background:var(--gold); opacity:.55;
 }
 .dash-stat-card:hover {
     box-shadow:0 8px 28px rgba(13,33,68,0.13), 0 2px 8px rgba(0,0,0,0.06);
     transform:translateY(-3px);
 }
+.dash-stat-card:hover .dash-stat-icon {
+    background:var(--navy) !important; color:#fff !important;
+}
 .dash-stat-icon {
-    width:52px; height:52px; border-radius:var(--radius);
+    width:50px; height:50px; border-radius:var(--radius);
     display:flex; align-items:center; justify-content:center;
-    font-size:22px; flex-shrink:0;
+    font-size:20px; flex-shrink:0;
+    background:#F1F5F9; color:var(--navy);
+    transition:background .2s, color .2s;
 }
 .dash-stat-number { font-size:32px; font-weight:800; color:var(--navy); line-height:1.05; letter-spacing:-0.01em; }
-.dash-stat-label  { font-size:16px; color:var(--text-muted); margin-top:5px; font-weight:400; line-height:1.4; }
+.dash-stat-label  { font-size:15px; color:var(--text-muted); margin-top:5px; font-weight:400; line-height:1.4; }
 
 /* ── Command Bar ─────────────────────────────────────────── */
 .cmd-bar {
