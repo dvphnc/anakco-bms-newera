@@ -112,11 +112,13 @@
 
 /* ── Command Bar ─────────────────────────────────────────── */
 .cmd-bar {
-    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    display:flex; align-items:center; gap:8px; flex-wrap:nowrap; overflow-x:auto;
     background:#fff; border-radius:var(--radius-lg);
-    padding:14px 20px; margin-bottom:20px;
+    padding:10px 16px; margin-bottom:20px;
     box-shadow:0 1px 6px rgba(13,33,68,0.07);
+    scrollbar-width:none;
 }
+.cmd-bar::-webkit-scrollbar { display:none; }
 .cmd-bar-label {
     font-size:11px; font-weight:700; text-transform:uppercase;
     letter-spacing:.1em; color:var(--text-subtle); margin-right:4px; flex-shrink:0;
@@ -366,14 +368,14 @@
         <i class="fas fa-globe"></i> Resident Portal
     </a>
 
-    <div style="flex:1"></div>
+    <div class="cmd-bar-divider"></div>
 
     <button onclick="openCmdPalette()" class="cmd-bar-btn cmd-bar-btn-ghost"
-            style="border-style:dashed" title="Global search (Ctrl+K)">
-        <i class="fas fa-magnifying-glass" style="color:var(--gold)"></i>
+            title="Global search (Ctrl+K)">
+        <i class="fas fa-magnifying-glass"></i>
         <span>Search</span>
         <kbd style="background:var(--surface3);border:1px solid var(--border);border-radius:4px;
-                    padding:1px 6px;font-family:monospace;font-size:10px;color:var(--text-subtle)">Ctrl K</kbd>
+                    padding:1px 6px;font-family:monospace;font-size:10px;color:var(--text-subtle)">Ctrl+K</kbd>
     </button>
 </div>
 @endif
