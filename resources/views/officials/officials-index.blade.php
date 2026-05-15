@@ -133,9 +133,13 @@
                         @endif
                     </td>
                     <td>
-                        <span class="badge {{ $official->is_active ? 'badge-green' : 'badge-gray' }}">
+                        <button class="badge {{ $official->is_active ? 'badge-green' : 'badge-gray' }} status-toggle"
+                                data-id="{{ $official->id }}"
+                                data-active="{{ $official->is_active ? '1' : '0' }}"
+                                style="border:none;cursor:pointer;font-family:inherit"
+                                title="Click to toggle status">
                             {{ $official->is_active ? 'Active' : 'Inactive' }}
-                        </span>
+                        </button>
                     </td>
                     <td>
                         <div style="display:flex;justify-content:flex-end;gap:6px">
@@ -173,3 +177,71 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+$(document).ready(function () {
+    /* Select2 for status filter */
+    $('#officialStatusFilter').select2({
+        dropdownParent: $('body'),
+        placeholder: 'All',
+        allowClear: true,
+        width: '160px',
+        minimumResultsForSearch: -1
+    });
+
+    /* Client-side search + status filter */
+    function filterTable() {
+        const q      = $('#officialSearch').val().toLowerCase();
+        const status = $('#officialStatusFilter').val();
+        $('tbody tr').each(function () {
+            const text     = $(this).text().toLowerCase();
+            const isActive = $(this).find('.status-toggle').data('active') == 1;
+            const matchQ   = !q || text.includes(q);
+            const matchS   = !status
+                || (status === 'active' && isActive)
+                || (status === 'inactive' && !isActive);
+            $(this).toggle(matchQ && matchS);
+        });
+    }
+
+    let debounce;
+    $('#officialSearch').on('input', function () {
+        clearTimeout(debounce);
+        debounce = setTimeout(filterTable, 250);
+    });
+    $('#officialStatusFilter').on('change', filterTable);
+    $('#officialResetBtn').on('click', function () {
+        $('#officialSearch').val('');
+        $('#officialStatusFilter').val(null).trigger('change');
+        filterTable();
+    });
+
+    /* Axios status toggle */
+    $(document).on('click', '.status-toggle', function () {
+        const btn      = $(this);
+        const id       = btn.data('id');
+        const isActive = btn.data('active') == 1;
+
+        btn.html('<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i>').prop('disabled', true);
+
+        axios.patch(`/officials/${id}/toggle-status`, {
+            _token: '{{ csrf_token() }}'
+        })
+        .then(({ data }) => {
+            const nowActive = data.is_active;
+            btn.removeClass('badge-green badge-gray')
+               .addClass(nowActive ? 'badge-green' : 'badge-gray')
+               .text(nowActive ? 'Active' : 'Inactive')
+               .data('active', nowActive ? '1' : '0')
+               .prop('disabled', false);
+            filterTable();
+        })
+        .catch(() => {
+            btn.text(isActive ? 'Active' : 'Inactive').prop('disabled', false);
+            alert('Could not update status. Please try again.');
+        });
+    });
+});
+</script>
+@endpush
