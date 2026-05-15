@@ -578,7 +578,7 @@
                 @php
                     $bIsOpen   = in_array($b->status, ['Active', 'Under Investigation']);
                     $bDaysOpen = $bIsOpen && $b->incident_date
-                        ? \Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
+                        ? (int)\Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
                 @endphp
                 <a href="{{ route('blotter.show', $b->id) }}" class="feed-row">
                     <div class="feed-icon"
