@@ -51,6 +51,43 @@
     </div>
 
     <div class="topbar-right">
+        {{-- System Health Pill --}}
+        <div class="sys-pill-wrap" tabindex="0">
+            <div class="sys-pill {{ $tpAllOk ? 'sys-pill-ok' : 'sys-pill-warn' }}">
+                <span class="sys-pill-dot"></span>
+                <span>{{ $tpAllOk ? 'All Systems' : 'Check System' }}</span>
+                <i class="fas fa-chevron-down" style="font-size:8px;opacity:.6"></i>
+            </div>
+            <div class="sys-popover">
+                <div class="sys-pop-title">System Status</div>
+                <div class="sys-pop-row">
+                    <span class="sh-dot {{ $tpDbOk ? 'ok' : 'offline' }}"></span>
+                    <span>Database</span>
+                    <span class="sys-pop-val {{ $tpDbOk ? 'ok' : 'err' }}">{{ $tpDbOk ? 'Online' : 'Error' }}</span>
+                </div>
+                <div class="sys-pop-row">
+                    <span class="sh-dot {{ $tpBkOk ? 'ok' : 'warn' }}"></span>
+                    <span>Last Backup</span>
+                    <span class="sys-pop-val {{ $tpBkOk ? 'ok' : 'warn' }}">{{ $tpBkAge }}</span>
+                </div>
+                <div class="sys-pop-row">
+                    <span class="sh-dot {{ $tpDiskPct < 65 ? 'ok' : ($tpDiskPct < 85 ? 'warn' : 'offline') }}"></span>
+                    <span>Storage</span>
+                    <span class="sys-pop-val {{ $tpDiskPct < 65 ? 'ok' : ($tpDiskPct < 85 ? 'warn' : 'err') }}">{{ $tpDiskPct }}% used</span>
+                </div>
+                <div class="sys-pop-row">
+                    <span class="sh-dot ok"></span>
+                    <span>System</span>
+                    <span class="sys-pop-val ok">Running</span>
+                </div>
+                @if(!$tpBkOk)
+                <a href="{{ route('backup.index') }}" class="sys-pop-action">
+                    <i class="fas fa-download"></i> Back up now
+                </a>
+                @endif
+            </div>
+        </div>
+        <div class="topbar-divider"></div>
         <div class="topbar-date">
             <i class="fas fa-calendar-day"></i>
             <span>{{ now()->format('M d, Y') }}</span>
@@ -83,6 +120,58 @@
 }
 .search-empty { padding:24px;text-align:center;font-size:13px;color:var(--text-muted); }
 .search-loading { padding:16px;text-align:center;font-size:13px;color:var(--text-muted); }
+
+/* ── System Health Pill ────────────────────── */
+.sys-pill-wrap {
+    position:relative;
+    outline:none;
+}
+.sys-pill {
+    display:flex;align-items:center;gap:6px;
+    padding:5px 11px;border-radius:99px;
+    font-size:12px;font-weight:600;cursor:pointer;
+    border:1px solid transparent;transition:all .15s;
+    white-space:nowrap;user-select:none;
+}
+.sys-pill-ok  { background:#f0fdf4;border-color:#bbf7d0;color:#15803d; }
+.sys-pill-warn { background:#fffbeb;border-color:#fde68a;color:#92400e; }
+.sys-pill-ok .sys-pill-dot  { background:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.25); }
+.sys-pill-warn .sys-pill-dot { background:#f59e0b;box-shadow:0 0 0 2px rgba(245,158,11,.25); }
+.sys-pill-dot { width:7px;height:7px;border-radius:50%;flex-shrink:0; }
+
+.sys-popover {
+    display:none;position:absolute;top:calc(100% + 8px);right:0;
+    background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+    box-shadow:0 8px 24px rgba(13,33,68,0.12);min-width:230px;z-index:600;
+    padding:4px 0;
+}
+.sys-pill-wrap:hover .sys-popover,
+.sys-pill-wrap:focus-within .sys-popover { display:block; }
+
+.sys-pop-title {
+    padding:8px 14px 6px;font-size:9.5px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.08em;color:var(--text-subtle);
+    border-bottom:1px solid var(--border);margin-bottom:4px;
+}
+.sys-pop-row {
+    display:flex;align-items:center;gap:9px;
+    padding:6px 14px;font-size:12px;color:var(--text);
+}
+.sys-pop-row .sh-dot { width:7px;height:7px;border-radius:50%;flex-shrink:0; }
+.sys-pop-row .sh-dot.ok      { background:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.2); }
+.sys-pop-row .sh-dot.warn    { background:#f59e0b; }
+.sys-pop-row .sh-dot.offline { background:#ef4444; }
+.sys-pop-val { margin-left:auto;font-size:11px;font-weight:600; }
+.sys-pop-val.ok   { color:#15803d; }
+.sys-pop-val.warn { color:#92400e; }
+.sys-pop-val.err  { color:#dc2626; }
+.sys-pop-action {
+    display:flex;align-items:center;gap:6px;
+    padding:7px 14px;font-size:12px;font-weight:600;color:var(--gold);
+    text-decoration:none;border-top:1px solid var(--border);margin-top:4px;
+    transition:background .1s;
+}
+.sys-pop-action:hover { background:var(--navy-pale); }
 </style>
 
 <script>
