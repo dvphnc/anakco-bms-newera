@@ -23,7 +23,7 @@
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D">
+        <div class="stat-icon" style="background:#F1F5F9;color:var(--navy)">
             <i class="fas fa-user-shield"></i>
         </div>
         <div class="stat-info">
@@ -32,7 +32,7 @@
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(155,28,28,0.08);color:#9B1C1C">
+        <div class="stat-icon" style="background:#F1F5F9;color:var(--navy)">
             <i class="fas fa-circle-exclamation"></i>
         </div>
         <div class="stat-info">
@@ -41,7 +41,7 @@
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)">
+        <div class="stat-icon" style="background:#F1F5F9;color:var(--navy)">
             <i class="fas fa-users"></i>
         </div>
         <div class="stat-info">
