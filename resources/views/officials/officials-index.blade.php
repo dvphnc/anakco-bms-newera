@@ -28,7 +28,7 @@
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D">
+        <div class="stat-icon" style="background:#F1F5F9;color:var(--navy)">
             <i class="fas fa-check-circle"></i>
         </div>
         <div class="stat-info">
@@ -37,7 +37,7 @@
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)">
+        <div class="stat-icon" style="background:#F1F5F9;color:var(--navy)">
             <i class="fas fa-star"></i>
         </div>
         <div class="stat-info">

@@ -124,6 +124,14 @@
 </style>
 <script>
 $(document).ready(function () {
+    $('#purokFilter').select2({
+        dropdownParent: $('body'),
+        placeholder: 'All Puroks',
+        allowClear: true,
+        width: '100%',
+        minimumResultsForSearch: -1
+    });
+
     var table = $('#householdsTable').DataTable({
         processing: true,
         serverSide: true,
@@ -148,14 +156,14 @@ $(document).ready(function () {
         language: { processing: '<i class="fas fa-spinner fa-spin"></i> Loading...', emptyTable: '<div class="empty-state"><i class="fas fa-house"></i><p>No households found.</p></div>' }
     });
     let searchTimer;
-    $('#searchInput').on('keyup', function () {
+    $('#searchInput').on('input', function () {
         clearTimeout(searchTimer);
-        searchTimer = setTimeout(() => table.ajax.reload(), 400);
+        searchTimer = setTimeout(() => table.ajax.reload(), 380);
     });
     $('#purokFilter').on('change', function () { table.ajax.reload(); });
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
-        $('#purokFilter').val('');
+        $('#purokFilter').val(null).trigger('change');
         table.ajax.reload();
     });
 });
