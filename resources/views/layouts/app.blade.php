@@ -208,7 +208,7 @@
         .btn-secondary:hover { border-color:var(--navy); color:var(--navy); background:var(--navy-pale); }
         .btn-danger    { background:var(--crimson-pale); color:var(--crimson); border-color:var(--crimson-border); }
         .btn-danger:hover { background:rgba(155,28,28,0.12); }
-        .btn-sm   { padding:7px 14px; font-size:13px; min-height:38px; }
+        .btn-sm   { padding:6px 13px; font-size:12px; min-height:34px; }
         .btn-icon { padding:9px; aspect-ratio:1; justify-content:center; position:relative; min-height:unset; }
         .btn-icon[title]::after {
             content: attr(title);
@@ -237,14 +237,14 @@
         .card-body { padding:22px; }
 
         .table-responsive { overflow-x:auto; -webkit-overflow-scrolling:touch; }
-        table { width:100%; border-collapse:collapse; font-size:14px; min-width:600px; }
-        thead th { padding:11px 16px; text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--navy); background:var(--surface2); border-bottom:2px solid var(--border2); white-space:nowrap; }
+        table { width:100%; border-collapse:collapse; font-size:13px; min-width:600px; }
+        thead th { padding:9px 14px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--navy); background:var(--surface2); border-bottom:2px solid var(--border2); white-space:nowrap; }
         tbody tr { border-bottom:1px solid var(--border); transition:background 0.1s; }
         tbody tr:last-child { border-bottom:none; }
         tbody tr:hover { background:var(--navy-pale); }
-        tbody td { padding:13px 16px; color:var(--text); vertical-align:middle; font-size:14px; line-height:1.55; }
-        .td-muted { color:var(--text-muted); font-size:13px; line-height:1.5; }
-        .td-mono  { font-family:'Courier New',monospace; color:var(--text-muted); font-size:13px; }
+        tbody td { padding:11px 14px; color:var(--text); vertical-align:middle; font-size:13px; line-height:1.55; }
+        .td-muted { color:var(--text-muted); font-size:12px; line-height:1.5; }
+        .td-mono  { font-family:'Courier New',monospace; color:var(--text-muted); font-size:12px; }
 
         .badge { display:inline-flex; align-items:center; padding:4px 11px; border-radius:99px; font-size:12px; font-weight:600; white-space:nowrap; letter-spacing:0.02em; }
         .badge-green  { background:rgba(22,101,52,0.1);  color:#14532D; }
