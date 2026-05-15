@@ -836,7 +836,7 @@ document.addEventListener('DOMContentLoaded', function () {
     tour.addStep({
         id: 'tabs',
         title: 'Dashboard Tabs',
-        text: 'Switch between <strong>Overview</strong> (today\'s summary), <strong>Analytics</strong> (charts and demographics), and <strong>Appointments</strong> (document requests from residents). The orange number on Appointments shows pending items.',
+        text: 'Switch between <strong>Overview</strong> (today\'s summary) and <strong>Analytics</strong> (charts and demographics). For appointments, use the dedicated Appointments page from the sidebar.',
         attachTo: { element: '.dash-tabs', on: 'bottom' },
         buttons: [btn('← Back', 'secondary', tour.back), btn('Finish Tour ✓', 'primary', function () {
             tour.complete();
