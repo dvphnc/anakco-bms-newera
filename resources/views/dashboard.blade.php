@@ -412,18 +412,18 @@
                 padding:16px 20px;display:flex;align-items:center;gap:14px;
                 box-shadow:0 2px 10px rgba(13,33,68,0.07)">
         <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
-                    background:rgba(13,33,68,0.07);display:flex;align-items:center;justify-content:center">
-            <i class="fas fa-circle-check" style="color:var(--navy);font-size:16px"></i>
+                    background:#F1F5F9;display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-circle-check" style="color:var(--navy);font-size:15px"></i>
         </div>
         <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
-                        color:var(--text-subtle);margin-bottom:2px">System</div>
-            <div style="font-size:15px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;
-                             display:inline-block;box-shadow:0 0 0 3px rgba(34,197,94,0.2)"></span>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                        color:var(--text-subtle);margin-bottom:3px">System</div>
+            <div style="font-size:14px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:7px">
+                <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;
+                             display:inline-block;box-shadow:0 0 0 3px rgba(34,197,94,0.18)"></span>
                 All Services Up
             </div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:1px">
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px">
                 {{ config('app.name', 'BMS') }} v1.0
             </div>
         </div>
@@ -678,7 +678,7 @@
             <div class="card-body" style="padding:0">
                 @forelse($recentDocuments as $d)
                 <a href="{{ route('documents.show', $d->id) }}" class="feed-row">
-                    <div class="feed-icon" style="background:#fffbeb"><i class="fas fa-file-alt" style="color:#d97706"></i></div>
+                    <div class="feed-icon"><i class="fas fa-file-alt"></i></div>
                     <div class="feed-body">
                         <div class="feed-title">{{ $d->doc_number }}</div>
                         <div class="feed-sub">{{ $d->resident->full_name ?? '—' }} · {{ $d->document_type }}</div>
