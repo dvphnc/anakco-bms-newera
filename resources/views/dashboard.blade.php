@@ -26,9 +26,9 @@
                border-top:1px solid var(--gold-border); }
 .alert-item i { flex-shrink:0; font-size:14px; }
 .alert-item > span { flex:1; line-height:1.5; }
-.alert-senior  { background:var(--gold-pale);    border:1px solid var(--gold-border);    border-left:4px solid var(--gold);    color:#78450a; }
-.alert-birthday{ background:var(--navy-pale);    border:1px solid var(--navy-border);    border-left:4px solid var(--navy);    color:var(--navy); }
-.alert-permit  { background:var(--crimson-pale); border:1px solid var(--crimson-border); border-left:4px solid var(--crimson); color:var(--crimson); }
+.alert-senior  { background:#fff; border-top:1px solid #f3f4f6; border-left:4px solid var(--gold);    color:#78450a; }
+.alert-birthday{ background:#fff; border-top:1px solid #f3f4f6; border-left:4px solid var(--navy);    color:var(--navy); }
+.alert-permit  { background:#fff; border-top:1px solid #f3f4f6; border-left:4px solid var(--crimson); color:var(--crimson); }
 .alert-link {
     font-size:13px; font-weight:600; color:inherit; opacity:.85;
     text-decoration:none; padding:5px 14px; border:1px solid currentColor;
