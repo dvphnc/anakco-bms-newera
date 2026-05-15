@@ -345,50 +345,7 @@
 </div>
 
 
-{{-- ═══════════ COMMAND BAR ═══════════ --}}
-@if(in_array(auth()->user()->role, ['Admin', 'Secretary']))
-<div class="cmd-bar no-print">
-    <span class="cmd-bar-label">Actions</span>
-
-    <a href="{{ route('documents.create') }}" class="cmd-bar-btn cmd-bar-btn-gold">
-        <i class="fas fa-file-circle-plus"></i> Issue Document
-    </a>
-    <a href="{{ route('residents.create') }}" class="cmd-bar-btn cmd-bar-btn-primary">
-        <i class="fas fa-user-plus"></i> Add Resident
-    </a>
-    <a href="{{ route('blotter.create') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
-        <i class="fas fa-gavel"></i> Log Blotter
-    </a>
-    <a href="{{ route('businesses.create') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
-        <i class="fas fa-store"></i> New Permit
-    </a>
-
-    <div class="cmd-bar-divider"></div>
-
-    <a href="{{ route('appointments.index') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
-        <i class="fas fa-calendar-check"></i> Appointments
-        @if($pendingAppointments)
-        <span style="background:var(--gold);color:#fff;font-size:10px;font-weight:700;
-                     padding:1px 6px;border-radius:99px;margin-left:2px">{{ $pendingAppointments }}</span>
-        @endif
-    </a>
-    <a href="{{ route('portal.index') }}" target="_blank" class="cmd-bar-btn cmd-bar-btn-ghost">
-        <i class="fas fa-globe"></i> Resident Portal
-    </a>
-
-    <div class="cmd-bar-divider"></div>
-
-    <button onclick="openCmdPalette()" class="cmd-bar-btn cmd-bar-btn-ghost"
-            title="Global search (Ctrl+K)">
-        <i class="fas fa-magnifying-glass"></i>
-        <span>Search</span>
-        <kbd style="background:var(--surface3);border:1px solid var(--border);border-radius:4px;
-                    padding:1px 6px;font-family:monospace;font-size:10px;color:var(--text-subtle)">Ctrl+K</kbd>
-    </button>
-</div>
-@endif
-
-{{-- ALERTS TRAY --}}
+{{-- ALERTS TRAY — above Command Bar so notices land first ─ --}}
 @php
     $alertCount = $seniorBdays->count() + $regularBdays->count()
                 + ($expiringPermits->count() ? 1 : 0)
@@ -460,6 +417,49 @@
         @endif
 
     </div>
+</div>
+@endif
+
+{{-- ═══════════ COMMAND BAR ═══════════ --}}
+@if(in_array(auth()->user()->role, ['Admin', 'Secretary']))
+<div class="cmd-bar no-print">
+    <span class="cmd-bar-label">Actions</span>
+
+    <a href="{{ route('documents.create') }}" class="cmd-bar-btn cmd-bar-btn-gold">
+        <i class="fas fa-file-circle-plus"></i> Issue Document
+    </a>
+    <a href="{{ route('residents.create') }}" class="cmd-bar-btn cmd-bar-btn-primary">
+        <i class="fas fa-user-plus"></i> Add Resident
+    </a>
+    <a href="{{ route('blotter.create') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
+        <i class="fas fa-gavel"></i> Log Blotter
+    </a>
+    <a href="{{ route('businesses.create') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
+        <i class="fas fa-store"></i> New Permit
+    </a>
+
+    <div class="cmd-bar-divider"></div>
+
+    <a href="{{ route('appointments.index') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
+        <i class="fas fa-calendar-check"></i> Appointments
+        @if($pendingAppointments)
+        <span style="background:var(--gold);color:#fff;font-size:10px;font-weight:700;
+                     padding:1px 6px;border-radius:99px;margin-left:2px">{{ $pendingAppointments }}</span>
+        @endif
+    </a>
+    <a href="{{ route('portal.index') }}" target="_blank" class="cmd-bar-btn cmd-bar-btn-ghost">
+        <i class="fas fa-globe"></i> Resident Portal
+    </a>
+
+    <div class="cmd-bar-divider"></div>
+
+    <button onclick="openCmdPalette()" class="cmd-bar-btn cmd-bar-btn-ghost"
+            title="Global search (Ctrl+K)">
+        <i class="fas fa-magnifying-glass"></i>
+        <span>Search</span>
+        <kbd style="background:var(--surface3);border:1px solid var(--border);border-radius:4px;
+                    padding:1px 6px;font-family:monospace;font-size:10px;color:var(--text-subtle)">Ctrl+K</kbd>
+    </button>
 </div>
 @endif
 
