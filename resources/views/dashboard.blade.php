@@ -291,7 +291,7 @@
                    style="background:var(--gold);color:#fff;border:none;
                           min-height:34px;font-size:12px;padding:6px 14px"
                    class="btn btn-sm">
-                    <i class="fas fa-file-plus"></i> New Document
+                    <i class="fas fa-file-circle-plus"></i> New Document
                 </a>
             </div>
         </div>
