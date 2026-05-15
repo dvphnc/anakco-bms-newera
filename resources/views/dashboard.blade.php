@@ -337,15 +337,15 @@
                 padding:16px 20px;display:flex;align-items:center;gap:14px;
                 box-shadow:0 2px 10px rgba(13,33,68,0.07)">
         <div style="width:40px;height:40px;border-radius:var(--radius);flex-shrink:0;
-                    background:rgba(22,101,52,0.1);display:flex;align-items:center;justify-content:center">
-            <i class="fas fa-database" style="color:#16a34a;font-size:16px"></i>
+                    background:#F1F5F9;display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-database" style="color:var(--navy);font-size:15px"></i>
         </div>
         <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
-                        color:var(--text-subtle);margin-bottom:2px">Database</div>
-            <div style="font-size:15px;font-weight:700;color:#14532d;display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;
-                             display:inline-block;box-shadow:0 0 0 3px rgba(34,197,94,0.2)"></span>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+                        color:var(--text-subtle);margin-bottom:3px">Database</div>
+            <div style="font-size:14px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:7px">
+                <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;
+                             display:inline-block;box-shadow:0 0 0 3px rgba(34,197,94,0.18)"></span>
                 Online
             </div>
         </div>
@@ -646,19 +646,19 @@
             <div class="card-body">
                 <div class="quick-grid">
                     @php $links = [
-                        ['href' => route('residents.index'),    'icon' => 'fa-users',          'label' => 'Residents',    'color' => '#4f46e5'],
-                        ['href' => route('households.index'),   'icon' => 'fa-house',          'label' => 'Households',   'color' => '#0891b2'],
-                        ['href' => route('documents.index'),    'icon' => 'fa-file-alt',       'label' => 'Documents',    'color' => '#d97706'],
-                        ['href' => route('blotter.index'),      'icon' => 'fa-gavel',          'label' => 'Blotter',      'color' => '#dc2626'],
-                        ['href' => route('businesses.index'),   'icon' => 'fa-store',          'label' => 'Businesses',   'color' => '#16a34a'],
-                        ['href' => route('appointments.index'), 'icon' => 'fa-calendar-check', 'label' => 'Appointments', 'color' => '#C8861A'],
-                        ['href' => route('officials.index'),    'icon' => 'fa-user-tie',       'label' => 'Officials',    'color' => '#7c3aed'],
-                        ['href' => route('reports.index'),      'icon' => 'fa-chart-bar',      'label' => 'Analytics',    'color' => '#0D2144'],
-                        ['href' => route('backup.index'),       'icon' => 'fa-database',       'label' => 'Backup',       'color' => '#374151'],
+                        ['href' => route('residents.index'),    'icon' => 'fa-users',          'label' => 'Residents'   ],
+                        ['href' => route('households.index'),   'icon' => 'fa-house',          'label' => 'Households'  ],
+                        ['href' => route('documents.index'),    'icon' => 'fa-file-alt',       'label' => 'Documents'   ],
+                        ['href' => route('blotter.index'),      'icon' => 'fa-gavel',          'label' => 'Blotter'     ],
+                        ['href' => route('businesses.index'),   'icon' => 'fa-store',          'label' => 'Businesses'  ],
+                        ['href' => route('appointments.index'), 'icon' => 'fa-calendar-check', 'label' => 'Appointments'],
+                        ['href' => route('officials.index'),    'icon' => 'fa-user-tie',       'label' => 'Officials'   ],
+                        ['href' => route('reports.index'),      'icon' => 'fa-chart-bar',      'label' => 'Analytics'   ],
+                        ['href' => route('backup.index'),       'icon' => 'fa-database',       'label' => 'Backup'      ],
                     ]; @endphp
                     @foreach($links as $l)
-                    <a href="{{ $l['href'] }}" class="quick-item" style="--qa-color:{{ $l['color'] }}">
-                        <div class="quick-icon" style="background:{{ $l['color'] }}18;color:{{ $l['color'] }}">
+                    <a href="{{ $l['href'] }}" class="quick-item">
+                        <div class="quick-icon">
                             <i class="fas {{ $l['icon'] }}"></i>
                         </div>
                         <span class="quick-label">{{ $l['label'] }}</span>
