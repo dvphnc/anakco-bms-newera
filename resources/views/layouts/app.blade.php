@@ -149,8 +149,8 @@
         }
         .topbar-left { display:flex; align-items:center; gap:14px; }
         .menu-toggle { background:none; border:none; color:var(--text-muted); font-size:18px; padding:6px; cursor:pointer; display:none; }
-        .topbar-title { font-size:18px; font-weight:700; color:var(--navy); line-height:1.2; letter-spacing:-0.01em; }
-        .topbar-subtitle { font-size:13px; color:var(--text-subtle); font-weight:300; }
+        .topbar-title { font-size:15px; font-weight:700; color:var(--navy); line-height:1.2; letter-spacing:-0.01em; }
+        .topbar-subtitle { font-size:11px; color:var(--text-subtle); font-weight:300; }
         .topbar-right { display:flex; align-items:center; gap:10px; }
         .topbar-date {
             display:flex; align-items:center; gap:7px; font-size:13px; color:var(--text-muted);
@@ -186,15 +186,15 @@
         .alert-close:hover { color:var(--text); }
 
         .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; gap:16px; flex-wrap:wrap; }
-        .page-title { font-size:22px; font-weight:700; color:var(--navy); line-height:1.2; letter-spacing:-0.01em; }
-        .page-subtitle { font-size:13px; color:var(--text-muted); margin-top:2px; font-weight:300; }
+        .page-title { font-size:18px; font-weight:700; color:var(--navy); line-height:1.2; letter-spacing:-0.01em; }
+        .page-subtitle { font-size:12px; color:var(--text-muted); margin-top:2px; font-weight:300; }
         .page-actions  { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
         .page-breadcrumb { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-muted); margin-top:5px; }
         .page-breadcrumb a { color:var(--text-muted); transition:color .15s; }
         .page-breadcrumb a:hover { color:var(--navy); text-decoration:underline; }
         .page-breadcrumb .bc-sep { font-size:9px; opacity:0.5; }
 
-        .btn { display:inline-flex; align-items:center; gap:7px; padding:10px 20px; min-height:48px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; border:1px solid transparent; cursor:pointer; transition:all 0.15s; font-family:'Poppins',sans-serif; white-space:nowrap; }
+        .btn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; min-height:44px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; border:1px solid transparent; cursor:pointer; transition:all 0.15s; font-family:'Poppins',sans-serif; white-space:nowrap; }
         .btn:focus-visible { outline:2px solid var(--gold); outline-offset:2px; box-shadow:0 0 0 4px rgba(200,134,26,0.18); }
         .btn-primary:focus-visible,
         .btn-gold:focus-visible { outline-color:var(--navy); box-shadow:0 0 0 4px var(--navy-pale); }
