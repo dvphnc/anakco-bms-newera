@@ -147,38 +147,39 @@
 /* ── Mid Row: Chart + Quick Access ───────────────────────── */
 .dash-mid { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px; }
 
-.quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+/* Audit 3: 2-col icon-left layout, reduced size */
+.quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
 .quick-item {
-    display:flex; flex-direction:column; align-items:center; gap:7px;
-    padding:14px 6px; background:#fff;
+    display:flex; flex-direction:row; align-items:center; gap:9px;
+    padding:9px 12px; background:#fff;
     border:1px solid var(--border); border-radius:var(--radius);
     text-decoration:none; transition:all .2s;
 }
 .quick-item:hover { background:var(--navy-pale); border-color:var(--navy-border); }
 .quick-item:hover .quick-icon { background:var(--navy) !important; color:#fff !important; }
 .quick-icon {
-    width:40px; height:40px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center; font-size:15px;
+    width:34px; height:34px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:13px;
     background:#F1F5F9; color:var(--navy);
     transition:background .2s, color .2s;
 }
-.quick-label { font-size:12.5px; font-weight:600; color:var(--text); text-align:center; line-height:1.3; }
+.quick-label { font-size:12px; font-weight:600; color:var(--text); line-height:1.3; }
 
 /* ── Bottom 2-col ────────────────────────────────────────── */
 .dash-bottom { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 
-/* ── Feed Rows (shared) ──────────────────────────────────── */
+/* ── Feed Rows (Audit 1: compact density) ───────────────── */
 .feed-row {
-    display:flex; align-items:center; gap:12px;
-    padding:12px 16px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:10px;
+    padding:8px 14px; border-bottom:1px solid var(--border);
     text-decoration:none; transition:background .1s;
 }
 .feed-row:last-child { border-bottom:none; }
 .feed-row:hover { background:var(--navy-pale); }
-.feed-icon { width:36px; height:36px; border-radius:50%; background:#F1F5F9; color:var(--navy); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px; }
+.feed-icon { width:30px; height:30px; border-radius:50%; background:#F1F5F9; color:var(--navy); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; }
 .feed-body { flex:1; min-width:0; }
-.feed-title { font-size:14px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.feed-sub   { font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+.feed-title { font-size:13px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.feed-sub   { font-size:12px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
 
 /* ── Analytics Tab ───────────────────────────────────────── */
 .analytics-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
