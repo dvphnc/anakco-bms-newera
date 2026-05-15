@@ -574,12 +574,12 @@
         .portal-footer { background: var(--navy-dark); color: rgba(255,255,255,.55); }
 
         .footer-inner {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 3.5rem clamp(1rem, 4vw, 2.5rem) 0;
             display: grid;
-            grid-template-columns: 1.8fr 1fr 1fr 1fr;
-            gap: 2.5rem;
+            grid-template-columns: 1.7fr 1fr 1fr 1.2fr auto;
+            gap: 2rem 2.5rem;
             align-items: start;
         }
 
@@ -627,15 +627,55 @@
         .footer-col a:hover { color: var(--gold-light); }
         .footer-col a i { font-size: .72rem; width: 14px; opacity: .6; }
 
-        /* Republic seal column */
+        /* Republic seal column — standalone visual anchor */
         .footer-republic {
-            display: flex; flex-direction: column;
-            align-items: center; gap: .6rem; text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-left: 1.5rem;
+            border-left: 1px solid rgba(255,255,255,.08);
         }
-        .footer-republic p {
-            font-size: .65rem; color: rgba(255,255,255,.3);
-            line-height: 1.5; max-width: 110px;
+        .footer-republic-img {
+            width: 148px;
+            height: 148px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+            opacity: .45;
+            transition: opacity .3s;
         }
+        .footer-republic:hover .footer-republic-img { opacity: .7; }
+
+        /* System Health widget */
+        .footer-health {
+            display: flex;
+            flex-direction: column;
+            gap: .55rem;
+        }
+        .footer-health h4 {
+            font-size: .72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .1em;
+            color: rgba(255,255,255,.35);
+            margin-bottom: .45rem; padding-bottom: .5rem;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+        .health-row {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            font-size: .78rem;
+            color: rgba(255,255,255,.55);
+            line-height: 1.4;
+        }
+        .health-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .health-dot.ok      { background: #22c55e; box-shadow: 0 0 5px rgba(34,197,94,.5); }
+        .health-dot.warn    { background: #f59e0b; box-shadow: 0 0 5px rgba(245,158,11,.5); }
+        .health-dot.offline { background: #ef4444; box-shadow: 0 0 5px rgba(239,68,68,.5);  }
+        .health-label { color: rgba(255,255,255,.75); font-weight: 500; }
 
         .footer-bottom {
             max-width: 1100px;
@@ -1008,5 +1048,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 @stack('scripts')
-</body>
-</html>
+</bo
