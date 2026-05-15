@@ -419,6 +419,47 @@
 
 </div>
 
+{{-- ═══════════ COMMAND BAR ═══════════ --}}
+<div class="cmd-bar no-print">
+    <span class="cmd-bar-label">Actions</span>
+
+    <a href="{{ route('documents.create') }}" class="cmd-bar-btn cmd-bar-btn-gold">
+        <i class="fas fa-file-circle-plus"></i> Issue Document
+    </a>
+    <a href="{{ route('residents.create') }}" class="cmd-bar-btn cmd-bar-btn-primary">
+        <i class="fas fa-user-plus"></i> Add Resident
+    </a>
+    <a href="{{ route('blotter.create') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
+        <i class="fas fa-gavel"></i> Log Blotter
+    </a>
+    <a href="{{ route('businesses.create') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
+        <i class="fas fa-store"></i> New Permit
+    </a>
+
+    <div class="cmd-bar-divider"></div>
+
+    <a href="{{ route('appointments.index') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
+        <i class="fas fa-calendar-check"></i> Appointments
+        @if($pendingAppointments)
+        <span style="background:var(--gold);color:#fff;font-size:10px;font-weight:700;
+                     padding:1px 6px;border-radius:99px;margin-left:2px">{{ $pendingAppointments }}</span>
+        @endif
+    </a>
+    <a href="{{ route('portal.index') }}" target="_blank" class="cmd-bar-btn cmd-bar-btn-ghost">
+        <i class="fas fa-globe"></i> Resident Portal
+    </a>
+
+    <div style="flex:1"></div>
+
+    <button onclick="openCmdPalette()" class="cmd-bar-btn cmd-bar-btn-ghost"
+            style="border-style:dashed" title="Global search (Ctrl+K)">
+        <i class="fas fa-magnifying-glass" style="color:var(--gold)"></i>
+        <span>Search</span>
+        <kbd style="background:var(--surface3);border:1px solid var(--border);border-radius:4px;
+                    padding:1px 6px;font-family:monospace;font-size:10px;color:var(--text-subtle)">Ctrl K</kbd>
+    </button>
+</div>
+
 {{-- ALERTS STRIP --}}
 @if($birthdays->count() || $expiringPermits->count() || $pendingAppointments || $lowStockMeds->count())
 <div class="alert-strip" id="tour-alerts">
@@ -879,6 +920,39 @@
 
 </div>{{-- end #dpanel-appointments --}}
 @endif
+
+{{-- ═══════════ NATIONAL SEAL FOOTER ═══════════ --}}
+<div class="no-print" style="
+    margin-top:40px; padding:24px 0 8px;
+    border-top:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    flex-wrap:wrap">
+
+    <div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;
+                    letter-spacing:.14em;color:var(--text-subtle);margin-bottom:6px">
+            Official Records &amp; Management System
+        </div>
+        <div style="font-size:14px;font-weight:600;color:var(--navy);line-height:1.5">
+            Barangay New Era &nbsp;·&nbsp; District VI, Quezon City
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">
+            Data Privacy Act of 2012 (RA 10173) Compliant
+        </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:20px">
+        <div style="text-align:right">
+            <div style="font-size:11px;color:var(--text-subtle);font-weight:500">Powered by</div>
+            <div style="font-size:13px;font-weight:700;color:var(--navy)">BMS v1.0</div>
+        </div>
+        <img src="{{ asset('images/republika-seal.png') }}"
+             alt="Seal of the Republic of the Philippines"
+             style="width:96px;height:96px;object-fit:contain;
+                    opacity:0.18;filter:grayscale(0.4)"
+             loading="lazy">
+    </div>
+</div>
 
 @endsection
 
