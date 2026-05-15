@@ -80,9 +80,9 @@
 /* ── Stat Cards ──────────────────────────────────────────── */
 .dash-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:20px; }
 .dash-stat-card {
-    display:flex; align-items:center; gap:14px;
+    display:flex; align-items:center; gap:12px;
     background:#fff; border:none;
-    border-radius:var(--radius-lg); padding:18px 20px;
+    border-radius:var(--radius-lg); padding:14px 16px;
     text-decoration:none;
     box-shadow:0 2px 12px rgba(13,33,68,0.08), 0 1px 3px rgba(0,0,0,0.04);
     transition:box-shadow .2s, transform .2s;
@@ -101,14 +101,14 @@
     background:var(--navy) !important; color:#fff !important;
 }
 .dash-stat-icon {
-    width:42px; height:42px; border-radius:var(--radius);
+    width:38px; height:38px; border-radius:var(--radius);
     display:flex; align-items:center; justify-content:center;
-    font-size:17px; flex-shrink:0;
+    font-size:15px; flex-shrink:0;
     background:#F1F5F9; color:var(--navy);
     transition:background .2s, color .2s;
 }
-.dash-stat-number { font-size:26px; font-weight:800; color:var(--navy); line-height:1.1; letter-spacing:-0.01em; }
-.dash-stat-label  { font-size:13px; color:var(--text-muted); margin-top:4px; font-weight:400; line-height:1.4; }
+.dash-stat-number { font-size:22px; font-weight:800; color:var(--navy); line-height:1.1; letter-spacing:-0.01em; }
+.dash-stat-label  { font-size:12px; color:var(--text-muted); margin-top:3px; font-weight:400; line-height:1.4; }
 
 /* ── Command Bar ─────────────────────────────────────────── */
 .cmd-bar {
