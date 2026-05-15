@@ -215,28 +215,7 @@
             </div>
         </div>
 
-        {{-- Center: Punong Barangay Card --}}
-        <div style="display:flex;align-items:center;gap:12px;
-                    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);
-                    border-radius:var(--radius);padding:12px 18px;backdrop-filter:blur(8px)">
-            <div style="width:40px;height:40px;border-radius:50%;
-                        background:linear-gradient(135deg,var(--gold),var(--gold-light));
-                        display:flex;align-items:center;justify-content:center;
-                        font-size:15px;font-weight:800;color:var(--navy);flex-shrink:0">
-                R
-            </div>
-            <div>
-                <div style="font-size:10px;font-weight:600;letter-spacing:0.1em;
-                            text-transform:uppercase;color:rgba(229,160,32,0.8);margin-bottom:2px">
-                    Punong Barangay
-                </div>
-                <div style="font-size:15px;font-weight:700;color:#fff;line-height:1.2">
-                    Robert S. Romano
-                </div>
-            </div>
-        </div>
-
-        {{-- Right: User greeting + actions --}}
+{{-- Right: User greeting + actions --}}
         <div style="text-align:right">
             <div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300">
                 {{ now()->format('l, F d, Y') }}
@@ -523,33 +502,33 @@
 
     {{-- STAT CARDS --}}
     <div class="dash-stats" id="tour-statcards">
-        <a href="{{ route('residents.index') }}" class="dash-stat-card">
+        <a href="{{ route('residents.index') }}" class="dash-stat-card" style="--stat-accent:#4f46e5">
             <div class="dash-stat-icon" style="background:#eef2ff;color:#4f46e5"><i class="fas fa-users"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($totalResidents) }}</div>
                 <div class="dash-stat-label">Total Residents</div>
             </div>
         </a>
-        <a href="{{ route('documents.index') }}" class="dash-stat-card">
+        <a href="{{ route('documents.index') }}" class="dash-stat-card" style="--stat-accent:#d97706">
             <div class="dash-stat-icon" style="background:#fffbeb;color:#d97706"><i class="fas fa-file-alt"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($pendingDocuments) }}</div>
                 <div class="dash-stat-label">Pending Documents</div>
             </div>
         </a>
-        <a href="{{ route('blotter.index') }}" class="dash-stat-card">
+        <a href="{{ route('blotter.index') }}" class="dash-stat-card" style="--stat-accent:#dc2626">
             <div class="dash-stat-icon" style="background:#fef2f2;color:#dc2626"><i class="fas fa-gavel"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($activeBlotter) }}</div>
                 <div class="dash-stat-label">Active Blotter Cases</div>
                 @if($overdueBlotter > 0)
-                <div style="font-size:13px;color:var(--crimson);margin-top:3px;font-weight:600">
+                <div style="font-size:13px;color:var(--crimson);margin-top:4px;font-weight:600">
                     <i class="fas fa-fire"></i> {{ $overdueBlotter }} overdue 30+ days
                 </div>
                 @endif
             </div>
         </a>
-        <a href="{{ route('businesses.index') }}" class="dash-stat-card">
+        <a href="{{ route('businesses.index') }}" class="dash-stat-card" style="--stat-accent:#16a34a">
             <div class="dash-stat-icon" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-store"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($activeBusinesses) }}</div>
@@ -557,7 +536,7 @@
             </div>
         </a>
         @if(in_array(auth()->user()->role, ['Admin','Secretary']))
-        <a href="{{ route('appointments.index') }}" class="dash-stat-card">
+        <a href="{{ route('appointments.index') }}" class="dash-stat-card" style="--stat-accent:var(--gold)">
             <div class="dash-stat-icon" style="background:var(--gold-pale);color:var(--gold)"><i class="fas fa-calendar-check"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($pendingAppointments) }}</div>
