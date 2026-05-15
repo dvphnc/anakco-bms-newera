@@ -297,50 +297,6 @@
         </div>
     </div>
 
-    {{-- Bottom action row --}}
-    <div style="position:relative;margin-top:20px;padding-top:16px;
-                border-top:1px solid rgba(255,255,255,0.08);
-                display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <span style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
-                     color:rgba(255,255,255,0.35);margin-right:4px">Quick Add</span>
-        <a href="{{ route('blotter.create') }}"
-           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
-                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
-                  font-size:12px;padding:5px 14px"
-           class="btn btn-sm">
-            <i class="fas fa-gavel"></i> Blotter Case
-        </a>
-        <a href="{{ route('businesses.create') }}"
-           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
-                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
-                  font-size:12px;padding:5px 14px"
-           class="btn btn-sm">
-            <i class="fas fa-store"></i> Business Permit
-        </a>
-        <a href="{{ route('households.create') }}"
-           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
-                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
-                  font-size:12px;padding:5px 14px"
-           class="btn btn-sm">
-            <i class="fas fa-house-circle-plus"></i> Household
-        </a>
-        @if(auth()->user()->role === 'Admin')
-        <a href="{{ route('officials.create') }}"
-           style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
-                  border:1px solid rgba(255,255,255,0.12);min-height:32px;
-                  font-size:12px;padding:5px 14px"
-           class="btn btn-sm">
-            <i class="fas fa-user-tie"></i> Official
-        </a>
-        @endif
-        <div style="flex:1"></div>
-        <span style="font-size:12px;color:rgba(255,255,255,0.30);display:flex;align-items:center;gap:6px">
-            <kbd style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);
-                        border-radius:4px;padding:2px 7px;font-family:monospace;font-size:10px;
-                        color:rgba(255,255,255,0.55)">Ctrl+K</kbd>
-            Global Search
-        </span>
-    </div>
 </div>
 
 
