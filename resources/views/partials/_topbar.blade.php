@@ -88,11 +88,6 @@
             </div>
         </div>
         <div class="topbar-divider"></div>
-        <div class="topbar-date">
-            <i class="fas fa-calendar-day"></i>
-            <span>{{ now()->format('M d, Y') }}</span>
-        </div>
-        <div class="topbar-divider"></div>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="topbar-btn">

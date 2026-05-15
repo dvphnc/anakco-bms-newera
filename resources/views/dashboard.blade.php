@@ -270,8 +270,8 @@
                         font-family:monospace;margin-top:1px;line-height:1.2">
             </div>
             {{-- Welcome greeting --}}
-            <div style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.55);margin-top:4px">
-                Welcome back, <span style="color:rgba(255,255,255,0.85);font-weight:600">{{ auth()->user()->name }}</span>
+            <div style="font-size:15px;font-weight:600;color:#fff;margin-top:5px;letter-spacing:0.01em">
+                Welcome back, <span style="color:var(--gold-light)">{{ auth()->user()->name }}</span>
             </div>
             <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
                 <button id="startTourBtn"
@@ -391,6 +391,19 @@
     </a>
     <a href="{{ route('businesses.create') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
         <i class="fas fa-store"></i> New Permit
+    </a>
+
+    <div class="cmd-bar-divider"></div>
+
+    <a href="{{ route('appointments.index') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
+        <i class="fas fa-calendar-check"></i> Appointments
+        @if($pendingAppointments)
+        <span style="background:var(--gold);color:#fff;font-size:10px;font-weight:700;
+                     padding:1px 6px;border-radius:99px;margin-left:2px">{{ $pendingAppointments }}</span>
+        @endif
+    </a>
+    <a href="{{ route('portal.index') }}" target="_blank" class="cmd-bar-btn cmd-bar-btn-ghost">
+        <i class="fas fa-globe"></i> Resident Portal
     </a>
 </div>
 @endif
