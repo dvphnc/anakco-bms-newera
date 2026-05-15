@@ -1,3 +1,16 @@
+@php
+    $tpDbOk = true;
+    try { \DB::connection()->getPdo(); } catch (\Exception $e) { $tpDbOk = false; }
+    $tpDir   = storage_path('app/backups');
+    $tpFiles = array_merge(glob($tpDir.'/*.sql') ?: [], glob($tpDir.'/*.gz') ?: []);
+    $tpTs    = $tpFiles ? max(array_map('filemtime', $tpFiles)) : null;
+    $tpBkOk  = $tpTs && (time() - $tpTs < 86400 * 7);
+    $tpBkAge = $tpTs ? \Carbon\Carbon::createFromTimestamp($tpTs)->diffForHumans() : 'No backup';
+    $tpDiskTotal = @disk_total_space(storage_path()) ?: 1;
+    $tpDiskFree  = @disk_free_space(storage_path()) ?: $tpDiskTotal;
+    $tpDiskPct   = round((($tpDiskTotal - $tpDiskFree) / $tpDiskTotal) * 100);
+    $tpAllOk = $tpDbOk && $tpBkOk && $tpDiskPct < 85;
+@endphp
 <header class="topbar no-print">
     <div class="topbar-left">
         <button class="menu-toggle" id="menuToggle">
