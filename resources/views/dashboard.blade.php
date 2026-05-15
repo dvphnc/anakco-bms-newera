@@ -147,23 +147,22 @@
 /* ── Mid Row: Chart + Quick Access ───────────────────────── */
 .dash-mid { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px; }
 
-/* Audit 3: 2-col icon-left layout, reduced size */
-.quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
 .quick-item {
-    display:flex; flex-direction:row; align-items:center; gap:9px;
-    padding:9px 12px; background:#fff;
+    display:flex; flex-direction:column; align-items:center; gap:7px;
+    padding:14px 6px; background:#fff;
     border:1px solid var(--border); border-radius:var(--radius);
     text-decoration:none; transition:all .2s;
 }
 .quick-item:hover { background:var(--navy-pale); border-color:var(--navy-border); }
 .quick-item:hover .quick-icon { background:var(--navy) !important; color:#fff !important; }
 .quick-icon {
-    width:34px; height:34px; border-radius:50%; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; font-size:13px;
+    width:40px; height:40px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:15px;
     background:#F1F5F9; color:var(--navy);
     transition:background .2s, color .2s;
 }
-.quick-label { font-size:12px; font-weight:600; color:var(--text); line-height:1.3; }
+.quick-label { font-size:12.5px; font-weight:600; color:var(--text); text-align:center; line-height:1.3; }
 
 /* ── Bottom 2-col ────────────────────────────────────────── */
 .dash-bottom { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
