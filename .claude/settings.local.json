@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "PowerShell(php -l \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\app\\\\Http\\\\Controllers\\\\ExportController.php\" 2>&1; php -l \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\app\\\\Http\\\\Controllers\\\\ReportController.php\" 2>&1)",
-      "PowerShell(Get-Content *)"
+      "PowerShell(Get-Content *)",
+      "Bash(Get-ChildItem -Path \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\.claude\\\\worktrees\\\\festive-lovelace-684745\\\\resources\\\\views\" -Filter \"*.blade.php\" -Recurse)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(Get-ChildItem -Path \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\.claude\\\\worktrees\\\\festive-lovelace-684745\\\\resources\\\\views\" -Recurse -Filter \"*.blade.php\")",
+      "Bash(cd \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\.claude\\\\worktrees\\\\festive-lovelace-684745\\\\resources\\\\views\" && grep -rn \"font-size\\\\s*:\\\\s*\\\\\\(9\\\\|10\\\\.5\\\\|10\\\\|11\\\\.5\\\\|11\\\\|12\\\\.5\\\\|12\\\\\\)px\" --include=\"*.blade.php\" | grep -E \"\\(residents/|households/|blotter/|businesses/|documents/|officials/|committees/|reports/|activity-log/|backup/|puroks/|appointments/|users/|dashboard\\\\.blade\\\\.php|layouts/app\\\\.blade\\\\.php|partials/\\)\" | grep -v \"\\\\.cert-\\\\|\\\\.permit-\\\\|\\\\.rpt-\" | grep -v \"@media.*print\" > /tmp/small_fonts.txt && wc -l /tmp/small_fonts.txt)",
+      "Bash(tee /tmp/fonts_list.txt)"
     ]
   }
 }

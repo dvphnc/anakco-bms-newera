@@ -40,9 +40,9 @@
             --sidebar-bg:    #0D2144;
             --sidebar-w:     270px;
             --topbar-h:      64px;
-            --radius:        10px;
-            --radius-sm:     6px;
-            --radius-lg:     14px;
+            --radius:        12px;
+            --radius-sm:     8px;
+            --radius-lg:     16px;
             --shadow-sm:     0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
             --shadow-md:     0 4px 12px rgba(0,0,0,0.08);
             --shadow-gold:   0 4px 20px rgba(200,134,26,0.14);
@@ -179,7 +179,7 @@
         .page-breadcrumb a:hover { color:var(--navy); text-decoration:underline; }
         .page-breadcrumb .bc-sep { font-size:9px; opacity:0.5; }
 
-        .btn { display:inline-flex; align-items:center; gap:7px; padding:10px 20px; min-height:44px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; border:1px solid transparent; cursor:pointer; transition:all 0.15s; font-family:'Poppins',sans-serif; white-space:nowrap; }
+        .btn { display:inline-flex; align-items:center; gap:7px; padding:10px 20px; min-height:48px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; border:1px solid transparent; cursor:pointer; transition:all 0.15s; font-family:'Poppins',sans-serif; white-space:nowrap; }
         .btn:focus-visible { outline:2px solid var(--gold); outline-offset:2px; box-shadow:0 0 0 4px rgba(200,134,26,0.18); }
         .btn-primary:focus-visible,
         .btn-gold:focus-visible { outline-color:var(--navy); box-shadow:0 0 0 4px var(--navy-pale); }
@@ -245,7 +245,7 @@
         .form-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
         .form-group  { display:flex; flex-direction:column; gap:7px; }
         .form-label { font-size:13px; font-weight:600; color:var(--text-muted); display:flex; align-items:center; gap:5px; }
-        .form-control { width:100%; padding:11px 14px; min-height:44px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:14px; font-family:'Poppins',sans-serif; outline:none; transition:border-color 0.15s, box-shadow 0.15s; }
+        .form-control { width:100%; padding:11px 14px; min-height:48px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:14px; font-family:'Poppins',sans-serif; outline:none; transition:border-color 0.15s, box-shadow 0.15s; }
         .form-control:focus,
         .form-control:focus-visible { border-color:var(--navy); box-shadow:0 0 0 3px var(--navy-pale); outline:none; }
         .form-control::placeholder { color:var(--text-subtle); font-weight:300; }
@@ -501,16 +501,16 @@
             padding: 18px 12px !important; font-style: normal !important; font-size: 12.5px !important;
         }
 
-        /* ── Select2 height sync with 44px targets ─────────────────── */
+        /* ── Select2 height sync with 48px targets ─────────────────── */
         .select2-container--default .select2-selection--single {
-            height: 44px !important;
+            height: 48px !important;
             padding: 0 36px 0 14px !important;
         }
         .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 42px !important;
+            height: 46px !important;
         }
         .select2-container--default .select2-selection--multiple {
-            min-height: 44px !important;
+            min-height: 48px !important;
         }
 
         /* ── Help / Tooltip icon ──────────────────────────────────── */
@@ -848,5 +848,282 @@
     @keyframes toastSlideIn { from { opacity:0; transform:translateX(16px); } to { opacity:1; transform:translateX(0); } }
     .alert-warning { background:var(--gold-pale); border:1px solid var(--gold-border); color:#78450a; }
     </style>
+
+    {{-- ══════════════════════════════════════════════════════════════════
+         Ctrl+K COMMAND PALETTE
+    ══════════════════════════════════════════════════════════════════ --}}
+    <div id="cmdPalette"
+         role="dialog" aria-modal="true" aria-label="Command palette"
+         style="display:none;position:fixed;inset:0;z-index:10500;
+                background:rgba(9,20,40,0.65);backdrop-filter:blur(5px);
+                align-items:flex-start;justify-content:center;
+                padding-top:clamp(60px,10vh,120px)">
+        <div id="cmdBox"
+             style="background:var(--surface);border-radius:var(--radius-lg);
+                    width:90%;max-width:620px;border:1px solid var(--border2);
+                    box-shadow:0 32px 80px rgba(0,0,0,0.32);overflow:hidden;
+                    animation:cmdSlideDown .18s ease">
+
+            {{-- Search input row --}}
+            <div style="display:flex;align-items:center;gap:12px;
+                        padding:16px 20px;border-bottom:1px solid var(--border)">
+                <i id="cmdSpinner" class="fas fa-search"
+                   style="color:var(--gold);font-size:16px;flex-shrink:0;width:18px;text-align:center"></i>
+                <input id="cmdInput" type="text"
+                       placeholder="Search residents, documents, blotter, businesses…"
+                       autocomplete="off" spellcheck="false"
+                       style="flex:1;border:none;outline:none;font-size:16px;
+                              font-family:'Poppins',sans-serif;color:var(--text);
+                              background:transparent;caret-color:var(--gold)">
+                <kbd style="background:var(--surface3);border:1px solid var(--border);
+                            border-radius:6px;padding:2px 9px;font-size:11px;
+                            color:var(--text-subtle);font-family:monospace;
+                            flex-shrink:0;cursor:pointer"
+                     onclick="closeCmdPalette()">Esc</kbd>
+            </div>
+
+            {{-- Results area --}}
+            <div id="cmdResults" style="max-height:420px;overflow-y:auto"></div>
+
+            {{-- Footer --}}
+            <div style="padding:9px 18px;border-top:1px solid var(--border);
+                        background:var(--surface2);display:flex;flex-wrap:wrap;
+                        gap:14px;align-items:center">
+                <span class="cmd-hint"><kbd>↑↓</kbd> Navigate</span>
+                <span class="cmd-hint"><kbd>↵</kbd> Open</span>
+                <span class="cmd-hint"><kbd>Esc</kbd> Close</span>
+                <span style="flex:1"></span>
+                <span style="font-size:11px;color:var(--text-subtle);display:flex;align-items:center;gap:5px">
+                    <kbd style="background:var(--navy);color:#fff;border:none;
+                                border-radius:4px;padding:1px 6px;font-family:monospace;font-size:10px">Ctrl</kbd>
+                    <kbd style="background:var(--navy);color:#fff;border:none;
+                                border-radius:4px;padding:1px 6px;font-family:monospace;font-size:10px">K</kbd>
+                    to open anywhere
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    @keyframes cmdSlideDown {
+        from { opacity:0; transform:translateY(-12px) scale(0.98); }
+        to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+    .cmd-hint {
+        font-size:11px; color:var(--text-subtle);
+        display:flex; align-items:center; gap:4px;
+    }
+    .cmd-hint kbd {
+        background:var(--surface); border:1px solid var(--border);
+        border-radius:4px; padding:1px 6px;
+        font-family:monospace; font-size:11px;
+    }
+    .cmd-section {
+        padding:8px 18px 4px;
+        font-size:10px; font-weight:700; letter-spacing:0.12em;
+        text-transform:uppercase; color:var(--text-subtle);
+        background:var(--surface2); border-bottom:1px solid var(--border);
+    }
+    .cmd-item {
+        display:flex; align-items:center; gap:12px;
+        padding:11px 18px; cursor:pointer;
+        transition:background .1s; text-decoration:none;
+        color:inherit; border-bottom:1px solid var(--border);
+    }
+    .cmd-item:last-child { border-bottom:none; }
+    .cmd-item.cmd-selected,
+    .cmd-item:hover { background:var(--navy-pale); }
+    .cmd-item.cmd-selected .cmd-item-title { color:var(--navy); }
+    .cmd-item-icon {
+        width:34px; height:34px; border-radius:var(--radius-sm);
+        display:flex; align-items:center; justify-content:center;
+        font-size:13px; flex-shrink:0;
+    }
+    .cmd-item-title {
+        font-size:14px; font-weight:600; color:var(--text);
+        white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .cmd-item-sub {
+        font-size:12px; color:var(--text-muted);
+        white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .cmd-empty {
+        padding:40px 24px; text-align:center;
+        font-size:14px; color:var(--text-muted);
+    }
+    .cmd-empty i { font-size:32px; opacity:.12; display:block; margin-bottom:12px; color:var(--navy); }
+    .cmd-loading {
+        padding:24px; text-align:center; font-size:13px; color:var(--text-muted);
+    }
+    </style>
+
+    <script>
+    // ══ Ctrl+K Command Palette ═══════════════════════════════════════════
+    (function () {
+        const palette   = document.getElementById('cmdPalette');
+        const cmdBox    = document.getElementById('cmdBox');
+        const cmdInput  = document.getElementById('cmdInput');
+        const cmdResults= document.getElementById('cmdResults');
+        const cmdSpinner= document.getElementById('cmdSpinner');
+        let searchTimer = null;
+        let activeIdx   = -1;
+        let resultLinks = [];
+
+        // ── Quick actions shown when palette opens with empty input ──────
+        const quickActions = [
+            @auth
+            { title:'Add New Resident',  sub:'Create a resident record',    url:'{{ route("residents.create") }}',   icon:'fa-user-plus',   color:'var(--navy)' },
+            { title:'Issue Document',    sub:'Barangay clearance, indigency…',url:'{{ route("documents.create") }}',  icon:'fa-file-circle-plus',color:'var(--gold)' },
+            { title:'File Blotter Case', sub:'Record an incident or complaint',url:'{{ route("blotter.create") }}',   icon:'fa-gavel',       color:'#9B1C1C' },
+            { title:'Register Business', sub:'Add a business permit record',  url:'{{ route("businesses.create") }}', icon:'fa-store',       color:'#166534' },
+            { title:'View Dashboard',    sub:'Overview, analytics, appointments',url:'{{ route("dashboard") }}',      icon:'fa-gauge-high',  color:'var(--navy)' },
+            { title:'Reports & Analytics',sub:'Population, demographics, services',url:'{{ route("reports.index") }}',icon:'fa-chart-bar',   color:'var(--gold)' },
+            { title:'Manage Users',      sub:'Accounts, roles, access control',url:'{{ route("users.index") }}',      icon:'fa-users-gear',  color:'var(--navy)' },
+            @endauth
+        ];
+
+        window.openCmdPalette = function () {
+            palette.style.display = 'flex';
+            cmdInput.value = '';
+            activeIdx = -1;
+            renderQuickActions();
+            requestAnimationFrame(() => cmdInput.focus());
+        };
+
+        window.closeCmdPalette = function () {
+            palette.style.display = 'none';
+            clearTimeout(searchTimer);
+        };
+
+        function renderQuickActions() {
+            let html = '<div class="cmd-section">Quick Actions</div>';
+            quickActions.forEach((a, i) => {
+                html += `<a href="${a.url}" class="cmd-item" data-idx="${i}">
+                    <div class="cmd-item-icon" style="background:${a.color}18;color:${a.color}">
+                        <i class="fas ${a.icon}"></i>
+                    </div>
+                    <div style="flex:1;min-width:0">
+                        <div class="cmd-item-title">${a.title}</div>
+                        <div class="cmd-item-sub">${a.sub}</div>
+                    </div>
+                    <i class="fas fa-arrow-right" style="color:var(--text-subtle);font-size:11px;opacity:0.4"></i>
+                </a>`;
+            });
+            cmdResults.innerHTML = html;
+            indexItems();
+        }
+
+        function renderLoading() {
+            cmdResults.innerHTML = '<div class="cmd-loading"><i class="fas fa-spinner fa-spin" style="margin-right:8px;color:var(--gold)"></i>Searching…</div>';
+        }
+
+        function renderSearchResults(data) {
+            if (!data.results || data.results.length === 0) {
+                cmdResults.innerHTML = `<div class="cmd-empty"><i class="fas fa-magnifying-glass"></i>No results for "<strong>${data.query}</strong>"</div>`;
+                indexItems(); return;
+            }
+            const groups = {};
+            data.results.forEach(r => { if (!groups[r.type]) groups[r.type] = []; groups[r.type].push(r); });
+            let html = '';
+            let idx = 0;
+            for (const [type, items] of Object.entries(groups)) {
+                html += `<div class="cmd-section">${type}s</div>`;
+                items.forEach(item => {
+                    html += `<a href="${item.url}" class="cmd-item" data-idx="${idx++}">
+                        <div class="cmd-item-icon" style="background:${item.color}18;color:${item.color}">
+                            <i class="fas ${item.icon}"></i>
+                        </div>
+                        <div style="flex:1;min-width:0">
+                            <div class="cmd-item-title">${item.title}</div>
+                            <div class="cmd-item-sub">${item.subtitle}</div>
+                        </div>
+                        <span class="badge ${item.badge_class}" style="flex-shrink:0">${item.badge}</span>
+                    </a>`;
+                });
+            }
+            html += `<div style="padding:9px 18px;font-size:12px;color:var(--text-subtle);
+                                  background:var(--surface2);border-top:1px solid var(--border);
+                                  text-align:center">
+                ${data.total} result${data.total !== 1 ? 's' : ''} for "<strong style="color:var(--text)">${data.query}</strong>"
+            </div>`;
+            cmdResults.innerHTML = html;
+            activeIdx = -1;
+            indexItems();
+        }
+
+        function indexItems() {
+            resultLinks = Array.from(cmdResults.querySelectorAll('.cmd-item'));
+        }
+
+        function setActive(n) {
+            resultLinks.forEach(el => el.classList.remove('cmd-selected'));
+            if (n >= 0 && n < resultLinks.length) {
+                resultLinks[n].classList.add('cmd-selected');
+                resultLinks[n].scrollIntoView({ block:'nearest' });
+            }
+            activeIdx = n;
+        }
+
+        // ── Input handler ────────────────────────────────────────────────
+        cmdInput.addEventListener('input', function () {
+            const q = this.value.trim();
+            clearTimeout(searchTimer);
+            activeIdx = -1;
+            if (q.length < 2) { renderQuickActions(); return; }
+            renderLoading();
+            cmdSpinner.className = 'fas fa-spinner fa-spin';
+            cmdSpinner.style.color = 'var(--gold)';
+            searchTimer = setTimeout(() => {
+                fetch(`/search?q=${encodeURIComponent(q)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    cmdSpinner.className = 'fas fa-search';
+                    renderSearchResults(data);
+                })
+                .catch(() => {
+                    cmdSpinner.className = 'fas fa-search';
+                    cmdResults.innerHTML = '<div class="cmd-empty"><i class="fas fa-wifi"></i>Search unavailable — check your connection.</div>';
+                });
+            }, 280);
+        });
+
+        // ── Keyboard navigation ──────────────────────────────────────────
+        cmdInput.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setActive(Math.min(activeIdx + 1, resultLinks.length - 1));
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setActive(Math.max(activeIdx - 1, 0));
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (activeIdx >= 0 && resultLinks[activeIdx]) {
+                    resultLinks[activeIdx].click();
+                } else if (resultLinks.length > 0) {
+                    resultLinks[0].click();
+                }
+            }
+        });
+
+        // ── Global keyboard shortcut ─────────────────────────────────────
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                if (palette.style.display === 'none') { openCmdPalette(); }
+                else { closeCmdPalette(); }
+            }
+            if (e.key === 'Escape' && palette.style.display !== 'none') {
+                closeCmdPalette();
+            }
+        });
+
+        // ── Click backdrop to close ──────────────────────────────────────
+        palette.addEventListener('click', function (e) {
+            if (!cmdBox.contains(e.target)) closeCmdPalette();
+        });
+    })();
+    </script>
 </body>
 </html>

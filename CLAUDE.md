@@ -102,12 +102,11 @@ routes/
 - ✅ Role/permission audit
 - ✅ Birthday & expiring permit alerts on dashboard
 - ✅ Dynamic data mapping on certificates (age, gender, civil status, birthdate)
-
-## Pending Features
-- ⬜ Dashboard redesign (cleaner, less cluttered)
-- ⬜ Tabbed dashboard
-- ⬜ Resident Portal (two-step document request workflow)
-- ⬜ Real-time medicine inventory (Health committee)
+- ✅ Dashboard redesign — tabbed (Overview / Analytics / Appointments), stat cards, charts, quick access grid
+- ✅ Resident Portal — public request form, confirmation page, Axios-powered appointment tracker
+- ✅ Real-time medicine inventory (Health committee) — Axios stock adjust & delete, live badge updates
+- ✅ Appointments admin page — Axios PATCH status update modal, delete with confirm dialog
+- ✅ Global UX polish — font smoothing, focus-visible rings, CSS tooltip labels, custom validation messages, overdue blotter badges
 
 ## Key Conventions
 - All controllers use `LogsActivity` trait
@@ -119,13 +118,7 @@ routes/
 - All dates formatted with Carbon
 
 ## Current Task
-Redesign `resources/views/dashboard.blade.php` with a cleaner layout:
-- Slim alert strip at top (birthdays + expiring permits) — only shows if there are alerts
-- 4 stat cards row (Residents, Documents, Blotter, Businesses) — clickable, link to modules
-- 2/3 monthly chart + 1/3 quick access 3x3 grid
-- 2-column bottom: Recent Documents (left) + Recent Blotter (right)
-- Keep navy + gold theme, Poppins font
-- No information overload — clean, spacious, professional
+All features complete. Project is in final polish / capstone-ready state.
 
 ## Notes
 - `layouts/app.blade.php` has Select2 CDN loaded globally (jQuery 3.7.1 + Select2 4.0.13)

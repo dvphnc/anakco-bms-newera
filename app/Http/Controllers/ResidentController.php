@@ -105,9 +105,14 @@ class ResidentController extends Controller
                     $edit      = route('residents.edit', $r);
                     $delete    = route('residents.destroy', $r);
                     $clearance = route('documents.create').'?resident_id='.$r->id;
+                    $qv        = route('residents.quick-view', $r);
 
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px;flex-wrap:nowrap">
+                            <button onclick="residentQuickView('.$r->id.',\''.$qv.'\')"
+                                    class="btn btn-secondary btn-sm btn-icon" title="Quick View">
+                                <i class="fas fa-id-card"></i>
+                            </button>
                             <a href="'.$clearance.'" class="btn btn-gold btn-sm" title="Issue Barangay Clearance" style="white-space:nowrap">
                                 <i class="fas fa-file-circle-check"></i> Clearance
                             </a>
@@ -141,6 +146,40 @@ class ResidentController extends Controller
         $puroks = Purok::orderBy('name')->get();
 
         return view('residents.residents-index', compact('puroks'));
+    }
+
+    // -------------------------------------------------------
+    // QUICK VIEW — JSON summary for the inline preview panel
+    // -------------------------------------------------------
+    public function quickView(Resident $resident)
+    {
+        $resident->load('purok', 'household');
+
+        return response()->json([
+            'id'               => $resident->id,
+            'full_name'        => $resident->full_name,
+            'photo_url'        => $resident->photo_path ? asset('storage/' . $resident->photo_path) : null,
+            'initials'         => strtoupper(substr($resident->first_name, 0, 1) . substr($resident->last_name, 0, 1)),
+            'age'              => $resident->age ?? '—',
+            'gender'           => $resident->gender ?? '—',
+            'civil_status'     => $resident->civil_status ?? '—',
+            'birthdate'        => $resident->birthdate ? \Carbon\Carbon::parse($resident->birthdate)->format('F d, Y') : '—',
+            'address'          => $resident->address ?? '—',
+            'contact_number'   => $resident->contact_number ?? '—',
+            'email_address'    => $resident->email_address ?? '—',
+            'occupation'       => $resident->occupation ?? '—',
+            'residency_status' => $resident->residency_status,
+            'purok'            => $resident->purok?->name ?? '—',
+            'household'        => $resident->household?->household_number ?? '—',
+            'is_voter'         => (bool) $resident->is_voter,
+            'is_senior'        => (bool) $resident->is_senior,
+            'is_pwd'           => (bool) $resident->is_pwd,
+            'is_solo_parent'   => (bool) $resident->is_solo_parent,
+            'is_4ps'           => (bool) $resident->is_4ps,
+            'profile_url'      => route('residents.show', $resident),
+            'edit_url'         => route('residents.edit', $resident),
+            'clearance_url'    => route('documents.create') . '?resident_id=' . $resident->id,
+        ]);
     }
 
     private function residentRules(): array

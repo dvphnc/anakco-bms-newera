@@ -18,7 +18,17 @@
                    style="width:100%;padding:8px 12px 8px 36px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Poppins',sans-serif;color:var(--text);outline:none;transition:all 0.15s"
                    onfocus="this.style.borderColor='var(--navy)';this.style.background='#fff';this.style.boxShadow='0 0 0 3px var(--navy-pale)'"
                    onblur="setTimeout(()=>{this.style.borderColor='var(--border)';this.style.background='var(--surface2)';this.style.boxShadow='none';hideSearch()},200)">
-            <kbd style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--surface3);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--text-subtle);font-family:monospace">/</kbd>
+            <button onclick="openCmdPalette()" title="Command palette (Ctrl+K)"
+                    style="position:absolute;right:8px;top:50%;transform:translateY(-50%);
+                           background:var(--surface3);border:1px solid var(--border);
+                           border-radius:6px;padding:2px 7px;font-size:10px;
+                           color:var(--text-subtle);font-family:monospace;cursor:pointer;
+                           display:flex;align-items:center;gap:3px;line-height:1.5;
+                           white-space:nowrap;transition:all .15s"
+                    onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
+                    onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-subtle)'">
+                <span style="font-size:9px;opacity:.7">⌃</span>K
+            </button>
         </div>
 
         {{-- Search Results Dropdown --}}
@@ -72,6 +82,7 @@ document.addEventListener('keydown', (e) => {
     if (e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
         e.preventDefault(); searchInput.focus();
     }
+    // Ctrl+K is handled globally in app.blade.php — no duplicate here
     if (e.key === 'Escape') { searchInput.blur(); hideSearch(); }
 });
 
