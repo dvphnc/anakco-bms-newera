@@ -30,9 +30,9 @@
     width: fit-content;
 }
 .dash-tab-btn {
-    padding: 10px 22px;
-    min-height: 44px;
-    font-size: 14px;
+    padding: 8px 18px;
+    min-height: 38px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--text-muted);
     background: none;
