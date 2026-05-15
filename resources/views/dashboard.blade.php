@@ -260,18 +260,21 @@
                 <span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.85);
                              letter-spacing:0.04em">{{ auth()->user()->role ?? 'Staff' }}</span>
             </div>
-            {{-- Live Clock --}}
-            <div id="cc-clock-date"
-                 style="font-size:12px;color:rgba(255,255,255,0.50);font-weight:400;letter-spacing:0.02em">
-                {{ now()->format('l, F d, Y') }}
-            </div>
-            <div id="cc-clock-time"
-                 style="font-size:20px;font-weight:700;color:#fff;letter-spacing:0.04em;
-                        font-family:monospace;margin-top:1px;line-height:1.2">
-            </div>
-            {{-- Welcome greeting --}}
-            <div style="font-size:15px;font-weight:600;color:#fff;margin-top:5px;letter-spacing:0.01em">
+            {{-- Welcome greeting — leads the hierarchy --}}
+            <div style="font-size:17px;font-weight:700;color:#fff;letter-spacing:0.01em;line-height:1.3">
                 Welcome back, <span style="color:var(--gold-light)">{{ auth()->user()->name }}</span>
+            </div>
+            {{-- Date + Live Clock on one supporting line --}}
+            <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:4px">
+                <span id="cc-clock-date"
+                      style="font-size:12px;color:rgba(255,255,255,0.45);font-weight:400">
+                    {{ now()->format('l, F d, Y') }}
+                </span>
+                <span style="color:rgba(255,255,255,0.2);font-size:11px">·</span>
+                <span id="cc-clock-time"
+                      style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);
+                             font-family:monospace;letter-spacing:0.05em">
+                </span>
             </div>
             <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
                 <button id="startTourBtn"
