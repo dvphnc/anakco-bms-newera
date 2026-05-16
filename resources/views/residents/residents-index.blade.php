@@ -7,9 +7,19 @@
 @section('content')
 
 <div class="page-header">
-    <div>
-        <h1 class="page-title">Residents</h1>
-        <p class="page-subtitle">All registered residents of Barangay New Era</p>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div>
+            <h1 class="page-title">Residents</h1>
+            <p class="page-subtitle">All registered residents of Barangay New Era</p>
+        </div>
+        <span id="headerFilterChip"
+              style="display:none;font-size:11px;font-weight:700;padding:3px 10px;
+                     border-radius:99px;background:var(--gold-pale);color:var(--gold);
+                     border:1px solid var(--gold-border);cursor:pointer"
+              onclick="toggleFilters('residents')"
+              title="Filters active — click to open">
+            <i class="fas fa-sliders"></i> <span id="headerFilterCount"></span> active
+        </span>
     </div>
     <div class="page-actions">
         <a href="{{ route('export.pdf', 'residents') }}" class="btn btn-secondary" title="Export PDF">
