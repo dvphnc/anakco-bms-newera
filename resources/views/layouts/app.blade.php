@@ -616,6 +616,7 @@
     <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
     <script src="https://unpkg.com/tippy.js@6/dist/tippy.umd.min.js"></script>
     <script src="https://unpkg.com/shepherd.js@11/dist/js/shepherd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
     $(document).ready(function() {
         $('body').on('init.select2', function() {});
