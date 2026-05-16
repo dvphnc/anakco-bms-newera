@@ -174,9 +174,42 @@ class BusinessController extends Controller
         return redirect()->route('businesses.index')->with('success', 'Business permit issued successfully.');
     }
 
-    public function show(Business $business)
+    public function show(Request $request, Business $business)
     {
         $business->load(['ownerResident', 'issuedBy']);
+
+        if ($request->wantsJson()) {
+            $expiry  = $business->expiry_date ? Carbon::parse($business->expiry_date) : null;
+            $expStat = 'valid';
+            $expDays = null;
+            if ($expiry && $business->status === 'Active') {
+                if ($expiry->isPast()) {
+                    $expStat = 'overdue';
+                    $expDays = (int) floor(now()->floatDiffInDays($expiry));
+                } elseif ($expiry->diffInDays(now()) <= 30) {
+                    $expStat = 'expiring_soon';
+                    $expDays = (int) ceil(now()->floatDiffInDays($expiry));
+                }
+            }
+
+            return response()->json([
+                'permit_number'    => $business->permit_number,
+                'business_name'    => $business->business_name,
+                'business_type'    => $business->business_type,
+                'business_address' => $business->business_address,
+                'owner_name'       => $business->owner_name,
+                'owner_contact'    => $business->owner_contact ?? '—',
+                'permit_date'      => $business->permit_date ? Carbon::parse($business->permit_date)->format('M d, Y') : '—',
+                'expiry_date'      => $expiry ? $expiry->format('M d, Y') : '—',
+                'expiry_status'    => $expStat,
+                'expiry_days'      => $expDays,
+                'status'           => $business->status,
+                'remarks'          => $business->remarks ?? '—',
+                'issued_by'        => $business->issuedBy?->name ?? '—',
+                'show_url'         => route('businesses.show', $business),
+                'edit_url'         => route('businesses.edit', $business),
+            ]);
+        }
 
         return view('businesses.businesses-show', compact('business'));
     }

@@ -60,6 +60,14 @@ class BlotterController extends Controller
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
                             <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View Case"><i class="fas fa-eye"></i></a>
+                            <button class="btn btn-primary btn-sm btn-icon blotter-status-btn"
+                                    title="Update Status"
+                                    data-id="'.$c->id.'"
+                                    data-num="'.e($c->case_number).'"
+                                    data-status="'.e($c->status).'"
+                                    data-notes="'.e($c->resolution_notes ?? '').'">
+                                <i class="fas fa-rotate"></i>
+                            </button>
                             <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
                             <form method="POST" action="'.$delete.'"
                                   data-confirm="Delete Case '.e($c->case_number).'? This will permanently remove the record and any attachments."
