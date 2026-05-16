@@ -1,10 +1,22 @@
 <?php $__env->startSection('title', 'Blotter Cases'); ?>
+<?php $__env->startSection('page-title', 'Blotter Cases'); ?>
+<?php $__env->startSection('page-subtitle', 'Incident and complaint records'); ?>
 <?php $__env->startSection('content'); ?>
 
 <div class="page-header" id="tour-header">
-    <div>
-        <h1 class="page-title">Blotter Cases</h1>
-        <p class="page-subtitle">Incident and complaint records</p>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div>
+            <h1 class="page-title">Blotter Cases</h1>
+            <p class="page-subtitle">Incident and complaint records</p>
+        </div>
+        <span id="headerFilterChip"
+              style="display:none;font-size:11px;font-weight:700;padding:3px 10px;
+                     border-radius:99px;background:var(--gold-pale);color:var(--gold);
+                     border:1px solid var(--gold-border);cursor:pointer"
+              onclick="toggleFilters('blotter')"
+              title="Filters active — click to open">
+            <i class="fas fa-sliders"></i> <span id="headerFilterCount"></span> active
+        </span>
     </div>
     <div class="page-actions">
         <a href="<?php echo e(route('export.pdf', 'blotter')); ?>" class="btn btn-secondary" title="Export PDF" id="tour-export">
@@ -200,6 +212,7 @@ $(document).ready(function () {
 
     /* ── Select2 init ─────────────────────────────────────────────────── */
     const s2Multi = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
+                      minimumResultsForSearch: 0,
                       language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
 
     $('#typeFilter').select2($.extend({}, s2Multi, { placeholder: 'All incident types…' }));
@@ -300,27 +313,36 @@ $(document).ready(function () {
         if (($('#statusFilter').val() || []).length)    n++;
         if ($('#dateFrom').val() || $('#dateTo').val()) n++;
         const badge = document.getElementById('filterBadge');
-        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
-        else       { badge.style.display = 'none'; }
+        const chip  = document.getElementById('headerFilterChip');
+        const chipN = document.getElementById('headerFilterCount');
+        if (n > 0) {
+            badge.textContent = n + (n === 1 ? ' filter active' : ' filters active');
+            badge.style.display = '';
+            chipN.textContent = n;
+            chip.style.display = '';
+        } else {
+            badge.style.display = 'none';
+            chip.style.display  = 'none';
+        }
     }
     window.toggleFilters = function (key) {
         const panel  = document.getElementById('filterPanel');
         const isOpen = panel.style.display !== 'none';
         panel.style.display = isOpen ? 'none' : 'block';
         document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
-        sessionStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+        localStorage.setItem('fp_' + key, isOpen ? '0' : '1');
     };
     window.quickFilter = function (filterId, values) {
         $('#' + filterId).val(values).trigger('change');
         if (document.getElementById('filterPanel').style.display === 'none') {
             document.getElementById('filterPanel').style.display = 'block';
             document.getElementById('filterToggleText').textContent = 'Hide Filters';
-            sessionStorage.setItem('fp_blotter', '1');
+            localStorage.setItem('fp_blotter', '1');
         }
         saveToUrl(); table.ajax.reload();
     };
     const hasUrlFilters = loadFromUrl();
-    if (hasUrlFilters || sessionStorage.getItem('fp_blotter') === '1') {
+    if (hasUrlFilters || localStorage.getItem('fp_blotter') === '1') {
         document.getElementById('filterPanel').style.display = 'block';
         document.getElementById('filterToggleText').textContent = 'Hide Filters';
     }

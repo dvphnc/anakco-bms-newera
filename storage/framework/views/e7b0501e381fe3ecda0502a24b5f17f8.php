@@ -1,10 +1,22 @@
 <?php $__env->startSection('title', 'Business Permits'); ?>
+<?php $__env->startSection('page-title', 'Business Permits'); ?>
+<?php $__env->startSection('page-subtitle', 'Registered businesses in Barangay New Era'); ?>
 <?php $__env->startSection('content'); ?>
 
 <div class="page-header" id="tour-header">
-    <div>
-        <h1 class="page-title">Business Permits</h1>
-        <p class="page-subtitle">Registered businesses in Barangay New Era</p>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div>
+            <h1 class="page-title">Business Permits</h1>
+            <p class="page-subtitle">Registered businesses in Barangay New Era</p>
+        </div>
+        <span id="headerFilterChip"
+              style="display:none;font-size:11px;font-weight:700;padding:3px 10px;
+                     border-radius:99px;background:var(--gold-pale);color:var(--gold);
+                     border:1px solid var(--gold-border);cursor:pointer"
+              onclick="toggleFilters('businesses')"
+              title="Filters active — click to open">
+            <i class="fas fa-sliders"></i> <span id="headerFilterCount"></span> active
+        </span>
     </div>
     <div class="page-actions">
         <a href="<?php echo e(route('export.pdf', 'businesses')); ?>" class="btn btn-secondary" title="Export PDF" id="tour-export">
@@ -20,29 +32,36 @@
 </div>
 
 
-<?php if($summaryCounts['Overdue'] > 0): ?>
-<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fef2f2;border:1px solid #fecaca;border-left:4px solid #ef4444;border-radius:var(--radius);margin-bottom:14px">
-    <i class="fas fa-triangle-exclamation" style="color:#ef4444;font-size:18px;flex-shrink:0"></i>
-    <div style="flex:1">
-        <div style="font-size:14px;font-weight:700;color:#991b1b"><?php echo e($summaryCounts['Overdue']); ?> Active Permit<?php echo e($summaryCounts['Overdue'] > 1 ? 's' : ''); ?> are Overdue!</div>
-        <div style="font-size:13px;color:#ef4444">These businesses have active status but their permits have already expired. Consider updating their status.</div>
+<?php if($summaryCounts['Overdue'] > 0 || $summaryCounts['ExpiringSoon'] > 0): ?>
+<div class="biz-alerts mb-6">
+    <?php if($summaryCounts['Overdue'] > 0): ?>
+    <div class="biz-alert biz-alert-danger">
+        <div class="biz-alert-icon"><i class="fas fa-triangle-exclamation"></i></div>
+        <div class="biz-alert-body">
+            <div class="biz-alert-title">
+                <?php echo e($summaryCounts['Overdue']); ?> Active Permit<?php echo e($summaryCounts['Overdue'] > 1 ? 's' : ''); ?> Overdue
+            </div>
+            <div class="biz-alert-text">These businesses still have Active status but their permits have already expired. Consider updating their status.</div>
+        </div>
+        <button class="btn btn-sm biz-alert-btn" onclick="quickFilter('expiryFilter','expired')">
+            <i class="fas fa-filter"></i> Show Overdue
+        </button>
     </div>
-    <button class="btn btn-secondary btn-sm" onclick="quickFilter('expiryFilter', 'expired')">
-        <i class="fas fa-filter"></i> Show Overdue
-    </button>
-</div>
-<?php endif; ?>
-
-<?php if($summaryCounts['ExpiringSoon'] > 0): ?>
-<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:var(--radius);margin-bottom:14px">
-    <i class="fas fa-clock" style="color:#f59e0b;font-size:18px;flex-shrink:0"></i>
-    <div style="flex:1">
-        <div style="font-size:14px;font-weight:700;color:#92400e"><?php echo e($summaryCounts['ExpiringSoon']); ?> Permit<?php echo e($summaryCounts['ExpiringSoon'] > 1 ? 's' : ''); ?> Expiring Within 30 Days</div>
-        <div style="font-size:13px;color:#b45309">Notify business owners to renew their barangay permits soon.</div>
+    <?php endif; ?>
+    <?php if($summaryCounts['ExpiringSoon'] > 0): ?>
+    <div class="biz-alert biz-alert-warning">
+        <div class="biz-alert-icon"><i class="fas fa-clock"></i></div>
+        <div class="biz-alert-body">
+            <div class="biz-alert-title">
+                <?php echo e($summaryCounts['ExpiringSoon']); ?> Permit<?php echo e($summaryCounts['ExpiringSoon'] > 1 ? 's' : ''); ?> Expiring Within 30 Days
+            </div>
+            <div class="biz-alert-text">Notify business owners to renew their barangay permits before they expire.</div>
+        </div>
+        <button class="btn btn-sm biz-alert-btn" onclick="quickFilter('expiryFilter','expiring_soon')">
+            <i class="fas fa-filter"></i> Show Expiring
+        </button>
     </div>
-    <button class="btn btn-secondary btn-sm" onclick="quickFilter('expiryFilter', 'expiring_soon')">
-        <i class="fas fa-filter"></i> Show Expiring
-    </button>
+    <?php endif; ?>
 </div>
 <?php endif; ?>
 
@@ -222,6 +241,25 @@
 <?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
+/* Business Alert Banners */
+.biz-alerts { display:flex; flex-direction:column; gap:10px; }
+.biz-alert { display:flex; align-items:center; gap:14px; padding:12px 16px;
+             border-radius:var(--radius); border:1px solid transparent;
+             border-left-width:4px; }
+.biz-alert-danger  { background:var(--crimson-pale,#fef2f2); border-color:var(--crimson-border,#fecaca); border-left-color:var(--crimson,#dc2626); }
+.biz-alert-warning { background:#fffbeb; border-color:#fde68a; border-left-color:#f59e0b; }
+.biz-alert-icon { font-size:18px; flex-shrink:0; }
+.biz-alert-danger  .biz-alert-icon { color:var(--crimson,#dc2626); }
+.biz-alert-warning .biz-alert-icon { color:#b45309; }
+.biz-alert-body { flex:1; min-width:0; }
+.biz-alert-title { font-size:13.5px; font-weight:700; line-height:1.3; }
+.biz-alert-danger  .biz-alert-title { color:#991b1b; }
+.biz-alert-warning .biz-alert-title { color:#92400e; }
+.biz-alert-text { font-size:12px; margin-top:3px; }
+.biz-alert-danger  .biz-alert-text { color:#b91c1c; }
+.biz-alert-warning .biz-alert-text { color:#b45309; }
+.biz-alert-btn { flex-shrink:0; border:1px solid var(--border); background:var(--surface); color:var(--text); }
+.biz-alert-btn:hover { background:var(--navy); color:#fff; border-color:var(--navy); }
 #businessesTable_wrapper .dataTables_length,
 #businessesTable_wrapper .dataTables_filter { display:none; }
 #businessesTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
@@ -234,8 +272,10 @@
 $(document).ready(function () {
 
     const s2Multi  = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
+                       minimumResultsForSearch: 0,
                        language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
     const s2Single = { dropdownParent: $('body'), allowClear: true,  width: '100%',
+                       minimumResultsForSearch: 0,
                        language: { noResults: () => 'No matches' } };
 
     $('#typeFilter').select2($.extend({}, s2Multi,  { placeholder: 'All business types…' }));
@@ -347,15 +387,24 @@ $(document).ready(function () {
         if (($('#statusFilter').val() || []).length) n++;
         if ($('#expiryFilter').val())                n++;
         const badge = document.getElementById('filterBadge');
-        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
-        else       { badge.style.display = 'none'; }
+        const chip  = document.getElementById('headerFilterChip');
+        const chipN = document.getElementById('headerFilterCount');
+        if (n > 0) {
+            badge.textContent = n + (n === 1 ? ' filter active' : ' filters active');
+            badge.style.display = '';
+            chipN.textContent = n;
+            chip.style.display = '';
+        } else {
+            badge.style.display = 'none';
+            chip.style.display  = 'none';
+        }
     }
     window.toggleFilters = function (key) {
         const panel  = document.getElementById('filterPanel');
         const isOpen = panel.style.display !== 'none';
         panel.style.display = isOpen ? 'none' : 'block';
         document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
-        sessionStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+        localStorage.setItem('fp_' + key, isOpen ? '0' : '1');
     };
     window.quickFilter = function (filterId, value) {
         if (value === null)          { $('#' + filterId).val(null).trigger('change'); }
@@ -364,12 +413,12 @@ $(document).ready(function () {
         if (document.getElementById('filterPanel').style.display === 'none') {
             document.getElementById('filterPanel').style.display = 'block';
             document.getElementById('filterToggleText').textContent = 'Hide Filters';
-            sessionStorage.setItem('fp_businesses', '1');
+            localStorage.setItem('fp_businesses', '1');
         }
         saveToUrl(); table.ajax.reload();
     };
     const hasUrlFilters = loadFromUrl();
-    if (hasUrlFilters || sessionStorage.getItem('fp_businesses') === '1') {
+    if (hasUrlFilters || localStorage.getItem('fp_businesses') === '1') {
         document.getElementById('filterPanel').style.display = 'block';
         document.getElementById('filterToggleText').textContent = 'Hide Filters';
     }
