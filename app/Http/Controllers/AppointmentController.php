@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DocumentAppointment;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class AppointmentController extends Controller
 {

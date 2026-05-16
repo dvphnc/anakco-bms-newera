@@ -98,15 +98,18 @@ class BusinessController extends Controller
                     return '<span class="badge '.$cls.'">'.$b->status.'</span>';
                 })
                 ->addColumn('actions', function ($b) {
-                    $show = route('businesses.show', $b);
-                    $edit = route('businesses.edit', $b);
+                    $show   = route('businesses.show', $b);
+                    $edit   = route('businesses.edit', $b);
                     $delete = route('businesses.destroy', $b);
 
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
-                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View"><i class="fas fa-eye"></i></a>
+                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon biz-qv-btn" title="Quick View" data-url="'.$show.'"><i class="fas fa-eye"></i></a>
                             <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
-                            <form method="POST" action="'.$delete.'" onsubmit="return confirm(\'Delete this business permit?\')">
+                            <form method="POST" action="'.$delete.'"
+                                  data-confirm="Delete permit '.e($b->permit_number).'? This cannot be undone."
+                                  data-confirm-title="Delete Business Permit"
+                                  data-confirm-ok="Delete">
                                 <input type="hidden" name="_token" value="'.csrf_token().'">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
@@ -243,10 +246,15 @@ class BusinessController extends Controller
         return redirect()->route('businesses.index')->with('success', 'Business permit updated successfully.');
     }
 
-    public function destroy(Business $business)
+    public function destroy(Request $request, Business $business)
     {
+        $num = $business->permit_number;
         $this->logActivity('deleted', $business);
         $business->delete();
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => "Permit {$num} deleted."]);
+        }
 
         return redirect()->route('businesses.index')->with('success', 'Business permit deleted successfully.');
     }
