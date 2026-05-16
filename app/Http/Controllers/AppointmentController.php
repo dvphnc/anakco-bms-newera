@@ -13,32 +13,74 @@ class AppointmentController extends Controller
 
     public function index(Request $request)
     {
-        $query = DocumentAppointment::query();
+        if ($request->ajax()) {
+            $query = DocumentAppointment::select('document_appointments.*')
+                ->when($request->status,        fn ($q) => $q->whereIn('status', (array) $request->status))
+                ->when($request->document_type, fn ($q) => $q->whereIn('document_type', (array) $request->document_type));
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        if ($request->filled('document_type')) {
-            $query->where('document_type', $request->document_type);
-        }
-        if ($request->filled('search')) {
-            $q = $request->search;
-            $query->where(function ($sub) use ($q) {
-                $sub->where('resident_name', 'like', "%{$q}%")
-                    ->orWhere('appointment_number', 'like', "%{$q}%")
-                    ->orWhere('contact_number', 'like', "%{$q}%");
-            });
-        }
+            return DataTables::of($query)
+                ->addColumn('number_col', fn ($a) => '<span class="td-mono">'.e($a->appointment_number).'</span>')
+                ->addColumn('resident_col', function ($a) {
+                    return '<div style="font-weight:600;font-size:13px;color:var(--navy)">'.e($a->resident_name).'</div>'
+                          .'<div class="td-muted">'.e($a->contact_number).'</div>';
+                })
+                ->addColumn('document_col', fn ($a) => '<span class="badge badge-navy" style="white-space:normal;line-height:1.4">'.e($a->document_type).'</span>')
+                ->addColumn('date_col', fn ($a) => '<span class="td-muted">'.($a->preferred_date ? \Carbon\Carbon::parse($a->preferred_date)->format('M d, Y') : '—').'</span>')
+                ->addColumn('submitted_col', fn ($a) => '<span class="td-muted">'.$a->created_at->format('M d, Y').'</span>')
+                ->addColumn('status_col', function ($a) {
+                    $cls = match ($a->status) {
+                        'Pending'    => 'badge-yellow',
+                        'Confirmed'  => 'badge-navy',
+                        'Processing' => 'badge-blue',
+                        'Ready'      => 'badge-green',
+                        'Released'   => 'badge-gray',
+                        'Cancelled'  => 'badge-red',
+                        default      => 'badge-gray',
+                    };
 
-        $appointments  = $query->orderByRaw("FIELD(status,'Pending','Confirmed','Processing','Ready','Released','Cancelled')")
-                               ->orderBy('preferred_date')
-                               ->paginate(20)
-                               ->withQueryString();
+                    return '<span class="badge '.$cls.'">'.e($a->status).'</span>';
+                })
+                ->addColumn('actions', function ($a) {
+                    $deleteUrl = route('appointments.destroy', $a);
+
+                    return '
+                        <div style="display:flex;justify-content:flex-end;gap:6px">
+                            <button class="btn btn-primary btn-sm btn-icon apt-status-btn"
+                                    title="Update Status"
+                                    data-id="'.$a->id.'"
+                                    data-num="'.e($a->appointment_number).'"
+                                    data-status="'.e($a->status).'"
+                                    data-notes="'.e($a->notes ?? '').'">
+                                <i class="fas fa-rotate"></i>
+                            </button>
+                            <form method="POST" action="'.$deleteUrl.'"
+                                  data-confirm="Delete appointment '.e($a->appointment_number).'? This cannot be undone."
+                                  data-confirm-title="Delete Appointment"
+                                  data-confirm-ok="Delete">
+                                <input type="hidden" name="_token" value="'.csrf_token().'">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </div>';
+                })
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('search') && $request->search['value']) {
+                        $s = $request->search['value'];
+                        $query->where(fn ($q) => $q
+                            ->where('resident_name', 'like', "%$s%")
+                            ->orWhere('appointment_number', 'like', "%$s%")
+                            ->orWhere('contact_number', 'like', "%$s%")
+                            ->orWhere('document_type', 'like', "%$s%"));
+                    }
+                })
+                ->rawColumns(['number_col', 'resident_col', 'document_col', 'date_col', 'submitted_col', 'status_col', 'actions'])
+                ->make(true);
+        }
 
         $statuses      = DocumentAppointment::$statuses;
         $documentTypes = DocumentAppointment::$documentTypes;
 
-        return view('appointments.index', compact('appointments', 'statuses', 'documentTypes'));
+        return view('appointments.index', compact('statuses', 'documentTypes'));
     }
 
     public function updateStatus(Request $request, DocumentAppointment $appointment)
@@ -70,10 +112,14 @@ class AppointmentController extends Controller
         return back()->with('success', "Appointment status updated to {$validated['status']}.");
     }
 
-    public function destroy(DocumentAppointment $appointment)
+    public function destroy(Request $request, DocumentAppointment $appointment)
     {
         $num = $appointment->appointment_number;
         $appointment->delete();
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => "Appointment {$num} deleted."]);
+        }
 
         return back()->with('success', "Appointment {$num} deleted.");
     }
