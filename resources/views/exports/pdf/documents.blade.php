@@ -17,10 +17,12 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #111; }
 .report-sub { text-align:center; font-size:7.5pt; color:#666; margin-bottom:10px; }
 .meta-bar { background:#f0f4f8; border:1px solid #dde2ea; border-radius:4px; padding:5px 10px; margin-bottom:10px; display:flex; justify-content:space-between; font-size:7.5pt; color:#444; }
 table { width:100%; border-collapse:collapse; font-size:7.5pt; }
-thead tr th { background:#0D2144; color:#fff; padding:6px 7px; text-align:left; font-size:7pt; text-transform:uppercase; letter-spacing:0.05em; border:1px solid #0a1a36; }
+thead { display:table-header-group; }
+thead tr th { background:#0D2144; color:#fff; padding:6px 8px; text-align:left; font-size:7pt; text-transform:uppercase; letter-spacing:0.06em; border:1px solid #0a1a36; }
+tbody tr { page-break-inside:avoid; }
 tbody tr:nth-child(odd) { background:#fff; }
 tbody tr:nth-child(even) { background:#f5f7fa; }
-tbody td { padding:5px 7px; border-bottom:1px solid #e5e7eb; border-right:1px solid #f0f0f0; vertical-align:middle; }
+tbody td { padding:5px 8px; border-bottom:1px solid #e5e7eb; border-right:1px solid #f0f0f0; vertical-align:middle; }
 tbody td:last-child { border-right:none; }
 .badge { display:inline-block; padding:1px 5px; border-radius:99px; font-size:6.5pt; font-weight:bold; margin:1px; }
 .badge-green  { background:#dcfce7; color:#166534; }
