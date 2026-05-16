@@ -1,10 +1,22 @@
 <?php $__env->startSection('title', 'Document Appointments'); ?>
+<?php $__env->startSection('page-title', 'Document Appointments'); ?>
+<?php $__env->startSection('page-subtitle', 'Resident document request scheduling'); ?>
 <?php $__env->startSection('content'); ?>
 
 <div class="page-header" id="tour-header">
-    <div>
-        <h1 class="page-title">Document Appointments</h1>
-        <p class="page-subtitle">Resident document request scheduling</p>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div>
+            <h1 class="page-title">Document Appointments</h1>
+            <p class="page-subtitle">Resident document request scheduling</p>
+        </div>
+        <span id="headerFilterChip"
+              style="display:none;font-size:11px;font-weight:700;padding:3px 10px;
+                     border-radius:99px;background:var(--gold-pale);color:var(--gold);
+                     border:1px solid var(--gold-border);cursor:pointer"
+              onclick="toggleFilters('appointments')"
+              title="Filters active — click to open">
+            <i class="fas fa-sliders"></i> <span id="headerFilterCount"></span> active
+        </span>
     </div>
     <div class="page-actions">
         <a href="<?php echo e(route('portal.index')); ?>" class="btn btn-secondary" target="_blank" id="tour-portal">
@@ -57,35 +69,48 @@
 
 
 <div class="card mb-6" id="tour-filters">
-    <div class="card-body" style="padding:16px 20px">
-        <div class="filter-bar">
-            <div class="form-group flex-1">
-                <label class="form-label">Search</label>
-                <div style="position:relative">
-                    <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
-                    <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
-                           placeholder="Resident name, appointment number…">
+    <div class="card-header" style="cursor:pointer" onclick="toggleFilters('appointments')">
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
+            <span id="filterBadge" class="badge badge-gold" style="display:none"></span>
+        </div>
+        <button type="button" class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleFilters('appointments')">
+            <i class="fas fa-sliders" id="filterToggleIcon"></i>
+            <span id="filterToggleText">Show Filters</span>
+        </button>
+    </div>
+    <div id="filterPanel" style="display:none">
+        <div class="card-body" style="padding:20px 22px">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+                <div class="form-group" style="grid-column:1/-1">
+                    <label class="form-label">Search</label>
+                    <div style="position:relative">
+                        <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
+                        <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
+                               placeholder="Resident name, appointment number…">
+                    </div>
+                </div>
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Status</label>
+                    <select id="statusFilter" multiple>
+                        <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                </div>
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Document Type</label>
+                    <select id="docTypeFilter" multiple>
+                        <?php $__currentLoopData = $documentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($dt); ?>"><?php echo e($dt); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Status</label>
-                <select id="statusFilter" multiple>
-                    <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Document Type</label>
-                <select id="docTypeFilter" multiple>
-                    <?php $__currentLoopData = $documentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($dt); ?>"><?php echo e($dt); ?></option>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </select>
-            </div>
-            <div class="form-group" style="justify-content:flex-end">
-                <label class="form-label">&nbsp;</label>
-                <button id="resetBtn" class="btn btn-secondary"><i class="fas fa-xmark"></i> Reset</button>
+            <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+                <button type="button" id="resetBtn" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-xmark"></i> Reset All Filters
+                </button>
             </div>
         </div>
     </div>
@@ -184,10 +209,11 @@
 $(document).ready(function () {
 
     const s2Multi = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
+                      minimumResultsForSearch: 0,
                       language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
 
     $('#statusFilter').select2($.extend({}, s2Multi, { placeholder: 'All statuses…' }));
-    $('#docTypeFilter').select2($.extend({}, s2Multi, { placeholder: 'All types…' }));
+    $('#docTypeFilter').select2($.extend({}, s2Multi, { placeholder: 'All document types…' }));
 
     var table = $('#appointmentsTable').DataTable({
         processing: true,
@@ -259,19 +285,79 @@ $(document).ready(function () {
         document.getElementById('aptStatusModal').style.display = 'flex';
     });
 
+    /* ── URL persistence ──────────────────────────────────────────────── */
+    function saveToUrl() {
+        const url = new URL(window.location);
+        ['s'].forEach(k => url.searchParams.delete(k));
+        url.searchParams.delete('status');
+        url.searchParams.delete('document_type');
+        if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
+        ($('#statusFilter').val()   || []).forEach(v => url.searchParams.append('status', v));
+        ($('#docTypeFilter').val()  || []).forEach(v => url.searchParams.append('document_type', v));
+        history.replaceState({}, '', url);
+        updateBadge();
+    }
+    function loadFromUrl() {
+        const p = new URLSearchParams(window.location.search);
+        let any = false;
+        if (p.get('s')) { $('#searchInput').val(p.get('s')); any = true; }
+        const statuses = p.getAll('status'), types = p.getAll('document_type');
+        if (statuses.length) { $('#statusFilter').val(statuses).trigger('change.select2'); any = true; }
+        if (types.length)    { $('#docTypeFilter').val(types).trigger('change.select2'); any = true; }
+        return any;
+    }
+    function updateBadge() {
+        let n = 0;
+        if ($('#searchInput').val())                    n++;
+        if (($('#statusFilter').val()  || []).length)   n++;
+        if (($('#docTypeFilter').val() || []).length)   n++;
+        const badge = document.getElementById('filterBadge');
+        const chip  = document.getElementById('headerFilterChip');
+        const chipN = document.getElementById('headerFilterCount');
+        if (n > 0) {
+            badge.textContent = n + (n === 1 ? ' filter active' : ' filters active');
+            badge.style.display = '';
+            chipN.textContent = n;
+            chip.style.display = '';
+        } else {
+            badge.style.display = 'none';
+            chip.style.display  = 'none';
+        }
+    }
+    window.toggleFilters = function (key) {
+        const panel  = document.getElementById('filterPanel');
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+        localStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+    };
+
+    const hasUrlFilters = loadFromUrl();
+    const lsOpen = localStorage.getItem('fp_appointments') === '1';
+    if (hasUrlFilters || lsOpen) {
+        document.getElementById('filterPanel').style.display = 'block';
+        document.getElementById('filterToggleText').textContent = 'Hide Filters';
+    }
+    updateBadge();
+
     /* ── Filters ──────────────────────────────────────────────────────── */
     let debounce;
-    $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => table.ajax.reload(), 380); });
-    $('#statusFilter, #docTypeFilter').on('change', function () { table.ajax.reload(); });
+    $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380); });
+    $('#statusFilter, #docTypeFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
         $('#statusFilter, #docTypeFilter').val(null).trigger('change');
-        table.ajax.reload();
+        saveToUrl(); table.ajax.reload();
     });
 });
 
 window.aptQuickFilter = function (filterId, values) {
     $('#' + filterId).val(values).trigger('change');
+    if (document.getElementById('filterPanel').style.display === 'none') {
+        document.getElementById('filterPanel').style.display = 'block';
+        document.getElementById('filterToggleText').textContent = 'Hide Filters';
+        localStorage.setItem('fp_appointments', '1');
+    }
     $('#appointmentsTable').DataTable().ajax.reload();
 };
 
