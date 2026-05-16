@@ -86,13 +86,6 @@ class HouseholdController extends Controller
         return redirect()->route('households.index')->with('success', 'Household added successfully.');
     }
 
-    public function show(Household $household)
-    {
-        $household->load(['purok', 'residents']);
-
-        return view('households.households-show', compact('household'));
-    }
-
     public function edit(Household $household)
     {
         $puroks = Purok::orderBy('name')->get();

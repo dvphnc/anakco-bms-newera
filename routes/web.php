@@ -64,6 +64,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('residents/{resident}/quick-view', [ResidentController::class, 'quickView'])
         ->name('residents.quick-view')
         ->middleware('role:Admin,Secretary');
+    Route::patch('residents/{resident}/toggle-status', [ResidentController::class, 'toggleStatus'])
+        ->name('residents.toggle-status')
+        ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Households — Admin + Secretary only

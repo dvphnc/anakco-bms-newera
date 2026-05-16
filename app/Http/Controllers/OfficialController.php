@@ -97,11 +97,25 @@ class OfficialController extends Controller
         return redirect()->route('officials.index')->with('success', 'Official updated successfully.');
     }
 
-    public function destroy(Official $official)
+    public function destroy(Request $request, Official $official)
     {
+        $name = $official->full_name;
         $this->logActivity('deleted', $official);
         $official->delete();
 
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => "{$name} has been removed."]);
+        }
+
         return redirect()->route('officials.index')->with('success', 'Official removed successfully.');
+    }
+
+    public function toggleStatus(Official $official)
+    {
+        $official->is_active = ! $official->is_active;
+        $official->save();
+        $this->logActivity('updated', $official);
+
+        return response()->json(['is_active' => $official->is_active]);
     }
 }
