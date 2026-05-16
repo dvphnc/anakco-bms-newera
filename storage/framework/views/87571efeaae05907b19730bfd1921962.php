@@ -3,7 +3,7 @@
 <?php $__env->startSection('page-subtitle', 'Resident document request scheduling'); ?>
 <?php $__env->startSection('content'); ?>
 
-<div class="page-header" id="tour-header">
+<div class="page-header">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
             <h1 class="page-title">Document Appointments</h1>
@@ -19,7 +19,7 @@
         </span>
     </div>
     <div class="page-actions">
-        <a href="<?php echo e(route('portal.index')); ?>" class="btn btn-secondary" target="_blank" id="tour-portal">
+        <a href="<?php echo e(route('portal.index')); ?>" class="btn btn-secondary" target="_blank">
             <i class="fas fa-external-link-alt"></i> View Portal
         </a>
     </div>
@@ -36,7 +36,7 @@
     $releasedCount = $aptCounts['Released'] ?? 0;
     $readyCount    = $aptCounts['Ready']    ?? 0;
 ?>
-<div class="grid-4 mb-6" id="tour-stats">
+<div class="grid-4 mb-6">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-calendar-check"></i></div>
         <div class="stat-info">
@@ -45,21 +45,21 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter',['Pending'])">
-        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-hourglass-half"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-hourglass-half"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($pendingCount)); ?></div>
             <div class="stat-label">Pending</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter',['Ready'])">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-box-open"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-box-open"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($readyCount)); ?></div>
             <div class="stat-label">Ready for Pick-up</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter',['Released'])">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-circle-check"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($releasedCount)); ?></div>
             <div class="stat-label">Released</div>
@@ -68,7 +68,7 @@
 </div>
 
 
-<div class="card mb-6" id="tour-filters">
+<div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('appointments')">
         <div style="display:flex;align-items:center;gap:10px">
             <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
@@ -117,7 +117,7 @@
 </div>
 
 
-<div class="card" id="tour-table">
+<div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-calendar-check"></i> Appointment Records</span>
     </div>
@@ -197,6 +197,11 @@
 <?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
+/* ── SaaS surface & stat card polish ──────────────────────────────── */
+.main-content { background: #F8F9FA; }
+.stat-card { background: #FFFFFF !important; box-shadow: 0 1px 4px rgba(13,33,68,0.07), 0 4px 16px rgba(13,33,68,0.04); }
+.stat-label { font-size: 12px; color: var(--text-subtle); font-weight: 500; letter-spacing: 0.02em; }
+.stat-number { font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1.1; }
 #appointmentsTable_wrapper .dataTables_length,
 #appointmentsTable_wrapper .dataTables_filter { display:none; }
 #appointmentsTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
@@ -204,6 +209,39 @@
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
+
+/* ── Filter Select2 — match residents blade ───────────────────── */
+#filterPanel .select2-container { width: 100% !important; }
+#filterPanel .select2-container--default .select2-selection--single,
+#filterPanel .select2-container--default .select2-selection--multiple {
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); min-height: 38px;
+}
+#filterPanel .select2-container--default .select2-selection--single {
+    padding: 0 32px 0 10px; display: flex; align-items: center;
+}
+#filterPanel .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text); font-size: 13.5px; padding: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal;
+}
+#filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
+#filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
+#filterPanel .select2-container--default .select2-selection--multiple { padding: 3px 8px; cursor: pointer; }
+#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+    padding: 0; display: flex; flex-wrap: wrap; gap: 3px; align-items: center; min-height: 30px;
+}
+#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
+    color: var(--text-subtle); font-size: 13.5px; margin: 2px 4px;
+    float: none; display: inline-block; white-space: nowrap;
+}
+#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background: var(--navy); color: #fff; border: none; border-radius: 99px;
+    padding: 2px 8px; font-size: 12px; margin: 2px 2px 2px 0; display: inline-flex; align-items: center; gap: 5px;
+}
+#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: rgba(255,255,255,.65); background: transparent; border: none; font-weight: normal; order: 1; padding: 0;
+}
+#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover { color: #fff; background: transparent; }
 </style>
 <script>
 $(document).ready(function () {
@@ -403,49 +441,6 @@ function saveAptStatus() {
         });
 }
 
-/* ── Shepherd.js Tour ─────────────────────────────────────────────── */
-(function () {
-    const TOUR_KEY = 'bms_tour_appointments_v1_<?php echo e(auth()->id()); ?>';
-    if (localStorage.getItem(TOUR_KEY)) return;
-    if (typeof Shepherd === 'undefined') return;
-
-    const tour = new Shepherd.Tour({
-        defaultStepOptions: { cancelIcon: { enabled: false }, scrollTo: { behavior: 'smooth', block: 'center' } },
-        useModalOverlay: true,
-    });
-
-    const skipBtn = {
-        text: '<i class="fas fa-forward"></i> Skip Tour',
-        classes: 'shepherd-button-secondary',
-        action: function () {
-            Swal.fire({
-                title: 'Skip this tour?',
-                text: 'You can clear your browser\'s local storage to see it again.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#0D2144',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Yes, skip it',
-                cancelButtonText: 'Continue tour',
-            }).then(function (result) {
-                if (result.isConfirmed) { localStorage.setItem(TOUR_KEY, new Date().toISOString()); tour.cancel(); }
-                else { tour.show(tour.getCurrentStep().id); }
-            });
-        },
-    };
-
-    tour.addStep({ id: 'header', title: '<i class="fas fa-calendar-check" style="color:var(--gold)"></i>&nbsp; Document Appointments', text: 'Residents can request documents through the public portal. Their appointments appear here for staff to track, process, and release.', attachTo: { element: '#tour-header', on: 'bottom' }, buttons: [skipBtn, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'stats', title: '<i class="fas fa-chart-bar" style="color:var(--gold)"></i>&nbsp; Status Overview', text: 'Click any stat card to filter appointments by status. Keep an eye on <strong>Ready</strong> — those documents are waiting for the resident to pick up.', attachTo: { element: '#tour-stats', on: 'bottom' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'filters', title: '<i class="fas fa-sliders" style="color:var(--gold)"></i>&nbsp; Filter Appointments', text: 'Filter by status and document type. The search box finds appointments by resident name or appointment number instantly — no page reload.', attachTo: { element: '#tour-filters', on: 'bottom' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'table', title: '<i class="fas fa-rotate" style="color:var(--gold)"></i>&nbsp; Update Status Inline', text: 'Click the <strong>🔄 rotate icon</strong> to update an appointment\'s status and add notes for the resident — the portal shows these notes automatically so residents stay informed.', attachTo: { element: '#tour-table', on: 'top' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'portal', title: '<i class="fas fa-external-link-alt" style="color:var(--gold)"></i>&nbsp; Resident Portal', text: 'Click <strong>View Portal</strong> to see what residents see when they submit requests or track their appointment. Useful for explaining the process to them.', attachTo: { element: '#tour-portal', on: 'left' }, buttons: [{ text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: '<i class="fas fa-check"></i> Got it!', action: tour.complete, classes: 'shepherd-button-primary' }] });
-
-    tour.on('complete', function () {
-        localStorage.setItem(TOUR_KEY, new Date().toISOString());
-        bmsToast('Tour complete! You\'re all set.', 'success');
-    });
-    setTimeout(function () { tour.start(); }, 900);
-})();
 </script>
 <?php $__env->stopPush(); ?>
 
