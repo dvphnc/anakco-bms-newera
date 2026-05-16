@@ -210,10 +210,11 @@
 $(document).ready(function () {
 
     const s2Multi = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
+                      minimumResultsForSearch: 0,
                       language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
 
     $('#statusFilter').select2($.extend({}, s2Multi, { placeholder: 'All statuses…' }));
-    $('#docTypeFilter').select2($.extend({}, s2Multi, { placeholder: 'All types…' }));
+    $('#docTypeFilter').select2($.extend({}, s2Multi, { placeholder: 'All document types…' }));
 
     var table = $('#appointmentsTable').DataTable({
         processing: true,
@@ -285,19 +286,79 @@ $(document).ready(function () {
         document.getElementById('aptStatusModal').style.display = 'flex';
     });
 
+    /* ── URL persistence ──────────────────────────────────────────────── */
+    function saveToUrl() {
+        const url = new URL(window.location);
+        ['s'].forEach(k => url.searchParams.delete(k));
+        url.searchParams.delete('status');
+        url.searchParams.delete('document_type');
+        if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
+        ($('#statusFilter').val()   || []).forEach(v => url.searchParams.append('status', v));
+        ($('#docTypeFilter').val()  || []).forEach(v => url.searchParams.append('document_type', v));
+        history.replaceState({}, '', url);
+        updateBadge();
+    }
+    function loadFromUrl() {
+        const p = new URLSearchParams(window.location.search);
+        let any = false;
+        if (p.get('s')) { $('#searchInput').val(p.get('s')); any = true; }
+        const statuses = p.getAll('status'), types = p.getAll('document_type');
+        if (statuses.length) { $('#statusFilter').val(statuses).trigger('change.select2'); any = true; }
+        if (types.length)    { $('#docTypeFilter').val(types).trigger('change.select2'); any = true; }
+        return any;
+    }
+    function updateBadge() {
+        let n = 0;
+        if ($('#searchInput').val())                    n++;
+        if (($('#statusFilter').val()  || []).length)   n++;
+        if (($('#docTypeFilter').val() || []).length)   n++;
+        const badge = document.getElementById('filterBadge');
+        const chip  = document.getElementById('headerFilterChip');
+        const chipN = document.getElementById('headerFilterCount');
+        if (n > 0) {
+            badge.textContent = n + (n === 1 ? ' filter active' : ' filters active');
+            badge.style.display = '';
+            chipN.textContent = n;
+            chip.style.display = '';
+        } else {
+            badge.style.display = 'none';
+            chip.style.display  = 'none';
+        }
+    }
+    window.toggleFilters = function (key) {
+        const panel  = document.getElementById('filterPanel');
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+        localStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+    };
+
+    const hasUrlFilters = loadFromUrl();
+    const lsOpen = localStorage.getItem('fp_appointments') === '1';
+    if (hasUrlFilters || lsOpen) {
+        document.getElementById('filterPanel').style.display = 'block';
+        document.getElementById('filterToggleText').textContent = 'Hide Filters';
+    }
+    updateBadge();
+
     /* ── Filters ──────────────────────────────────────────────────────── */
     let debounce;
-    $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => table.ajax.reload(), 380); });
-    $('#statusFilter, #docTypeFilter').on('change', function () { table.ajax.reload(); });
+    $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380); });
+    $('#statusFilter, #docTypeFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
         $('#statusFilter, #docTypeFilter').val(null).trigger('change');
-        table.ajax.reload();
+        saveToUrl(); table.ajax.reload();
     });
 });
 
 window.aptQuickFilter = function (filterId, values) {
     $('#' + filterId).val(values).trigger('change');
+    if (document.getElementById('filterPanel').style.display === 'none') {
+        document.getElementById('filterPanel').style.display = 'block';
+        document.getElementById('filterToggleText').textContent = 'Hide Filters';
+        localStorage.setItem('fp_appointments', '1');
+    }
     $('#appointmentsTable').DataTable().ajax.reload();
 };
 
