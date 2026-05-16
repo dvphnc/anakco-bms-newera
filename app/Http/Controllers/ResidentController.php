@@ -324,13 +324,35 @@ class ResidentController extends Controller
     }
 
     // -------------------------------------------------------
-    // DESTROY — Delete resident (soft delete)
+    // DESTROY — Delete resident
     // -------------------------------------------------------
-    public function destroy(Resident $resident)
+    public function destroy(Request $request, Resident $resident)
     {
+        $name = $resident->full_name;
         $this->logActivity('deleted', $resident);
         $resident->delete();
 
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => "{$name} has been removed."]);
+        }
+
         return redirect()->route('residents.index')->with('success', 'Resident removed successfully.');
+    }
+
+    // -------------------------------------------------------
+    // TOGGLE STATUS — Axios PATCH for inline status change
+    // -------------------------------------------------------
+    public function toggleStatus(Resident $resident)
+    {
+        // Cycle: Active ↔ Transferred  (Deceased is terminal — cannot toggle)
+        if ($resident->residency_status === 'Active') {
+            $resident->residency_status = 'Transferred';
+        } elseif ($resident->residency_status === 'Transferred') {
+            $resident->residency_status = 'Active';
+        }
+        $resident->save();
+        $this->logActivity('updated', $resident);
+
+        return response()->json(['residency_status' => $resident->residency_status]);
     }
 }
