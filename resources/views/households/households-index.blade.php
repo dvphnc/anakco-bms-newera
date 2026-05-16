@@ -75,6 +75,14 @@
                     @endforeach
                 </select>
             </div>
+            <div class="form-group">
+                <label class="form-label">Voter HH</label>
+                <select id="voterFilter">
+                    <option value=""></option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
             <div class="form-group" style="justify-content:flex-end">
                 <label class="form-label">&nbsp;</label>
                 <button id="resetBtn" class="btn btn-secondary"><i class="fas fa-xmark"></i> Reset</button>
