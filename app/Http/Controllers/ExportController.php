@@ -316,7 +316,7 @@ class ExportController extends Controller
 
                 return Pdf::loadView('exports.pdf.committee', compact(
                     'slug', 'committeeName', 'records', 'activities', 'attendances', 'inventory', 'partnerships',
-                    'generatedAt', 'generatedBy', 'officialName'
+                    'generatedAt', 'generatedBy', 'officialName', 'secretaryName'
                 ))->setPaper('a4', 'portrait')->stream("{$slug}-report-{$date}.pdf");
 
             default:

@@ -284,14 +284,23 @@ tbody td:last-child { border-right: none; }
 
 {{-- Footer --}}
 <div class="footer">
-    <div>
+    <div style="font-size:7pt;color:#888">
         <div>Barangay New Era, District VI, Quezon City</div>
         <div>{{ $generatedAt }}</div>
     </div>
-    <div class="sig-line">
-        <div class="line"></div>
-        <div class="name">{{ $officialName }}</div>
-        <div class="title">Punong Barangay</div>
+    <div style="display:flex;gap:40px;align-items:flex-end">
+        <div class="sig-line">
+            <div style="height:28px"></div>
+            <div class="line"></div>
+            <div class="name">{{ $secretaryName }}</div>
+            <div class="title">Barangay Secretary</div>
+        </div>
+        <div class="sig-line">
+            <div style="height:28px"></div>
+            <div class="line"></div>
+            <div class="name">{{ $officialName }}</div>
+            <div class="title">Punong Barangay</div>
+        </div>
     </div>
 </div>
 
