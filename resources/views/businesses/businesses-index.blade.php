@@ -33,29 +33,36 @@
 </div>
 
 {{-- Expiry Alerts --}}
-@if($summaryCounts['Overdue'] > 0)
-<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fef2f2;border:1px solid #fecaca;border-left:4px solid #ef4444;border-radius:var(--radius);margin-bottom:14px">
-    <i class="fas fa-triangle-exclamation" style="color:#ef4444;font-size:18px;flex-shrink:0"></i>
-    <div style="flex:1">
-        <div style="font-size:14px;font-weight:700;color:#991b1b">{{ $summaryCounts['Overdue'] }} Active Permit{{ $summaryCounts['Overdue'] > 1 ? 's' : '' }} are Overdue!</div>
-        <div style="font-size:13px;color:#ef4444">These businesses have active status but their permits have already expired. Consider updating their status.</div>
+@if($summaryCounts['Overdue'] > 0 || $summaryCounts['ExpiringSoon'] > 0)
+<div class="biz-alerts mb-6">
+    @if($summaryCounts['Overdue'] > 0)
+    <div class="biz-alert biz-alert-danger">
+        <div class="biz-alert-icon"><i class="fas fa-triangle-exclamation"></i></div>
+        <div class="biz-alert-body">
+            <div class="biz-alert-title">
+                {{ $summaryCounts['Overdue'] }} Active Permit{{ $summaryCounts['Overdue'] > 1 ? 's' : '' }} Overdue
+            </div>
+            <div class="biz-alert-text">These businesses still have Active status but their permits have already expired. Consider updating their status.</div>
+        </div>
+        <button class="btn btn-sm biz-alert-btn" onclick="quickFilter('expiryFilter','expired')">
+            <i class="fas fa-filter"></i> Show Overdue
+        </button>
     </div>
-    <button class="btn btn-secondary btn-sm" onclick="quickFilter('expiryFilter', 'expired')">
-        <i class="fas fa-filter"></i> Show Overdue
-    </button>
-</div>
-@endif
-
-@if($summaryCounts['ExpiringSoon'] > 0)
-<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:var(--radius);margin-bottom:14px">
-    <i class="fas fa-clock" style="color:#f59e0b;font-size:18px;flex-shrink:0"></i>
-    <div style="flex:1">
-        <div style="font-size:14px;font-weight:700;color:#92400e">{{ $summaryCounts['ExpiringSoon'] }} Permit{{ $summaryCounts['ExpiringSoon'] > 1 ? 's' : '' }} Expiring Within 30 Days</div>
-        <div style="font-size:13px;color:#b45309">Notify business owners to renew their barangay permits soon.</div>
+    @endif
+    @if($summaryCounts['ExpiringSoon'] > 0)
+    <div class="biz-alert biz-alert-warning">
+        <div class="biz-alert-icon"><i class="fas fa-clock"></i></div>
+        <div class="biz-alert-body">
+            <div class="biz-alert-title">
+                {{ $summaryCounts['ExpiringSoon'] }} Permit{{ $summaryCounts['ExpiringSoon'] > 1 ? 's' : '' }} Expiring Within 30 Days
+            </div>
+            <div class="biz-alert-text">Notify business owners to renew their barangay permits before they expire.</div>
+        </div>
+        <button class="btn btn-sm biz-alert-btn" onclick="quickFilter('expiryFilter','expiring_soon')">
+            <i class="fas fa-filter"></i> Show Expiring
+        </button>
     </div>
-    <button class="btn btn-secondary btn-sm" onclick="quickFilter('expiryFilter', 'expiring_soon')">
-        <i class="fas fa-filter"></i> Show Expiring
-    </button>
+    @endif
 </div>
 @endif
 
@@ -235,6 +242,25 @@
 @push('scripts')
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
+/* Business Alert Banners */
+.biz-alerts { display:flex; flex-direction:column; gap:10px; }
+.biz-alert { display:flex; align-items:center; gap:14px; padding:12px 16px;
+             border-radius:var(--radius); border:1px solid transparent;
+             border-left-width:4px; }
+.biz-alert-danger  { background:var(--crimson-pale,#fef2f2); border-color:var(--crimson-border,#fecaca); border-left-color:var(--crimson,#dc2626); }
+.biz-alert-warning { background:#fffbeb; border-color:#fde68a; border-left-color:#f59e0b; }
+.biz-alert-icon { font-size:18px; flex-shrink:0; }
+.biz-alert-danger  .biz-alert-icon { color:var(--crimson,#dc2626); }
+.biz-alert-warning .biz-alert-icon { color:#b45309; }
+.biz-alert-body { flex:1; min-width:0; }
+.biz-alert-title { font-size:13.5px; font-weight:700; line-height:1.3; }
+.biz-alert-danger  .biz-alert-title { color:#991b1b; }
+.biz-alert-warning .biz-alert-title { color:#92400e; }
+.biz-alert-text { font-size:12px; margin-top:3px; }
+.biz-alert-danger  .biz-alert-text { color:#b91c1c; }
+.biz-alert-warning .biz-alert-text { color:#b45309; }
+.biz-alert-btn { flex-shrink:0; border:1px solid var(--border); background:var(--surface); color:var(--text); }
+.biz-alert-btn:hover { background:var(--navy); color:#fff; border-color:var(--navy); }
 #businessesTable_wrapper .dataTables_length,
 #businessesTable_wrapper .dataTables_filter { display:none; }
 #businessesTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
