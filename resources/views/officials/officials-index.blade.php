@@ -312,6 +312,39 @@ $(document).ready(function () {
         filterTable();
     });
 
+    /* Axios DELETE — officials static table row removal */
+    $(document).on('click', '#listView form[data-confirm] button[type="submit"]', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        const btn  = $(this);
+        const form = btn.closest('form');
+        const url  = form.attr('action');
+
+        bmsConfirm({
+            title:   form.data('confirm-title') || 'Delete Official',
+            message: form.data('confirm'),
+            ok:      form.data('confirm-ok')    || 'Delete',
+        }, function () {
+            const icon = btn.find('i');
+            const orig = icon.attr('class');
+            icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
+            btn.prop('disabled', true);
+
+            axios.delete(url, { headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } })
+                .then(() => {
+                    const row = form.closest('tr');
+                    row.css({ transition: 'opacity .3s', opacity: '0' });
+                    setTimeout(() => row.remove(), 310);
+                })
+                .catch(() => {
+                    icon.attr('class', orig).css('color', '');
+                    btn.prop('disabled', false);
+                    alert('Could not delete official. Please try again.');
+                });
+        });
+    });
+
     /* Axios status toggle */
     $(document).on('click', '.status-toggle', function () {
         const btn      = $(this);
