@@ -619,18 +619,49 @@
     $(document).ready(function() {
         $('body').on('init.select2', function() {});
 
-        /* ── Force search visible in every Select2 dropdown on open ──────── */
+        /* ── Force search visible in every Select2 dropdown ──────────────── */
+        /* MutationObserver watches for the hide class being added and strips it */
+        if (window.MutationObserver) {
+            var _s2SearchObs = new MutationObserver(function (mutations) {
+                mutations.forEach(function (m) {
+                    /* class change on the search wrapper */
+                    if (m.type === 'attributes' && m.attributeName === 'class') {
+                        var el = m.target;
+                        if (el.classList.contains('select2-search--dropdown') &&
+                            el.classList.contains('select2-search--hide')) {
+                            el.classList.remove('select2-search--hide');
+                            el.style.display = 'block';
+                            var f = el.querySelector('.select2-search__field');
+                            if (f) { f.style.display = 'block'; }
+                        }
+                    }
+                    /* style change (jQuery .hide() sets inline display:none) */
+                    if (m.type === 'attributes' && m.attributeName === 'style') {
+                        var el2 = m.target;
+                        if (el2.classList.contains('select2-search--dropdown') &&
+                            el2.style.display === 'none') {
+                            el2.style.display = 'block';
+                        }
+                    }
+                });
+            });
+            _s2SearchObs.observe(document.body, {
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['class', 'style']
+            });
+        }
+        /* Fallback: also handle via open event */
         $(document).on('select2:open', function () {
-            // Use a short delay so Select2 finishes its own open/hide logic first
             setTimeout(function () {
                 var $cont = $('.select2-container--open');
-                var $search = $cont.find('.select2-search--dropdown');
-                if (!$search.length) return;
-                $search.removeClass('select2-search--hide').css('display', 'block');
-                var $field = $search.find('.select2-search__field');
-                $field.css('display', 'block');
-                if ($field.length) { $field[0].focus(); }
-            }, 50);
+                $cont.find('.select2-search--dropdown')
+                     .removeClass('select2-search--hide')
+                     .css('display', 'block');
+                var $f = $cont.find('.select2-search--dropdown .select2-search__field')
+                              .css('display', 'block');
+                if ($f.length) { $f[0].focus(); }
+            }, 20);
         });
 
         $('.select2-resident').each(function() {
