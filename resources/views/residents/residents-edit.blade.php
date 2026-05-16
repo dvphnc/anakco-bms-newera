@@ -66,7 +66,7 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Gender <span style="color:var(--crimson)">*</span></label>
-                <select name="gender" class="form-control @error('gender') is-invalid @enderror" required>
+                <select name="gender" id="s2Gender" class="form-control @error('gender') is-invalid @enderror" required>
                     @foreach(['Male','Female'] as $g)
                         <option value="{{ $g }}" {{ old('gender', $resident->gender) === $g ? 'selected' : '' }}>{{ $g }}</option>
                     @endforeach
@@ -78,7 +78,7 @@
                     Civil Status <span style="color:var(--crimson)">*</span>
                     <span class="help-icon" data-tippy-content="Choose 'Annulled' if the marriage was legally annulled — not 'Single'. This affects eligibility for certain programs.">?</span>
                 </label>
-                <select name="civil_status" class="form-control @error('civil_status') is-invalid @enderror" required>
+                <select name="civil_status" id="s2CivilStatus" class="form-control @error('civil_status') is-invalid @enderror" required>
                     @foreach(['Single','Married','Widowed','Separated','Annulled'] as $s)
                         <option value="{{ $s }}" {{ old('civil_status', $resident->civil_status) === $s ? 'selected' : '' }}>{{ $s }}</option>
                     @endforeach
@@ -118,7 +118,7 @@
                     Purok <span style="color:var(--crimson)">*</span>
                     <span class="help-icon" data-tippy-content="Select the Purok (zone/neighborhood) where the resident currently lives. Contact the Secretary if you're unsure which Purok an address falls under.">?</span>
                 </label>
-                <select name="purok_id" class="form-control @error('purok_id') is-invalid @enderror" required>
+                <select name="purok_id" id="s2Purok" class="form-control @error('purok_id') is-invalid @enderror" required>
                     <option value="">Select Purok</option>
                     @foreach($puroks as $purok)
                         <option value="{{ $purok->id }}" {{ old('purok_id', $resident->purok_id) == $purok->id ? 'selected' : '' }}>
