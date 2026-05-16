@@ -3,7 +3,7 @@
 <?php $__env->startSection('page-subtitle', 'Registered businesses in Barangay New Era'); ?>
 <?php $__env->startSection('content'); ?>
 
-<div class="page-header" id="tour-header">
+<div class="page-header">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
             <h1 class="page-title">Business Permits</h1>
@@ -19,14 +19,14 @@
         </span>
     </div>
     <div class="page-actions">
-        <a href="<?php echo e(route('export.pdf', 'businesses')); ?>" class="btn btn-secondary" title="Export PDF" id="tour-export">
+        <a href="<?php echo e(route('export.pdf', 'businesses')); ?>" class="btn btn-secondary" title="Export PDF">
             <i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF
         </a>
         <a href="<?php echo e(route('export.excel', 'businesses')); ?>" class="btn btn-secondary" title="Export Excel">
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
-        <a href="<?php echo e(route('businesses.create')); ?>" class="btn btn-primary" id="tour-issue">
-            <i class="fas fa-store"></i> Issue Permit
+        <a href="<?php echo e(route('businesses.create')); ?>" class="btn btn-primary">
+            <i class="fas fa-file-plus"></i> Issue Permit
         </a>
     </div>
 </div>
@@ -66,7 +66,7 @@
 <?php endif; ?>
 
 
-<div class="grid-4 mb-6" id="tour-stats">
+<div class="grid-4 mb-6">
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', null)">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-store"></i></div>
         <div class="stat-info">
@@ -75,37 +75,37 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Active'])">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-check-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($summaryCounts['Active'])); ?></div>
             <div class="stat-label">Active Permits</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer;border-color:#fde68a" onclick="quickFilter('expiryFilter', 'expiring_soon')">
-        <div class="stat-icon" style="background:#fffbeb;color:#b45309"><i class="fas fa-clock"></i></div>
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('expiryFilter', 'expiring_soon')">
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-clock"></i></div>
         <div class="stat-info">
-            <div class="stat-number" style="color:#b45309"><?php echo e(number_format($summaryCounts['ExpiringSoon'])); ?></div>
+            <div class="stat-number"><?php echo e(number_format($summaryCounts['ExpiringSoon'])); ?></div>
             <div class="stat-label">Expiring in 30 Days</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer;border-color:#fecaca" onclick="quickFilter('expiryFilter', 'expired')">
-        <div class="stat-icon" style="background:#fef2f2;color:#ef4444"><i class="fas fa-triangle-exclamation"></i></div>
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('expiryFilter', 'expired')">
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-triangle-exclamation"></i></div>
         <div class="stat-info">
-            <div class="stat-number" style="color:#ef4444"><?php echo e(number_format($summaryCounts['Overdue'])); ?></div>
+            <div class="stat-number"><?php echo e(number_format($summaryCounts['Overdue'])); ?></div>
             <div class="stat-label">Overdue (Active)</div>
         </div>
     </div>
 </div>
 <div class="grid-2 mb-6">
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Expired'])">
-        <div class="stat-icon" style="background:rgba(155,28,28,0.08);color:#9B1C1C"><i class="fas fa-times-circle"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-times-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($summaryCounts['Expired'])); ?></div>
             <div class="stat-label">Marked Expired</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Suspended'])">
-        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-pause-circle"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-pause-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($summaryCounts['Suspended'])); ?></div>
             <div class="stat-label">Suspended</div>
@@ -114,7 +114,7 @@
 </div>
 
 
-<div class="card mb-6" id="tour-filters">
+<div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('businesses')">
         <div style="display:flex;align-items:center;gap:10px">
             <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
@@ -172,7 +172,7 @@
 </div>
 
 
-<div class="card" id="tour-table">
+<div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-store"></i> Business Records</span>
         <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted)">
@@ -241,6 +241,11 @@
 <?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
+/* ── SaaS surface & stat card polish ──────────────────────────────── */
+.main-content { background: #F8F9FA; }
+.stat-card { background: #FFFFFF !important; box-shadow: 0 1px 4px rgba(13,33,68,0.07), 0 4px 16px rgba(13,33,68,0.04); }
+.stat-label { font-size: 12px; color: var(--text-subtle); font-weight: 500; letter-spacing: 0.02em; }
+.stat-number { font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1.1; }
 /* Business Alert Banners */
 .biz-alerts { display:flex; flex-direction:column; gap:10px; }
 .biz-alert { display:flex; align-items:center; gap:14px; padding:12px 16px;
@@ -560,48 +565,6 @@ document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeBizPanel();
 });
 
-/* ── Shepherd.js Tour ─────────────────────────────────────────────── */
-(function () {
-    const TOUR_KEY = 'bms_tour_businesses_v1_<?php echo e(auth()->id()); ?>';
-    if (localStorage.getItem(TOUR_KEY)) return;
-    if (typeof Shepherd === 'undefined') return;
-
-    const tour = new Shepherd.Tour({
-        defaultStepOptions: { cancelIcon: { enabled: false }, scrollTo: { behavior: 'smooth', block: 'center' } },
-        useModalOverlay: true,
-    });
-
-    const skipBtn = {
-        text: '<i class="fas fa-forward"></i> Skip Tour',
-        classes: 'shepherd-button-secondary',
-        action: function () {
-            Swal.fire({
-                title: 'Skip this tour?',
-                text: 'You can clear your browser\'s local storage to see it again.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#0D2144',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Yes, skip it',
-                cancelButtonText: 'Continue tour',
-            }).then(function (result) {
-                if (result.isConfirmed) { localStorage.setItem(TOUR_KEY, new Date().toISOString()); tour.cancel(); }
-                else { tour.show(tour.getCurrentStep().id); }
-            });
-        },
-    };
-
-    tour.addStep({ id: 'header', title: '<i class="fas fa-store" style="color:var(--gold)"></i>&nbsp; Business Permits', text: 'This module tracks all registered businesses in Barangay New Era — sari-sari stores, restaurants, salons, and more. Permits can be issued, renewed, suspended, or expired.', attachTo: { element: '#tour-header', on: 'bottom' }, buttons: [skipBtn, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'stats', title: '<i class="fas fa-clock" style="color:var(--gold)"></i>&nbsp; Expiry Tracking', text: 'The dashboard shows real-time expiry alerts. <strong style="color:#b45309">Expiring Soon</strong> means within 30 days. <strong style="color:#ef4444">Overdue</strong> means still Active but already expired. Click any card to filter.', attachTo: { element: '#tour-stats', on: 'bottom' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'table', title: '<i class="fas fa-eye" style="color:var(--gold)"></i>&nbsp; Quick View Panel', text: 'Click the <strong>👁 eye icon</strong> on any record to open an instant preview panel — owner details, permit dates, expiry countdown — without leaving the page.', attachTo: { element: '#tour-table', on: 'top' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'issue', title: '<i class="fas fa-store" style="color:var(--gold)"></i>&nbsp; Issue a Permit', text: 'Click <strong>Issue Permit</strong> to register a new business. You can link the owner to an existing resident record for faster data entry.', attachTo: { element: '#tour-issue', on: 'left' }, buttons: [{ text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: '<i class="fas fa-check"></i> Got it!', action: tour.complete, classes: 'shepherd-button-primary' }] });
-
-    tour.on('complete', function () {
-        localStorage.setItem(TOUR_KEY, new Date().toISOString());
-        bmsToast('Tour complete! You\'re all set.', 'success');
-    });
-    setTimeout(function () { tour.start(); }, 900);
-})();
 </script>
 <?php $__env->stopPush(); ?>
 
