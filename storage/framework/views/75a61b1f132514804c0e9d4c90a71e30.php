@@ -618,6 +618,25 @@
     <script>
     $(document).ready(function() {
         $('body').on('init.select2', function() {});
+
+        /* ── Force search visible in every Select2 dropdown on open ──────── */
+        $(document).on('select2:open', function () {
+            // setTimeout 0 lets Select2 finish hiding before we override
+            setTimeout(function () {
+                var wrap = document.querySelector(
+                    '.select2-container--open .select2-search--dropdown'
+                );
+                if (!wrap) return;
+                wrap.classList.remove('select2-search--hide');
+                wrap.style.removeProperty('display');
+                var field = wrap.querySelector('.select2-search__field');
+                if (field) {
+                    field.style.removeProperty('display');
+                    field.focus();
+                }
+            }, 0);
+        });
+
         $('.select2-resident').each(function() {
             if ($(this).data('select2')) return;
             $(this).select2({
