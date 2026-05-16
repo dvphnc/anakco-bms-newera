@@ -10,7 +10,13 @@
       "Bash(cd \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\.claude\\\\worktrees\\\\festive-lovelace-684745\\\\resources\\\\views\" && grep -rn \"font-size\\\\s*:\\\\s*\\\\\\(9\\\\|10\\\\.5\\\\|10\\\\|11\\\\.5\\\\|11\\\\|12\\\\.5\\\\|12\\\\\\)px\" --include=\"*.blade.php\" | grep -E \"\\(residents/|households/|blotter/|businesses/|documents/|officials/|committees/|reports/|activity-log/|backup/|puroks/|appointments/|users/|dashboard\\\\.blade\\\\.php|layouts/app\\\\.blade\\\\.php|partials/\\)\" | grep -v \"\\\\.cert-\\\\|\\\\.permit-\\\\|\\\\.rpt-\" | grep -v \"@media.*print\" > /tmp/small_fonts.txt && wc -l /tmp/small_fonts.txt)",
       "Bash(tee /tmp/fonts_list.txt)",
       "Read(//d/laragon/www/anakco_bms/**)",
-      "Bash(php artisan *)"
+      "Bash(php artisan *)",
+      "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\resources\\\\views\\\\documents\\\\documents-index.blade.php\")",
+      "Bash(Measure-Object -Line)",
+      "Bash(Select-Object -ExpandProperty Lines)",
+      "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\resources\\\\views\\\\blotter\\\\blotter-index.blade.php\")",
+      "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\resources\\\\views\\\\businesses\\\\businesses-index.blade.php\")",
+      "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\resources\\\\views\\\\appointments\\\\index.blade.php\")"
     ]
   }
 }
