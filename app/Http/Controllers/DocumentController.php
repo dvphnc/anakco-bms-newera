@@ -167,10 +167,34 @@ class DocumentController extends Controller
         return redirect()->route('documents.index')->with('success', 'Document updated successfully.');
     }
 
-    public function destroy(Document $document)
+    public function quickStatus(Request $request, Document $document)
     {
+        $validated = $request->validate([
+            'status' => 'required|in:Pending,Processing,Released,Cancelled',
+        ]);
+        if ($validated['status'] === 'Released' && $document->status !== 'Released') {
+            $validated['released_at'] = now();
+        }
+        $old = $document->getOriginal();
+        $document->update($validated);
+        $this->logActivity('updated', $document, $old, $document->fresh()->toArray());
+
+        return response()->json([
+            'success' => true,
+            'message' => "Status updated to {$validated['status']}.",
+            'status'  => $document->status,
+        ]);
+    }
+
+    public function destroy(Request $request, Document $document)
+    {
+        $num = $document->doc_number;
         $this->logActivity('deleted', $document);
         $document->delete();
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => "Document {$num} deleted."]);
+        }
 
         return redirect()->route('documents.index')->with('success', 'Document deleted successfully.');
     }
