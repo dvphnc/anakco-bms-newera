@@ -247,8 +247,10 @@
 $(document).ready(function () {
 
     const s2Multi  = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
+                       minimumResultsForSearch: 0,
                        language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
     const s2Single = { dropdownParent: $('body'), allowClear: true,  width: '100%',
+                       minimumResultsForSearch: 0,
                        language: { noResults: () => 'No matches' } };
 
     $('#typeFilter').select2($.extend({}, s2Multi,  { placeholder: 'All business types…' }));
@@ -360,15 +362,24 @@ $(document).ready(function () {
         if (($('#statusFilter').val() || []).length) n++;
         if ($('#expiryFilter').val())                n++;
         const badge = document.getElementById('filterBadge');
-        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
-        else       { badge.style.display = 'none'; }
+        const chip  = document.getElementById('headerFilterChip');
+        const chipN = document.getElementById('headerFilterCount');
+        if (n > 0) {
+            badge.textContent = n + (n === 1 ? ' filter active' : ' filters active');
+            badge.style.display = '';
+            chipN.textContent = n;
+            chip.style.display = '';
+        } else {
+            badge.style.display = 'none';
+            chip.style.display  = 'none';
+        }
     }
     window.toggleFilters = function (key) {
         const panel  = document.getElementById('filterPanel');
         const isOpen = panel.style.display !== 'none';
         panel.style.display = isOpen ? 'none' : 'block';
         document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
-        sessionStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+        localStorage.setItem('fp_' + key, isOpen ? '0' : '1');
     };
     window.quickFilter = function (filterId, value) {
         if (value === null)          { $('#' + filterId).val(null).trigger('change'); }
@@ -377,12 +388,12 @@ $(document).ready(function () {
         if (document.getElementById('filterPanel').style.display === 'none') {
             document.getElementById('filterPanel').style.display = 'block';
             document.getElementById('filterToggleText').textContent = 'Hide Filters';
-            sessionStorage.setItem('fp_businesses', '1');
+            localStorage.setItem('fp_businesses', '1');
         }
         saveToUrl(); table.ajax.reload();
     };
     const hasUrlFilters = loadFromUrl();
-    if (hasUrlFilters || sessionStorage.getItem('fp_businesses') === '1') {
+    if (hasUrlFilters || localStorage.getItem('fp_businesses') === '1') {
         document.getElementById('filterPanel').style.display = 'block';
         document.getElementById('filterToggleText').textContent = 'Hide Filters';
     }
