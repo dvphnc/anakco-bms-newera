@@ -20,7 +20,7 @@
         </span>
     </div>
     <div class="page-actions">
-        <a href="{{ route('portal.index') }}" class="btn btn-secondary" target="_blank" id="tour-portal">
+        <a href="{{ route('portal.index') }}" class="btn btn-secondary" target="_blank">
             <i class="fas fa-external-link-alt"></i> View Portal
         </a>
     </div>
@@ -37,7 +37,7 @@
     $releasedCount = $aptCounts['Released'] ?? 0;
     $readyCount    = $aptCounts['Ready']    ?? 0;
 @endphp
-<div class="grid-4 mb-6" id="tour-stats">
+<div class="grid-4 mb-6">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-calendar-check"></i></div>
         <div class="stat-info">
@@ -69,7 +69,7 @@
 </div>
 
 {{-- Collapsible Filter Bar --}}
-<div class="card mb-6" id="tour-filters">
+<div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('appointments')">
         <div style="display:flex;align-items:center;gap:10px">
             <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
@@ -118,7 +118,7 @@
 </div>
 
 {{-- Table --}}
-<div class="card" id="tour-table">
+<div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-calendar-check"></i> Appointment Records</span>
     </div>

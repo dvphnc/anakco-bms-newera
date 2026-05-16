@@ -20,13 +20,13 @@
         </span>
     </div>
     <div class="page-actions">
-        <a href="{{ route('export.pdf', 'businesses') }}" class="btn btn-secondary" title="Export PDF" id="tour-export">
+        <a href="{{ route('export.pdf', 'businesses') }}" class="btn btn-secondary" title="Export PDF">
             <i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF
         </a>
         <a href="{{ route('export.excel', 'businesses') }}" class="btn btn-secondary" title="Export Excel">
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
-        <a href="{{ route('businesses.create') }}" class="btn btn-primary" id="tour-issue">
+        <a href="{{ route('businesses.create') }}" class="btn btn-primary">
             <i class="fas fa-file-plus"></i> Issue Permit
         </a>
     </div>
@@ -67,7 +67,7 @@
 @endif
 
 {{-- Stat Cards --}}
-<div class="grid-4 mb-6" id="tour-stats">
+<div class="grid-4 mb-6">
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', null)">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-store"></i></div>
         <div class="stat-info">
@@ -115,7 +115,7 @@
 </div>
 
 {{-- Filter Bar --}}
-<div class="card mb-6" id="tour-filters">
+<div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('businesses')">
         <div style="display:flex;align-items:center;gap:10px">
             <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
@@ -173,7 +173,7 @@
 </div>
 
 {{-- Table --}}
-<div class="card" id="tour-table">
+<div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-store"></i> Business Records</span>
         <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted)">

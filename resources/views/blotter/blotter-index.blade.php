@@ -32,7 +32,7 @@
     </div>
 </div>
 
-<div class="grid-4 mb-6" id="tour-stats">
+<div class="grid-4 mb-6">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-gavel"></i></div>
         <div class="stat-info">
@@ -64,7 +64,7 @@
 </div>
 
 {{-- Collapsible Filter Bar --}}
-<div class="card mb-6" id="tour-filters">
+<div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('blotter')">
         <div style="display:flex;align-items:center;gap:10px">
             <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
@@ -120,7 +120,7 @@
     </div>
 </div>
 
-<div class="card" id="tour-table">
+<div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-gavel"></i> Case Records</span>
     </div>
