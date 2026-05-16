@@ -242,6 +242,11 @@
 @push('scripts')
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
+/* ── SaaS surface & stat card polish ──────────────────────────────── */
+.main-content { background: #F8F9FA; }
+.stat-card { background: #FFFFFF !important; box-shadow: 0 1px 4px rgba(13,33,68,0.07), 0 4px 16px rgba(13,33,68,0.04); }
+.stat-label { font-size: 12px; color: var(--text-subtle); font-weight: 500; letter-spacing: 0.02em; }
+.stat-number { font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1.1; }
 /* Business Alert Banners */
 .biz-alerts { display:flex; flex-direction:column; gap:10px; }
 .biz-alert { display:flex; align-items:center; gap:14px; padding:12px 16px;
