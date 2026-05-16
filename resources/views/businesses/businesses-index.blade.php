@@ -561,47 +561,5 @@ document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeBizPanel();
 });
 
-/* ── Shepherd.js Tour ─────────────────────────────────────────────── */
-(function () {
-    const TOUR_KEY = 'bms_tour_businesses_v1_{{ auth()->id() }}';
-    if (localStorage.getItem(TOUR_KEY)) return;
-    if (typeof Shepherd === 'undefined') return;
-
-    const tour = new Shepherd.Tour({
-        defaultStepOptions: { cancelIcon: { enabled: false }, scrollTo: { behavior: 'smooth', block: 'center' } },
-        useModalOverlay: true,
-    });
-
-    const skipBtn = {
-        text: '<i class="fas fa-forward"></i> Skip Tour',
-        classes: 'shepherd-button-secondary',
-        action: function () {
-            Swal.fire({
-                title: 'Skip this tour?',
-                text: 'You can clear your browser\'s local storage to see it again.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#0D2144',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Yes, skip it',
-                cancelButtonText: 'Continue tour',
-            }).then(function (result) {
-                if (result.isConfirmed) { localStorage.setItem(TOUR_KEY, new Date().toISOString()); tour.cancel(); }
-                else { tour.show(tour.getCurrentStep().id); }
-            });
-        },
-    };
-
-    tour.addStep({ id: 'header', title: '<i class="fas fa-store" style="color:var(--gold)"></i>&nbsp; Business Permits', text: 'This module tracks all registered businesses in Barangay New Era — sari-sari stores, restaurants, salons, and more. Permits can be issued, renewed, suspended, or expired.', attachTo: { element: '#tour-header', on: 'bottom' }, buttons: [skipBtn, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'stats', title: '<i class="fas fa-clock" style="color:var(--gold)"></i>&nbsp; Expiry Tracking', text: 'The dashboard shows real-time expiry alerts. <strong style="color:#b45309">Expiring Soon</strong> means within 30 days. <strong style="color:#ef4444">Overdue</strong> means still Active but already expired. Click any card to filter.', attachTo: { element: '#tour-stats', on: 'bottom' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'table', title: '<i class="fas fa-eye" style="color:var(--gold)"></i>&nbsp; Quick View Panel', text: 'Click the <strong>👁 eye icon</strong> on any record to open an instant preview panel — owner details, permit dates, expiry countdown — without leaving the page.', attachTo: { element: '#tour-table', on: 'top' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'issue', title: '<i class="fas fa-store" style="color:var(--gold)"></i>&nbsp; Issue a Permit', text: 'Click <strong>Issue Permit</strong> to register a new business. You can link the owner to an existing resident record for faster data entry.', attachTo: { element: '#tour-issue', on: 'left' }, buttons: [{ text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: '<i class="fas fa-check"></i> Got it!', action: tour.complete, classes: 'shepherd-button-primary' }] });
-
-    tour.on('complete', function () {
-        localStorage.setItem(TOUR_KEY, new Date().toISOString());
-        bmsToast('Tour complete! You\'re all set.', 'success');
-    });
-    setTimeout(function () { tour.start(); }, 900);
-})();
 </script>
 @endpush
