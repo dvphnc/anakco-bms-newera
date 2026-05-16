@@ -56,7 +56,7 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Released')">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-circle-check"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format(\App\Models\Document::where('status','Released')->count()) }}</div>
             <div class="stat-label">Released</div>

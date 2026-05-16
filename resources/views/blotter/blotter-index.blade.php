@@ -41,21 +41,21 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Active'])">
-        <div class="stat-icon" style="background:rgba(155,28,28,0.08);color:#9B1C1C"><i class="fas fa-circle-exclamation"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-exclamation"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Active'] ?? 0) }}</div>
             <div class="stat-label">Active</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Under Investigation'])">
-        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-magnifying-glass"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-magnifying-glass"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Under Investigation'] ?? 0) }}</div>
             <div class="stat-label">Under Investigation</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Settled'])">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-handshake"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-handshake"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Settled'] ?? 0) }}</div>
             <div class="stat-label">Settled</div>

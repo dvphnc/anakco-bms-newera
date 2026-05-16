@@ -27,7 +27,7 @@
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
         <a href="{{ route('businesses.create') }}" class="btn btn-primary" id="tour-issue">
-            <i class="fas fa-store"></i> Issue Permit
+            <i class="fas fa-file-plus"></i> Issue Permit
         </a>
     </div>
 </div>
