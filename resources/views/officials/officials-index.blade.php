@@ -284,29 +284,32 @@ $(document).ready(function () {
     $('#officialPositionFilter').select2($.extend({}, s2off, { placeholder: 'All Positions' }));
     $('#officialStatusFilter').select2($.extend({}, s2off, { placeholder: 'All Statuses' }));
 
-    /* Client-side search + status filter (list + grouped views) */
+    /* Client-side search + position + status filter (list + grouped views) */
     function filterTable() {
-        const q      = $('#officialSearch').val().toLowerCase();
-        const status = $('#officialStatusFilter').val();
-        // List view
+        const q        = $('#officialSearch').val().toLowerCase();
+        const status   = $('#officialStatusFilter').val();
+        const position = $('#officialPositionFilter').val();
+
+        // List view rows
         $('tbody tr').each(function () {
-            const text     = $(this).text().toLowerCase();
-            const isActive = $(this).find('.status-toggle').data('active') == 1;
-            const matchQ   = !q || text.includes(q);
-            const matchS   = !status
-                || (status === 'active' && isActive)
-                || (status === 'inactive' && !isActive);
-            $(this).toggle(matchQ && matchS);
+            const text      = $(this).text().toLowerCase();
+            const isActive  = $(this).find('.status-toggle').data('active') == 1;
+            const rowPos    = $(this).find('.badge-navy').first().text().trim();
+            const matchQ    = !q        || text.includes(q);
+            const matchS    = !status   || (status === 'active' && isActive) || (status === 'inactive' && !isActive);
+            const matchP    = !position || rowPos === position;
+            $(this).toggle(matchQ && matchS && matchP);
         });
-        // Grouped view
+
+        // Grouped view cards
         $('.grouped-official-row').each(function () {
-            const text     = $(this).text().toLowerCase();
-            const isActive = $(this).data('active') == 1;
-            const matchQ   = !q || text.includes(q);
-            const matchS   = !status
-                || (status === 'active' && isActive)
-                || (status === 'inactive' && !isActive);
-            $(this).toggle(matchQ && matchS);
+            const text      = $(this).text().toLowerCase();
+            const isActive  = $(this).data('active') == 1;
+            const rowPos    = $(this).closest('.card').find('.card-title').text().trim();
+            const matchQ    = !q        || text.includes(q);
+            const matchS    = !status   || (status === 'active' && isActive) || (status === 'inactive' && !isActive);
+            const matchP    = !position || rowPos.includes(position);
+            $(this).toggle(matchQ && matchS && matchP);
         });
     }
 
@@ -315,10 +318,10 @@ $(document).ready(function () {
         clearTimeout(debounce);
         debounce = setTimeout(filterTable, 250);
     });
-    $('#officialStatusFilter').on('change', filterTable);
+    $('#officialPositionFilter, #officialStatusFilter').on('change', filterTable);
     $('#officialResetBtn').on('click', function () {
         $('#officialSearch').val('');
-        $('#officialStatusFilter').val(null).trigger('change');
+        $('#officialPositionFilter, #officialStatusFilter').val(null).trigger('change');
         filterTable();
     });
 
