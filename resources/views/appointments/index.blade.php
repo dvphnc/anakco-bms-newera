@@ -53,14 +53,14 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter',['Ready'])">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-box-open"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-box-open"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($readyCount) }}</div>
             <div class="stat-label">Ready for Pick-up</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter',['Released'])">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-circle-check"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($releasedCount) }}</div>
             <div class="stat-label">Released</div>
