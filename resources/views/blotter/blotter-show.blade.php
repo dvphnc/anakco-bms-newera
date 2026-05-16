@@ -250,8 +250,8 @@
 ============================================= --}}
 <div class="print-only" id="blotter-report">
 @php
-    $officialName = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
-    $secretaryName = \App\Models\Official::where('position','Barangay Secretary')->where('is_active',true)->first()?->full_name ?? 'BARANGAY SECRETARY';
+    $officialName  = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'ROBERT S. ROMANO';
+    $secretaryName = \App\Models\Official::where('position','Barangay Secretary')->where('is_active',true)->first()?->full_name ?? 'JOSEPHINE A. FLORES';
 @endphp
 <style>
 @media print {

@@ -472,6 +472,13 @@
                             <div style="border-top:1px solid #000;width:150px"></div>
                         </div>
                     </div>
+                    {{-- Center: secretary countersignature --}}
+                    <div style="text-align:center;min-width:180px">
+                        <div style="height:64px"></div>
+                        <div style="border-top:1px solid #000;margin-bottom:3px"></div>
+                        <div class="cert-punong">{{ $secretaryName }}</div>
+                        <div class="cert-punong-title">Barangay Secretary</div>
+                    </div>
                     {{-- Right: punong signature --}}
                     <div style="text-align:center;min-width:200px">
                         <div style="height:64px"></div>
