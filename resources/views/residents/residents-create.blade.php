@@ -116,7 +116,7 @@
                     Purok <span style="color:var(--crimson)">*</span>
                     <span class="help-icon" data-tippy-content="Select the zone or neighborhood (Purok) where this resident currently lives. Contact the Barangay Secretary if you are unsure which Purok applies.">?</span>
                 </label>
-                <select name="purok_id" class="form-control @error('purok_id') is-invalid @enderror" required>
+                <select name="purok_id" id="s2Purok" class="form-control @error('purok_id') is-invalid @enderror" required>
                     <option value="">Select Purok</option>
                     @foreach($puroks as $purok)
                         <option value="{{ $purok->id }}" {{ old('purok_id') == $purok->id ? 'selected' : '' }}>
@@ -131,7 +131,7 @@
                     Household
                     <span class="help-icon" data-tippy-content="Optional. Link this resident to a registered household. This automatically updates the household's family size count. You can skip this and add it later.">?</span>
                 </label>
-                <select name="household_id" class="form-control @error('household_id') is-invalid @enderror">
+                <select name="household_id" id="s2Household" class="form-control @error('household_id') is-invalid @enderror">
                     <option value="">Select Household (optional)</option>
                     @foreach($households as $hh)
                         <option value="{{ $hh->id }}" {{ old('household_id') == $hh->id ? 'selected' : '' }}>
@@ -157,7 +157,7 @@
                     Residency Status
                     <span class="help-icon" data-tippy-content="'Active' = currently living here. 'Transferred' = moved to another address. 'Deceased' = passed away. Only Active residents appear in document requests.">?</span>
                 </label>
-                <select name="residency_status" class="form-control @error('residency_status') is-invalid @enderror">
+                <select name="residency_status" id="s2ResidencyStatus" class="form-control @error('residency_status') is-invalid @enderror">
                     @foreach(['Active','Deceased','Transferred'] as $s)
                         <option value="{{ $s }}" {{ old('residency_status', 'Active') === $s ? 'selected' : '' }}>{{ $s }}</option>
                     @endforeach
@@ -243,3 +243,38 @@
 </form>
 
 @endsection
+
+@push('scripts')
+<script>
+$(function () {
+    const s2 = { dropdownParent: $('body'), width: '100%' };
+
+    /* Short lists — no search box */
+    $('#s2Gender').select2($.extend({}, s2, {
+        placeholder: 'Select Gender',
+        minimumResultsForSearch: Infinity,
+        allowClear: false
+    }));
+    $('#s2CivilStatus').select2($.extend({}, s2, {
+        placeholder: 'Select Status',
+        minimumResultsForSearch: Infinity,
+        allowClear: false
+    }));
+    $('#s2ResidencyStatus').select2($.extend({}, s2, {
+        placeholder: 'Select Status',
+        minimumResultsForSearch: Infinity,
+        allowClear: false
+    }));
+
+    /* Long lists — searchable */
+    $('#s2Purok').select2($.extend({}, s2, {
+        placeholder: 'Select Purok',
+        allowClear: true
+    }));
+    $('#s2Household').select2($.extend({}, s2, {
+        placeholder: 'Select Household (optional)',
+        allowClear: true
+    }));
+});
+</script>
+@endpush
