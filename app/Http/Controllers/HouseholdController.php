@@ -117,10 +117,48 @@ class HouseholdController extends Controller
         return redirect()->route('households.index')->with('success', 'Household updated successfully.');
     }
 
-    public function destroy(Household $household)
+    public function show(Household $household)
     {
+        $household->load(['purok', 'residents']);
+
+        // Quick-view JSON response for the slide panel
+        if (request()->wantsJson()) {
+            $members = $household->residents->map(function ($r) {
+                return [
+                    'full_name'         => $r->full_name,
+                    'age'               => $r->age ?? '—',
+                    'gender'            => $r->gender ?? '—',
+                    'is_household_head' => (bool) $r->is_household_head,
+                    'is_voter'          => (bool) $r->is_voter,
+                    'photo_url'         => $r->photo_path ? asset('storage/' . $r->photo_path) : null,
+                    'initials'          => strtoupper(substr($r->first_name, 0, 1) . substr($r->last_name, 0, 1)),
+                ];
+            });
+
+            return response()->json([
+                'household_number'   => $household->household_number,
+                'address'            => $household->address,
+                'purok'              => $household->purok?->name ?? '—',
+                'family_size'        => $household->family_size ?? 0,
+                'is_voter_household' => (bool) $household->is_voter_household,
+                'members'            => $members,
+                'show_url'           => route('households.show', $household),
+                'edit_url'           => route('households.edit', $household),
+            ]);
+        }
+
+        return view('households.households-show', compact('household'));
+    }
+
+    public function destroy(Request $request, Household $household)
+    {
+        $number = $household->household_number;
         $this->logActivity('deleted', $household);
         $household->delete();
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => "Household {$number} has been removed."]);
+        }
 
         return redirect()->route('households.index')->with('success', 'Household deleted successfully.');
     }
