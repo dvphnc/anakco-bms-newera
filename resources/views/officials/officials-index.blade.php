@@ -69,6 +69,15 @@
                 </div>
             </div>
             <div class="form-group">
+                <label class="form-label">Position</label>
+                <select id="officialPositionFilter">
+                    <option value=""></option>
+                    @foreach($officials->pluck('position')->unique()->sort()->values() as $pos)
+                        <option value="{{ $pos }}">{{ $pos }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
                 <label class="form-label">Status</label>
                 <select id="officialStatusFilter">
                     <option value="">All</option>
@@ -265,14 +274,15 @@ $(document).ready(function () {
     const savedView = localStorage.getItem('officials_view') || 'list';
     setOfficialView(savedView);
 
-    /* Select2 for status filter */
-    $('#officialStatusFilter').select2({
+    /* Select2 for position + status filters */
+    const s2off = {
         dropdownParent: $('body'),
-        placeholder: 'All',
         allowClear: true,
-        width: '160px',
-        minimumResultsForSearch: -1
-    });
+        width: '100%',
+        minimumResultsForSearch: Infinity
+    };
+    $('#officialPositionFilter').select2($.extend({}, s2off, { placeholder: 'All Positions' }));
+    $('#officialStatusFilter').select2($.extend({}, s2off, { placeholder: 'All Statuses' }));
 
     /* Client-side search + status filter (list + grouped views) */
     function filterTable() {

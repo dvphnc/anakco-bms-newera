@@ -17,6 +17,8 @@ class HouseholdController extends Controller
         if ($request->ajax()) {
             $query = Household::with(['purok'])
                 ->when($request->purok_id, fn ($q) => $q->where('purok_id', $request->purok_id))
+                ->when($request->voter === 'yes', fn ($q) => $q->where('is_voter_household', true))
+                ->when($request->voter === 'no',  fn ($q) => $q->where('is_voter_household', false))
                 ->select('households.*');
 
             return DataTables::of($query)
