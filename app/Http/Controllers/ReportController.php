@@ -101,11 +101,12 @@ class ReportController extends Controller
         $generatedAt = now()->format('F d, Y \a\t h:i A');
         $generatedBy = auth()->user()->name;
         $officialName = Official::where('position', 'Punong Barangay')->where('is_active', true)->first()?->full_name ?? 'ROBERT S. ROMANO';
+        $secretaryName = Official::where('position', 'Barangay Secretary')->where('is_active', true)->first()?->full_name ?? 'JOSEPHINE A. FLORES';
 
         $pdf = Pdf::loadView('reports.pdf', compact(
             'type', 'module', 'year', 'periodLabel',
             'startDate', 'endDate', 'data',
-            'generatedAt', 'generatedBy', 'officialName'
+            'generatedAt', 'generatedBy', 'officialName', 'secretaryName'
         ))->setPaper('a4', 'portrait');
 
         $filename = strtolower("{$type}_{$module}_report_{$year}").

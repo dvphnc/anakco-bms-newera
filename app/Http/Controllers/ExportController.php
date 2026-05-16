@@ -291,7 +291,7 @@ class ExportController extends Controller
                     ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
                     ->orderBy('business_name')->get();
 
-                return Pdf::loadView('exports.pdf.businesses', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'filters'))
+                return Pdf::loadView('exports.pdf.businesses', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters'))
                     ->setPaper('a4', 'landscape')->stream("businesses-{$date}.pdf");
 
             case 'committees':
@@ -333,7 +333,9 @@ class ExportController extends Controller
         $generatedAt = now()->format('F d, Y \a\t h:i A');
         $generatedBy = auth()->user()->name;
         $officialName = \App\Models\Official::where('position', 'Punong Barangay')
-            ->where('is_active', true)->first()?->full_name ?? 'PUNONG BARANGAY';
+            ->where('is_active', true)->first()?->full_name ?? 'ROBERT S. ROMANO';
+        $secretaryName = \App\Models\Official::where('position', 'Barangay Secretary')
+            ->where('is_active', true)->first()?->full_name ?? 'JOSEPHINE A. FLORES';
 
         // Gather all analytics data
         $totalResidents = Resident::count();
@@ -361,7 +363,7 @@ class ExportController extends Controller
 
         if ($format === 'pdf') {
             return Pdf::loadView('exports.pdf.analytics', compact(
-                'generatedAt', 'generatedBy', 'officialName',
+                'generatedAt', 'generatedBy', 'officialName', 'secretaryName',
                 'totalResidents', 'totalActive', 'totalDeceased', 'totalTransferred',
                 'totalMale', 'totalFemale', 'totalHouseholds',
                 'totalVoters', 'totalSeniors', 'totalPwd', 'totalSoloParent', 'total4ps',
