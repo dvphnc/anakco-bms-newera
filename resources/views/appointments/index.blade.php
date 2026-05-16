@@ -437,48 +437,5 @@ function saveAptStatus() {
         });
 }
 
-/* ── Shepherd.js Tour ─────────────────────────────────────────────── */
-(function () {
-    const TOUR_KEY = 'bms_tour_appointments_v1_{{ auth()->id() }}';
-    if (localStorage.getItem(TOUR_KEY)) return;
-    if (typeof Shepherd === 'undefined') return;
-
-    const tour = new Shepherd.Tour({
-        defaultStepOptions: { cancelIcon: { enabled: false }, scrollTo: { behavior: 'smooth', block: 'center' } },
-        useModalOverlay: true,
-    });
-
-    const skipBtn = {
-        text: '<i class="fas fa-forward"></i> Skip Tour',
-        classes: 'shepherd-button-secondary',
-        action: function () {
-            Swal.fire({
-                title: 'Skip this tour?',
-                text: 'You can clear your browser\'s local storage to see it again.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#0D2144',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Yes, skip it',
-                cancelButtonText: 'Continue tour',
-            }).then(function (result) {
-                if (result.isConfirmed) { localStorage.setItem(TOUR_KEY, new Date().toISOString()); tour.cancel(); }
-                else { tour.show(tour.getCurrentStep().id); }
-            });
-        },
-    };
-
-    tour.addStep({ id: 'header', title: '<i class="fas fa-calendar-check" style="color:var(--gold)"></i>&nbsp; Document Appointments', text: 'Residents can request documents through the public portal. Their appointments appear here for staff to track, process, and release.', attachTo: { element: '#tour-header', on: 'bottom' }, buttons: [skipBtn, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'stats', title: '<i class="fas fa-chart-bar" style="color:var(--gold)"></i>&nbsp; Status Overview', text: 'Click any stat card to filter appointments by status. Keep an eye on <strong>Ready</strong> — those documents are waiting for the resident to pick up.', attachTo: { element: '#tour-stats', on: 'bottom' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'filters', title: '<i class="fas fa-sliders" style="color:var(--gold)"></i>&nbsp; Filter Appointments', text: 'Filter by status and document type. The search box finds appointments by resident name or appointment number instantly — no page reload.', attachTo: { element: '#tour-filters', on: 'bottom' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'table', title: '<i class="fas fa-rotate" style="color:var(--gold)"></i>&nbsp; Update Status Inline', text: 'Click the <strong>🔄 rotate icon</strong> to update an appointment\'s status and add notes for the resident — the portal shows these notes automatically so residents stay informed.', attachTo: { element: '#tour-table', on: 'top' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'portal', title: '<i class="fas fa-external-link-alt" style="color:var(--gold)"></i>&nbsp; Resident Portal', text: 'Click <strong>View Portal</strong> to see what residents see when they submit requests or track their appointment. Useful for explaining the process to them.', attachTo: { element: '#tour-portal', on: 'left' }, buttons: [{ text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: '<i class="fas fa-check"></i> Got it!', action: tour.complete, classes: 'shepherd-button-primary' }] });
-
-    tour.on('complete', function () {
-        localStorage.setItem(TOUR_KEY, new Date().toISOString());
-        bmsToast('Tour complete! You\'re all set.', 'success');
-    });
-    setTimeout(function () { tour.start(); }, 900);
-})();
 </script>
 @endpush
