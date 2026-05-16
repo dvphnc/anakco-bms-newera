@@ -63,7 +63,7 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Gender <span style="color:var(--crimson)">*</span></label>
-                <select name="gender" class="form-control @error('gender') is-invalid @enderror" required>
+                <select name="gender" id="s2Gender" class="form-control @error('gender') is-invalid @enderror" required>
                     <option value="">Select Gender</option>
                     <option value="Male"   {{ old('gender') === 'Male'   ? 'selected' : '' }}>Male</option>
                     <option value="Female" {{ old('gender') === 'Female' ? 'selected' : '' }}>Female</option>
@@ -75,7 +75,7 @@
                     Civil Status <span style="color:var(--crimson)">*</span>
                     <span class="help-icon" data-tippy-content="Current marital status. 'Annulled' means a marriage was legally voided by court. This affects eligibility for some barangay programs.">?</span>
                 </label>
-                <select name="civil_status" class="form-control @error('civil_status') is-invalid @enderror" required>
+                <select name="civil_status" id="s2CivilStatus" class="form-control @error('civil_status') is-invalid @enderror" required>
                     <option value="">Select Status</option>
                     @foreach(['Single','Married','Widowed','Separated','Annulled'] as $s)
                         <option value="{{ $s }}" {{ old('civil_status') === $s ? 'selected' : '' }}>{{ $s }}</option>
