@@ -164,13 +164,16 @@
 </style>
 <script>
 $(document).ready(function () {
-    $('#purokFilter').select2({
-        dropdownParent: $('body'),
+    const s2 = { dropdownParent: $('body'), allowClear: true, width: '100%' };
+
+    $('#purokFilter').select2($.extend({}, s2, {
         placeholder: 'All Puroks',
-        allowClear: true,
-        width: '100%',
-        minimumResultsForSearch: -1
-    });
+        minimumResultsForSearch: Infinity
+    }));
+    $('#voterFilter').select2($.extend({}, s2, {
+        placeholder: 'All',
+        minimumResultsForSearch: Infinity
+    }));
 
     var table = $('#householdsTable').DataTable({
         processing: true,
@@ -179,6 +182,7 @@ $(document).ready(function () {
             url: '{{ route('households.index') }}',
             data: function (d) {
                 d.purok_id = $('#purokFilter').val();
+                d.voter    = $('#voterFilter').val();
                 d.search   = { value: $('#searchInput').val() };
             }
         },
@@ -200,10 +204,10 @@ $(document).ready(function () {
         clearTimeout(searchTimer);
         searchTimer = setTimeout(() => table.ajax.reload(), 380);
     });
-    $('#purokFilter').on('change', function () { table.ajax.reload(); });
+    $('#purokFilter, #voterFilter').on('change', function () { table.ajax.reload(); });
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
-        $('#purokFilter').val(null).trigger('change');
+        $('#purokFilter, #voterFilter').val(null).trigger('change');
         table.ajax.reload();
     });
 
