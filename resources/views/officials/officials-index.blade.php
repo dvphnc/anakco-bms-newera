@@ -275,7 +275,7 @@ $(document).ready(function () {
     setOfficialView(savedView);
 
     /* Select2 for position + status filters */
-    const s2off = { dropdownParent: $('body'), allowClear: true, width: '100%' };
+    const s2off = { dropdownParent: $('body'), allowClear: true, width: '100%', minimumResultsForSearch: 0 };
     $('#officialPositionFilter').select2($.extend({}, s2off, { placeholder: 'All Positions' }));
     $('#officialStatusFilter').select2($.extend({}, s2off, { placeholder: 'All Statuses' }));
 
