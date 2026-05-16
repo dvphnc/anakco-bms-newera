@@ -205,6 +205,37 @@ $(document).ready(function () {
         const url = $(this).attr('href');
         openHhPanel(url);
     });
+
+    /* Axios DELETE — household row removal */
+    $('#householdsTable').on('click', 'form button[type="submit"]', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        const btn  = $(this);
+        const form = btn.closest('form');
+        const url  = form.attr('action');
+
+        bmsConfirm({
+            title:   'Delete Household',
+            message: 'Delete this household? This cannot be undone.',
+            ok:      'Delete',
+        }, function () {
+            const icon = btn.find('i');
+            const orig = icon.attr('class');
+            icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
+            btn.prop('disabled', true);
+
+            axios.delete(url, { headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } })
+                .then(() => {
+                    table.row(form.closest('tr')).remove().draw(false);
+                })
+                .catch(() => {
+                    icon.attr('class', orig).css('color', '');
+                    btn.prop('disabled', false);
+                    alert('Could not delete household. Please try again.');
+                });
+        });
+    });
 });
 
 function openHhPanel(url) {

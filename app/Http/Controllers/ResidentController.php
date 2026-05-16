@@ -92,13 +92,20 @@ class ResidentController extends Controller
                 })
                 ->addColumn('status_col', function ($r) {
                     $cls = match ($r->residency_status) {
-                        'Active' => 'badge-green',
-                        'Deceased' => 'badge-gray',
+                        'Active'      => 'badge-green',
                         'Transferred' => 'badge-yellow',
-                        default => 'badge-gray'
+                        default       => 'badge-gray',
                     };
+                    // Deceased is terminal — no toggle
+                    if ($r->residency_status === 'Deceased') {
+                        return '<span class="badge badge-gray">Deceased</span>';
+                    }
 
-                    return '<span class="badge '.$cls.'">'.$r->residency_status.'</span>';
+                    return '<button class="badge '.$cls.' res-status-toggle"
+                                    data-id="'.$r->id.'"
+                                    data-status="'.e($r->residency_status).'"
+                                    style="border:none;cursor:pointer;font-family:inherit"
+                                    title="Click to toggle: Active ↔ Transferred">'.e($r->residency_status).'</button>';
                 })
                 ->addColumn('actions', function ($r) {
                     $show      = route('residents.show', $r);

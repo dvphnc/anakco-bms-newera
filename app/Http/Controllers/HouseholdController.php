@@ -35,12 +35,12 @@ class HouseholdController extends Controller
 
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
-                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-eye"></i></a>
-                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-pen"></i></a>
-                            <form method="POST" action="'.$delete.'" onsubmit="return confirm(\'Delete this household?\')">
+                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View"><i class="fas fa-eye"></i></a>
+                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
+                            <form method="POST" action="'.$delete.'">
                                 <input type="hidden" name="_token" value="'.csrf_token().'">
                                 <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
                             </form>
                         </div>';
                 })
