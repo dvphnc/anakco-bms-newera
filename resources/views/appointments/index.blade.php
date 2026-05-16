@@ -1,5 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Document Appointments')
+@section('page-title', 'Document Appointments')
+@section('page-subtitle', 'Resident document request scheduling')
 @section('content')
 
 <div class="page-header" id="tour-header">

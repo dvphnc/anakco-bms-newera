@@ -1,5 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Blotter Cases')
+@section('page-title', 'Blotter Cases')
+@section('page-subtitle', 'Incident and complaint records')
 @section('content')
 
 <div class="page-header" id="tour-header">

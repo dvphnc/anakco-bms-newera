@@ -1,5 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Business Permits')
+@section('page-title', 'Business Permits')
+@section('page-subtitle', 'Registered businesses in Barangay New Era')
 @section('content')
 
 <div class="page-header" id="tour-header">

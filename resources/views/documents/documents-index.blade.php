@@ -1,5 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Documents')
+@section('page-title', 'Document Issuance')
+@section('page-subtitle', 'Barangay certificates and clearances')
 @section('content')
 
 <div class="page-header" id="tour-header">
