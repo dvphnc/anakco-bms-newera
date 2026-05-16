@@ -227,6 +227,14 @@
 }
 /* Filter panel transition */
 #filterPanel { transition: none; }
+
+/* Audit B — Condensed row density */
+#residentsTable td,
+#residentsTable th { padding: 7px 11px !important; font-size: 13px; }
+#residentsTable td .res-avatar {
+    width: 26px !important; height: 26px !important; font-size: 10px !important;
+}
+#residentsTable td .res-phone { display: none; }
 </style>
 
 <script>
