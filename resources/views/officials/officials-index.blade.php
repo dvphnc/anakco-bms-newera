@@ -104,8 +104,58 @@
     </div>
 </div>
 
+{{-- Grouped view panel (hidden by default) --}}
+<div id="groupedView" style="display:none">
+@php
+    $grouped = $officials->groupBy('position')->sortByDesc(fn($g) => in_array($g->first()->position, ['Punong Barangay','Barangay Captain']) ? 999 : 0);
+@endphp
+@foreach($grouped as $position => $group)
+    @php $isPunong = in_array($position, ['Punong Barangay','Barangay Captain']); @endphp
+    <div class="card mb-4" style="{{ $isPunong ? 'border-left:4px solid var(--gold)' : '' }}">
+        <div class="card-header" style="{{ $isPunong ? 'background:linear-gradient(90deg,var(--navy),var(--navy-mid))' : '' }}">
+            <span class="card-title" style="{{ $isPunong ? 'color:#fff' : '' }}">
+                <i class="fas {{ $isPunong ? 'fa-star' : 'fa-user-tie' }}"
+                   style="color:{{ $isPunong ? 'var(--gold-light)' : 'var(--navy)' }}"></i>
+                {{ $position }}
+            </span>
+            <span style="font-size:12px;font-weight:600;
+                         color:{{ $isPunong ? 'rgba(255,255,255,0.55)' : 'var(--text-muted)' }}">
+                {{ $group->count() }} {{ Str::plural('member', $group->count()) }}
+            </span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--border)">
+            @foreach($group as $off)
+            <div class="grouped-official-row" data-active="{{ $off->is_active ? '1' : '0' }}"
+                 style="background:var(--surface);padding:14px 18px;display:flex;align-items:center;gap:12px">
+                <div style="width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;
+                            background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+                            display:flex;align-items:center;justify-content:center;
+                            font-weight:700;color:#fff;font-size:13px">
+                    @if($off->photo_path)
+                        <img src="{{ asset('storage/'.$off->photo_path) }}" style="width:100%;height:100%;object-fit:cover">
+                    @else
+                        {{ strtoupper(substr($off->full_name ?? 'O', 0, 1)) }}
+                    @endif
+                </div>
+                <div style="flex:1;min-width:0">
+                    <div style="font-size:13px;font-weight:600;color:var(--text)">{{ $off->full_name }}</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:1px">
+                        {{ $off->committee ?? 'No committee' }}
+                        @if($off->term_start) · {{ \Carbon\Carbon::parse($off->term_start)->format('Y') }}–{{ $off->term_end ? \Carbon\Carbon::parse($off->term_end)->format('Y') : 'present' }} @endif
+                    </div>
+                </div>
+                <span class="badge {{ $off->is_active ? 'badge-green' : 'badge-gray' }}" style="flex-shrink:0">
+                    {{ $off->is_active ? 'Active' : 'Inactive' }}
+                </span>
+            </div>
+            @endforeach
+        </div>
+    </div>
+@endforeach
+</div>
+
 {{-- Table — $officials is a plain collection from controller --}}
-<div class="card">
+<div id="listView" class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-user-tie"></i> Officials List</span>
         <span style="font-size:13px;color:var(--text-muted)">{{ $officials->count() }} officials</span>
@@ -192,7 +242,7 @@
             </tbody>
         </table>
     </div>
-</div>
+</div>{{-- end #listView --}}
 
 @endsection
 
