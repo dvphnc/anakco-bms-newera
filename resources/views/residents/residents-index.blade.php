@@ -264,12 +264,11 @@ $(document).ready(function () {
     };
 
     $('#purokFilter').select2($.extend({}, s2Base, { placeholder: 'All Puroks' }));
-    $('#genderFilter').select2($.extend({}, s2Base, { placeholder: 'All Genders', minimumResultsForSearch: -1 }));
-    $('#statusFilter').select2($.extend({}, s2Base, { placeholder: 'All Statuses', minimumResultsForSearch: -1 }));
-    $('#civilStatusFilter').select2($.extend({}, s2Base, { placeholder: 'Any Civil Status', minimumResultsForSearch: -1 }));
+    $('#genderFilter').select2($.extend({}, s2Base, { placeholder: 'All Genders' }));
+    $('#statusFilter').select2($.extend({}, s2Base, { placeholder: 'All Statuses' }));
+    $('#civilStatusFilter').select2($.extend({}, s2Base, { placeholder: 'Any Civil Status' }));
     $('#tagsFilter').select2($.extend({}, s2Base, {
         placeholder: 'Filter by classification…',
-        minimumResultsForSearch: -1,
         closeOnSelect: false,
         allowClear: false
     }));
