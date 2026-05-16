@@ -76,37 +76,37 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Active'])">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-check-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Active']) }}</div>
             <div class="stat-label">Active Permits</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer;border-color:#fde68a" onclick="quickFilter('expiryFilter', 'expiring_soon')">
-        <div class="stat-icon" style="background:#fffbeb;color:#b45309"><i class="fas fa-clock"></i></div>
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('expiryFilter', 'expiring_soon')">
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-clock"></i></div>
         <div class="stat-info">
-            <div class="stat-number" style="color:#b45309">{{ number_format($summaryCounts['ExpiringSoon']) }}</div>
+            <div class="stat-number">{{ number_format($summaryCounts['ExpiringSoon']) }}</div>
             <div class="stat-label">Expiring in 30 Days</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer;border-color:#fecaca" onclick="quickFilter('expiryFilter', 'expired')">
-        <div class="stat-icon" style="background:#fef2f2;color:#ef4444"><i class="fas fa-triangle-exclamation"></i></div>
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('expiryFilter', 'expired')">
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-triangle-exclamation"></i></div>
         <div class="stat-info">
-            <div class="stat-number" style="color:#ef4444">{{ number_format($summaryCounts['Overdue']) }}</div>
+            <div class="stat-number">{{ number_format($summaryCounts['Overdue']) }}</div>
             <div class="stat-label">Overdue (Active)</div>
         </div>
     </div>
 </div>
 <div class="grid-2 mb-6">
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Expired'])">
-        <div class="stat-icon" style="background:rgba(155,28,28,0.08);color:#9B1C1C"><i class="fas fa-times-circle"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-times-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Expired']) }}</div>
             <div class="stat-label">Marked Expired</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Suspended'])">
-        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-pause-circle"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-pause-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Suspended']) }}</div>
             <div class="stat-label">Suspended</div>

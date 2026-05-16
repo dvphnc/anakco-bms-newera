@@ -46,7 +46,7 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter',['Pending'])">
-        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-hourglass-half"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-hourglass-half"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($pendingCount) }}</div>
             <div class="stat-label">Pending</div>
