@@ -108,11 +108,19 @@ tr.row-expiring td { background:#fffbeb !important; }
         <em>This document is confidential. For official use only.</em><br>
         Barangay New Era Management System
     </div>
-    <div class="sig-line">
-        <div style="height:28px"></div>
-        <div class="line"></div>
-        <div class="name">{{ $officialName }}</div>
-        <div class="title">Punong Barangay</div>
+    <div style="display:flex;gap:40px;align-items:flex-end">
+        <div class="sig-line">
+            <div style="height:28px"></div>
+            <div class="line"></div>
+            <div class="name">{{ $secretaryName }}</div>
+            <div class="title">Barangay Secretary</div>
+        </div>
+        <div class="sig-line">
+            <div style="height:28px"></div>
+            <div class="line"></div>
+            <div class="name">{{ $officialName }}</div>
+            <div class="title">Punong Barangay</div>
+        </div>
     </div>
 </div>
 </body>
