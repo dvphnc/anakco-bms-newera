@@ -61,19 +61,20 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #111; }
 
 /* Table */
 table { width: 100%; border-collapse: collapse; font-size: 7.5pt; }
+thead { display: table-header-group; }
 thead tr th {
     background: #0D2144;
     color: #fff;
-    padding: 6px 7px;
+    padding: 6px 8px;
     text-align: left;
     font-size: 7pt;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     border: 1px solid #0a1a36;
 }
+tbody tr { page-break-inside: avoid; }
 tbody tr:nth-child(odd)  { background: #fff; }
 tbody tr:nth-child(even) { background: #f5f7fa; }
-tbody tr:hover { background: #eef1f6; }
 tbody td {
     padding: 5px 7px;
     border-bottom: 1px solid #e5e7eb;
