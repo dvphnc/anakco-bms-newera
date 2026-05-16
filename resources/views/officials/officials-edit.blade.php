@@ -118,12 +118,7 @@
 @push('scripts')
 <script>
 $(function () {
-    const s2 = {
-        dropdownParent: $('body'),
-        width: '100%',
-        minimumResultsForSearch: Infinity,
-        allowClear: false
-    };
+    const s2 = { dropdownParent: $('body'), width: '100%', allowClear: false };
     $('#s2Position').select2($.extend({}, s2, { placeholder: 'Select Position' }));
     $('#s2Committee').select2($.extend({}, s2, { placeholder: 'None / N/A', allowClear: true }));
 });
