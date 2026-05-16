@@ -3,7 +3,7 @@
 <?php $__env->startSection('page-subtitle', 'Barangay certificates and clearances'); ?>
 <?php $__env->startSection('content'); ?>
 
-<div class="page-header" id="tour-header">
+<div class="page-header">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
             <h1 class="page-title">Document Issuance</h1>
@@ -19,20 +19,20 @@
         </span>
     </div>
     <div class="page-actions">
-        <a href="<?php echo e(route('export.pdf', 'documents')); ?>" class="btn btn-secondary" title="Export PDF" id="tour-export">
+        <a href="<?php echo e(route('export.pdf', 'documents')); ?>" class="btn btn-secondary" title="Export PDF">
             <i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF
         </a>
         <a href="<?php echo e(route('export.excel', 'documents')); ?>" class="btn btn-secondary" title="Export Excel">
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
-        <a href="<?php echo e(route('documents.create')); ?>" class="btn btn-primary" id="tour-issue">
+        <a href="<?php echo e(route('documents.create')); ?>" class="btn btn-primary">
             <i class="fas fa-file-circle-plus"></i> Issue Document
         </a>
     </div>
 </div>
 
 
-<div class="grid-4 mb-6" id="tour-stats">
+<div class="grid-4 mb-6">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-file-lines"></i></div>
         <div class="stat-info">
@@ -41,7 +41,7 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Pending')">
-        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-hourglass-half"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-hourglass-half"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format(\App\Models\Document::where('status','Pending')->count())); ?></div>
             <div class="stat-label">Pending</div>
@@ -55,7 +55,7 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Released')">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-circle-check"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format(\App\Models\Document::where('status','Released')->count())); ?></div>
             <div class="stat-label">Released</div>
@@ -64,7 +64,7 @@
 </div>
 
 
-<div class="card mb-6" id="tour-filters">
+<div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('documents')">
         <div style="display:flex;align-items:center;gap:10px">
             <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
@@ -112,7 +112,7 @@
     </div>
 </div>
 
-<div class="card" id="tour-table">
+<div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-file-lines"></i> Document Records</span>
     </div>
@@ -188,6 +188,11 @@
 <?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
+/* ── SaaS surface & stat card polish ──────────────────────────────── */
+.main-content { background: #F8F9FA; }
+.stat-card { background: #FFFFFF !important; box-shadow: 0 1px 4px rgba(13,33,68,0.07), 0 4px 16px rgba(13,33,68,0.04); }
+.stat-label { font-size: 12px; color: var(--text-subtle); font-weight: 500; letter-spacing: 0.02em; }
+.stat-number { font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1.1; }
 #documentsTable_wrapper .dataTables_length,
 #documentsTable_wrapper .dataTables_filter { display:none; }
 #documentsTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
@@ -433,88 +438,6 @@ function saveDocStatus() {
         });
 }
 
-/* ── Shepherd.js Tour ─────────────────────────────────────────────── */
-(function () {
-    const TOUR_KEY = 'bms_tour_documents_v1_<?php echo e(auth()->id()); ?>';
-    if (localStorage.getItem(TOUR_KEY)) return;
-    if (typeof Shepherd === 'undefined') return;
-
-    const tour = new Shepherd.Tour({
-        defaultStepOptions: {
-            cancelIcon: { enabled: false },
-            scrollTo: { behavior: 'smooth', block: 'center' },
-        },
-        useModalOverlay: true,
-    });
-
-    const skipBtn = {
-        text: '<i class="fas fa-forward"></i> Skip Tour',
-        action: function () {
-            Swal.fire({
-                title: 'Skip this tour?',
-                text: 'You can re-enable it by clearing your browser\'s local storage.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#0D2144',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Yes, skip it',
-                cancelButtonText: 'Continue tour',
-                customClass: { popup: 'swal-poppins' },
-            }).then(function (result) {
-                if (result.isConfirmed) {
-                    localStorage.setItem(TOUR_KEY, new Date().toISOString());
-                    tour.cancel();
-                } else {
-                    tour.show(tour.getCurrentStep().id);
-                }
-            });
-        },
-        classes: 'shepherd-button-secondary',
-    };
-
-    tour.addStep({
-        id: 'step-header',
-        title: '<i class="fas fa-file-lines" style="color:var(--gold)"></i>&nbsp; Document Issuance',
-        text: 'This page manages all barangay document requests — clearances, certificates, and more. Staff can issue, track, and update document status from here.',
-        attachTo: { element: '#tour-header', on: 'bottom' },
-        buttons: [skipBtn, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }],
-    });
-    tour.addStep({
-        id: 'step-stats',
-        title: '<i class="fas fa-chart-bar" style="color:var(--gold)"></i>&nbsp; Status Summary',
-        text: 'Click any stat card to instantly filter the table by that status. The numbers update in real time as you issue and release documents.',
-        attachTo: { element: '#tour-stats', on: 'bottom' },
-        buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }],
-    });
-    tour.addStep({
-        id: 'step-filters',
-        title: '<i class="fas fa-sliders" style="color:var(--gold)"></i>&nbsp; Smart Filters',
-        text: 'Expand the filter panel to search by document type, status, or resident name. Active filters are shown as a badge. Filters are saved in the URL for easy sharing.',
-        attachTo: { element: '#tour-filters', on: 'bottom' },
-        buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }],
-    });
-    tour.addStep({
-        id: 'step-table',
-        title: '<i class="fas fa-table" style="color:var(--gold)"></i>&nbsp; Document Records',
-        text: 'The table loads instantly with server-side processing. Use the <strong>🔄 rotate icon</strong> to update a document\'s status in one click — no page reload needed. The <strong>🗑 trash icon</strong> deletes with a confirmation prompt.',
-        attachTo: { element: '#tour-table', on: 'top' },
-        buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }],
-    });
-    tour.addStep({
-        id: 'step-issue',
-        title: '<i class="fas fa-file-circle-plus" style="color:var(--gold)"></i>&nbsp; Issue a Document',
-        text: 'Click <strong>Issue Document</strong> to open the issuance form. Resident data auto-fills age, gender, civil status, and birthdate on the printed certificate.',
-        attachTo: { element: '#tour-issue', on: 'left' },
-        buttons: [{ text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: '<i class="fas fa-check"></i> Got it!', action: tour.complete, classes: 'shepherd-button-primary' }],
-    });
-
-    tour.on('complete', function () {
-        localStorage.setItem(TOUR_KEY, new Date().toISOString());
-        bmsToast('Tour complete! You\'re all set.', 'success');
-    });
-
-    setTimeout(function () { tour.start(); }, 900);
-})();
 </script>
 <?php $__env->stopPush(); ?>
 

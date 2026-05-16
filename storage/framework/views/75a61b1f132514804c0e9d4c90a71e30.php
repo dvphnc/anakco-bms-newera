@@ -29,7 +29,7 @@
             --crimson-mid:   #9B1C1C;
             --crimson-pale:  rgba(155,28,28,0.07);
             --crimson-border:rgba(155,28,28,0.18);
-            --bg:            #F3F5F8;
+            --bg:            #F8F9FA;
             --surface:       #FFFFFF;
             --surface2:      #F7F9FB;
             --surface3:      #ECF0F5;
@@ -272,12 +272,12 @@
         .form-section-title { font-size:13px; font-weight:700; color:var(--navy); letter-spacing:0.04em; text-transform:uppercase; padding-bottom:10px; border-bottom:1px solid var(--gold-border); margin-bottom:18px; }
         .form-actions { display:flex; align-items:center; gap:10px; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; }
 
-        .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:22px; display:flex; align-items:center; gap:18px; box-shadow:var(--shadow-sm); transition:border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
-        .stat-card:hover { border-color:var(--gold-border); box-shadow:var(--shadow-gold); transform:translateY(-2px); }
+        .stat-card { background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-lg); padding:22px; display:flex; align-items:center; gap:18px; box-shadow:0 1px 4px rgba(13,33,68,0.07),0 4px 16px rgba(13,33,68,0.04); transition:border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
+        .stat-card:hover { border-color:var(--gold-border); box-shadow:0 4px 20px rgba(200,134,26,0.14),0 1px 4px rgba(13,33,68,0.08); transform:translateY(-2px); }
         .stat-icon { width:52px; height:52px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
         .stat-info { flex:1; min-width:0; }
-        .stat-number { font-size:30px; font-weight:700; color:var(--navy); line-height:1; }
-        .stat-label  { font-size:13px; color:var(--text-muted); margin-top:4px; font-weight:400; }
+        .stat-number { font-size:28px; font-weight:700; color:var(--navy); line-height:1.1; }
+        .stat-label  { font-size:12px; color:var(--text-subtle); margin-top:5px; font-weight:500; letter-spacing:0.02em; }
 
         .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
         .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
