@@ -276,8 +276,8 @@
         .stat-card:hover { border-color:var(--gold-border); box-shadow:0 4px 20px rgba(200,134,26,0.14),0 1px 4px rgba(13,33,68,0.08); transform:translateY(-2px); }
         .stat-icon { width:52px; height:52px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
         .stat-info { flex:1; min-width:0; }
-        .stat-number { font-size:30px; font-weight:700; color:var(--navy); line-height:1; }
-        .stat-label  { font-size:13px; color:var(--text-muted); margin-top:4px; font-weight:400; }
+        .stat-number { font-size:28px; font-weight:700; color:var(--navy); line-height:1.1; }
+        .stat-label  { font-size:12px; color:var(--text-subtle); margin-top:5px; font-weight:500; letter-spacing:0.02em; }
 
         .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
         .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
