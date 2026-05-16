@@ -50,18 +50,27 @@ class DocumentController extends Controller
                     return '<span class="badge '.$cls.'">'.$d->status.'</span>';
                 })
                 ->addColumn('actions', function ($d) {
-                    $show = route('documents.show', $d);
-                    $edit = route('documents.edit', $d);
+                    $show   = route('documents.show', $d);
+                    $edit   = route('documents.edit', $d);
                     $delete = route('documents.destroy', $d);
 
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
-                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-eye"></i></a>
-                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-pen"></i></a>
-                            <form method="POST" action="'.$delete.'" onsubmit="return confirm(\'Delete this document?\')">
+                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View"><i class="fas fa-eye"></i></a>
+                            <button class="btn btn-primary btn-sm btn-icon doc-status-btn"
+                                    title="Update Status"
+                                    data-id="'.$d->id.'"
+                                    data-status="'.e($d->status).'">
+                                <i class="fas fa-rotate"></i>
+                            </button>
+                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
+                            <form method="POST" action="'.$delete.'"
+                                  data-confirm="Delete document '.e($d->doc_number).'? This cannot be undone."
+                                  data-confirm-title="Delete Document"
+                                  data-confirm-ok="Delete">
                                 <input type="hidden" name="_token" value="'.csrf_token().'">
                                 <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
                             </form>
                         </div>';
                 })

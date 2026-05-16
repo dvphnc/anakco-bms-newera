@@ -197,10 +197,38 @@ class BlotterController extends Controller
         return redirect()->route('blotter.index')->with('success', 'Blotter case updated successfully.');
     }
 
-    public function destroy(BlotterCase $blotter)
+    public function quickStatus(Request $request, BlotterCase $blotter)
     {
+        $validated = $request->validate([
+            'status'           => 'required|in:Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
+            'resolution_notes' => 'nullable|string|max:1000',
+        ]);
+        if (in_array($validated['status'], ['Settled', 'Closed']) && ! in_array($blotter->status, ['Settled', 'Closed'])) {
+            $validated['settled_at'] = now();
+        }
+        $old = $blotter->getOriginal();
+        $blotter->update($validated);
+        $this->logActivity('updated', $blotter, $old, $blotter->fresh()->toArray());
+
+        return response()->json([
+            'success' => true,
+            'message' => "Case status updated to {$blotter->status}.",
+            'status'  => $blotter->status,
+        ]);
+    }
+
+    public function destroy(Request $request, BlotterCase $blotter)
+    {
+        if ($blotter->file_path) {
+            \Storage::disk('public')->delete($blotter->file_path);
+        }
+        $num = $blotter->case_number;
         $this->logActivity('deleted', $blotter);
         $blotter->delete();
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => "Case {$num} deleted."]);
+        }
 
         return redirect()->route('blotter.index')->with('success', 'Blotter case deleted successfully.');
     }
