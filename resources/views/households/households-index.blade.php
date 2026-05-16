@@ -105,6 +105,38 @@
     </div>
 </div>
 
+{{-- Household Quick View Panel --}}
+<div id="hhQvPanel"
+     style="display:none;opacity:0;position:fixed;inset:0;z-index:9500;
+            align-items:flex-start;justify-content:flex-end;
+            background:rgba(9,20,40,0.45);backdrop-filter:blur(3px);
+            transition:opacity .2s"
+     onclick="if(event.target===this) closeHhPanel()">
+    <div style="width:420px;max-width:95vw;height:100vh;background:var(--surface);
+                overflow-y:auto;box-shadow:-8px 0 40px rgba(0,0,0,0.22);
+                display:flex;flex-direction:column;animation:qvSlideIn .2s ease">
+        <div style="display:flex;align-items:center;justify-content:space-between;
+                    padding:16px 20px;border-bottom:1px solid var(--border);
+                    background:var(--navy);flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:10px">
+                <i class="fas fa-house" style="color:var(--gold);font-size:14px"></i>
+                <span style="font-size:14px;font-weight:700;color:#fff">Household Quick View</span>
+            </div>
+            <button onclick="closeHhPanel()"
+                    style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);
+                           border-radius:var(--radius-sm);width:30px;height:30px;
+                           display:flex;align-items:center;justify-content:center;
+                           color:rgba(255,255,255,0.7);cursor:pointer;font-size:13px">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div id="hhQvBody" style="flex:1"></div>
+    </div>
+</div>
+<style>
+@keyframes qvSlideIn { from { transform:translateX(32px);opacity:0; } to { transform:translateX(0);opacity:1; } }
+</style>
+
 @endsection
 
 @push('styles')
@@ -166,6 +198,90 @@ $(document).ready(function () {
         $('#purokFilter').val(null).trigger('change');
         table.ajax.reload();
     });
+
+    /* Intercept view-button clicks in the DataTable */
+    $('#householdsTable').on('click', 'a.btn-icon[title="View"], a[href*="/households/"][title="View"]', function (e) {
+        e.preventDefault();
+        const url = $(this).attr('href');
+        openHhPanel(url);
+    });
+});
+
+function openHhPanel(url) {
+    const panel = document.getElementById('hhQvPanel');
+    const body  = document.getElementById('hhQvBody');
+    panel.style.display = 'flex';
+    requestAnimationFrame(() => { panel.style.opacity = '1'; });
+    body.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+                    height:200px;gap:12px">
+            <i class="fas fa-spinner fa-spin" style="font-size:24px;color:var(--gold)"></i>
+            <span style="font-size:13px;color:var(--text-muted)">Loading household…</span>
+        </div>`;
+
+    axios.get(url, { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+        .then(({ data: h }) => {
+            const members = (h.members || []).map(m => `
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 0;
+                            border-bottom:1px solid var(--border)">
+                    <div style="width:30px;height:30px;border-radius:50%;flex-shrink:0;overflow:hidden;
+                                background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+                                display:flex;align-items:center;justify-content:center;
+                                font-size:11px;font-weight:700;color:#fff">
+                        ${m.photo_url
+                            ? `<img src="${m.photo_url}" style="width:100%;height:100%;object-fit:cover">`
+                            : m.initials}
+                    </div>
+                    <div style="flex:1;min-width:0">
+                        <div style="font-size:13px;font-weight:600;color:var(--text)">${m.full_name}</div>
+                        <div style="font-size:12px;color:var(--text-muted)">${m.age} yrs · ${m.gender}${m.is_household_head ? ' · <strong style="color:var(--navy)">Head</strong>' : ''}</div>
+                    </div>
+                    ${m.is_voter ? '<span class="badge badge-navy" style="font-size:10px">Voter</span>' : ''}
+                </div>`).join('') || '<div style="padding:20px;text-align:center;color:var(--text-muted)">No members found.</div>';
+
+            body.innerHTML = `
+                <div style="padding:18px 20px 14px;border-bottom:1px solid var(--border)">
+                    <div style="font-size:16px;font-weight:700;color:var(--navy)">${h.household_number}</div>
+                    <div style="font-size:13px;color:var(--text-muted);margin-top:2px">${h.address || '—'}</div>
+                    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+                        <span class="badge badge-navy"><i class="fas fa-location-dot"></i> ${h.purok || '—'}</span>
+                        <span class="badge badge-gray"><i class="fas fa-users"></i> ${h.family_size} member${h.family_size != 1 ? 's' : ''}</span>
+                        ${h.is_voter_household ? '<span class="badge badge-green">Voter HH</span>' : ''}
+                    </div>
+                </div>
+                <div style="padding:14px 20px">
+                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
+                                color:var(--text-subtle);margin-bottom:10px">
+                        <i class="fas fa-users"></i> Members
+                    </div>
+                    ${members}
+                </div>
+                <div style="padding:12px 20px;border-top:1px solid var(--border);
+                            display:flex;gap:8px;background:var(--surface2)">
+                    <a href="${h.show_url}" class="btn btn-primary btn-sm" style="flex:1;justify-content:center">
+                        <i class="fas fa-eye"></i> Full Details
+                    </a>
+                    <a href="${h.edit_url}" class="btn btn-secondary btn-sm btn-icon" title="Edit">
+                        <i class="fas fa-pen"></i>
+                    </a>
+                </div>`;
+        })
+        .catch(() => {
+            body.innerHTML = `<div style="padding:32px;text-align:center;color:var(--crimson)">
+                <i class="fas fa-exclamation-circle" style="font-size:28px;opacity:.5;display:block;margin-bottom:10px"></i>
+                Could not load household data.
+            </div>`;
+        });
+}
+
+function closeHhPanel() {
+    const panel = document.getElementById('hhQvPanel');
+    panel.style.opacity = '0';
+    setTimeout(() => { panel.style.display = 'none'; }, 200);
+}
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeHhPanel();
 });
 </script>
 @endpush
