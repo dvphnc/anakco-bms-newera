@@ -78,9 +78,27 @@
             </div>
             <div class="form-group" style="justify-content:flex-end">
                 <label class="form-label">&nbsp;</label>
-                <button id="officialResetBtn" class="btn btn-secondary">
-                    <i class="fas fa-xmark"></i> Reset
-                </button>
+                <div style="display:flex;gap:6px">
+                    <button id="officialResetBtn" class="btn btn-secondary">
+                        <i class="fas fa-xmark"></i> Reset
+                    </button>
+                    <div style="display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
+                        <button id="viewList" onclick="setOfficialView('list')"
+                                class="btn btn-sm"
+                                style="border-radius:0;border:none;background:var(--navy);color:#fff;
+                                       padding:6px 12px;font-size:12px"
+                                title="List view">
+                            <i class="fas fa-list"></i>
+                        </button>
+                        <button id="viewGrouped" onclick="setOfficialView('grouped')"
+                                class="btn btn-sm"
+                                style="border-radius:0;border:none;background:var(--surface2);color:var(--text-muted);
+                                       padding:6px 12px;font-size:12px"
+                                title="By Position">
+                            <i class="fas fa-layer-group"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

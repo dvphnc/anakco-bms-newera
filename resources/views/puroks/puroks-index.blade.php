@@ -111,12 +111,23 @@
                 @endif
             </div>
 
-            {{-- Description --}}
-            @if($purok->description)
-            <div style="font-size:13px;color:var(--text-muted);padding-top:10px;border-top:1px solid var(--border)">
-                {{ $purok->description }}
+            {{-- Population bar --}}
+            <div style="padding-top:12px;border-top:1px solid var(--border)">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                    <span style="font-size:11px;font-weight:700;text-transform:uppercase;
+                                 letter-spacing:0.07em;color:var(--text-subtle)">
+                        Share of Population
+                    </span>
+                    <span style="font-size:12px;font-weight:700;color:var(--navy)">{{ $pct }}%</span>
+                </div>
+                <div style="background:var(--surface3);border-radius:99px;height:7px;overflow:hidden">
+                    <div style="height:100%;border-radius:99px;background:var(--navy);
+                                width:{{ $pct }}%;transition:width .6s ease;opacity:.75"></div>
+                </div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:5px">
+                    {{ number_format($purok->residents_count) }} of {{ number_format($totalResidents) }} residents
+                </div>
             </div>
-            @endif
         </div>
     </div>
     @endforeach
