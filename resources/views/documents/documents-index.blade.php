@@ -5,9 +5,19 @@
 @section('content')
 
 <div class="page-header" id="tour-header">
-    <div>
-        <h1 class="page-title">Document Issuance</h1>
-        <p class="page-subtitle">Barangay certificates and clearances</p>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div>
+            <h1 class="page-title">Document Issuance</h1>
+            <p class="page-subtitle">Barangay certificates and clearances</p>
+        </div>
+        <span id="headerFilterChip"
+              style="display:none;font-size:11px;font-weight:700;padding:3px 10px;
+                     border-radius:99px;background:var(--gold-pale);color:var(--gold);
+                     border:1px solid var(--gold-border);cursor:pointer"
+              onclick="toggleFilters('documents')"
+              title="Filters active — click to open">
+            <i class="fas fa-sliders"></i> <span id="headerFilterCount"></span> active
+        </span>
     </div>
     <div class="page-actions">
         <a href="{{ route('export.pdf', 'documents') }}" class="btn btn-secondary" title="Export PDF" id="tour-export">
@@ -192,8 +202,10 @@ $(document).ready(function () {
 
     /* ── Select2 init ─────────────────────────────────────────────────── */
     const s2Multi  = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
+                       minimumResultsForSearch: 0,
                        language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
     const s2Single = { dropdownParent: $('body'), allowClear: true,  width: '100%',
+                       minimumResultsForSearch: 0,
                        language: { noResults: () => 'No matches' } };
 
     $('#typeFilter').select2($.extend({}, s2Multi,  { placeholder: 'All document types…' }));
