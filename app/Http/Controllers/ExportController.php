@@ -248,6 +248,8 @@ class ExportController extends Controller
         $generatedBy = auth()->user()->name;
         $officialName = \App\Models\Official::where('position', 'Punong Barangay')
             ->where('is_active', true)->first()?->full_name ?? 'ROBERT S. ROMANO';
+        $secretaryName = \App\Models\Official::where('position', 'Barangay Secretary')
+            ->where('is_active', true)->first()?->full_name ?? 'JOSEPHINE A. FLORES';
 
         switch ($module) {
             case 'residents':
@@ -257,7 +259,7 @@ class ExportController extends Controller
                     ->when($filters['purok_id'] ?? null, fn ($q, $v) => $q->where('purok_id', $v))
                     ->orderBy('last_name')->get();
 
-                return Pdf::loadView('exports.pdf.residents', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'filters'))
+                return Pdf::loadView('exports.pdf.residents', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters'))
                     ->setPaper('a4', 'landscape')->stream("residents-{$date}.pdf");
 
             case 'households':
