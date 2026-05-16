@@ -248,7 +248,23 @@
 
 @push('scripts')
 <script>
+/* View toggle */
+window.setOfficialView = function(mode) {
+    const isList = mode === 'list';
+    document.getElementById('listView').style.display    = isList ? '' : 'none';
+    document.getElementById('groupedView').style.display = isList ? 'none' : '';
+    document.getElementById('viewList').style.background    = isList ? 'var(--navy)' : 'var(--surface2)';
+    document.getElementById('viewList').style.color         = isList ? '#fff'        : 'var(--text-muted)';
+    document.getElementById('viewGrouped').style.background = isList ? 'var(--surface2)' : 'var(--navy)';
+    document.getElementById('viewGrouped').style.color      = isList ? 'var(--text-muted)' : '#fff';
+    localStorage.setItem('officials_view', mode);
+};
+
 $(document).ready(function () {
+    /* Restore last view */
+    const savedView = localStorage.getItem('officials_view') || 'list';
+    setOfficialView(savedView);
+
     /* Select2 for status filter */
     $('#officialStatusFilter').select2({
         dropdownParent: $('body'),
@@ -258,13 +274,24 @@ $(document).ready(function () {
         minimumResultsForSearch: -1
     });
 
-    /* Client-side search + status filter */
+    /* Client-side search + status filter (list + grouped views) */
     function filterTable() {
         const q      = $('#officialSearch').val().toLowerCase();
         const status = $('#officialStatusFilter').val();
+        // List view
         $('tbody tr').each(function () {
             const text     = $(this).text().toLowerCase();
             const isActive = $(this).find('.status-toggle').data('active') == 1;
+            const matchQ   = !q || text.includes(q);
+            const matchS   = !status
+                || (status === 'active' && isActive)
+                || (status === 'inactive' && !isActive);
+            $(this).toggle(matchQ && matchS);
+        });
+        // Grouped view
+        $('.grouped-official-row').each(function () {
+            const text     = $(this).text().toLowerCase();
+            const isActive = $(this).data('active') == 1;
             const matchQ   = !q || text.includes(q);
             const matchS   = !status
                 || (status === 'active' && isActive)
