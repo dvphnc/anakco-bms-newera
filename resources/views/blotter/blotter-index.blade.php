@@ -455,48 +455,5 @@ function saveBlotterStatus() {
         });
 }
 
-/* ── Shepherd.js Tour ─────────────────────────────────────────────── */
-(function () {
-    const TOUR_KEY = 'bms_tour_blotter_v1_{{ auth()->id() }}';
-    if (localStorage.getItem(TOUR_KEY)) return;
-    if (typeof Shepherd === 'undefined') return;
-
-    const tour = new Shepherd.Tour({
-        defaultStepOptions: { cancelIcon: { enabled: false }, scrollTo: { behavior: 'smooth', block: 'center' } },
-        useModalOverlay: true,
-    });
-
-    const skipBtn = {
-        text: '<i class="fas fa-forward"></i> Skip Tour',
-        classes: 'shepherd-button-secondary',
-        action: function () {
-            Swal.fire({
-                title: 'Skip this tour?',
-                text: 'You can clear your browser\'s local storage to see it again.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#0D2144',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Yes, skip it',
-                cancelButtonText: 'Continue tour',
-            }).then(function (result) {
-                if (result.isConfirmed) { localStorage.setItem(TOUR_KEY, new Date().toISOString()); tour.cancel(); }
-                else { tour.show(tour.getCurrentStep().id); }
-            });
-        },
-    };
-
-    tour.addStep({ id: 'header', title: '<i class="fas fa-gavel" style="color:var(--gold)"></i>&nbsp; Blotter Cases', text: 'This module records all barangay incidents — noise complaints, disputes, assault, theft, and more. Each case gets a unique case number and can be tracked through resolution.', attachTo: { element: '#tour-header', on: 'bottom' }, buttons: [skipBtn, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'stats', title: '<i class="fas fa-chart-bar" style="color:var(--gold)"></i>&nbsp; Case Summary', text: 'Click any stat card to filter by case status. Cases open for 30+ days display an <strong style="color:#9B1C1C">overdue badge</strong> automatically.', attachTo: { element: '#tour-stats', on: 'bottom' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'filters', title: '<i class="fas fa-sliders" style="color:var(--gold)"></i>&nbsp; Date Range Filters', text: 'In addition to type and status filters, you can filter cases by <strong>incident date range</strong> — useful for generating monthly or weekly reports.', attachTo: { element: '#tour-filters', on: 'bottom' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'table', title: '<i class="fas fa-table" style="color:var(--gold)"></i>&nbsp; Quick Status Update', text: 'Use the <strong>🔄 rotate button</strong> in the Actions column to update a case status and add resolution notes — without leaving this page. No full edit form needed for routine updates.', attachTo: { element: '#tour-table', on: 'top' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
-    tour.addStep({ id: 'file', title: '<i class="fas fa-gavel" style="color:var(--gold)"></i>&nbsp; File a New Case', text: 'Click <strong>File Case</strong> to record a new incident. You can link complainants to existing residents and attach supporting documents.', attachTo: { element: '#tour-file', on: 'left' }, buttons: [{ text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: '<i class="fas fa-check"></i> Got it!', action: tour.complete, classes: 'shepherd-button-primary' }] });
-
-    tour.on('complete', function () {
-        localStorage.setItem(TOUR_KEY, new Date().toISOString());
-        bmsToast('Tour complete! You\'re all set.', 'success');
-    });
-    setTimeout(function () { tour.start(); }, 900);
-})();
 </script>
 @endpush
