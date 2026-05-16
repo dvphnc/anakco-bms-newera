@@ -264,22 +264,9 @@
 $(function () {
     const s2 = { dropdownParent: $('body'), width: '100%' };
 
-    /* Short lists — no search box */
-    $('#s2Gender').select2($.extend({}, s2, {
-        placeholder: 'Select Gender',
-        minimumResultsForSearch: Infinity,
-        allowClear: false
-    }));
-    $('#s2CivilStatus').select2($.extend({}, s2, {
-        placeholder: 'Select Status',
-        minimumResultsForSearch: Infinity,
-        allowClear: false
-    }));
-    $('#s2ResidencyStatus').select2($.extend({}, s2, {
-        placeholder: 'Select Status',
-        minimumResultsForSearch: Infinity,
-        allowClear: false
-    }));
+    $('#s2Gender').select2($.extend({}, s2, { placeholder: 'Select Gender', allowClear: false }));
+    $('#s2CivilStatus').select2($.extend({}, s2, { placeholder: 'Select Status', allowClear: false }));
+    $('#s2ResidencyStatus').select2($.extend({}, s2, { placeholder: 'Select Status', allowClear: false }));
 
     /* Long lists — searchable */
     $('#s2Purok').select2($.extend({}, s2, {
