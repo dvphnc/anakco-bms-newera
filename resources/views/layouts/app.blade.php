@@ -450,6 +450,13 @@
         .select2-container--default .select2-search--dropdown .select2-search__field:focus {
             border-color: var(--navy) !important; box-shadow: 0 0 0 3px var(--navy-pale) !important;
         }
+        /* Always show the search box — override Select2's hide mechanism */
+        .select2-search--dropdown.select2-search--hide {
+            display: block !important;
+        }
+        .select2-search--dropdown.select2-search--hide .select2-search__field {
+            display: block !important;
+        }
         .select2-results__options { max-height: 240px !important; overflow-y: auto !important; }
         .select2-container--default .select2-results__option {
             padding: 8px 12px !important; font-size: 12.5px !important;
