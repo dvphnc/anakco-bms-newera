@@ -68,37 +68,50 @@
     </div>
 </div>
 
-{{-- Filter Bar --}}
+{{-- Collapsible Filter Bar --}}
 <div class="card mb-6" id="tour-filters">
-    <div class="card-body" style="padding:16px 20px">
-        <div class="filter-bar">
-            <div class="form-group flex-1">
-                <label class="form-label">Search</label>
-                <div style="position:relative">
-                    <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
-                    <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
-                           placeholder="Resident name, appointment number…">
+    <div class="card-header" style="cursor:pointer" onclick="toggleFilters('appointments')">
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
+            <span id="filterBadge" class="badge badge-gold" style="display:none"></span>
+        </div>
+        <button type="button" class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleFilters('appointments')">
+            <i class="fas fa-sliders" id="filterToggleIcon"></i>
+            <span id="filterToggleText">Show Filters</span>
+        </button>
+    </div>
+    <div id="filterPanel" style="display:none">
+        <div class="card-body" style="padding:20px 22px">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+                <div class="form-group" style="grid-column:1/-1">
+                    <label class="form-label">Search</label>
+                    <div style="position:relative">
+                        <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
+                        <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
+                               placeholder="Resident name, appointment number…">
+                    </div>
+                </div>
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Status</label>
+                    <select id="statusFilter" multiple>
+                        @foreach($statuses as $s)
+                            <option value="{{ $s }}">{{ $s }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Document Type</label>
+                    <select id="docTypeFilter" multiple>
+                        @foreach($documentTypes as $dt)
+                            <option value="{{ $dt }}">{{ $dt }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Status</label>
-                <select id="statusFilter" multiple>
-                    @foreach($statuses as $s)
-                        <option value="{{ $s }}">{{ $s }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Document Type</label>
-                <select id="docTypeFilter" multiple>
-                    @foreach($documentTypes as $dt)
-                        <option value="{{ $dt }}">{{ $dt }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="form-group" style="justify-content:flex-end">
-                <label class="form-label">&nbsp;</label>
-                <button id="resetBtn" class="btn btn-secondary"><i class="fas fa-xmark"></i> Reset</button>
+            <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+                <button type="button" id="resetBtn" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-xmark"></i> Reset All Filters
+                </button>
             </div>
         </div>
     </div>
