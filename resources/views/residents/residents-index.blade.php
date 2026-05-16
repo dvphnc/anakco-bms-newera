@@ -255,6 +255,7 @@ $(document).ready(function () {
         dropdownParent: $('body'),
         allowClear: true,
         width: '100%',
+        minimumResultsForSearch: 0,
         language: {
             noResults: function () {
                 return 'No matches — try a different term';

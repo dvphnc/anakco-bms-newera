@@ -164,7 +164,7 @@
 </style>
 <script>
 $(document).ready(function () {
-    const s2 = { dropdownParent: $('body'), allowClear: true, width: '100%' };
+    const s2 = { dropdownParent: $('body'), allowClear: true, width: '100%', minimumResultsForSearch: 0 };
 
     $('#purokFilter').select2($.extend({}, s2, { placeholder: 'All Puroks' }));
     $('#voterFilter').select2($.extend({}, s2, { placeholder: 'All' }));
