@@ -268,6 +268,39 @@
 #businessesTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
 #businessesTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
 #businessesTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
+
+/* ── Filter Select2 — match residents blade ───────────────────── */
+#filterPanel .select2-container { width: 100% !important; }
+#filterPanel .select2-container--default .select2-selection--single,
+#filterPanel .select2-container--default .select2-selection--multiple {
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); min-height: 38px;
+}
+#filterPanel .select2-container--default .select2-selection--single {
+    padding: 0 32px 0 10px; display: flex; align-items: center;
+}
+#filterPanel .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text); font-size: 13.5px; padding: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal;
+}
+#filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
+#filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
+#filterPanel .select2-container--default .select2-selection--multiple { padding: 3px 8px; cursor: pointer; }
+#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+    padding: 0; display: flex; flex-wrap: wrap; gap: 3px; align-items: center; min-height: 30px;
+}
+#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
+    color: var(--text-subtle); font-size: 13.5px; margin: 2px 4px;
+    float: none; display: inline-block; white-space: nowrap;
+}
+#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background: var(--navy); color: #fff; border: none; border-radius: 99px;
+    padding: 2px 8px; font-size: 12px; margin: 2px 2px 2px 0; display: inline-flex; align-items: center; gap: 5px;
+}
+#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: rgba(255,255,255,.65); background: transparent; border: none; font-weight: normal; order: 1; padding: 0;
+}
+#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover { color: #fff; background: transparent; }
 </style>
 <script>
 $(document).ready(function () {
