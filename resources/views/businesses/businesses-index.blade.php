@@ -4,7 +4,7 @@
 @section('page-subtitle', 'Registered businesses in Barangay New Era')
 @section('content')
 
-<div class="page-header" id="tour-header">
+<div class="page-header">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
             <h1 class="page-title">Business Permits</h1>

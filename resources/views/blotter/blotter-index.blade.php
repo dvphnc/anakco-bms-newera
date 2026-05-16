@@ -4,7 +4,7 @@
 @section('page-subtitle', 'Incident and complaint records')
 @section('content')
 
-<div class="page-header" id="tour-header">
+<div class="page-header">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
             <h1 class="page-title">Blotter Cases</h1>
@@ -20,13 +20,13 @@
         </span>
     </div>
     <div class="page-actions">
-        <a href="{{ route('export.pdf', 'blotter') }}" class="btn btn-secondary" title="Export PDF" id="tour-export">
+        <a href="{{ route('export.pdf', 'blotter') }}" class="btn btn-secondary" title="Export PDF">
             <i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF
         </a>
         <a href="{{ route('export.excel', 'blotter') }}" class="btn btn-secondary" title="Export Excel">
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
-        <a href="{{ route('blotter.create') }}" class="btn btn-primary" id="tour-file">
+        <a href="{{ route('blotter.create') }}" class="btn btn-primary">
             <i class="fas fa-file-plus"></i> File Case
         </a>
     </div>

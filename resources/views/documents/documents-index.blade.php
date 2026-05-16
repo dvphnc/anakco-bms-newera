@@ -113,7 +113,7 @@
     </div>
 </div>
 
-<div class="card" id="tour-table">
+<div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-file-lines"></i> Document Records</span>
     </div>
