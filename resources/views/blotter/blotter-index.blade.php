@@ -2,25 +2,25 @@
 @section('title', 'Blotter Cases')
 @section('content')
 
-<div class="page-header">
+<div class="page-header" id="tour-header">
     <div>
         <h1 class="page-title">Blotter Cases</h1>
         <p class="page-subtitle">Incident and complaint records</p>
     </div>
     <div class="page-actions">
-        <a href="{{ route('export.pdf', 'blotter') }}" class="btn btn-secondary" title="Export PDF">
+        <a href="{{ route('export.pdf', 'blotter') }}" class="btn btn-secondary" title="Export PDF" id="tour-export">
             <i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF
         </a>
         <a href="{{ route('export.excel', 'blotter') }}" class="btn btn-secondary" title="Export Excel">
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
-        <a href="{{ route('blotter.create') }}" class="btn btn-primary">
+        <a href="{{ route('blotter.create') }}" class="btn btn-primary" id="tour-file">
             <i class="fas fa-gavel"></i> File Case
         </a>
     </div>
 </div>
 
-<div class="grid-4 mb-6">
+<div class="grid-4 mb-6" id="tour-stats">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-gavel"></i></div>
         <div class="stat-info">
@@ -52,7 +52,7 @@
 </div>
 
 {{-- Collapsible Filter Bar --}}
-<div class="card mb-6">
+<div class="card mb-6" id="tour-filters">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('blotter')">
         <div style="display:flex;align-items:center;gap:10px">
             <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
@@ -66,8 +66,6 @@
     <div id="filterPanel" style="display:none">
         <div class="card-body" style="padding:20px 22px">
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
-
-                {{-- Search (full width) --}}
                 <div class="form-group" style="grid-column:1/-1">
                     <label class="form-label">Search</label>
                     <div style="position:relative">
@@ -76,8 +74,6 @@
                                placeholder="Case number, complainant, respondent…">
                     </div>
                 </div>
-
-                {{-- Incident Type (multi, span 2) --}}
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Incident Type</label>
                     <select id="typeFilter" multiple>
@@ -86,8 +82,6 @@
                         @endforeach
                     </select>
                 </div>
-
-                {{-- Status (multi, span 2) --}}
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Case Status</label>
                     <select id="statusFilter" multiple>
@@ -96,8 +90,6 @@
                         @endforeach
                     </select>
                 </div>
-
-                {{-- Date Range --}}
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Incident Date — From</label>
                     <input type="date" id="dateFrom" class="form-control">
@@ -106,7 +98,6 @@
                     <label class="form-label">Incident Date — To</label>
                     <input type="date" id="dateTo" class="form-control">
                 </div>
-
             </div>
             <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
                 <button type="button" id="resetBtn" class="btn btn-secondary btn-sm">
@@ -117,7 +108,7 @@
     </div>
 </div>
 
-<div class="card">
+<div class="card" id="tour-table">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-gavel"></i> Case Records</span>
     </div>
@@ -136,6 +127,55 @@
             </thead>
             <tbody></tbody>
         </table>
+    </div>
+</div>
+
+{{-- Quick Status Modal --}}
+<div id="blotterStatusModal"
+     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
+            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
+     onclick="if(event.target===this)closeBlotterStatusModal()">
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:460px;
+                padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
+        <div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:10px">
+                <i class="fas fa-rotate" style="color:var(--gold);font-size:14px"></i>
+                <span style="font-size:14px;font-weight:700;color:#fff">Update Case Status</span>
+            </div>
+            <button onclick="closeBlotterStatusModal()"
+                    style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+                           border-radius:var(--radius-sm);width:30px;height:30px;display:flex;
+                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div style="padding:20px">
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">
+                Case: <strong id="blotterStatusNum" style="color:var(--navy)"></strong>
+            </p>
+            <div class="form-group">
+                <label class="form-label">New Status <span style="color:var(--crimson)">*</span></label>
+                <select id="blotterStatusSelect" class="form-control">
+                    @foreach($statuses as $s)
+                        <option value="{{ $s }}">{{ $s }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Resolution Notes <span style="font-size:12px;color:var(--text-subtle);font-weight:400">(optional)</span></label>
+                <textarea id="blotterStatusNotes" class="form-control" rows="3"
+                          placeholder="e.g., Parties agreed to settle — signed on May 10, 2026…"></textarea>
+            </div>
+            <div id="blotterStatusError" style="display:none;font-size:13px;color:var(--crimson);
+                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
+                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
+            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
+                <button type="button" onclick="closeBlotterStatusModal()" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="blotterStatusSaveBtn" onclick="saveBlotterStatus()" class="btn btn-primary">
+                    <i class="fas fa-floppy-disk"></i> Save Status
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -160,22 +200,11 @@
 $(document).ready(function () {
 
     /* ── Select2 init ─────────────────────────────────────────────────── */
-    const s2Multi = {
-        dropdownParent: $('body'),
-        allowClear: false,
-        width: '100%',
-        closeOnSelect: false,
-        language: {
-            noResults: function () { return 'No matches — try a different term'; },
-            searching: function () { return 'Searching…'; }
-        }
-    };
+    const s2Multi = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
+                      language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
 
     $('#typeFilter').select2($.extend({}, s2Multi, { placeholder: 'All incident types…' }));
-    $('#statusFilter').select2($.extend({}, s2Multi, {
-        placeholder: 'All statuses…',
-        minimumResultsForSearch: -1
-    }));
+    $('#statusFilter').select2($.extend({}, s2Multi, { placeholder: 'All statuses…' }));
 
     /* ── DataTable ────────────────────────────────────────────────────── */
     var table = $('#blotterTable').DataTable({
@@ -209,57 +238,79 @@ $(document).ready(function () {
         }
     });
 
+    /* ── Axios DELETE ─────────────────────────────────────────────────── */
+    $('#blotterTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const btn  = $(this);
+        const form = btn.closest('form');
+        const url  = form.attr('action');
+
+        bmsConfirm({
+            title:   form.data('confirm-title') || 'Delete Case',
+            message: form.data('confirm'),
+            ok:      form.data('confirm-ok')    || 'Delete',
+        }, function () {
+            const icon = btn.find('i');
+            const orig = icon.attr('class');
+            icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
+            btn.prop('disabled', true);
+
+            axios.delete(url)
+                .then(function (res) {
+                    table.row(form.closest('tr')).remove().draw(false);
+                    bmsToast(res.data.message || 'Case deleted.', 'success');
+                })
+                .catch(function () {
+                    icon.attr('class', orig).css('color', '');
+                    btn.prop('disabled', false);
+                    bmsToast('Could not delete case.', 'error');
+                });
+        });
+    });
+
     /* ── URL persistence ──────────────────────────────────────────────── */
     function saveToUrl() {
         const url = new URL(window.location);
         ['s','date_from','date_to'].forEach(k => url.searchParams.delete(k));
         url.searchParams.delete('incident_type');
         url.searchParams.delete('status');
-
         if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
         if ($('#dateFrom').val())    url.searchParams.set('date_from', $('#dateFrom').val());
         if ($('#dateTo').val())      url.searchParams.set('date_to', $('#dateTo').val());
         ($('#typeFilter').val()   || []).forEach(v => url.searchParams.append('incident_type', v));
         ($('#statusFilter').val() || []).forEach(v => url.searchParams.append('status', v));
-
         history.replaceState({}, '', url);
         updateBadge();
     }
-
     function loadFromUrl() {
         const p = new URLSearchParams(window.location.search);
         let any = false;
         if (p.get('s'))         { $('#searchInput').val(p.get('s')); any = true; }
         if (p.get('date_from')) { $('#dateFrom').val(p.get('date_from')); any = true; }
         if (p.get('date_to'))   { $('#dateTo').val(p.get('date_to')); any = true; }
-        const types    = p.getAll('incident_type');
-        const statuses = p.getAll('status');
+        const types = p.getAll('incident_type'), statuses = p.getAll('status');
         if (types.length)    { $('#typeFilter').val(types).trigger('change.select2'); any = true; }
         if (statuses.length) { $('#statusFilter').val(statuses).trigger('change.select2'); any = true; }
         return any;
     }
-
     function updateBadge() {
         let n = 0;
-        if ($('#searchInput').val())                   n++;
-        if (($('#typeFilter').val()   || []).length)   n++;
-        if (($('#statusFilter').val() || []).length)   n++;
+        if ($('#searchInput').val())                    n++;
+        if (($('#typeFilter').val()   || []).length)    n++;
+        if (($('#statusFilter').val() || []).length)    n++;
         if ($('#dateFrom').val() || $('#dateTo').val()) n++;
         const badge = document.getElementById('filterBadge');
         if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
         else       { badge.style.display = 'none'; }
     }
-
-    /* ── Panel toggle ─────────────────────────────────────────────────── */
     window.toggleFilters = function (key) {
-        const panel = document.getElementById('filterPanel');
+        const panel  = document.getElementById('filterPanel');
         const isOpen = panel.style.display !== 'none';
         panel.style.display = isOpen ? 'none' : 'block';
         document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
         sessionStorage.setItem('fp_' + key, isOpen ? '0' : '1');
     };
-
-    // Quick-filter from stat cards — sets multi-select and opens panel
     window.quickFilter = function (filterId, values) {
         $('#' + filterId).val(values).trigger('change');
         if (document.getElementById('filterPanel').style.display === 'none') {
@@ -267,10 +318,8 @@ $(document).ready(function () {
             document.getElementById('filterToggleText').textContent = 'Hide Filters';
             sessionStorage.setItem('fp_blotter', '1');
         }
-        saveToUrl();
-        table.ajax.reload();
+        saveToUrl(); table.ajax.reload();
     };
-
     const hasUrlFilters = loadFromUrl();
     if (hasUrlFilters || sessionStorage.getItem('fp_blotter') === '1') {
         document.getElementById('filterPanel').style.display = 'block';
@@ -278,22 +327,10 @@ $(document).ready(function () {
     }
     updateBadge();
 
-    /* ── Event listeners ─────────────────────────────────────────────── */
     let debounce;
-
-    $('#searchInput').on('input', function () {
-        clearTimeout(debounce);
-        debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380);
-    });
-
-    $('#typeFilter, #statusFilter').on('change', function () {
-        saveToUrl(); table.ajax.reload();
-    });
-
-    $('#dateFrom, #dateTo').on('change', function () {
-        saveToUrl(); table.ajax.reload();
-    });
-
+    $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380); });
+    $('#typeFilter, #statusFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
+    $('#dateFrom, #dateTo').on('change', function () { saveToUrl(); table.ajax.reload(); });
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
         $('#typeFilter, #statusFilter').val(null).trigger('change');
@@ -301,5 +338,110 @@ $(document).ready(function () {
         saveToUrl(); table.ajax.reload();
     });
 });
+
+/* ── Quick Status Modal ───────────────────────────────────────────── */
+var _blotterStatusId = null;
+
+$(document).on('click', '#blotterTable .blotter-status-btn', function () {
+    _blotterStatusId = $(this).data('id');
+    document.getElementById('blotterStatusNum').textContent = $(this).data('num');
+    document.getElementById('blotterStatusSelect').value    = $(this).data('status');
+    document.getElementById('blotterStatusNotes').value     = $(this).data('notes') || '';
+    document.getElementById('blotterStatusError').style.display = 'none';
+    document.getElementById('blotterStatusModal').style.display = 'flex';
+});
+
+function closeBlotterStatusModal() {
+    document.getElementById('blotterStatusModal').style.display = 'none';
+    _blotterStatusId = null;
+}
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { closeBlotterStatusModal(); }
+});
+
+function saveBlotterStatus() {
+    if (!_blotterStatusId) return;
+    const btn    = document.getElementById('blotterStatusSaveBtn');
+    const errDiv = document.getElementById('blotterStatusError');
+    const status = document.getElementById('blotterStatusSelect').value;
+    const notes  = document.getElementById('blotterStatusNotes').value;
+
+    errDiv.style.display = 'none';
+    btn.disabled   = true;
+    btn.innerHTML  = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Saving…';
+
+    axios.patch('/blotter/' + _blotterStatusId + '/status', { status: status, resolution_notes: notes })
+        .then(function (res) {
+            const clsMap = {
+                'Active':               'badge-red',
+                'Under Investigation':  'badge-yellow',
+                'Mediated':             'badge-blue',
+                'Settled':              'badge-green',
+                'Closed':               'badge-gray',
+                'Referred to Higher Authority': 'badge-orange',
+            };
+            const row = $('button.blotter-status-btn[data-id="' + _blotterStatusId + '"]').closest('tr');
+            row.find('.blotter-status-btn').data('status', res.data.status).data('notes', notes);
+            row.find('td .badge:not(.badge-navy,.badge-red[title])').first().each(function () {
+                $(this).removeClass('badge-red badge-yellow badge-blue badge-green badge-gray badge-orange')
+                       .addClass(clsMap[res.data.status] || 'badge-gray').text(res.data.status);
+            });
+            closeBlotterStatusModal();
+            bmsToast(res.data.message, 'success');
+            $('#blotterTable').DataTable().ajax.reload(null, false);
+        })
+        .catch(function (err) {
+            errDiv.textContent   = err.response?.data?.message || 'Failed to update status.';
+            errDiv.style.display = 'block';
+        })
+        .finally(function () {
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Status';
+        });
+}
+
+/* ── Shepherd.js Tour ─────────────────────────────────────────────── */
+(function () {
+    const TOUR_KEY = 'bms_tour_blotter_v1_{{ auth()->id() }}';
+    if (localStorage.getItem(TOUR_KEY)) return;
+    if (typeof Shepherd === 'undefined') return;
+
+    const tour = new Shepherd.Tour({
+        defaultStepOptions: { cancelIcon: { enabled: false }, scrollTo: { behavior: 'smooth', block: 'center' } },
+        useModalOverlay: true,
+    });
+
+    const skipBtn = {
+        text: '<i class="fas fa-forward"></i> Skip Tour',
+        classes: 'shepherd-button-secondary',
+        action: function () {
+            Swal.fire({
+                title: 'Skip this tour?',
+                text: 'You can clear your browser\'s local storage to see it again.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#0D2144',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, skip it',
+                cancelButtonText: 'Continue tour',
+            }).then(function (result) {
+                if (result.isConfirmed) { localStorage.setItem(TOUR_KEY, new Date().toISOString()); tour.cancel(); }
+                else { tour.show(tour.getCurrentStep().id); }
+            });
+        },
+    };
+
+    tour.addStep({ id: 'header', title: '<i class="fas fa-gavel" style="color:var(--gold)"></i>&nbsp; Blotter Cases', text: 'This module records all barangay incidents — noise complaints, disputes, assault, theft, and more. Each case gets a unique case number and can be tracked through resolution.', attachTo: { element: '#tour-header', on: 'bottom' }, buttons: [skipBtn, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
+    tour.addStep({ id: 'stats', title: '<i class="fas fa-chart-bar" style="color:var(--gold)"></i>&nbsp; Case Summary', text: 'Click any stat card to filter by case status. Cases open for 30+ days display an <strong style="color:#9B1C1C">overdue badge</strong> automatically.', attachTo: { element: '#tour-stats', on: 'bottom' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
+    tour.addStep({ id: 'filters', title: '<i class="fas fa-sliders" style="color:var(--gold)"></i>&nbsp; Date Range Filters', text: 'In addition to type and status filters, you can filter cases by <strong>incident date range</strong> — useful for generating monthly or weekly reports.', attachTo: { element: '#tour-filters', on: 'bottom' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
+    tour.addStep({ id: 'table', title: '<i class="fas fa-table" style="color:var(--gold)"></i>&nbsp; Quick Status Update', text: 'Use the <strong>🔄 rotate button</strong> in the Actions column to update a case status and add resolution notes — without leaving this page. No full edit form needed for routine updates.', attachTo: { element: '#tour-table', on: 'top' }, buttons: [skipBtn, { text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'Next <i class="fas fa-arrow-right"></i>', action: tour.next, classes: 'shepherd-button-primary' }] });
+    tour.addStep({ id: 'file', title: '<i class="fas fa-gavel" style="color:var(--gold)"></i>&nbsp; File a New Case', text: 'Click <strong>File Case</strong> to record a new incident. You can link complainants to existing residents and attach supporting documents.', attachTo: { element: '#tour-file', on: 'left' }, buttons: [{ text: '<i class="fas fa-arrow-left"></i> Back', action: tour.back, classes: 'shepherd-button-secondary' }, { text: '<i class="fas fa-check"></i> Got it!', action: tour.complete, classes: 'shepherd-button-primary' }] });
+
+    tour.on('complete', function () {
+        localStorage.setItem(TOUR_KEY, new Date().toISOString());
+        bmsToast('Tour complete! You\'re all set.', 'success');
+    });
+    setTimeout(function () { tour.start(); }, 900);
+})();
 </script>
 @endpush
