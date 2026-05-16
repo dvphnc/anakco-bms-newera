@@ -110,6 +110,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     Route::resource('officials', OfficialController::class)
         ->middleware('role:Admin,Secretary');
+    Route::patch('officials/{official}/toggle-status', [OfficialController::class, 'toggleStatus'])
+        ->name('officials.toggle-status')
+        ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Committees — all roles (Admin, Secretary, Committee)

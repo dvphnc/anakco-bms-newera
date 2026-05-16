@@ -524,6 +524,62 @@ window.closeQvPanel = function () {
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeQvPanel();
 });
+
+/* ── Axios DELETE — DataTable row removal ──────────────────────────────── */
+$(document).on('click', '#residentsTable form[data-confirm] button[type="submit"]', function (e) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    const btn  = $(this);
+    const form = btn.closest('form');
+    const url  = form.attr('action');
+
+    bmsConfirm({
+        title:   form.data('confirm-title') || 'Delete Resident',
+        message: form.data('confirm'),
+        ok:      form.data('confirm-ok')    || 'Delete',
+    }, function () {
+        const icon = btn.find('i');
+        const orig = icon.attr('class');
+        icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
+        btn.prop('disabled', true);
+
+        axios.delete(url, { headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } })
+            .then(() => {
+                const dt = $('#residentsTable').DataTable();
+                dt.row(form.closest('tr')).remove().draw(false);
+            })
+            .catch(() => {
+                icon.attr('class', orig).css('color', '');
+                btn.prop('disabled', false);
+                alert('Could not delete resident. Please try again.');
+            });
+    });
+});
+
+/* ── Axios PATCH — Residency status inline toggle ──────────────────────── */
+$(document).on('click', '#residentsTable .res-status-toggle', function () {
+    const btn    = $(this);
+    const id     = btn.data('id');
+    const cur    = btn.data('status');
+
+    btn.html('<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i>').prop('disabled', true);
+
+    axios.patch(`/residents/${id}/toggle-status`, { _token: '{{ csrf_token() }}' })
+        .then(({ data }) => {
+            const s = data.residency_status;
+            const clsMap = { Active: 'badge-green', Transferred: 'badge-yellow', Deceased: 'badge-gray' };
+            btn.removeClass('badge-green badge-yellow badge-gray')
+               .addClass(clsMap[s] || 'badge-gray')
+               .text(s)
+               .data('status', s)
+               .prop('disabled', false);
+        })
+        .catch(() => {
+            btn.text(cur).prop('disabled', false);
+            alert('Could not update status. Please try again.');
+        });
+});
 </script>
 
 {{-- Quick View Slide Panel --}}
