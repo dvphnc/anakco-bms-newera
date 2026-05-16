@@ -41,7 +41,7 @@
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Purok <span style="color:var(--crimson)">*</span></label>
-                <select name="purok_id" class="form-control" required>
+                <select name="purok_id" id="s2Purok" class="form-control" required>
                     <option value="">Select Purok</option>
                     @foreach($puroks as $purok)
                         <option value="{{ $purok->id }}" {{ old('purok_id') == $purok->id ? 'selected' : '' }}>{{ $purok->name }}</option>
@@ -78,6 +78,14 @@
 
 @push('scripts')
 <script>
+/* Purok — searchable Select2 */
+$('#s2Purok').select2({
+    dropdownParent: $('body'),
+    width: '100%',
+    placeholder: 'Select Purok',
+    allowClear: true
+});
+
 $('#head_resident_id').on('select2:select', function(e) {
     const text = e.params.data.text;
     const parts = text.split(' — ');
