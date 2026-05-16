@@ -4,7 +4,7 @@
 @section('page-subtitle', 'Barangay certificates and clearances')
 @section('content')
 
-<div class="page-header" id="tour-header">
+<div class="page-header">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
             <h1 class="page-title">Document Issuance</h1>
@@ -20,20 +20,20 @@
         </span>
     </div>
     <div class="page-actions">
-        <a href="{{ route('export.pdf', 'documents') }}" class="btn btn-secondary" title="Export PDF" id="tour-export">
+        <a href="{{ route('export.pdf', 'documents') }}" class="btn btn-secondary" title="Export PDF">
             <i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF
         </a>
         <a href="{{ route('export.excel', 'documents') }}" class="btn btn-secondary" title="Export Excel">
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
-        <a href="{{ route('documents.create') }}" class="btn btn-primary" id="tour-issue">
+        <a href="{{ route('documents.create') }}" class="btn btn-primary">
             <i class="fas fa-file-circle-plus"></i> Issue Document
         </a>
     </div>
 </div>
 
 {{-- Stat cards --}}
-<div class="grid-4 mb-6" id="tour-stats">
+<div class="grid-4 mb-6">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-file-lines"></i></div>
         <div class="stat-info">
@@ -65,7 +65,7 @@
 </div>
 
 {{-- Collapsible Filter Bar --}}
-<div class="card mb-6" id="tour-filters">
+<div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('documents')">
         <div style="display:flex;align-items:center;gap:10px">
             <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
