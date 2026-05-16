@@ -621,20 +621,16 @@
 
         /* ── Force search visible in every Select2 dropdown on open ──────── */
         $(document).on('select2:open', function () {
-            // setTimeout 0 lets Select2 finish hiding before we override
+            // Use a short delay so Select2 finishes its own open/hide logic first
             setTimeout(function () {
-                var wrap = document.querySelector(
-                    '.select2-container--open .select2-search--dropdown'
-                );
-                if (!wrap) return;
-                wrap.classList.remove('select2-search--hide');
-                wrap.style.removeProperty('display');
-                var field = wrap.querySelector('.select2-search__field');
-                if (field) {
-                    field.style.removeProperty('display');
-                    field.focus();
-                }
-            }, 0);
+                var $cont = $('.select2-container--open');
+                var $search = $cont.find('.select2-search--dropdown');
+                if (!$search.length) return;
+                $search.removeClass('select2-search--hide').css('display', 'block');
+                var $field = $search.find('.select2-search__field');
+                $field.css('display', 'block');
+                if ($field.length) { $field[0].focus(); }
+            }, 50);
         });
 
         $('.select2-resident').each(function() {
