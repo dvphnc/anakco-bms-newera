@@ -166,14 +166,8 @@
 $(document).ready(function () {
     const s2 = { dropdownParent: $('body'), allowClear: true, width: '100%' };
 
-    $('#purokFilter').select2($.extend({}, s2, {
-        placeholder: 'All Puroks',
-        minimumResultsForSearch: Infinity
-    }));
-    $('#voterFilter').select2($.extend({}, s2, {
-        placeholder: 'All',
-        minimumResultsForSearch: Infinity
-    }));
+    $('#purokFilter').select2($.extend({}, s2, { placeholder: 'All Puroks' }));
+    $('#voterFilter').select2($.extend({}, s2, { placeholder: 'All' }));
 
     var table = $('#householdsTable').DataTable({
         processing: true,
