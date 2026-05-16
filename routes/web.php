@@ -92,12 +92,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     Route::resource('documents', DocumentController::class)
         ->middleware('role:Admin,Secretary');
+    Route::patch('documents/{document}/status', [DocumentController::class, 'quickStatus'])
+        ->name('documents.quickStatus')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Blotter Cases — Admin + Secretary only
     // ---------------------------------------------------
     Route::resource('blotter', BlotterController::class)
         ->middleware('role:Admin,Secretary');
+    Route::patch('blotter/{blotter}/status', [BlotterController::class, 'quickStatus'])
+        ->name('blotter.quickStatus')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Business Permits — Admin + Secretary only
