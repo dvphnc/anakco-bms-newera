@@ -45,7 +45,7 @@
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Position <span style="color:var(--crimson)">*</span></label>
-                <select name="position" class="form-control @error('position') is-invalid @enderror" required>
+                <select name="position" id="s2Position" class="form-control @error('position') is-invalid @enderror" required>
                     <option value="">Select Position</option>
                     @foreach($positions as $p)
                         <option value="{{ $p }}" {{ old('position') === $p ? 'selected' : '' }}>{{ $p }}</option>
@@ -55,7 +55,7 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Committee</label>
-                <select name="committee" class="form-control @error('committee') is-invalid @enderror">
+                <select name="committee" id="s2Committee" class="form-control @error('committee') is-invalid @enderror">
                     <option value="">None / N/A</option>
                     @foreach($committees as $c)
                         <option value="{{ $c }}" {{ old('committee') === $c ? 'selected' : '' }}>{{ $c }}</option>
@@ -108,3 +108,18 @@
 </form>
 
 @endsection
+
+@push('scripts')
+<script>
+$(function () {
+    const s2 = {
+        dropdownParent: $('body'),
+        width: '100%',
+        minimumResultsForSearch: Infinity,
+        allowClear: false
+    };
+    $('#s2Position').select2($.extend({}, s2, { placeholder: 'Select Position' }));
+    $('#s2Committee').select2($.extend({}, s2, { placeholder: 'None / N/A', allowClear: true }));
+});
+</script>
+@endpush

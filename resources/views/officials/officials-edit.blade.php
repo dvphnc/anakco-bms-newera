@@ -45,7 +45,7 @@
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Position <span style="color:var(--crimson)">*</span></label>
-                <select name="position" class="form-control @error('position') is-invalid @enderror" required>
+                <select name="position" id="s2Position" class="form-control @error('position') is-invalid @enderror" required>
                     @foreach($positions as $p)
                         <option value="{{ $p }}" {{ old('position', $official->position) === $p ? 'selected' : '' }}>{{ $p }}</option>
                     @endforeach
@@ -54,7 +54,7 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Committee</label>
-                <select name="committee" class="form-control @error('committee') is-invalid @enderror">
+                <select name="committee" id="s2Committee" class="form-control @error('committee') is-invalid @enderror">
                     <option value="">None / N/A</option>
                     @foreach($committees as $c)
                         <option value="{{ $c }}" {{ old('committee', $official->committee) === $c ? 'selected' : '' }}>{{ $c }}</option>
