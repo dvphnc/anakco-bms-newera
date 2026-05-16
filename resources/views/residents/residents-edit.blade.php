@@ -133,7 +133,7 @@
                     Household
                     <span class="help-icon" data-tippy-content="Optional. Link this resident to a registered household to track family size and relationships. Leave blank if the household is not yet registered.">?</span>
                 </label>
-                <select name="household_id" class="form-control @error('household_id') is-invalid @enderror">
+                <select name="household_id" id="s2Household" class="form-control @error('household_id') is-invalid @enderror">
                     <option value="">No Household</option>
                     @foreach($households as $hh)
                         <option value="{{ $hh->id }}" {{ old('household_id', $resident->household_id) == $hh->id ? 'selected' : '' }}>
@@ -158,7 +158,7 @@
                     Residency Status
                     <span class="help-icon" data-tippy-content="'Active' = currently residing in the barangay. 'Transferred' = moved to another area. 'Deceased' = has passed away. Changing this affects who appears in active resident counts.">?</span>
                 </label>
-                <select name="residency_status" class="form-control @error('residency_status') is-invalid @enderror">
+                <select name="residency_status" id="s2ResidencyStatus" class="form-control @error('residency_status') is-invalid @enderror">
                     @foreach(['Active','Deceased','Transferred'] as $s)
                         <option value="{{ $s }}" {{ old('residency_status', $resident->residency_status) === $s ? 'selected' : '' }}>{{ $s }}</option>
                     @endforeach
@@ -258,3 +258,38 @@
 </form>
 
 @endsection
+
+@push('scripts')
+<script>
+$(function () {
+    const s2 = { dropdownParent: $('body'), width: '100%' };
+
+    /* Short lists — no search box */
+    $('#s2Gender').select2($.extend({}, s2, {
+        placeholder: 'Select Gender',
+        minimumResultsForSearch: Infinity,
+        allowClear: false
+    }));
+    $('#s2CivilStatus').select2($.extend({}, s2, {
+        placeholder: 'Select Status',
+        minimumResultsForSearch: Infinity,
+        allowClear: false
+    }));
+    $('#s2ResidencyStatus').select2($.extend({}, s2, {
+        placeholder: 'Select Status',
+        minimumResultsForSearch: Infinity,
+        allowClear: false
+    }));
+
+    /* Long lists — searchable */
+    $('#s2Purok').select2($.extend({}, s2, {
+        placeholder: 'Select Purok',
+        allowClear: true
+    }));
+    $('#s2Household').select2($.extend({}, s2, {
+        placeholder: 'No Household',
+        allowClear: true
+    }));
+});
+</script>
+@endpush
