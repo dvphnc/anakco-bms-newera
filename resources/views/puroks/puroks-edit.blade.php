@@ -122,24 +122,34 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const select  = document.getElementById('leaderSelect');
-    const preview = document.getElementById('leaderPreview');
-    const avatar  = document.getElementById('leaderAvatar');
-    const name    = document.getElementById('leaderName');
-    const contact = document.getElementById('leaderContact');
+$(function () {
+    const $sel     = $('#leaderSelect');
+    const preview  = document.getElementById('leaderPreview');
+    const avatar   = document.getElementById('leaderAvatar');
+    const nameEl   = document.getElementById('leaderName');
+    const contact  = document.getElementById('leaderContact');
 
-    select.addEventListener('change', function () {
-        const opt = this.options[this.selectedIndex];
-        if (this.value) {
-            const text = opt.text.split('—')[0].trim();
-            avatar.textContent  = text.charAt(0).toUpperCase();
-            name.textContent    = text;
-            contact.textContent = opt.dataset.contact || 'No contact on file';
-            preview.style.display = 'block';
-        } else {
-            preview.style.display = 'none';
-        }
+    /* Init Select2 with search — potentially many residents */
+    $sel.select2({
+        dropdownParent: $('body'),
+        width: '100%',
+        placeholder: '— No leader assigned —',
+        allowClear: true
+    });
+
+    /* Update preview card on select */
+    $sel.on('select2:select', function (e) {
+        const opt  = e.params.data.element;
+        const text = e.params.data.text.split('—')[0].trim();
+        avatar.textContent  = text.charAt(0).toUpperCase();
+        nameEl.textContent  = text;
+        contact.textContent = opt.dataset.contact || 'No contact on file';
+        preview.style.display = 'block';
+    });
+
+    /* Hide preview when cleared */
+    $sel.on('select2:clear', function () {
+        preview.style.display = 'none';
     });
 });
 </script>
