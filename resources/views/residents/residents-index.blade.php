@@ -356,26 +356,44 @@ $(document).ready(function () {
         if ($('#ageMin').val() || $('#ageMax').val())   n++;
         if (($('#tagsFilter').val() || []).length)      n++;
         const badge = document.getElementById('filterBadge');
-        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
-        else       { badge.style.display = 'none'; }
+        const chip  = document.getElementById('headerFilterChip');
+        const chipN = document.getElementById('headerFilterCount');
+        if (n > 0) {
+            badge.textContent = n + (n === 1 ? ' filter active' : ' filters active');
+            badge.style.display = '';
+            chipN.textContent = n;
+            chip.style.display = '';
+        } else {
+            badge.style.display = 'none';
+            chip.style.display  = 'none';
+        }
     }
 
-    /* ── Filter panel toggle (global so card-header click works) ─────── */
+    /* ── Filter panel toggle — persists to localStorage ─────────────── */
     window.toggleFilters = function (key) {
-        const panel = document.getElementById('filterPanel');
+        const panel  = document.getElementById('filterPanel');
         const isOpen = panel.style.display !== 'none';
         panel.style.display = isOpen ? 'none' : 'block';
         document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
-        sessionStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+        localStorage.setItem('fp_' + key, isOpen ? '0' : '1');
     };
 
-    // Restore panel state on load
+    // Restore panel state: open if URL filters present, localStorage says open, or any filter active
     const hasUrlFilters = loadFromUrl();
-    if (hasUrlFilters || sessionStorage.getItem('fp_residents') === '1') {
+    const lsOpen = localStorage.getItem('fp_residents') === '1';
+    if (hasUrlFilters || lsOpen) {
         document.getElementById('filterPanel').style.display = 'block';
         document.getElementById('filterToggleText').textContent = 'Hide Filters';
     }
     updateBadge();
+    // Auto-open panel if filters are active (even if localStorage says closed)
+    setTimeout(() => {
+        const n = parseInt(document.getElementById('filterBadge').textContent) || 0;
+        if (n > 0 && document.getElementById('filterPanel').style.display === 'none') {
+            document.getElementById('filterPanel').style.display = 'block';
+            document.getElementById('filterToggleText').textContent = 'Hide Filters';
+        }
+    }, 50);
 
     /* ── Event listeners ─────────────────────────────────────────────── */
     let debounce;

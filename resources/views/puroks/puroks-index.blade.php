@@ -52,8 +52,10 @@
 </div>
 
 {{-- Puroks Grid --}}
+@php $totalResidents = $puroks->sum('residents_count') ?: 1; @endphp
 <div class="grid-3">
     @foreach($puroks as $purok)
+    @php $pct = round(($purok->residents_count / $totalResidents) * 100); @endphp
     <div class="card">
         <div style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:20px;display:flex;align-items:center;gap:14px">
             <div style="width:48px;height:48px;border-radius:var(--radius);background:rgba(200,134,26,0.2);border:2px solid rgba(200,134,26,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0">
