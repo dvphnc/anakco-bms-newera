@@ -238,7 +238,8 @@ $(document).ready(function () {
     /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
        The browser won't paint until after this synchronous block, so no visual flash. */
     var $fp = $('#filterPanel');
-    $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1' });
+    var _fpW = $fp.parent().width();
+    $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1', width: _fpW + 'px' });
 
     const s2Single = { dropdownParent: $('body'), allowClear: true, width: '100%',
                        minimumResultsForSearch: 0,
@@ -247,7 +248,7 @@ $(document).ready(function () {
     $('#typeFilter').select2($.extend({}, s2Single, { placeholder: 'All incident types…' }));
     $('#statusFilter').select2($.extend({}, s2Single, { placeholder: 'All statuses…' }));
 
-    $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '' });
+    $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 
     /* ── DataTable ────────────────────────────────────────────────────── */
     var table = $('#blotterTable').DataTable({
