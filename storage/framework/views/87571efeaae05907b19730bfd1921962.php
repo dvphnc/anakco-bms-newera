@@ -44,21 +44,21 @@
             <div class="stat-label">Total Appointments</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter',['Pending'])">
+    <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Pending')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-hourglass-half"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($pendingCount)); ?></div>
             <div class="stat-label">Pending</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter',['Ready'])">
+    <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Ready')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-box-open"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($readyCount)); ?></div>
             <div class="stat-label">Ready for Pick-up</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter',['Released'])">
+    <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Released')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($releasedCount)); ?></div>
@@ -92,7 +92,8 @@
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Status</label>
-                    <select id="statusFilter" multiple>
+                    <select id="statusFilter">
+                        <option value=""></option>
                         <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -100,7 +101,8 @@
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Document Type</label>
-                    <select id="docTypeFilter" multiple>
+                    <select id="docTypeFilter">
+                        <option value=""></option>
                         <?php $__currentLoopData = $documentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <option value="<?php echo e($dt); ?>"><?php echo e($dt); ?></option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -226,27 +228,6 @@
 }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
-#filterPanel .select2-container--default .select2-selection--multiple {
-    padding: 3px 8px; cursor: pointer;
-    display: block; width: 100%; box-sizing: border-box;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__rendered {
-    padding: 0; display: flex; flex-wrap: wrap; gap: 3px; align-items: center; min-height: 30px; width: 100%;
-    overflow: visible; white-space: normal;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
-    color: var(--text-subtle); font-size: 13.5px; margin: 0 4px;
-    float: none; display: inline-block; white-space: nowrap;
-    flex: 1 0 auto; line-height: 30px;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice {
-    background: var(--navy); color: #fff; border: none; border-radius: 99px;
-    padding: 2px 8px; font-size: 12px; margin: 2px 2px 2px 0; display: inline-flex; align-items: center; gap: 5px;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-    color: rgba(255,255,255,.65); background: transparent; border: none; font-weight: normal; order: 1; padding: 0;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover { color: #fff; background: transparent; }
 </style>
 <script>
 $(document).ready(function () {
@@ -256,12 +237,12 @@ $(document).ready(function () {
     var $fp = $('#filterPanel');
     $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1' });
 
-    const s2Multi = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
-                      minimumResultsForSearch: 0,
-                      language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
+    const s2Single = { dropdownParent: $('body'), allowClear: true, width: '100%',
+                       minimumResultsForSearch: 0,
+                       language: { noResults: () => 'No matches' } };
 
-    $('#statusFilter').select2($.extend({}, s2Multi, { placeholder: 'All statuses…' }));
-    $('#docTypeFilter').select2($.extend({}, s2Multi, { placeholder: 'All document types…' }));
+    $('#statusFilter').select2($.extend({}, s2Single, { placeholder: 'All statuses…' }));
+    $('#docTypeFilter').select2($.extend({}, s2Single, { placeholder: 'All document types…' }));
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '' });
 
@@ -343,8 +324,8 @@ $(document).ready(function () {
         url.searchParams.delete('status');
         url.searchParams.delete('document_type');
         if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
-        ($('#statusFilter').val()   || []).forEach(v => url.searchParams.append('status', v));
-        ($('#docTypeFilter').val()  || []).forEach(v => url.searchParams.append('document_type', v));
+        if ($('#statusFilter').val())  url.searchParams.set('status', $('#statusFilter').val());
+        if ($('#docTypeFilter').val()) url.searchParams.set('document_type', $('#docTypeFilter').val());
         history.replaceState({}, '', url);
         updateBadge();
     }
@@ -352,16 +333,16 @@ $(document).ready(function () {
         const p = new URLSearchParams(window.location.search);
         let any = false;
         if (p.get('s')) { $('#searchInput').val(p.get('s')); any = true; }
-        const statuses = p.getAll('status'), types = p.getAll('document_type');
-        if (statuses.length) { $('#statusFilter').val(statuses).trigger('change.select2'); any = true; }
-        if (types.length)    { $('#docTypeFilter').val(types).trigger('change.select2'); any = true; }
+        const status = p.get('status'), type = p.get('document_type');
+        if (status) { $('#statusFilter').val(status).trigger('change.select2'); any = true; }
+        if (type)   { $('#docTypeFilter').val(type).trigger('change.select2'); any = true; }
         return any;
     }
     function updateBadge() {
         let n = 0;
         if ($('#searchInput').val())                    n++;
-        if (($('#statusFilter').val()  || []).length)   n++;
-        if (($('#docTypeFilter').val() || []).length)   n++;
+        if ($('#statusFilter').val())  n++;
+        if ($('#docTypeFilter').val()) n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');
         const chipN = document.getElementById('headerFilterCount');
