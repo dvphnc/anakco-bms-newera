@@ -1201,8 +1201,8 @@
                         <div class="form-group"><label class="form-label">Incident Type <span style="color:var(--crimson)">*</span></label><select name="incident_type" class="form-control" required>@foreach(['Flood','Fire','Earthquake','Typhoon','Landslide','Accident','Medical Emergency','Other'] as $t)<option>{{ $t }}</option>@endforeach</select></div>
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="incident_date" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-control">@foreach(['Active','Resolved','Monitoring'] as $s)<option>{{ $s }}</option>@endforeach</select></div>
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Location <span style="color:var(--crimson)">*</span></label><input type="text" name="location" class="form-control" required></div>
-                        <div class="form-group"><label class="form-label">Reported By</label><input type="text" name="reported_by" class="form-control"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Location <span style="color:var(--crimson)">*</span></label><input type="text" name="location" class="form-control @error('location') is-invalid @enderror" value="{{ old('location') }}" required>@error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                        <div class="form-group"><label class="form-label">Reported By</label><input type="text" name="reported_by" class="form-control" value="{{ old('reported_by') }}"></div>
                         <div class="form-group"><label class="form-label">Affected Families</label><input type="number" name="affected_families" class="form-control" min="0"></div>
                         <div class="form-group"><label class="form-label">Affected Persons</label><input type="number" name="affected_persons" class="form-control" min="0"></div>
                         <div class="form-group" style="grid-column:span 3"><label class="form-label">Description</label><input type="text" name="description" class="form-control"></div>
@@ -1247,7 +1247,7 @@
                 <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
                     @csrf <input type="hidden" name="specific_type" value="evacuation">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Center Name <span style="color:var(--crimson)">*</span></label><input type="text" name="center_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Center Name <span style="color:var(--crimson)">*</span></label><input type="text" name="center_name" class="form-control @error('center_name') is-invalid @enderror" value="{{ old('center_name') }}" required>@error('center_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-control">@foreach(['Available','Active','Full','Closed'] as $s)<option>{{ $s }}</option>@endforeach</select></div>
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Location <span style="color:var(--crimson)">*</span></label><input type="text" name="location" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Capacity</label><input type="number" name="capacity" class="form-control" min="0"></div>
@@ -1307,7 +1307,7 @@
                 <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
                     @csrf <input type="hidden" name="specific_type" value="relief">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Item Name <span style="color:var(--crimson)">*</span></label><input type="text" name="item_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Item Name <span style="color:var(--crimson)">*</span></label><input type="text" name="item_name" class="form-control @error('item_name') is-invalid @enderror" value="{{ old('item_name') }}" required>@error('item_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="form-group"><label class="form-label">Category <span style="color:var(--crimson)">*</span></label><select name="category" class="form-control" required>@foreach(['Food','Non-food','Medicine','PPE','Equipment','Other'] as $c)<option>{{ $c }}</option>@endforeach</select></div>
                         <div class="form-group"><label class="form-label">Quantity <span style="color:var(--crimson)">*</span></label><input type="number" name="quantity" class="form-control" min="0" value="0" required></div>
                         <div class="form-group"><label class="form-label">Unit</label><input type="text" name="unit" class="form-control" placeholder="e.g. pcs, packs, boxes, sacks"></div>
@@ -1370,7 +1370,7 @@
                 <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" enctype="multipart/form-data">
                     @csrf <input type="hidden" name="specific_type" value="training">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control" placeholder="e.g. Anti-Drug Campaign Seminar" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control @error('title') is-invalid @enderror" placeholder="e.g. Anti-Drug Campaign Seminar" value="{{ old('title') }}" required>@error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="form-group"><label class="form-label">Type <span style="color:var(--crimson)">*</span></label><select name="training_type" class="form-control" required>@foreach(['Training','Seminar','Workshop','Drill','Other'] as $t)<option>{{ $t }}</option>@endforeach</select></div>
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="training_date" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Duration</label><input type="text" name="duration" class="form-control" placeholder="e.g. 3 days, 8 hours"></div>
@@ -1426,7 +1426,7 @@
                 <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
                     @csrf <input type="hidden" name="specific_type" value="clinic-staff">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control @error('full_name') is-invalid @enderror" value="{{ old('full_name') }}" required>@error('full_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="form-group"><label class="form-label">Position <span style="color:var(--crimson)">*</span></label><select name="position" class="form-control" required>@foreach(['Doctor','Nurse','Midwife','BHW','Dentist','Other'] as $p)<option>{{ $p }}</option>@endforeach</select></div>
                         <div class="form-group"><label class="form-label">Specialization</label><input type="text" name="specialization" class="form-control" placeholder="e.g. Pediatrics"></div>
                         <div class="form-group"><label class="form-label">Affiliation</label><input type="text" name="affiliation" class="form-control" placeholder="e.g. DOH, RHU, Private"></div>
@@ -1480,7 +1480,7 @@
                     @csrf <input type="hidden" name="specific_type" value="medicine">
                     <div class="form-grid-3" style="gap:12px">
                         {{-- Row 1: Names --}}
-                        <div class="form-group"><label class="form-label">Generic Name <span style="color:var(--crimson)">*</span></label><input type="text" name="medicine_name" class="form-control" placeholder="e.g. Paracetamol" required></div>
+                        <div class="form-group"><label class="form-label">Generic Name <span style="color:var(--crimson)">*</span></label><input type="text" name="medicine_name" class="form-control @error('medicine_name') is-invalid @enderror" placeholder="e.g. Paracetamol" value="{{ old('medicine_name') }}" required>@error('medicine_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="form-group"><label class="form-label">Brand Name</label><input type="text" name="brand_name" class="form-control" placeholder="e.g. Biogesic"></div>
                         <div class="form-group"><label class="form-label">Alt. Generic Name</label><input type="text" name="generic_name" class="form-control" placeholder="INN / USAN"></div>
                         {{-- Row 2: Classification --}}
@@ -1837,7 +1837,7 @@
                 <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
                     @csrf <input type="hidden" name="specific_type" value="sweeper">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control @error('full_name') is-invalid @enderror" value="{{ old('full_name') }}" required>@error('full_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-control">@foreach(['Active','Inactive','On Leave'] as $s)<option>{{ $s }}</option>@endforeach</select></div>
                         <div class="form-group"><label class="form-label">Assigned Zone / Area</label><input type="text" name="assigned_zone" class="form-control" placeholder="e.g. Purok 3 — Main Road"></div>
                         <div class="form-group"><label class="form-label">Contact Number</label><input type="text" name="contact_number" class="form-control"></div>
@@ -1889,7 +1889,7 @@
                     @csrf <input type="hidden" name="specific_type" value="contract">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group"><label class="form-label">Contract Number</label><input type="text" name="contract_number" class="form-control" placeholder="e.g. BNE-2026-001"></div>
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Contractor / Supplier Name <span style="color:var(--crimson)">*</span></label><input type="text" name="contractor_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Contractor / Supplier Name <span style="color:var(--crimson)">*</span></label><input type="text" name="contractor_name" class="form-control @error('contractor_name') is-invalid @enderror" value="{{ old('contractor_name') }}" required>@error('contractor_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="form-group" style="grid-column:span 3"><label class="form-label">Scope of Work</label><input type="text" name="scope_of_work" class="form-control" placeholder="Brief description of the contract"></div>
                         <div class="form-group"><label class="form-label">Contract Amount (₱)</label><input type="number" name="contract_amount" class="form-control" min="0" step="0.01"></div>
                         <div class="form-group"><label class="form-label">Start Date</label><input type="date" name="start_date" class="form-control"></div>
@@ -1945,7 +1945,7 @@
                 <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" enctype="multipart/form-data">
                     @csrf <input type="hidden" name="specific_type" value="financial">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title / Description <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control" required placeholder="e.g. Road Repair Fund Utilization Q1"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title / Description <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control @error('title') is-invalid @enderror" placeholder="e.g. Road Repair Fund Utilization Q1" value="{{ old('title') }}" required>@error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="form-group"><label class="form-label">Type <span style="color:var(--crimson)">*</span></label><select name="type" class="form-control" required>@foreach(['Budget','Utilization','Liquidation'] as $t)<option>{{ $t }}</option>@endforeach</select></div>
                         <div class="form-group"><label class="form-label">Amount (₱) <span style="color:var(--crimson)">*</span></label><input type="number" name="amount" class="form-control" min="0" step="0.01" required></div>
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="date" class="form-control" required></div>
