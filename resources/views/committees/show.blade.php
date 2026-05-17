@@ -2027,9 +2027,10 @@ function toggleForm(id, btnEl) {
     const isOpen = panel.classList.toggle('open');
     if (btnEl) {
         const label = btnEl.dataset.label || 'Add';
+        const icon  = btnEl.dataset.icon  || 'fa-plus';
         btnEl.innerHTML = isOpen
             ? '<i class="fas fa-times"></i> Cancel'
-            : '<i class="fas fa-plus"></i> ' + label;
+            : '<i class="fas ' + icon + '"></i> ' + label;
         btnEl.className = isOpen ? 'btn btn-secondary btn-sm' : 'btn btn-primary btn-sm';
     }
 }
