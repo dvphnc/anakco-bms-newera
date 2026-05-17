@@ -152,7 +152,11 @@
     .not-found h3 { font-size: 1rem; color: var(--navy); margin-bottom: .35rem; }
     .not-found p { font-size: .82rem; color: #6b7280; }
 
+<<<<<<< Updated upstream
     /* ── Mobile: vertical timeline for progress steps ── */
+=======
+    /* Mobile: vertical timeline for progress steps */
+>>>>>>> Stashed changes
     @media (max-width: 600px) {
         .search-row { flex-direction: column; }
         .search-row .btn { width: 100%; justify-content: center; }
@@ -161,7 +165,11 @@
             flex-direction: column;
             align-items: flex-start;
             gap: 0;
+<<<<<<< Updated upstream
             padding-left: .5rem;
+=======
+            padding-left: .25rem;
+>>>>>>> Stashed changes
         }
         .prog-step {
             display: flex;
@@ -169,22 +177,46 @@
             gap: .75rem;
             flex: none;
             width: 100%;
+<<<<<<< Updated upstream
             padding: .3rem 0;
             text-align: left;
         }
         /* Vertical connector: runs downward from each dot */
         .prog-step::before {
+=======
+            padding: .35rem 0;
+        }
+        /* Vertical connector line */
+        .prog-step::before {
+            content: '';
+            position: absolute;
+>>>>>>> Stashed changes
             top: 28px;
             left: 13px;
             right: auto;
             width: 2px;
+<<<<<<< Updated upstream
             height: calc(100% + 2px);
+=======
+            height: calc(100% - 8px);
+>>>>>>> Stashed changes
             background: #e5e7eb;
         }
         .prog-step:last-child::before { display: none; }
         .prog-step.done::before { background: var(--navy); }
+<<<<<<< Updated upstream
         .prog-dot { flex-shrink: 0; margin: 0; }
         .prog-label { font-size: .82rem; margin-top: 0; }
+=======
+        .prog-dot {
+            flex-shrink: 0;
+            margin: 0;
+        }
+        .prog-label {
+            font-size: .82rem;
+            margin-top: 0;
+        }
+>>>>>>> Stashed changes
     }
 </style>
 @endpush
@@ -276,8 +308,13 @@
             </div>
         @endif
     @endif
+<<<<<<< Updated upstream
 </div>{{-- /.p-card --}}
 </div>{{-- /.portal-wrap --}}
+=======
+</div>
+</div>
+>>>>>>> Stashed changes
 @endsection
 
 @push('scripts')

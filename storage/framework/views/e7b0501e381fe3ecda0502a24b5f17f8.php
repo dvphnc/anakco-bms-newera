@@ -32,6 +32,7 @@
 </div>
 
 
+<<<<<<< Updated upstream
 <?php
     $bizAlertCount = ($summaryCounts['Overdue'] > 0 ? 1 : 0) + ($summaryCounts['ExpiringSoon'] > 0 ? 1 : 0);
 ?>
@@ -73,6 +74,31 @@
         <?php endif; ?>
 
     </div>
+=======
+<?php if($summaryCounts['Overdue'] > 0): ?>
+<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fef2f2;border:1px solid #fecaca;border-left:4px solid #ef4444;border-radius:var(--radius);margin-bottom:14px">
+    <i class="fas fa-triangle-exclamation" style="color:#ef4444;font-size:18px;flex-shrink:0"></i>
+    <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:#991b1b"><?php echo e($summaryCounts['Overdue']); ?> Active Permit<?php echo e($summaryCounts['Overdue'] > 1 ? 's' : ''); ?> are Overdue!</div>
+        <div style="font-size:13px;color:#ef4444">These businesses have active status but their permits have already expired. Consider updating their status.</div>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="quickFilter('expiryFilter', 'expired')">
+        <i class="fas fa-filter"></i> Show Overdue
+    </button>
+</div>
+<?php endif; ?>
+
+<?php if($summaryCounts['ExpiringSoon'] > 0): ?>
+<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:var(--radius);margin-bottom:14px">
+    <i class="fas fa-clock" style="color:#f59e0b;font-size:18px;flex-shrink:0"></i>
+    <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:#92400e"><?php echo e($summaryCounts['ExpiringSoon']); ?> Permit<?php echo e($summaryCounts['ExpiringSoon'] > 1 ? 's' : ''); ?> Expiring Within 30 Days</div>
+        <div style="font-size:13px;color:#b45309">Notify business owners to renew their barangay permits soon.</div>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="quickFilter('expiryFilter', 'expiring_soon')">
+        <i class="fas fa-filter"></i> Show Expiring
+    </button>
+>>>>>>> Stashed changes
 </div>
 <?php endif; ?>
 
@@ -85,22 +111,37 @@
             <div class="stat-label">Total Businesses</div>
         </div>
     </div>
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Active')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-check-circle"></i></div>
+=======
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Active'])">
+        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-check-circle"></i></div>
+>>>>>>> Stashed changes
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($summaryCounts['Active'])); ?></div>
             <div class="stat-label">Active Permits</div>
         </div>
     </div>
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('expiryFilter', 'expiring_soon')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-clock"></i></div>
+=======
+    <div class="stat-card" style="cursor:pointer;border-color:#fde68a" onclick="quickFilter('expiryFilter', 'expiring_soon')">
+        <div class="stat-icon" style="background:#fffbeb;color:#b45309"><i class="fas fa-clock"></i></div>
+>>>>>>> Stashed changes
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($summaryCounts['ExpiringSoon'])); ?></div>
             <div class="stat-label">Expiring in 30 Days</div>
         </div>
     </div>
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('expiryFilter', 'expired')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-triangle-exclamation"></i></div>
+=======
+    <div class="stat-card" style="cursor:pointer;border-color:#fecaca" onclick="quickFilter('expiryFilter', 'expired')">
+        <div class="stat-icon" style="background:#fef2f2;color:#ef4444"><i class="fas fa-triangle-exclamation"></i></div>
+>>>>>>> Stashed changes
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($summaryCounts['Overdue'])); ?></div>
             <div class="stat-label">Overdue (Active)</div>
@@ -108,15 +149,25 @@
     </div>
 </div>
 <div class="grid-2 mb-6">
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Expired')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-times-circle"></i></div>
+=======
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Expired'])">
+        <div class="stat-icon" style="background:rgba(155,28,28,0.08);color:#9B1C1C"><i class="fas fa-times-circle"></i></div>
+>>>>>>> Stashed changes
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($summaryCounts['Expired'])); ?></div>
             <div class="stat-label">Marked Expired</div>
         </div>
     </div>
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Suspended')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-pause-circle"></i></div>
+=======
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Suspended'])">
+        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-pause-circle"></i></div>
+>>>>>>> Stashed changes
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($summaryCounts['Suspended'])); ?></div>
             <div class="stat-label">Suspended</div>
@@ -132,13 +183,22 @@
             <span id="filterBadge" class="badge badge-gold" style="display:none"></span>
         </div>
         <button type="button" class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleFilters('businesses')">
+<<<<<<< Updated upstream
             <i class="fas fa-sliders"></i>
+=======
+            <i class="fas fa-sliders" id="filterToggleIcon"></i>
+>>>>>>> Stashed changes
             <span id="filterToggleText">Show Filters</span>
         </button>
     </div>
     <div id="filterPanel" style="display:none">
         <div class="card-body" style="padding:20px 22px">
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+<<<<<<< Updated upstream
+=======
+
+                
+>>>>>>> Stashed changes
                 <div class="form-group" style="grid-column:1/-1">
                     <label class="form-label">Search</label>
                     <div style="position:relative">
@@ -146,6 +206,7 @@
                         <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
                                placeholder="Business name, owner, permit number…">
                     </div>
+<<<<<<< Updated upstream
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Business Type</label>
@@ -173,7 +234,41 @@
                         <option value="expired">🔴 Overdue</option>
                         <option value="valid">✅ Valid</option>
                     </select>
+=======
+>>>>>>> Stashed changes
                 </div>
+
+                
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Business Type</label>
+                    <select id="typeFilter" multiple>
+                        <?php $__currentLoopData = $businessTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($t); ?>"><?php echo e($t); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                </div>
+
+                
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="statusFilter" multiple>
+                        <?php $__currentLoopData = ['Active','Expired','Suspended','Cancelled']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                </div>
+
+                
+                <div class="form-group">
+                    <label class="form-label">Expiry Status</label>
+                    <select id="expiryFilter">
+                        <option value=""></option>
+                        <option value="expiring_soon">⚠ Expiring Soon (30 days)</option>
+                        <option value="expired">🔴 Overdue</option>
+                        <option value="valid">✅ Valid</option>
+                    </select>
+                </div>
+
             </div>
             <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
                 <button type="button" id="resetBtn" class="btn btn-secondary btn-sm">
@@ -282,6 +377,7 @@
 <script>
 $(document).ready(function () {
 
+<<<<<<< Updated upstream
     /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
        The browser won't paint until after this synchronous block, so no visual flash. */
     var $fp = $('#filterPanel');
@@ -298,6 +394,33 @@ $(document).ready(function () {
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 
+=======
+    /* ── Select2 init ─────────────────────────────────────────────────── */
+    const s2Multi = {
+        dropdownParent: $('body'),
+        allowClear: false,
+        width: '100%',
+        closeOnSelect: false,
+        language: {
+            noResults: function () { return 'No matches — try a different term'; },
+            searching: function () { return 'Searching…'; }
+        }
+    };
+    const s2Single = {
+        dropdownParent: $('body'),
+        allowClear: true,
+        width: '100%',
+        language: {
+            noResults: function () { return 'No matches'; }
+        }
+    };
+
+    $('#typeFilter').select2($.extend({}, s2Multi, { placeholder: 'All business types…' }));
+    $('#statusFilter').select2($.extend({}, s2Multi, { placeholder: 'All statuses…', minimumResultsForSearch: -1 }));
+    $('#expiryFilter').select2($.extend({}, s2Single, { placeholder: 'All', minimumResultsForSearch: -1 }));
+
+    /* ── DataTable ────────────────────────────────────────────────────── */
+>>>>>>> Stashed changes
     var table = $('#businessesTable').DataTable({
         processing: true,
         serverSide: true,
@@ -336,6 +459,7 @@ $(document).ready(function () {
         }
     });
 
+<<<<<<< Updated upstream
     /* ── Axios DELETE ─────────────────────────────────────────────────── */
     $('#businessesTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
         e.preventDefault();
@@ -444,6 +568,92 @@ $(document).ready(function () {
     let debounce;
     $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380); });
     $('#typeFilter, #statusFilter, #expiryFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
+=======
+    /* ── URL persistence ──────────────────────────────────────────────── */
+    function saveToUrl() {
+        const url = new URL(window.location);
+        ['s','expiry_filter'].forEach(k => url.searchParams.delete(k));
+        url.searchParams.delete('business_type');
+        url.searchParams.delete('status');
+
+        if ($('#searchInput').val())  url.searchParams.set('s', $('#searchInput').val());
+        if ($('#expiryFilter').val()) url.searchParams.set('expiry_filter', $('#expiryFilter').val());
+        ($('#typeFilter').val()   || []).forEach(v => url.searchParams.append('business_type', v));
+        ($('#statusFilter').val() || []).forEach(v => url.searchParams.append('status', v));
+
+        history.replaceState({}, '', url);
+        updateBadge();
+    }
+
+    function loadFromUrl() {
+        const p = new URLSearchParams(window.location.search);
+        let any = false;
+        if (p.get('s'))             { $('#searchInput').val(p.get('s')); any = true; }
+        if (p.get('expiry_filter')) { $('#expiryFilter').val(p.get('expiry_filter')).trigger('change.select2'); any = true; }
+        const types    = p.getAll('business_type');
+        const statuses = p.getAll('status');
+        if (types.length)    { $('#typeFilter').val(types).trigger('change.select2'); any = true; }
+        if (statuses.length) { $('#statusFilter').val(statuses).trigger('change.select2'); any = true; }
+        return any;
+    }
+
+    function updateBadge() {
+        let n = 0;
+        if ($('#searchInput').val())                    n++;
+        if (($('#typeFilter').val()   || []).length)    n++;
+        if (($('#statusFilter').val() || []).length)    n++;
+        if ($('#expiryFilter').val())                   n++;
+        const badge = document.getElementById('filterBadge');
+        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
+        else       { badge.style.display = 'none'; }
+    }
+
+    /* ── Panel toggle + quick-filter (for stat cards & alerts) ───────── */
+    window.toggleFilters = function (key) {
+        const panel = document.getElementById('filterPanel');
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+        sessionStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+    };
+
+    window.quickFilter = function (filterId, value) {
+        if (value === null) {
+            $('#' + filterId).val(null).trigger('change');
+        } else if (Array.isArray(value)) {
+            $('#' + filterId).val(value).trigger('change');
+        } else {
+            $('#' + filterId).val(value).trigger('change');
+        }
+        if (document.getElementById('filterPanel').style.display === 'none') {
+            document.getElementById('filterPanel').style.display = 'block';
+            document.getElementById('filterToggleText').textContent = 'Hide Filters';
+            sessionStorage.setItem('fp_businesses', '1');
+        }
+        saveToUrl();
+        table.ajax.reload();
+    };
+
+    const hasUrlFilters = loadFromUrl();
+    if (hasUrlFilters || sessionStorage.getItem('fp_businesses') === '1') {
+        document.getElementById('filterPanel').style.display = 'block';
+        document.getElementById('filterToggleText').textContent = 'Hide Filters';
+    }
+    updateBadge();
+
+    /* ── Event listeners ─────────────────────────────────────────────── */
+    let debounce;
+
+    $('#searchInput').on('input', function () {
+        clearTimeout(debounce);
+        debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380);
+    });
+
+    $('#typeFilter, #statusFilter, #expiryFilter').on('change', function () {
+        saveToUrl(); table.ajax.reload();
+    });
+
+>>>>>>> Stashed changes
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
         $('#typeFilter, #statusFilter').val(null).trigger('change');

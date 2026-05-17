@@ -175,6 +175,11 @@
             Processing time is 1–3 business days. You will need to present a valid ID when claiming.
         </p>
     </form>
+<<<<<<< Updated upstream
 </div>{{-- /.p-card --}}
 </div>{{-- /.portal-wrap --}}
+=======
+</div>
+</div>
+>>>>>>> Stashed changes
 @endsection

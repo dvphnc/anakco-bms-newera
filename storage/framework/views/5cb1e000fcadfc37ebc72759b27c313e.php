@@ -144,8 +144,12 @@
                 
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Classifications</label>
+<<<<<<< Updated upstream
                     <select id="tagsFilter">
                         <option value=""></option>
+=======
+                    <select id="tagsFilter" multiple>
+>>>>>>> Stashed changes
                         <option value="voter">Registered Voter</option>
                         <option value="senior">Senior Citizen (60+)</option>
                         <option value="pwd">Person with Disability (PWD)</option>
@@ -236,6 +240,7 @@
 }
 /* Filter panel transition */
 #filterPanel { transition: none; }
+<<<<<<< Updated upstream
 
 /* Audit B — Condensed row density */
 #residentsTable td,
@@ -244,23 +249,31 @@
     width: 26px !important; height: 26px !important; font-size: 10px !important;
 }
 #residentsTable td .res-phone { display: none; }
+=======
+>>>>>>> Stashed changes
 </style>
 
 <script>
 $(document).ready(function () {
 
     /* ── Select2 init ─────────────────────────────────────────────────── */
+<<<<<<< Updated upstream
     /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
        The browser won't paint until after this synchronous block, so no visual flash. */
     var $fp = $('#filterPanel');
     var _fpW = $fp.parent().width();
     $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1', width: _fpW + 'px' });
 
+=======
+>>>>>>> Stashed changes
     const s2Base = {
         dropdownParent: $('body'),
         allowClear: true,
         width: '100%',
+<<<<<<< Updated upstream
         minimumResultsForSearch: 0,
+=======
+>>>>>>> Stashed changes
         language: {
             noResults: function () {
                 return 'No matches — try a different term';
@@ -270,12 +283,24 @@ $(document).ready(function () {
     };
 
     $('#purokFilter').select2($.extend({}, s2Base, { placeholder: 'All Puroks' }));
+<<<<<<< Updated upstream
     $('#genderFilter').select2($.extend({}, s2Base, { placeholder: 'All Genders' }));
     $('#statusFilter').select2($.extend({}, s2Base, { placeholder: 'All Statuses' }));
     $('#civilStatusFilter').select2($.extend({}, s2Base, { placeholder: 'Any Civil Status' }));
     $('#tagsFilter').select2($.extend({}, s2Base, { placeholder: 'Filter by classification…' }));
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
+=======
+    $('#genderFilter').select2($.extend({}, s2Base, { placeholder: 'All Genders', minimumResultsForSearch: -1 }));
+    $('#statusFilter').select2($.extend({}, s2Base, { placeholder: 'All Statuses', minimumResultsForSearch: -1 }));
+    $('#civilStatusFilter').select2($.extend({}, s2Base, { placeholder: 'Any Civil Status', minimumResultsForSearch: -1 }));
+    $('#tagsFilter').select2($.extend({}, s2Base, {
+        placeholder: 'Filter by classification…',
+        minimumResultsForSearch: -1,
+        closeOnSelect: false,
+        allowClear: false
+    }));
+>>>>>>> Stashed changes
 
     /* ── DataTable ────────────────────────────────────────────────────── */
     var table = $('#residentsTable').DataTable({
@@ -328,7 +353,11 @@ $(document).ready(function () {
         if ($('#civilStatusFilter').val())  url.searchParams.set('civil_status', $('#civilStatusFilter').val());
         if ($('#ageMin').val())             url.searchParams.set('age_min', $('#ageMin').val());
         if ($('#ageMax').val())             url.searchParams.set('age_max', $('#ageMax').val());
+<<<<<<< Updated upstream
         if ($('#tagsFilter').val()) url.searchParams.set('tags', $('#tagsFilter').val());
+=======
+        ($('#tagsFilter').val() || []).forEach(t => url.searchParams.append('tags', t));
+>>>>>>> Stashed changes
 
         history.replaceState({}, '', url);
         updateBadge();
@@ -344,8 +373,13 @@ $(document).ready(function () {
         if (p.get('civil_status')) { $('#civilStatusFilter').val(p.get('civil_status')).trigger('change.select2'); any = true; }
         if (p.get('age_min'))      { $('#ageMin').val(p.get('age_min')); any = true; }
         if (p.get('age_max'))      { $('#ageMax').val(p.get('age_max')); any = true; }
+<<<<<<< Updated upstream
         const tag = p.get('tags');
         if (tag) { $('#tagsFilter').val(tag).trigger('change.select2'); any = true; }
+=======
+        const tags = p.getAll('tags');
+        if (tags.length)           { $('#tagsFilter').val(tags).trigger('change.select2'); any = true; }
+>>>>>>> Stashed changes
         return any;
     }
 
@@ -357,6 +391,7 @@ $(document).ready(function () {
         if ($('#statusFilter').val())                   n++;
         if ($('#civilStatusFilter').val())              n++;
         if ($('#ageMin').val() || $('#ageMax').val())   n++;
+<<<<<<< Updated upstream
         if ($('#tagsFilter').val())                      n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');
@@ -385,10 +420,31 @@ $(document).ready(function () {
     const hasUrlFilters = loadFromUrl();
     const lsOpen = localStorage.getItem('fp_residents') === '1';
     if (hasUrlFilters || lsOpen) {
+=======
+        if (($('#tagsFilter').val() || []).length)      n++;
+        const badge = document.getElementById('filterBadge');
+        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
+        else       { badge.style.display = 'none'; }
+    }
+
+    /* ── Filter panel toggle (global so card-header click works) ─────── */
+    window.toggleFilters = function (key) {
+        const panel = document.getElementById('filterPanel');
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+        sessionStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+    };
+
+    // Restore panel state on load
+    const hasUrlFilters = loadFromUrl();
+    if (hasUrlFilters || sessionStorage.getItem('fp_residents') === '1') {
+>>>>>>> Stashed changes
         document.getElementById('filterPanel').style.display = 'block';
         document.getElementById('filterToggleText').textContent = 'Hide Filters';
     }
     updateBadge();
+<<<<<<< Updated upstream
     // Auto-open panel if filters are active (even if localStorage says closed)
     setTimeout(() => {
         const n = parseInt(document.getElementById('filterBadge').textContent) || 0;
@@ -397,6 +453,8 @@ $(document).ready(function () {
             document.getElementById('filterToggleText').textContent = 'Hide Filters';
         }
     }, 50);
+=======
+>>>>>>> Stashed changes
 
     /* ── Event listeners ─────────────────────────────────────────────── */
     let debounce;
@@ -527,6 +585,7 @@ window.closeQvPanel = function () {
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeQvPanel();
 });
+<<<<<<< Updated upstream
 
 /* ── Axios DELETE — DataTable row removal ──────────────────────────────── */
 $(document).on('click', '#residentsTable form[data-confirm] button[type="submit"]', function (e) {
@@ -585,6 +644,8 @@ $(document).on('click', '#residentsTable .res-status-toggle', function () {
             alert('Could not update status. Please try again.');
         });
 });
+=======
+>>>>>>> Stashed changes
 </script>
 
 
