@@ -736,29 +736,36 @@
         $(document).on('select2:open', function () {
             setTimeout(function () {
                 var $cont = $('.select2-container--open');
+                /* With dropdownParent:$('body') the dropdown is appended to <body>,
+                   NOT inside $cont — so we must search on $('body') directly. */
+                var $dd = $('.select2-dropdown');
 
-                /* Ensure search is always visible */
-                $cont.find('.select2-search--dropdown')
-                     .removeClass('select2-search--hide')
-                     .css('display', 'block');
-                var $f = $cont.find('.select2-search--dropdown .select2-search__field')
-                              .css('display', 'block');
+                if (!$cont.length || !$dd.length) return;
+
+                /* ── Always show the search field ─────────────────────────── */
+                $dd.find('.select2-search--dropdown')
+                   .removeClass('select2-search--hide')
+                   .css('display', 'block');
+                var $f = $dd.find('.select2-search__field').css('display', 'block');
                 if ($f.length) { $f[0].focus(); }
 
-                /* Force dropdown to open BELOW — fix for .main-content scroll container.
-                   Select2 calculates space using window.pageYOffset (= 0 since body
-                   doesn't scroll; .main-content does), which can make it choose "above"
-                   even when there is ample viewport space below. */
-                var $dd = $('.select2-dropdown--above');
-                if ($dd.length && $cont.length) {
-                    var rect = $cont[0].getBoundingClientRect();
-                    var scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
-                    $dd.css({ top: (rect.bottom + scrollY + 1) + 'px', 'margin-top': '0' });
-                    $dd.removeClass('select2-dropdown--above').addClass('select2-dropdown--below');
-                    $cont.find('.select2-selection')
-                         .css('border-bottom-left-radius', '0')
-                         .css('border-bottom-right-radius', '0');
-                }
+                /* ── Fix position & height ────────────────────────────────── */
+                /* .main-content is the scroll container, not window — so
+                   window.pageYOffset is always 0 and Select2's built-in space
+                   calculation is wrong when the user has scrolled.
+                   We recalculate everything from viewport coordinates. */
+                var rect       = $cont[0].getBoundingClientRect();
+                var mcScroll   = (document.querySelector('.main-content') || {}).scrollTop || 0;
+                var docTop     = rect.bottom + mcScroll;          // position in document
+                var spaceBelow = (window.innerHeight || 768) - rect.bottom - 6;
+                var maxH       = Math.max(140, Math.min(280, spaceBelow));
+
+                $dd.css({ top: docTop + 'px', 'margin-top': '0' });
+                $dd.find('.select2-results__options').css('max-height', maxH + 'px');
+                $dd.removeClass('select2-dropdown--above').addClass('select2-dropdown--below');
+                $cont.find('.select2-selection')
+                     .css('border-bottom-left-radius', '0')
+                     .css('border-bottom-right-radius', '0');
             }, 20);
         });
 
