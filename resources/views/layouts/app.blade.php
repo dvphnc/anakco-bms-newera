@@ -742,33 +742,32 @@
             var $dd   = $('.select2-dropdown');
             if (!$cont.length || !$dd.length) return;
 
-            /* ── Position & height ────────────────────────────────────────
-               No setTimeout — run synchronously so the browser never paints
-               the "wrong" position (which caused the visible blink).
-
-               getBoundingClientRect() is viewport-relative. Because <body>
-               never scrolls (only .main-content does), viewport coords equal
-               document coords for any element appended to <body>.
-               → top: rect.bottom is the correct placement, no scroll offset
-                 needed. The old + mcScroll was double-counting.
-
-               spaceBelow uses pure viewport maths, so max-height is always
-               correct regardless of how far .main-content has scrolled. */
+            /* ── Max-height fix ───────────────────────────────────────────
+               Select2 uses $(window).scrollTop() = 0 (body never scrolls,
+               only .main-content does) so it miscalculates available space
+               when the user has scrolled. Fix: derive max-height from
+               getBoundingClientRect() which is always viewport-accurate. */
             var rect       = $cont[0].getBoundingClientRect();
             var spaceBelow = (window.innerHeight || 768) - rect.bottom - 6;
             var maxH       = Math.max(140, Math.min(280, spaceBelow));
-
-            $dd.css({ top: rect.bottom + 'px', 'margin-top': '0' });
             $dd.find('.select2-results__options').css('max-height', maxH + 'px');
-            $dd.removeClass('select2-dropdown--above').addClass('select2-dropdown--below');
-            $cont.find('.select2-selection')
-                 .css('border-bottom-left-radius', '0')
-                 .css('border-bottom-right-radius', '0');
+
+            /* ── Reposition only when Select2 chose "above" ───────────────
+               For dropdowns already opening below, Select2's own top value
+               is correct — do NOT override it or the dropdown shifts down.
+               Only flip above→below using rect.bottom (viewport coords =
+               document coords since body never scrolls). */
+            if ($dd.hasClass('select2-dropdown--above')) {
+                $dd.css({ top: rect.bottom + 'px', 'margin-top': '0' });
+                $dd.removeClass('select2-dropdown--above').addClass('select2-dropdown--below');
+                $cont.find('.select2-selection')
+                     .css('border-bottom-left-radius', '0')
+                     .css('border-bottom-right-radius', '0');
+            }
 
             /* ── Search field ─────────────────────────────────────────────
                Dropdown is on <body>, not inside $cont, so target $dd.
-               No .focus() call — that fires focusout on .select2-container
-               which Select2 reads as "clicked outside" → closes immediately. */
+               No .focus() — fires focusout on .select2-container → closes. */
             $dd.find('.select2-search--dropdown')
                .removeClass('select2-search--hide')
                .css('display', 'block');
