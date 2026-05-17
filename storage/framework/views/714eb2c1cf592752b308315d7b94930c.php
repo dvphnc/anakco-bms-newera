@@ -39,9 +39,15 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     padding: 8px 18px;
     min-height: 38px;
     font-size: 13px;
+=======
+    padding: 10px 22px;
+    min-height: 44px;
+    font-size: 14px;
+>>>>>>> Stashed changes
 =======
     padding: 10px 22px;
     min-height: 44px;
@@ -122,6 +128,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 .dash-stat-number { font-size:22px; font-weight:800; color:var(--navy); line-height:1.1; letter-spacing:-0.01em; }
 .dash-stat-label  { font-size:12px; color:var(--text-muted); margin-top:3px; font-weight:400; line-height:1.4; }
 
@@ -174,6 +181,10 @@
 .dash-stat-number { font-size:28px; font-weight:700; color:var(--text); line-height:1.1; }
 .dash-stat-label  { font-size:14px; color:var(--text-muted); margin-top:4px; }
 >>>>>>> Stashed changes
+=======
+.dash-stat-number { font-size:28px; font-weight:700; color:var(--text); line-height:1.1; }
+.dash-stat-label  { font-size:14px; color:var(--text-muted); margin-top:4px; }
+>>>>>>> Stashed changes
 
 /* ── Mid Row: Chart + Quick Access ───────────────────────── */
 .dash-mid { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px; }
@@ -202,6 +213,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -227,8 +241,13 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 .feed-title { font-size:13px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .feed-sub   { font-size:12px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+=======
+.feed-title { font-size:14px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.feed-sub   { font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+>>>>>>> Stashed changes
 =======
 .feed-title { font-size:14px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .feed-sub   { font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
@@ -290,7 +309,11 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div style="position:relative;display:flex;align-items:center;justify-content:space-between;
+=======
+    <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;
+>>>>>>> Stashed changes
 =======
     <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;
 >>>>>>> Stashed changes
@@ -328,6 +351,7 @@
             </div>
         </div>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -372,6 +396,8 @@
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         
         <div style="display:flex;align-items:center;gap:12px;
                     background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);
@@ -405,6 +431,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -434,11 +463,14 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     <i class="fas fa-file-circle-plus"></i> New Document
                 </a>
             </div>
         </div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -497,6 +529,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -515,6 +550,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     $alertCount = $seniorBdays->count() + $regularBdays->count()
                 + ($expiringPermits->count() ? 1 : 0)
                 + ($pendingAppointments ? 1 : 0)
@@ -527,6 +563,8 @@
         <span><?php echo e($alertCount); ?> Notice<?php echo e($alertCount > 1 ? 's' : ''); ?> — Birthdays, Permits & More</span>
         <i class="fas fa-chevron-down tray-caret"></i>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -881,8 +919,11 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             <div class="card-header card-header-plain">
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -959,12 +1000,20 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                         ? (int)\Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
                 ?>
                 <a href="<?php echo e(route('blotter.show', $b->id)); ?>" class="feed-row">
                     <div class="feed-icon"
                          style="<?php echo e($bIsOpen && $bDaysOpen >= 30 ? 'outline:2px solid var(--crimson);outline-offset:-2px;' : ''); ?>">
                         <i class="fas fa-gavel"></i>
+=======
+                        ? \Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
+                ?>
+                <a href="<?php echo e(route('blotter.show', $b->id)); ?>" class="feed-row">
+                    <div class="feed-icon" style="background:#fef2f2<?php echo e($bIsOpen && $bDaysOpen >= 30 ? ';outline:2px solid #dc2626;outline-offset:-2px' : ''); ?>">
+                        <i class="fas fa-gavel" style="color:#dc2626"></i>
+>>>>>>> Stashed changes
 =======
                         ? \Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
                 ?>
@@ -1327,7 +1376,11 @@ document.addEventListener('DOMContentLoaded', function () {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         text: 'Switch between <strong>Overview</strong> (today\'s summary) and <strong>Analytics</strong> (charts and demographics). For appointments, use the dedicated Appointments page from the sidebar.',
+=======
+        text: 'Switch between <strong>Overview</strong> (today\'s summary), <strong>Analytics</strong> (charts and demographics), and <strong>Appointments</strong> (document requests from residents). The orange number on Appointments shows pending items.',
+>>>>>>> Stashed changes
 =======
         text: 'Switch between <strong>Overview</strong> (today\'s summary), <strong>Analytics</strong> (charts and demographics), and <strong>Appointments</strong> (document requests from residents). The orange number on Appointments shows pending items.',
 >>>>>>> Stashed changes
