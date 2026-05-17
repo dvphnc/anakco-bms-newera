@@ -255,12 +255,19 @@
 $(document).ready(function () {
 
     /* ── Select2 init ─────────────────────────────────────────────────── */
+    /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
+       The browser won't paint until after this synchronous block, so no visual flash. */
+    var $fp = $('#filterPanel');
+    $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1' });
+
     const s2Multi = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
                       minimumResultsForSearch: 0,
                       language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
 
     $('#typeFilter').select2($.extend({}, s2Multi, { placeholder: 'All incident types…' }));
     $('#statusFilter').select2($.extend({}, s2Multi, { placeholder: 'All statuses…' }));
+
+    $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '' });
 
     /* ── DataTable ────────────────────────────────────────────────────── */
     var table = $('#blotterTable').DataTable({
