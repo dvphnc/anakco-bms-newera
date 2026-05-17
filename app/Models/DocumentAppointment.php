@@ -68,6 +68,11 @@ class DocumentAppointment extends Model
         return $number;
     }
 
+    public function statusLogs()
+    {
+        return $this->hasMany(AppointmentStatusLog::class, 'appointment_id')->orderBy('created_at');
+    }
+
     /**
      * Status badge color helper.
      */

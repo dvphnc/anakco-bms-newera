@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AppointmentStatusLog;
 use App\Models\DocumentAppointment;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
