@@ -18,7 +18,10 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -183,6 +186,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -290,6 +296,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -321,7 +330,11 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         .btn-sm   { padding:6px 13px; font-size:12px; min-height:34px; }
+=======
+        .btn-sm   { padding:7px 14px; font-size:13px; min-height:38px; }
+>>>>>>> Stashed changes
 =======
         .btn-sm   { padding:7px 14px; font-size:13px; min-height:38px; }
 >>>>>>> Stashed changes
@@ -378,6 +391,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         table { width:100%; border-collapse:collapse; font-size:13px; min-width:600px; }
         thead th { padding:9px 14px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--navy); background:var(--surface2); border-bottom:2px solid var(--border2); white-space:nowrap; }
         tbody tr { border-bottom:1px solid var(--border); transition:background 0.1s; }
@@ -386,6 +400,16 @@
         tbody td { padding:11px 14px; color:var(--text); vertical-align:middle; font-size:13px; line-height:1.55; }
         .td-muted { color:var(--text-muted); font-size:12px; line-height:1.5; }
         .td-mono  { font-family:'Courier New',monospace; color:var(--text-muted); font-size:12px; }
+=======
+        table { width:100%; border-collapse:collapse; font-size:14px; min-width:600px; }
+        thead th { padding:11px 16px; text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--navy); background:var(--surface2); border-bottom:2px solid var(--border2); white-space:nowrap; }
+        tbody tr { border-bottom:1px solid var(--border); transition:background 0.1s; }
+        tbody tr:last-child { border-bottom:none; }
+        tbody tr:hover { background:var(--navy-pale); }
+        tbody td { padding:13px 16px; color:var(--text); vertical-align:middle; font-size:14px; line-height:1.55; }
+        .td-muted { color:var(--text-muted); font-size:13px; line-height:1.5; }
+        .td-mono  { font-family:'Courier New',monospace; color:var(--text-muted); font-size:13px; }
+>>>>>>> Stashed changes
 =======
         table { width:100%; border-collapse:collapse; font-size:14px; min-width:600px; }
         thead th { padding:11px 16px; text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--navy); background:var(--surface2); border-bottom:2px solid var(--border2); white-space:nowrap; }
@@ -489,6 +513,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         .stat-card { background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-lg); padding:22px; display:flex; align-items:center; gap:18px; box-shadow:0 1px 4px rgba(13,33,68,0.07),0 4px 16px rgba(13,33,68,0.04); transition:border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
         .stat-card:hover { border-color:var(--gold-border); box-shadow:0 4px 20px rgba(200,134,26,0.14),0 1px 4px rgba(13,33,68,0.08); transform:translateY(-2px); }
         .stat-icon { width:52px; height:52px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
@@ -496,6 +521,8 @@
         .stat-number { font-size:28px; font-weight:700; color:var(--navy); line-height:1.1; }
         .stat-label  { font-size:12px; color:var(--text-subtle); margin-top:5px; font-weight:500; letter-spacing:0.02em; }
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -520,6 +547,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -933,7 +963,10 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -1147,6 +1180,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     // ── Shared alert auto-dismiss (progress bar + fade-collapse) ────────
     function bmsAlertAutoDismiss(el) {
         var bar = document.createElement('div');
@@ -1236,6 +1270,8 @@
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     // ── Toast notification ───────────────────────────────────────────────
     function bmsToast(message, type) {
         type = type || 'success';
@@ -1271,6 +1307,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -1300,9 +1339,14 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         const cb = _bmsCallback;
         bmsConfirmCancel();
         if (cb) cb();
+=======
+        bmsConfirmCancel();
+        if (_bmsCallback) _bmsCallback();
+>>>>>>> Stashed changes
 =======
         bmsConfirmCancel();
         if (_bmsCallback) _bmsCallback();
@@ -1402,6 +1446,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     // Also force a full reload so Select2, DataTables, and all JS re-initialise
     // cleanly instead of running against a frozen DOM snapshot.
     window.addEventListener('pageshow', function(e) {
@@ -1419,6 +1464,8 @@
     @keyframes alertShrink   { from { width:100%; } to { width:0%; } }
     @keyframes alertSlideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -1469,6 +1516,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
