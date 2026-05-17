@@ -85,7 +85,7 @@
             <div class="stat-label">Total Businesses</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Active'])">
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Active')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-check-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($summaryCounts['Active'])); ?></div>
@@ -108,14 +108,14 @@
     </div>
 </div>
 <div class="grid-2 mb-6">
-    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Expired'])">
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Expired')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-times-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($summaryCounts['Expired'])); ?></div>
             <div class="stat-label">Marked Expired</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Suspended'])">
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Suspended')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-pause-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($summaryCounts['Suspended'])); ?></div>
@@ -149,7 +149,8 @@
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Business Type</label>
-                    <select id="typeFilter" multiple>
+                    <select id="typeFilter">
+                        <option value=""></option>
                         <?php $__currentLoopData = $businessTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <option value="<?php echo e($t); ?>"><?php echo e($t); ?></option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -157,7 +158,8 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Status</label>
-                    <select id="statusFilter" multiple>
+                    <select id="statusFilter">
+                        <option value=""></option>
                         <?php $__currentLoopData = ['Active','Expired','Suspended','Cancelled']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -281,27 +283,6 @@
 }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
-#filterPanel .select2-container--default .select2-selection--multiple {
-    padding: 3px 8px; cursor: pointer;
-    display: block; width: 100%; box-sizing: border-box;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__rendered {
-    padding: 0; display: flex; flex-wrap: wrap; gap: 3px; align-items: center; min-height: 30px; width: 100%;
-    overflow: visible; white-space: normal;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
-    color: var(--text-subtle); font-size: 13.5px; margin: 0 4px;
-    float: none; display: inline-block; white-space: nowrap;
-    flex: 1 0 auto; line-height: 30px;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice {
-    background: var(--navy); color: #fff; border: none; border-radius: 99px;
-    padding: 2px 8px; font-size: 12px; margin: 2px 2px 2px 0; display: inline-flex; align-items: center; gap: 5px;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-    color: rgba(255,255,255,.65); background: transparent; border: none; font-weight: normal; order: 1; padding: 0;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover { color: #fff; background: transparent; }
 </style>
 <script>
 $(document).ready(function () {
@@ -311,15 +292,12 @@ $(document).ready(function () {
     var $fp = $('#filterPanel');
     $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1' });
 
-    const s2Multi  = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
-                       minimumResultsForSearch: 0,
-                       language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
     const s2Single = { dropdownParent: $('body'), allowClear: true,  width: '100%',
                        minimumResultsForSearch: 0,
                        language: { noResults: () => 'No matches' } };
 
-    $('#typeFilter').select2($.extend({}, s2Multi,  { placeholder: 'All business types…' }));
-    $('#statusFilter').select2($.extend({}, s2Multi,  { placeholder: 'All statuses…' }));
+    $('#typeFilter').select2($.extend({}, s2Single, { placeholder: 'All business types…' }));
+    $('#statusFilter').select2($.extend({}, s2Single, { placeholder: 'All statuses…' }));
     $('#expiryFilter').select2($.extend({}, s2Single, { placeholder: 'All' }));
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '' });
@@ -408,8 +386,8 @@ $(document).ready(function () {
         url.searchParams.delete('status');
         if ($('#searchInput').val())  url.searchParams.set('s', $('#searchInput').val());
         if ($('#expiryFilter').val()) url.searchParams.set('expiry_filter', $('#expiryFilter').val());
-        ($('#typeFilter').val()   || []).forEach(v => url.searchParams.append('business_type', v));
-        ($('#statusFilter').val() || []).forEach(v => url.searchParams.append('status', v));
+        if ($('#typeFilter').val())   url.searchParams.set('business_type', $('#typeFilter').val());
+        if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
         history.replaceState({}, '', url);
         updateBadge();
     }
@@ -418,16 +396,16 @@ $(document).ready(function () {
         let any = false;
         if (p.get('s'))             { $('#searchInput').val(p.get('s')); any = true; }
         if (p.get('expiry_filter')) { $('#expiryFilter').val(p.get('expiry_filter')).trigger('change.select2'); any = true; }
-        const types = p.getAll('business_type'), statuses = p.getAll('status');
-        if (types.length)    { $('#typeFilter').val(types).trigger('change.select2'); any = true; }
-        if (statuses.length) { $('#statusFilter').val(statuses).trigger('change.select2'); any = true; }
+        const type = p.get('business_type'), status = p.get('status');
+        if (type)   { $('#typeFilter').val(type).trigger('change.select2'); any = true; }
+        if (status) { $('#statusFilter').val(status).trigger('change.select2'); any = true; }
         return any;
     }
     function updateBadge() {
         let n = 0;
         if ($('#searchInput').val())                 n++;
-        if (($('#typeFilter').val()   || []).length) n++;
-        if (($('#statusFilter').val() || []).length) n++;
+        if ($('#typeFilter').val())   n++;
+        if ($('#statusFilter').val()) n++;
         if ($('#expiryFilter').val())                n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');
