@@ -46,7 +46,11 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 Ctrl+K
+=======
+                <span style="font-size:9px;opacity:.7">⌃</span>K
+>>>>>>> Stashed changes
 =======
                 <span style="font-size:9px;opacity:.7">⌃</span>K
 >>>>>>> Stashed changes
@@ -145,6 +149,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 /* ── System Health Pill ────────────────────── */
 .sys-pill-wrap {
@@ -197,6 +202,8 @@
     transition:background .1s;
 }
 .sys-pop-action:hover { background:var(--navy-pale); }
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======

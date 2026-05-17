@@ -12,6 +12,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -1737,6 +1738,177 @@
     }
 
 >>>>>>> Stashed changes
+=======
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+    /* ══════════════════════════════════════════════════════════
+       DESIGN TOKENS
+    ══════════════════════════════════════════════════════════ */
+    :root {
+        --navy:          #0D2144;
+        --navy-mid:      #163160;
+        --navy-dark:     #091830;
+        --navy-pale:     rgba(13,33,68,0.06);
+        --navy-border:   rgba(13,33,68,0.15);
+        --gold:          #C8861A;
+        --gold-light:    #E5A020;
+        --gold-pale:     #FEF3DC;
+        --gold-border:   rgba(200,134,26,0.3);
+        --crimson:       #9B1C1C;
+        --crimson-pale:  rgba(155,28,28,0.07);
+        --crimson-border:rgba(155,28,28,0.2);
+        --bg:            #F0F4F8;
+        --surface:       #FFFFFF;
+        --surface2:      #F7F9FB;
+        --border:        #DDE2EA;
+        --border2:       #C8CDD8;
+        --text:          #0F1924;
+        --text-muted:    #4B5563;
+        --text-subtle:   #9CA3AF;
+        --radius:        12px;
+        --radius-sm:     8px;
+        --radius-lg:     16px;
+        --shadow-sm:     0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        --shadow-md:     0 4px 16px rgba(0,0,0,0.10);
+        --shadow-lg:     0 12px 40px rgba(0,0,0,0.14);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 16px;
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+    /* ══════════════════════════════════════════════════════════
+       HEADER / NAV
+    ══════════════════════════════════════════════════════════ */
+    .portal-header {
+        background: var(--navy);
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 clamp(1rem, 5vw, 2.5rem);
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.28);
+    }
+    .portal-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--gold) 0%, rgba(200,134,26,0.25) 55%, transparent 90%);
+    }
+
+    .portal-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #fff;
+        flex-shrink: 0;
+        min-width: 0;
+    }
+    .brand-logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--gold), var(--gold-light));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: var(--navy);
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 2px solid rgba(200,134,26,0.4);
+    }
+    .brand-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .brand-text strong {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #fff;
+        white-space: nowrap;
+    }
+    .brand-text span { font-size: 11px; color: rgba(255,255,255,0.55); }
+
+    /* Desktop Nav */
+    .portal-nav {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+    }
+    .portal-nav a {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: rgba(255,255,255,0.75);
+        font-size: 13px;
+        font-weight: 500;
+        padding: 9px 14px;
+        border-radius: var(--radius-sm);
+        min-height: 40px;
+        white-space: nowrap;
+        transition: all 0.15s;
+    }
+    .portal-nav a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+    .portal-nav a.nav-gold {
+        background: var(--gold);
+        color: #fff;
+        font-weight: 600;
+        margin-left: 4px;
+    }
+    .portal-nav a.nav-gold:hover { background: var(--gold-light); }
+    .portal-nav a.nav-ghost {
+        border: 1px solid rgba(255,255,255,0.2);
+        margin-left: 4px;
+    }
+    .portal-nav a.nav-ghost:hover { border-color: rgba(255,255,255,0.5); }
+
+    /* Hamburger (mobile only) */
+    .nav-hamburger {
+        display: none;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        padding: 8px 10px;
+        color: #fff;
+        font-size: 18px;
+        line-height: 1;
+        min-height: 40px;
+        min-width: 40px;
+        align-items: center;
+        justify-content: center;
+    }
+
+>>>>>>> Stashed changes
     /* ══════════════════════════════════════════════════════════
        MOBILE DRAWER
     ══════════════════════════════════════════════════════════ */
@@ -2084,6 +2256,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -2101,6 +2276,7 @@
 </head>
 <body>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -2181,9 +2357,13 @@
 =======
 {{-- ── Portal Header ──────────────────────────────────────────── --}}
 >>>>>>> Stashed changes
+=======
+{{-- ── Portal Header ──────────────────────────────────────────── --}}
+>>>>>>> Stashed changes
 <header class="portal-header">
 
     <a href="{{ route('portal.index') }}" class="portal-brand">
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -2205,6 +2385,8 @@
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         <div class="brand-logo">
             <img src="{{ asset('images/bne-logo.png') }}" alt="BNE"
                  onerror="this.style.display='none';this.parentNode.innerHTML='<i class=\'fas fa-landmark\' style=\'color:var(--navy);font-size:16px\'></i>'">
@@ -2215,6 +2397,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -2231,6 +2416,7 @@
         </div>
     </a>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -2340,6 +2526,20 @@
         @else
             <a href="{{ route('login') }}" class="nav-ghost">
 >>>>>>> Stashed changes
+=======
+    <nav class="portal-nav" aria-label="Main navigation">
+        <a href="{{ route('portal.index') }}"><i class="fas fa-home"></i> Home</a>
+        <a href="{{ route('portal.track') }}"><i class="fas fa-search"></i> Track Status</a>
+        <a href="{{ route('portal.request') }}" class="nav-gold">
+            <i class="fas fa-file-plus"></i> Request Document
+        </a>
+        @auth
+            <a href="{{ route('dashboard') }}" class="nav-ghost">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+        @else
+            <a href="{{ route('login') }}" class="nav-ghost">
+>>>>>>> Stashed changes
                 <i class="fas fa-sign-in-alt"></i> Staff Login
             </a>
         @endauth
@@ -2348,6 +2548,7 @@
         </a>
     </nav>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -3238,6 +3439,103 @@ document.addEventListener('DOMContentLoaded', function () {
 </footer>
 
 >>>>>>> Stashed changes
+=======
+    <button class="nav-hamburger" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false" id="hamburgerBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+</header>
+
+{{-- ── Mobile Drawer ──────────────────────────────────────────── --}}
+<div id="mobileDrawer" class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <div class="drawer-backdrop" onclick="closeMobileNav()"></div>
+    <div class="drawer-panel">
+        <div class="drawer-head">
+            <div class="portal-brand">
+                <div class="brand-logo" style="width:32px;height:32px;font-size:13px">
+                    <img src="{{ asset('images/bne-logo.png') }}" alt="BNE"
+                         onerror="this.style.display='none';this.parentNode.innerHTML='<i class=\'fas fa-landmark\'></i>'">
+                </div>
+                <div class="brand-text">
+                    <strong>Barangay New Era</strong>
+                    <span>Resident Portal</span>
+                </div>
+            </div>
+            <button class="drawer-close" onclick="closeMobileNav()" aria-label="Close menu">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+
+        <nav class="drawer-nav">
+            <a href="{{ route('portal.index') }}">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="{{ route('portal.track') }}">
+                <i class="fas fa-search"></i> Track My Status
+            </a>
+            <a href="{{ route('portal.request') }}" class="drawer-cta">
+                <i class="fas fa-file-plus"></i> Request a Document
+            </a>
+            <div class="drawer-sep"></div>
+            @auth
+                <a href="{{ route('dashboard') }}">
+                    <i class="fas fa-tachometer-alt"></i> Staff Dashboard
+                </a>
+            @else
+                <a href="{{ route('login') }}">
+                    <i class="fas fa-sign-in-alt"></i> Staff Login
+                </a>
+            @endauth
+        </nav>
+
+        <div class="drawer-foot">
+            Barangay New Era &nbsp;·&nbsp; District VI, Quezon City
+        </div>
+    </div>
+</div>
+
+{{-- ── Toast ──────────────────────────────────────────────────── --}}
+<div id="portalToast" role="alert" aria-live="polite">
+    <i id="portalToastIcon" class="fas fa-check-circle" style="flex-shrink:0;font-size:17px;margin-top:1px"></i>
+    <span id="portalToastMsg" style="flex:1"></span>
+    <button class="toast-close" onclick="document.getElementById('portalToast').classList.remove('show')">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+{{-- ── Main ───────────────────────────────────────────────────── --}}
+<main class="portal-main">
+    @yield('content')
+</main>
+
+{{-- ── Footer ─────────────────────────────────────────────────── --}}
+<footer class="portal-footer">
+    <div class="footer-grid">
+        <div class="footer-brand-text">
+            <strong>Barangay New Era</strong>
+            <p>Digital services for residents of Barangay New Era, District VI, Quezon City. Powered by the Barangay Management System (BMS).</p>
+        </div>
+        <div class="footer-col">
+            <h4>Services</h4>
+            <a href="{{ route('portal.request') }}">Request Document</a>
+            <a href="{{ route('portal.track') }}">Track Appointment</a>
+            <a href="{{ route('portal.index') }}">How It Works</a>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            @auth
+                <a href="{{ route('dashboard') }}">Staff Dashboard</a>
+            @else
+                <a href="{{ route('login') }}">Staff Login</a>
+            @endauth
+            <a href="#faq">FAQ</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        &copy; {{ date('Y') }} Barangay New Era, District VI, Quezon City &nbsp;&middot;&nbsp; All rights reserved.
+    </div>
+</footer>
+
+>>>>>>> Stashed changes
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 // ── Mobile Drawer ──────────────────────────────────────────────────────
@@ -3306,6 +3604,9 @@ document.addEventListener('DOMContentLoaded', function () {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
