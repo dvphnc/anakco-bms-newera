@@ -84,7 +84,7 @@
             <div class="stat-label">Total Businesses</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Active'])">
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Active')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-check-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Active']) }}</div>

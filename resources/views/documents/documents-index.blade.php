@@ -89,7 +89,8 @@
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Document Type</label>
-                    <select id="typeFilter" multiple>
+                    <select id="typeFilter">
+                        <option value=""></option>
                         @foreach($documentTypes as $t)
                             <option value="{{ $t }}">{{ $t }}</option>
                         @endforeach

@@ -93,7 +93,8 @@
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Status</label>
-                    <select id="statusFilter" multiple>
+                    <select id="statusFilter">
+                        <option value=""></option>
                         @foreach($statuses as $s)
                             <option value="{{ $s }}">{{ $s }}</option>
                         @endforeach
@@ -101,7 +102,8 @@
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Document Type</label>
-                    <select id="docTypeFilter" multiple>
+                    <select id="docTypeFilter">
+                        <option value=""></option>
                         @foreach($documentTypes as $dt)
                             <option value="{{ $dt }}">{{ $dt }}</option>
                         @endforeach
