@@ -40,7 +40,7 @@
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-calendar-check"></i></div>
         <div class="stat-info">
-            <div class="stat-number"><?php echo e(number_format($totalCount)); ?></div>
+            <div class="stat-number" id="statApptTotal"><?php echo e(number_format($totalCount)); ?></div>
             <div class="stat-label">Total Appointments</div>
         </div>
     </div>
@@ -232,6 +232,7 @@
 }
 #filterPanel .select2-container--default .select2-selection--multiple .select2-selection__rendered {
     padding: 0; display: flex; flex-wrap: wrap; gap: 3px; align-items: center; min-height: 30px; width: 100%;
+    overflow: visible; white-space: normal;
 }
 #filterPanel .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
     color: var(--text-subtle); font-size: 13.5px; margin: 0 4px;
@@ -307,6 +308,7 @@ $(document).ready(function () {
             axios.delete(url)
                 .then(function (res) {
                     table.row(form.closest('tr')).remove().draw(false);
+                    bmsStatDecrement('statApptTotal');
                     bmsToast(res.data.message || 'Appointment deleted.', 'success');
                 })
                 .catch(function () {

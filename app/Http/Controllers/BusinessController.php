@@ -144,7 +144,17 @@ class BusinessController extends Controller
                 ->count(),
         ];
 
-        return view('businesses.businesses-index', compact('businessTypes', 'summaryCounts'));
+        $expiringBusinesses = Business::where('status', 'Active')
+            ->whereBetween('expiry_date', [now(), now()->addDays(30)])
+            ->orderBy('expiry_date')
+            ->get(['business_name', 'expiry_date']);
+
+        $overdueBusinesses = Business::where('status', 'Active')
+            ->where('expiry_date', '<', now())
+            ->orderBy('expiry_date')
+            ->get(['business_name', 'expiry_date']);
+
+        return view('businesses.businesses-index', compact('businessTypes', 'summaryCounts', 'expiringBusinesses', 'overdueBusinesses'));
     }
 
     public function create()

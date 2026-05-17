@@ -115,7 +115,9 @@ class AppointmentController extends Controller
     public function destroy(Request $request, DocumentAppointment $appointment)
     {
         $num = $appointment->appointment_number;
+        $snap = $appointment->toArray();
         $appointment->delete();
+        $this->logActivity('deleted', $appointment, $snap);
 
         if ($request->wantsJson()) {
             return response()->json(['success' => true, 'message' => "Appointment {$num} deleted."]);

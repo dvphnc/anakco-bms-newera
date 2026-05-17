@@ -37,7 +37,7 @@
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-file-lines"></i></div>
         <div class="stat-info">
-            <div class="stat-number">{{ number_format(\App\Models\Document::count()) }}</div>
+            <div class="stat-number" id="statDocTotal">{{ number_format(\App\Models\Document::count()) }}</div>
             <div class="stat-label">Total Documents</div>
         </div>
     </div>
@@ -98,6 +98,7 @@
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Status</label>
                     <select id="statusFilter">
+                        <option value=""></option>
                         @foreach(['Pending','Processing','Released','Cancelled'] as $s)
                             <option value="{{ $s }}">{{ $s }}</option>
                         @endforeach
@@ -224,6 +225,7 @@
 }
 #filterPanel .select2-container--default .select2-selection--multiple .select2-selection__rendered {
     padding: 0; display: flex; flex-wrap: wrap; gap: 3px; align-items: center; min-height: 30px; width: 100%;
+    overflow: visible; white-space: normal;
 }
 #filterPanel .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
     color: var(--text-subtle); font-size: 13.5px; margin: 0 4px;
@@ -305,6 +307,7 @@ $(document).ready(function () {
             axios.delete(url)
                 .then(function (res) {
                     table.row(form.closest('tr')).remove().draw(false);
+                    bmsStatDecrement('statDocTotal');
                     bmsToast(res.data.message || 'Document deleted.', 'success');
                 })
                 .catch(function () {

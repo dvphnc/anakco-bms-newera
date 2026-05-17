@@ -39,7 +39,7 @@
             <i class="fas fa-users"></i>
         </div>
         <div class="stat-info">
-            <div class="stat-number"><?php echo e(number_format(\App\Models\Resident::count())); ?></div>
+            <div class="stat-number" id="statResTotal"><?php echo e(number_format(\App\Models\Resident::count())); ?></div>
             <div class="stat-label">Total Residents</div>
         </div>
     </div>
@@ -543,14 +543,16 @@ $(document).on('click', '#residentsTable form[data-confirm] button[type="submit"
         btn.prop('disabled', true);
 
         axios.delete(url, { headers: { 'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>' } })
-            .then(() => {
+            .then(res => {
                 const dt = $('#residentsTable').DataTable();
                 dt.row(form.closest('tr')).remove().draw(false);
+                bmsStatDecrement('statResTotal');
+                bmsToast(res.data.message || 'Resident deleted.', 'success');
             })
             .catch(() => {
                 icon.attr('class', orig).css('color', '');
                 btn.prop('disabled', false);
-                alert('Could not delete resident. Please try again.');
+                bmsToast('Could not delete resident. Please try again.', 'error');
             });
     });
 });

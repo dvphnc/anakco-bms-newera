@@ -21,7 +21,7 @@
             <i class="fas fa-user-tie"></i>
         </div>
         <div class="stat-info">
-            <div class="stat-number"><?php echo e(number_format($officials->count())); ?></div>
+            <div class="stat-number" id="statOffTotal"><?php echo e(number_format($officials->count())); ?></div>
             <div class="stat-label">Total Officials</div>
         </div>
     </div>
@@ -347,15 +347,17 @@ $(document).ready(function () {
             btn.prop('disabled', true);
 
             axios.delete(url, { headers: { 'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>' } })
-                .then(() => {
+                .then(res => {
                     const row = form.closest('tr');
                     row.css({ transition: 'opacity .3s', opacity: '0' });
                     setTimeout(() => row.remove(), 310);
+                    bmsStatDecrement('statOffTotal');
+                    bmsToast(res.data.message || 'Official deleted.', 'success');
                 })
                 .catch(() => {
                     icon.attr('class', orig).css('color', '');
                     btn.prop('disabled', false);
-                    alert('Could not delete official. Please try again.');
+                    bmsToast('Could not delete official. Please try again.', 'error');
                 });
         });
     });

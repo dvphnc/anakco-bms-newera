@@ -186,6 +186,30 @@
         .alert-close   { background:none; border:none; color:var(--text-subtle); font-size:14px; padding:2px; flex-shrink:0; }
         .alert-close:hover { color:var(--text); }
 
+        /* ── Alert Tray (collapsible notices strip — dashboard & module pages) ── */
+        .alert-tray     { margin-bottom:18px; border-radius:var(--radius); overflow:hidden;
+                          border:1px solid var(--gold-border); background:var(--gold-pale); }
+        .alert-tray-hdr { display:flex; align-items:center; gap:9px; padding:9px 14px;
+                          cursor:pointer; user-select:none; font-size:13px; font-weight:600;
+                          color:#78450a; transition:background .15s; }
+        .alert-tray-hdr:hover { background:rgba(200,134,26,.1); }
+        .alert-tray-hdr i.tray-icon  { font-size:14px; color:var(--gold); flex-shrink:0; }
+        .alert-tray-hdr i.tray-caret { margin-left:auto; font-size:11px; opacity:.55; transition:transform .2s; }
+        .alert-tray.open .tray-caret { transform:rotate(180deg); }
+        .alert-tray-body { display:none; flex-direction:column; gap:0; }
+        .alert-tray.open .alert-tray-body { display:flex; }
+        .alert-item  { display:flex; align-items:center; gap:10px; padding:9px 14px;
+                       font-size:13px; border-top:1px solid var(--gold-border); }
+        .alert-item i { flex-shrink:0; font-size:14px; }
+        .alert-item > span { flex:1; line-height:1.5; }
+        .alert-senior   { background:#fff; border-top:1px solid #f3f4f6; border-left:4px solid var(--gold);    color:#78450a; }
+        .alert-birthday { background:#fff; border-top:1px solid #f3f4f6; border-left:4px solid var(--navy);    color:var(--navy); }
+        .alert-permit   { background:#fff; border-top:1px solid #f3f4f6; border-left:4px solid var(--crimson); color:var(--crimson); }
+        .alert-link { font-size:13px; font-weight:600; color:inherit; opacity:.85; text-decoration:none;
+                      padding:5px 14px; border:1px solid currentColor; border-radius:99px;
+                      white-space:nowrap; flex-shrink:0; }
+        .alert-link:hover { opacity:1; }
+
         .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; gap:16px; flex-wrap:wrap; }
         .page-title { font-size:18px; font-weight:700; color:var(--navy); line-height:1.2; letter-spacing:-0.01em; }
         .page-subtitle { font-size:12px; color:var(--text-muted); margin-top:2px; font-weight:300; }
@@ -302,6 +326,61 @@
         .filter-bar { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
         .filter-bar .form-group { min-width:150px; }
         .filter-bar .form-group.flex-1 { flex:1; min-width:200px; }
+
+        /* ── Global Select2 overrides — filter panels ────────────────────
+           Applies to #filterPanel (collapsible cards) and .filter-bar (inline bars).
+           Single-select and multi-select share the same height token. ── */
+        #filterPanel .select2-container,
+        .filter-bar  .select2-container { width: 100% !important; }
+
+        /* Single-select */
+        #filterPanel .select2-container--default .select2-selection--single,
+        .filter-bar  .select2-container--default .select2-selection--single {
+            height: 38px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+            background: var(--surface); display: flex; align-items: center; padding: 0 36px 0 12px;
+        }
+        #filterPanel .select2-container--default .select2-selection--single .select2-selection__rendered,
+        .filter-bar  .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: var(--text); font-size: 13.5px; padding: 0;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal;
+        }
+        #filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder,
+        .filter-bar  .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
+        #filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow,
+        .filter-bar  .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
+
+        /* Multi-select — key fix: block display so width resolves to grid-cell, not content */
+        #filterPanel .select2-container--default .select2-selection--multiple,
+        .filter-bar  .select2-container--default .select2-selection--multiple {
+            display: block; width: 100%; box-sizing: border-box;
+            min-height: 38px; padding: 3px 8px; cursor: pointer;
+            border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface);
+        }
+        #filterPanel .select2-container--default .select2-selection--multiple .select2-selection__rendered,
+        .filter-bar  .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            padding: 0; display: flex; flex-wrap: wrap; gap: 3px;
+            align-items: center; min-height: 30px; width: 100%;
+            overflow: visible; white-space: normal; /* override Select2's hidden+nowrap defaults */
+        }
+        /* Placeholder — flex:1 so it fills remaining space without clipping */
+        #filterPanel .select2-container--default .select2-selection--multiple .select2-selection__placeholder,
+        .filter-bar  .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
+            color: var(--text-subtle); font-size: 13.5px; margin: 0 4px;
+            float: none; white-space: nowrap; flex: 1 0 auto; line-height: 30px;
+        }
+        /* Choice tags */
+        #filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice,
+        .filter-bar  .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background: var(--navy-pale); border: 1px solid var(--navy-border, rgba(13,33,68,.18));
+            border-radius: 4px; color: var(--navy); font-size: 12px;
+            padding: 2px 6px; margin: 1px; display: flex; align-items: center; gap: 4px;
+        }
+        #filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove,
+        .filter-bar  .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: var(--navy); opacity: .6; font-size: 11px;
+        }
+        #filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover,
+        .filter-bar  .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover { opacity: 1; }
 
         .progress-bar-wrap { background:var(--surface3); border-radius:99px; height:7px; overflow:hidden; }
         .progress-bar { height:100%; border-radius:99px; transition:width 0.7s ease; }
@@ -657,12 +736,29 @@
         $(document).on('select2:open', function () {
             setTimeout(function () {
                 var $cont = $('.select2-container--open');
+
+                /* Ensure search is always visible */
                 $cont.find('.select2-search--dropdown')
                      .removeClass('select2-search--hide')
                      .css('display', 'block');
                 var $f = $cont.find('.select2-search--dropdown .select2-search__field')
                               .css('display', 'block');
                 if ($f.length) { $f[0].focus(); }
+
+                /* Force dropdown to open BELOW — fix for .main-content scroll container.
+                   Select2 calculates space using window.pageYOffset (= 0 since body
+                   doesn't scroll; .main-content does), which can make it choose "above"
+                   even when there is ample viewport space below. */
+                var $dd = $('.select2-dropdown--above');
+                if ($dd.length && $cont.length) {
+                    var rect = $cont[0].getBoundingClientRect();
+                    var scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+                    $dd.css({ top: (rect.bottom + scrollY + 1) + 'px', 'margin-top': '0' });
+                    $dd.removeClass('select2-dropdown--above').addClass('select2-dropdown--below');
+                    $cont.find('.select2-selection')
+                         .css('border-bottom-left-radius', '0')
+                         .css('border-bottom-right-radius', '0');
+                }
             }, 20);
         });
 
@@ -780,34 +876,81 @@
         });
     })();
 
-    // ── Toast notification ───────────────────────────────────────────────
+    // ── Shared alert auto-dismiss (progress bar + fade-collapse) ────────
+    function bmsAlertAutoDismiss(el) {
+        var bar = document.createElement('div');
+        bar.style.cssText = 'position:absolute;bottom:0;left:0;height:2px;background:currentColor;opacity:0.3;' +
+            'border-radius:0 0 var(--radius) var(--radius);width:100%;transform-origin:left;animation:alertShrink 5s linear forwards';
+        el.style.position = 'relative';
+        el.style.overflow = 'hidden';
+        el.appendChild(bar);
+        setTimeout(function () {
+            el.style.transition = 'opacity 0.4s, max-height 0.4s, margin 0.4s, padding 0.4s';
+            el.style.opacity = '0';
+            el.style.maxHeight = '0';
+            el.style.marginBottom = '0';
+            el.style.paddingTop = '0';
+            el.style.paddingBottom = '0';
+            setTimeout(function () { if (el.parentNode) el.remove(); }, 450);
+        }, 5000);
+    }
+
+    // ── Toast notification — injected inline at top of .main-content ────
     function bmsToast(message, type) {
         type = type || 'success';
-        var palettes = {
-            success: { bg:'#f0fdf4', border:'#86efac', text:'#14532d', icon:'fa-check-circle' },
-            error:   { bg:'#fef2f2', border:'#fca5a5', text:'#7f1d1d', icon:'fa-exclamation-circle' },
-            warning: { bg:'#fffbeb', border:'#fcd34d', text:'#78350f', icon:'fa-triangle-exclamation' },
+        var typeMap = {
+            success: { cls: 'alert-success', icon: 'fa-check-circle' },
+            error:   { cls: 'alert-error',   icon: 'fa-exclamation-circle' },
+            warning: { cls: 'alert-warning', icon: 'fa-triangle-exclamation' },
         };
-        var c = palettes[type] || palettes.success;
+        var t = typeMap[type] || typeMap.success;
         var el = document.createElement('div');
-        el.style.cssText = 'position:fixed;top:76px;right:20px;z-index:9998;min-width:300px;max-width:420px;' +
-            'padding:13px 16px;border-radius:var(--radius);border:1px solid ' + c.border + ';' +
-            'background:' + c.bg + ';color:' + c.text + ';font-size:14px;font-weight:500;' +
-            'box-shadow:0 6px 24px rgba(0,0,0,0.13);display:flex;align-items:center;gap:10px;' +
-            "font-family:'Poppins',sans-serif;animation:toastSlideIn .22s ease;";
-        el.innerHTML = '<i class="fas ' + c.icon + '" style="flex-shrink:0;font-size:16px"></i>' +
-                       '<span style="flex:1;line-height:1.45">' + message + '</span>' +
-                       '<button onclick="this.parentNode.remove()" style="background:none;border:none;cursor:pointer;' +
-                       'color:inherit;opacity:.5;font-size:14px;padding:0 0 0 8px;line-height:1">' +
-                       '<i class="fas fa-times"></i></button>';
-        document.body.appendChild(el);
-        setTimeout(function () {
-            el.style.transition = 'opacity .3s,transform .3s';
-            el.style.opacity = '0';
-            el.style.transform = 'translateX(16px)';
-            setTimeout(function () { el.remove(); }, 350);
-        }, 4500);
+        el.className = 'alert ' + t.cls + ' mb-4';
+        el.style.animation = 'alertSlideDown .25s ease';
+        el.innerHTML =
+            '<i class="fas ' + t.icon + ' alert-icon"></i>' +
+            '<div class="alert-message">' + message + '</div>' +
+            '<button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>';
+        var container = document.querySelector('.main-content');
+        if (container) {
+            container.insertBefore(el, container.firstChild);
+            container.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            document.body.insertBefore(el, document.body.firstChild);
+        }
+        if (type !== 'error') bmsAlertAutoDismiss(el);
     }
+
+    // ── Stat card decrement after Axios delete ───────────────────────────
+    function bmsStatDecrement(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var n = parseInt(el.textContent.replace(/,/g, ''), 10);
+        if (!isNaN(n) && n > 0) {
+            el.textContent = (n - 1).toLocaleString();
+            el.style.transition = 'color .25s';
+            el.style.color = 'var(--gold)';
+            setTimeout(function () { el.style.color = ''; }, 900);
+        }
+    }
+
+    // ── Edit-button loading state on navigation ──────────────────────────
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('a.btn');
+        if (btn && btn.querySelector('i.fa-pen, i.fa-pencil')) {
+            var icon = btn.querySelector('i');
+            var orig = icon.className;
+            icon.className = 'fas fa-spinner fa-spin';
+            btn.style.opacity = '0.65';
+            btn.style.pointerEvents = 'none';
+            window.addEventListener('pageshow', function restore() {
+                icon.className = orig;
+                btn.style.opacity = '';
+                btn.style.pointerEvents = '';
+                window.removeEventListener('pageshow', restore);
+            });
+        }
+    });
 
     // ── Global Confirmation Modal ────────────────────────────────────────
     let _bmsCallback = null;
@@ -818,8 +961,9 @@
     }
 
     document.getElementById('bmsConfirmOk').addEventListener('click', function () {
+        const cb = _bmsCallback;
         bmsConfirmCancel();
-        if (_bmsCallback) _bmsCallback();
+        if (cb) cb();
     });
 
     document.getElementById('bmsConfirmModal').addEventListener('click', function (e) {
@@ -893,29 +1037,14 @@
         }
     });
 
-    // ── Alert auto-dismiss (success/warning only — errors stay) ─────────
+    // ── Alert auto-dismiss on page load (success/warning only) ──────────
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.alert-success, .alert-warning').forEach(function (el) {
-            const bar = document.createElement('div');
-            bar.style.cssText = 'position:absolute;bottom:0;left:0;height:2px;background:currentColor;opacity:0.3;border-radius:0 0 var(--radius) var(--radius);width:100%;transform-origin:left;animation:alertShrink 5s linear forwards';
-            el.style.position = 'relative';
-            el.style.overflow = 'hidden';
-            el.appendChild(bar);
-            setTimeout(function () {
-                el.style.transition = 'opacity 0.4s, max-height 0.4s, margin 0.4s, padding 0.4s';
-                el.style.opacity = '0';
-                el.style.maxHeight = '0';
-                el.style.marginBottom = '0';
-                el.style.paddingTop = '0';
-                el.style.paddingBottom = '0';
-                setTimeout(() => el.remove(), 450);
-            }, 5000);
-        });
+        document.querySelectorAll('.alert-success, .alert-warning').forEach(bmsAlertAutoDismiss);
     });
     </script>
     <style>
-    @keyframes alertShrink  { from { width:100%; } to { width:0%; } }
-    @keyframes toastSlideIn { from { opacity:0; transform:translateX(16px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes alertShrink   { from { width:100%; } to { width:0%; } }
+    @keyframes alertSlideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
     .alert-warning { background:var(--gold-pale); border:1px solid var(--gold-border); color:#78450a; }
     </style>
 

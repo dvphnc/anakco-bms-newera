@@ -43,7 +43,7 @@ class BlotterController extends Controller
 
                     $isOpen = in_array($c->status, ['Active', 'Under Investigation']);
                     if ($isOpen && $c->incident_date) {
-                        $days = Carbon::parse($c->incident_date)->diffInDays(now());
+                        $days = (int) Carbon::parse($c->incident_date)->diffInDays(now());
                         if ($days >= 30) {
                             $out .= ' <span class="badge badge-red" style="font-size:10px;gap:3px" title="Open for '.$days.' days">'.
                                     '<i class="fas fa-fire"></i> '.$days.'d overdue</span>';

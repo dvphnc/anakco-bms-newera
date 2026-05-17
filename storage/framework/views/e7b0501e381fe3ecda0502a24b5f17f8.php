@@ -32,36 +32,47 @@
 </div>
 
 
-<?php if($summaryCounts['Overdue'] > 0 || $summaryCounts['ExpiringSoon'] > 0): ?>
-<div class="biz-alerts mb-6">
-    <?php if($summaryCounts['Overdue'] > 0): ?>
-    <div class="biz-alert biz-alert-danger">
-        <div class="biz-alert-icon"><i class="fas fa-triangle-exclamation"></i></div>
-        <div class="biz-alert-body">
-            <div class="biz-alert-title">
-                <?php echo e($summaryCounts['Overdue']); ?> Active Permit<?php echo e($summaryCounts['Overdue'] > 1 ? 's' : ''); ?> Overdue
-            </div>
-            <div class="biz-alert-text">These businesses still have Active status but their permits have already expired. Consider updating their status.</div>
-        </div>
-        <button class="btn btn-sm biz-alert-btn" onclick="quickFilter('expiryFilter','expired')">
-            <i class="fas fa-filter"></i> Show Overdue
-        </button>
+<?php
+    $bizAlertCount = ($summaryCounts['Overdue'] > 0 ? 1 : 0) + ($summaryCounts['ExpiringSoon'] > 0 ? 1 : 0);
+?>
+<?php if($bizAlertCount): ?>
+<div class="alert-tray open no-print mb-6">
+    <div class="alert-tray-hdr" onclick="this.closest('.alert-tray').classList.toggle('open')">
+        <i class="fas fa-bell tray-icon"></i>
+        <span><?php echo e($bizAlertCount); ?> Notice<?php echo e($bizAlertCount > 1 ? 's' : ''); ?> — Business Permit Alert<?php echo e($bizAlertCount > 1 ? 's' : ''); ?></span>
+        <i class="fas fa-chevron-down tray-caret"></i>
     </div>
-    <?php endif; ?>
-    <?php if($summaryCounts['ExpiringSoon'] > 0): ?>
-    <div class="biz-alert biz-alert-warning">
-        <div class="biz-alert-icon"><i class="fas fa-clock"></i></div>
-        <div class="biz-alert-body">
-            <div class="biz-alert-title">
-                <?php echo e($summaryCounts['ExpiringSoon']); ?> Permit<?php echo e($summaryCounts['ExpiringSoon'] > 1 ? 's' : ''); ?> Expiring Within 30 Days
-            </div>
-            <div class="biz-alert-text">Notify business owners to renew their barangay permits before they expire.</div>
+    <div class="alert-tray-body">
+
+        <?php if($summaryCounts['Overdue'] > 0): ?>
+        <div class="alert-item alert-permit">
+            <i class="fas fa-triangle-exclamation"></i>
+            <span>
+                <strong><?php echo e($summaryCounts['Overdue']); ?> Active Permit<?php echo e($summaryCounts['Overdue'] > 1 ? 's' : ''); ?> Overdue —</strong>
+                <?php echo e($overdueBusinesses->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(' · ')); ?><?php echo e($summaryCounts['Overdue'] > 3 ? ' +' . ($summaryCounts['Overdue'] - 3) . ' more' : ''); ?>
+
+            </span>
+            <button class="alert-link" style="background:none;cursor:pointer" onclick="toggleFilters('businesses');quickFilter('expiryFilter','expired')">
+                <i class="fas fa-filter" style="font-size:11px;margin-right:4px"></i> Show Overdue
+            </button>
         </div>
-        <button class="btn btn-sm biz-alert-btn" onclick="quickFilter('expiryFilter','expiring_soon')">
-            <i class="fas fa-filter"></i> Show Expiring
-        </button>
+        <?php endif; ?>
+
+        <?php if($summaryCounts['ExpiringSoon'] > 0): ?>
+        <div class="alert-item alert-senior">
+            <i class="fas fa-clock"></i>
+            <span>
+                <strong><?php echo e($summaryCounts['ExpiringSoon']); ?> Permit<?php echo e($summaryCounts['ExpiringSoon'] > 1 ? 's' : ''); ?> Expiring Within 30 Days —</strong>
+                <?php echo e($expiringBusinesses->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(' · ')); ?><?php echo e($summaryCounts['ExpiringSoon'] > 3 ? ' +' . ($summaryCounts['ExpiringSoon'] - 3) . ' more' : ''); ?>
+
+            </span>
+            <button class="alert-link" style="background:none;cursor:pointer" onclick="toggleFilters('businesses');quickFilter('expiryFilter','expiring_soon')">
+                <i class="fas fa-filter" style="font-size:11px;margin-right:4px"></i> Show Expiring
+            </button>
+        </div>
+        <?php endif; ?>
+
     </div>
-    <?php endif; ?>
 </div>
 <?php endif; ?>
 
@@ -70,7 +81,7 @@
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', null)">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-store"></i></div>
         <div class="stat-info">
-            <div class="stat-number"><?php echo e(number_format(array_sum([$summaryCounts['Active'],$summaryCounts['Expired'],$summaryCounts['Suspended'],$summaryCounts['Cancelled']]))); ?></div>
+            <div class="stat-number" id="statBizTotal"><?php echo e(number_format(array_sum([$summaryCounts['Active'],$summaryCounts['Expired'],$summaryCounts['Suspended'],$summaryCounts['Cancelled']]))); ?></div>
             <div class="stat-label">Total Businesses</div>
         </div>
     </div>
@@ -246,25 +257,6 @@
 .stat-card { background: #FFFFFF !important; box-shadow: 0 1px 4px rgba(13,33,68,0.07), 0 4px 16px rgba(13,33,68,0.04); }
 .stat-label { font-size: 12px; color: var(--text-subtle); font-weight: 500; letter-spacing: 0.02em; }
 .stat-number { font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1.1; }
-/* Business Alert Banners */
-.biz-alerts { display:flex; flex-direction:column; gap:10px; }
-.biz-alert { display:flex; align-items:center; gap:14px; padding:12px 16px;
-             border-radius:var(--radius); border:1px solid transparent;
-             border-left-width:4px; }
-.biz-alert-danger  { background:var(--crimson-pale,#fef2f2); border-color:var(--crimson-border,#fecaca); border-left-color:var(--crimson,#dc2626); }
-.biz-alert-warning { background:#fffbeb; border-color:#fde68a; border-left-color:#f59e0b; }
-.biz-alert-icon { font-size:18px; flex-shrink:0; }
-.biz-alert-danger  .biz-alert-icon { color:var(--crimson,#dc2626); }
-.biz-alert-warning .biz-alert-icon { color:#b45309; }
-.biz-alert-body { flex:1; min-width:0; }
-.biz-alert-title { font-size:13.5px; font-weight:700; line-height:1.3; }
-.biz-alert-danger  .biz-alert-title { color:#991b1b; }
-.biz-alert-warning .biz-alert-title { color:#92400e; }
-.biz-alert-text { font-size:12px; margin-top:3px; }
-.biz-alert-danger  .biz-alert-text { color:#b91c1c; }
-.biz-alert-warning .biz-alert-text { color:#b45309; }
-.biz-alert-btn { flex-shrink:0; border:1px solid var(--border); background:var(--surface); color:var(--text); }
-.biz-alert-btn:hover { background:var(--navy); color:#fff; border-color:var(--navy); }
 #businessesTable_wrapper .dataTables_length,
 #businessesTable_wrapper .dataTables_filter { display:none; }
 #businessesTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
@@ -295,6 +287,7 @@
 }
 #filterPanel .select2-container--default .select2-selection--multiple .select2-selection__rendered {
     padding: 0; display: flex; flex-wrap: wrap; gap: 3px; align-items: center; min-height: 30px; width: 100%;
+    overflow: visible; white-space: normal;
 }
 #filterPanel .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
     color: var(--text-subtle); font-size: 13.5px; margin: 0 4px;
@@ -383,6 +376,7 @@ $(document).ready(function () {
             axios.delete(url)
                 .then(function (res) {
                     table.row(form.closest('tr')).remove().draw(false);
+                    bmsStatDecrement('statBizTotal');
                     bmsToast(res.data.message || 'Permit deleted.', 'success');
                 })
                 .catch(function () {

@@ -23,7 +23,7 @@
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-house"></i></div>
         <div class="stat-info">
-            <div class="stat-number"><?php echo e(number_format(\App\Models\Household::count())); ?></div>
+            <div class="stat-number" id="statHhTotal"><?php echo e(number_format(\App\Models\Household::count())); ?></div>
             <div class="stat-label">Total Households</div>
         </div>
     </div>
@@ -231,13 +231,15 @@ $(document).ready(function () {
             btn.prop('disabled', true);
 
             axios.delete(url, { headers: { 'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>' } })
-                .then(() => {
+                .then(res => {
                     table.row(form.closest('tr')).remove().draw(false);
+                    bmsStatDecrement('statHhTotal');
+                    bmsToast(res.data.message || 'Household deleted.', 'success');
                 })
                 .catch(() => {
                     icon.attr('class', orig).css('color', '');
                     btn.prop('disabled', false);
-                    alert('Could not delete household. Please try again.');
+                    bmsToast('Could not delete household. Please try again.', 'error');
                 });
         });
     });
