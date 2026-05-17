@@ -114,9 +114,12 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Active')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-check-circle"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -132,9 +135,12 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('expiryFilter', 'expiring_soon')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-clock"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -150,9 +156,12 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('expiryFilter', 'expired')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-triangle-exclamation"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -170,9 +179,12 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Expired')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-times-circle"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -188,9 +200,12 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Suspended')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-pause-circle"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -216,7 +231,11 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             <i class="fas fa-sliders"></i>
+=======
+            <i class="fas fa-sliders" id="filterToggleIcon"></i>
+>>>>>>> Stashed changes
 =======
             <i class="fas fa-sliders" id="filterToggleIcon"></i>
 >>>>>>> Stashed changes
@@ -235,6 +254,11 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+
+                
+>>>>>>> Stashed changes
 =======
 
                 
@@ -254,6 +278,7 @@
                         <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
                                placeholder="Business name, owner, permit number…">
                     </div>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -287,6 +312,9 @@
 =======
 >>>>>>> Stashed changes
                 </div>
+=======
+                </div>
+>>>>>>> Stashed changes
 =======
                 </div>
 >>>>>>> Stashed changes
@@ -436,6 +464,7 @@ $(document).ready(function () {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
        The browser won't paint until after this synchronous block, so no visual flash. */
     var $fp = $('#filterPanel');
@@ -453,6 +482,8 @@ $(document).ready(function () {
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -484,6 +515,9 @@ $(document).ready(function () {
     /* ── DataTable ────────────────────────────────────────────────────── */
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -527,6 +561,7 @@ $(document).ready(function () {
         }
     });
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -643,6 +678,8 @@ $(document).ready(function () {
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     /* ── URL persistence ──────────────────────────────────────────────── */
     function saveToUrl() {
         const url = new URL(window.location);
@@ -729,6 +766,9 @@ $(document).ready(function () {
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
