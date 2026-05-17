@@ -148,7 +148,8 @@
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Business Type</label>
-                    <select id="typeFilter" multiple>
+                    <select id="typeFilter">
+                        <option value=""></option>
                         @foreach($businessTypes as $t)
                             <option value="{{ $t }}">{{ $t }}</option>
                         @endforeach
@@ -156,7 +157,8 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Status</label>
-                    <select id="statusFilter" multiple>
+                    <select id="statusFilter">
+                        <option value=""></option>
                         @foreach(['Active','Expired','Suspended','Cancelled'] as $s)
                             <option value="{{ $s }}">{{ $s }}</option>
                         @endforeach

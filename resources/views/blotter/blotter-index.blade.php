@@ -88,7 +88,8 @@
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Incident Type</label>
-                    <select id="typeFilter" multiple>
+                    <select id="typeFilter">
+                        <option value=""></option>
                         @foreach($incidentTypes as $t)
                             <option value="{{ $t }}">{{ $t }}</option>
                         @endforeach
@@ -96,7 +97,8 @@
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Case Status</label>
-                    <select id="statusFilter" multiple>
+                    <select id="statusFilter">
+                        <option value=""></option>
                         @foreach($statuses as $s)
                             <option value="{{ $s }}">{{ $s }}</option>
                         @endforeach
