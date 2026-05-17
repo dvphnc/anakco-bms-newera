@@ -312,15 +312,12 @@ $(document).ready(function () {
     var $fp = $('#filterPanel');
     $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1' });
 
-    const s2Multi  = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
-                       minimumResultsForSearch: 0,
-                       language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
     const s2Single = { dropdownParent: $('body'), allowClear: true,  width: '100%',
                        minimumResultsForSearch: 0,
                        language: { noResults: () => 'No matches' } };
 
-    $('#typeFilter').select2($.extend({}, s2Multi,  { placeholder: 'All business types…' }));
-    $('#statusFilter').select2($.extend({}, s2Multi,  { placeholder: 'All statuses…' }));
+    $('#typeFilter').select2($.extend({}, s2Single, { placeholder: 'All business types…' }));
+    $('#statusFilter').select2($.extend({}, s2Single, { placeholder: 'All statuses…' }));
     $('#expiryFilter').select2($.extend({}, s2Single, { placeholder: 'All' }));
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '' });
@@ -409,8 +406,8 @@ $(document).ready(function () {
         url.searchParams.delete('status');
         if ($('#searchInput').val())  url.searchParams.set('s', $('#searchInput').val());
         if ($('#expiryFilter').val()) url.searchParams.set('expiry_filter', $('#expiryFilter').val());
-        ($('#typeFilter').val()   || []).forEach(v => url.searchParams.append('business_type', v));
-        ($('#statusFilter').val() || []).forEach(v => url.searchParams.append('status', v));
+        if ($('#typeFilter').val())   url.searchParams.set('business_type', $('#typeFilter').val());
+        if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
         history.replaceState({}, '', url);
         updateBadge();
     }
@@ -419,16 +416,16 @@ $(document).ready(function () {
         let any = false;
         if (p.get('s'))             { $('#searchInput').val(p.get('s')); any = true; }
         if (p.get('expiry_filter')) { $('#expiryFilter').val(p.get('expiry_filter')).trigger('change.select2'); any = true; }
-        const types = p.getAll('business_type'), statuses = p.getAll('status');
-        if (types.length)    { $('#typeFilter').val(types).trigger('change.select2'); any = true; }
-        if (statuses.length) { $('#statusFilter').val(statuses).trigger('change.select2'); any = true; }
+        const type = p.get('business_type'), status = p.get('status');
+        if (type)   { $('#typeFilter').val(type).trigger('change.select2'); any = true; }
+        if (status) { $('#statusFilter').val(status).trigger('change.select2'); any = true; }
         return any;
     }
     function updateBadge() {
         let n = 0;
         if ($('#searchInput').val())                 n++;
-        if (($('#typeFilter').val()   || []).length) n++;
-        if (($('#statusFilter').val() || []).length) n++;
+        if ($('#typeFilter').val())   n++;
+        if ($('#statusFilter').val()) n++;
         if ($('#expiryFilter').val())                n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');

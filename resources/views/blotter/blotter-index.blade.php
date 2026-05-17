@@ -344,8 +344,8 @@ $(document).ready(function () {
         if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
         if ($('#dateFrom').val())    url.searchParams.set('date_from', $('#dateFrom').val());
         if ($('#dateTo').val())      url.searchParams.set('date_to', $('#dateTo').val());
-        ($('#typeFilter').val()   || []).forEach(v => url.searchParams.append('incident_type', v));
-        ($('#statusFilter').val() || []).forEach(v => url.searchParams.append('status', v));
+        if ($('#typeFilter').val())   url.searchParams.set('incident_type', $('#typeFilter').val());
+        if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
         history.replaceState({}, '', url);
         updateBadge();
     }
@@ -355,16 +355,16 @@ $(document).ready(function () {
         if (p.get('s'))         { $('#searchInput').val(p.get('s')); any = true; }
         if (p.get('date_from')) { $('#dateFrom').val(p.get('date_from')); any = true; }
         if (p.get('date_to'))   { $('#dateTo').val(p.get('date_to')); any = true; }
-        const types = p.getAll('incident_type'), statuses = p.getAll('status');
-        if (types.length)    { $('#typeFilter').val(types).trigger('change.select2'); any = true; }
-        if (statuses.length) { $('#statusFilter').val(statuses).trigger('change.select2'); any = true; }
+        const type = p.get('incident_type'), status = p.get('status');
+        if (type)   { $('#typeFilter').val(type).trigger('change.select2'); any = true; }
+        if (status) { $('#statusFilter').val(status).trigger('change.select2'); any = true; }
         return any;
     }
     function updateBadge() {
         let n = 0;
         if ($('#searchInput').val())                    n++;
-        if (($('#typeFilter').val()   || []).length)    n++;
-        if (($('#statusFilter').val() || []).length)    n++;
+        if ($('#typeFilter').val())   n++;
+        if ($('#statusFilter').val()) n++;
         if ($('#dateFrom').val() || $('#dateTo').val()) n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');
