@@ -8,6 +8,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /* ════════════════════════════════════════════════════════════
    SHARED SECTION UTILITIES
 ════════════════════════════════════════════════════════════ */
@@ -632,6 +633,44 @@
 .hero-wave svg { display: block; width: 100%; height: 60px; }
 
 >>>>>>> Stashed changes
+=======
+/* ══════════════════════════════════════════════════════════
+   HERO SECTION
+══════════════════════════════════════════════════════════ */
+.hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #1a3a6e 55%, #0a2855 100%);
+    position: relative;
+    overflow: hidden;
+    padding: clamp(3rem, 8vw, 5.5rem) clamp(1rem, 5vw, 2.5rem);
+}
+/* Decorative radial glows */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -80px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(200,134,26,0.10) 0%, transparent 65%);
+    pointer-events: none;
+}
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -60px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 65%);
+    pointer-events: none;
+}
+/* Bottom wave */
+.hero-wave {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    overflow: hidden;
+    line-height: 0;
+}
+.hero-wave svg { display: block; width: 100%; height: 60px; }
+
+>>>>>>> Stashed changes
 .hero-inner {
     position: relative;
     z-index: 1;
@@ -870,6 +909,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -884,6 +926,7 @@
     content: '';
     position: absolute;
     top: 28px;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -906,6 +949,8 @@
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     left: calc(12.5% + 14px);
     right: calc(12.5% + 14px);
     height: 2px;
@@ -917,6 +962,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -931,6 +979,7 @@
     position: relative;
     z-index: 1;
 }
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -952,10 +1001,14 @@
 =======
 .step-num {
 >>>>>>> Stashed changes
+=======
+.step-num {
+>>>>>>> Stashed changes
     width: 56px; height: 56px;
     border-radius: 50%;
     background: var(--navy);
     color: #fff;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -1009,6 +1062,8 @@
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     font-size: 18px;
     font-weight: 800;
     display: flex; align-items: center; justify-content: center;
@@ -1032,6 +1087,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -1050,10 +1108,13 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     .steps-row { flex-direction: column; gap: 0; }
     .steps-row::before { display: none; }
 
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -1072,6 +1133,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -1089,6 +1153,7 @@
         padding: 0 0 2rem 0;
         position: relative;
     }
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -1407,6 +1472,8 @@
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     .step-item:last-child { padding-bottom: 0; }
     /* Vertical connector */
     .step-item:not(:last-child)::after {
@@ -1644,6 +1711,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -1658,6 +1728,7 @@
 
 @section('content')
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -2523,6 +2594,88 @@
         </svg>
     </div>
 >>>>>>> Stashed changes
+=======
+{{-- ═══════════ HERO ═══════════ --}}
+<section class="hero" aria-label="Welcome">
+    <div class="hero-inner">
+        <div class="hero-content">
+            <div class="hero-eyebrow">
+                <i class="fas fa-shield-halved"></i>
+                Official Barangay Digital Services
+            </div>
+            <h1 class="hero-title">
+                Your Barangay<br>
+                Services. <span class="gold">Digitized.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Request official documents and track your appointment online — no need to visit the barangay hall just to inquire. Fast, simple, and secure.
+            </p>
+            <div class="hero-actions">
+                <a href="{{ route('portal.request') }}" class="btn btn-gold btn-lg">
+                    <i class="fas fa-file-plus"></i> Request a Document
+                </a>
+                <a href="{{ route('portal.track') }}" class="btn btn-white-outline btn-lg">
+                    <i class="fas fa-search"></i> Track My Status
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div>
+                    <div class="hero-stat-num">4</div>
+                    <div class="hero-stat-lbl">Document Types</div>
+                </div>
+                <div>
+                    <div class="hero-stat-num">1–3</div>
+                    <div class="hero-stat-lbl">Business Days</div>
+                </div>
+                <div>
+                    <div class="hero-stat-num">100%</div>
+                    <div class="hero-stat-lbl">Free Service</div>
+                </div>
+            </div>
+        </div>
+
+        {{-- App mockup (hidden on mobile) --}}
+        <div class="hero-visual" aria-hidden="true">
+            <div class="hero-app-mock">
+                <div class="hero-mock-header">
+                    <div class="hero-mock-avatar">B</div>
+                    <div style="flex:1">
+                        <div class="hero-mock-title">Barangay New Era</div>
+                        <div class="hero-mock-sub">Resident Portal</div>
+                    </div>
+                    <span class="hero-mock-chip"><i class="fas fa-circle" style="font-size:6px"></i> Online</span>
+                </div>
+                <div class="hero-mock-row">
+                    <i class="fas fa-file-shield"></i>
+                    <span class="hero-mock-row-text">Barangay Clearance</span>
+                    <span style="font-size:11px;color:rgba(255,255,255,0.4);margin-left:auto">Ready</span>
+                </div>
+                <div class="hero-mock-row">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <span class="hero-mock-row-text">Certificate of Indigency</span>
+                    <span style="font-size:11px;color:rgba(255,255,255,0.4);margin-left:auto">Pending</span>
+                </div>
+                <div class="hero-mock-row">
+                    <i class="fas fa-house-circle-check"></i>
+                    <span class="hero-mock-row-text">Certificate of Residency</span>
+                    <span style="font-size:11px;color:rgba(255,255,255,0.4);margin-left:auto">Released</span>
+                </div>
+                <div style="margin-top:16px;padding:12px 14px;background:rgba(200,134,26,0.15);border-radius:var(--radius-sm);border:1px solid rgba(200,134,26,0.3)">
+                    <div style="font-size:11px;color:rgba(200,160,32,0.9);font-weight:600;margin-bottom:3px">
+                        <i class="fas fa-clock"></i> Processing Time
+                    </div>
+                    <div style="font-size:13px;color:rgba(255,255,255,0.8)">1–3 business days after confirmation</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-wave">
+        <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <path d="M0,60 L0,30 Q360,0 720,30 Q1080,60 1440,30 L1440,60 Z" fill="#F0F4F8"/>
+        </svg>
+    </div>
+>>>>>>> Stashed changes
 </section>
 
 {{-- ═══════════ SERVICES ═══════════ --}}
@@ -2767,6 +2920,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -2781,6 +2937,7 @@
 
 @push('scripts')
 <script>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -2827,6 +2984,8 @@ document.addEventListener('DOMContentLoaded', function () {
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 function toggleFaq(btn) {
     const item = btn.closest('.faq-item');
     const isOpen = item.classList.contains('open');
@@ -2841,6 +3000,9 @@ function toggleFaq(btn) {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

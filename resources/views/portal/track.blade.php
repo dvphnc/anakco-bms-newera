@@ -157,7 +157,11 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     /* ── Mobile: vertical timeline for progress steps ── */
+=======
+    /* Mobile: vertical timeline for progress steps */
+>>>>>>> Stashed changes
 =======
     /* Mobile: vertical timeline for progress steps */
 >>>>>>> Stashed changes
@@ -186,7 +190,11 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             padding-left: .5rem;
+=======
+            padding-left: .25rem;
+>>>>>>> Stashed changes
 =======
             padding-left: .25rem;
 >>>>>>> Stashed changes
@@ -214,12 +222,15 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             padding: .3rem 0;
             text-align: left;
         }
         /* Vertical connector: runs downward from each dot */
         .prog-step::before {
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -238,6 +249,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -256,7 +270,11 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             height: calc(100% + 2px);
+=======
+            height: calc(100% - 8px);
+>>>>>>> Stashed changes
 =======
             height: calc(100% - 8px);
 >>>>>>> Stashed changes
@@ -281,9 +299,12 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         .prog-dot { flex-shrink: 0; margin: 0; }
         .prog-label { font-size: .82rem; margin-top: 0; }
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -304,6 +325,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -414,6 +438,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
