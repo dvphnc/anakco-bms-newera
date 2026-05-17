@@ -266,22 +266,17 @@
 #businessesTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
 #businessesTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
 
-/* ── Filter Select2 — match residents blade ───────────────────── */
-#filterPanel .select2-container { width: 100% !important; }
-#filterPanel .select2-container--default .select2-selection--single,
-#filterPanel .select2-container--default .select2-selection--multiple {
-    border: 1px solid var(--border); border-radius: var(--radius-sm);
-    background: var(--surface); min-height: 38px;
-}
+/* ── Filter Select2 height override — filter panels use 38px, not 48px ── */
 #filterPanel .select2-container--default .select2-selection--single {
-    padding: 0 32px 0 10px; display: flex; align-items: center;
+    height: 38px !important;
+    padding: 0 32px 0 10px !important;
+    min-height: unset !important;
 }
-#filterPanel .select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: var(--text); font-size: 13.5px; padding: 0;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal;
+#filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px !important;
+    top: 0 !important;
+    right: 8px !important;
 }
-#filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
-#filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
 </style>
 <script>
 $(document).ready(function () {

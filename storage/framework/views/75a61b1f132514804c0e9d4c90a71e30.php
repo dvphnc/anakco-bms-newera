@@ -758,7 +758,7 @@
                Only flip above→below using rect.bottom (viewport coords =
                document coords since body never scrolls). */
             if ($dd.hasClass('select2-dropdown--above')) {
-                $dd.css({ top: rect.bottom + 'px', 'margin-top': '0' });
+                $dd.css({ top: rect.bottom + 'px', bottom: 'auto', 'margin-top': '0' });
                 $dd.removeClass('select2-dropdown--above').addClass('select2-dropdown--below');
                 $cont.find('.select2-selection')
                      .css('border-bottom-left-radius', '0')
