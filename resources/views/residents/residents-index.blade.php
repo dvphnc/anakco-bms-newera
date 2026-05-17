@@ -146,7 +146,8 @@
                 {{-- Classifications / Tags (multi, span 2) --}}
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Classifications</label>
-                    <select id="tagsFilter" multiple>
+                    <select id="tagsFilter">
+                        <option value=""></option>
                         <option value="voter">Registered Voter</option>
                         <option value="senior">Senior Citizen (60+)</option>
                         <option value="pwd">Person with Disability (PWD)</option>
@@ -273,11 +274,7 @@ $(document).ready(function () {
     $('#genderFilter').select2($.extend({}, s2Base, { placeholder: 'All Genders' }));
     $('#statusFilter').select2($.extend({}, s2Base, { placeholder: 'All Statuses' }));
     $('#civilStatusFilter').select2($.extend({}, s2Base, { placeholder: 'Any Civil Status' }));
-    $('#tagsFilter').select2($.extend({}, s2Base, {
-        placeholder: 'Filter by classification…',
-        closeOnSelect: false,
-        allowClear: false
-    }));
+    $('#tagsFilter').select2($.extend({}, s2Base, { placeholder: 'Filter by classification…' }));
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '' });
 
@@ -332,7 +329,7 @@ $(document).ready(function () {
         if ($('#civilStatusFilter').val())  url.searchParams.set('civil_status', $('#civilStatusFilter').val());
         if ($('#ageMin').val())             url.searchParams.set('age_min', $('#ageMin').val());
         if ($('#ageMax').val())             url.searchParams.set('age_max', $('#ageMax').val());
-        ($('#tagsFilter').val() || []).forEach(t => url.searchParams.append('tags', t));
+        if ($('#tagsFilter').val()) url.searchParams.set('tags', $('#tagsFilter').val());
 
         history.replaceState({}, '', url);
         updateBadge();
