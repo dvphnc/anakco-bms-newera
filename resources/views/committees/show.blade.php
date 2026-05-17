@@ -969,8 +969,8 @@
     <div id="tab-projects" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-hard-hat"></i> Projects</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-projects', this)" data-label="Add Project">
-                <i class="fas fa-plus"></i> Add Project
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-projects', this)" data-label="Add Project" data-icon="fa-hard-hat">
+                <i class="fas fa-hard-hat"></i> Add Project
             </button>
         </div>
         <div id="form-projects" class="form-panel">
@@ -1029,8 +1029,8 @@
     <div id="tab-env-programs" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-leaf"></i> Environmental Programs</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-env', this)" data-label="Add Program">
-                <i class="fas fa-plus"></i> Add Program
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-env', this)" data-label="Add Program" data-icon="fa-leaf">
+                <i class="fas fa-leaf"></i> Add Program
             </button>
         </div>
         <div id="form-env" class="form-panel">
@@ -1083,8 +1083,8 @@
     <div id="tab-beneficiaries" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-hand-holding-heart"></i> Beneficiaries</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-beneficiaries', this)" data-label="Add Beneficiary">
-                <i class="fas fa-plus"></i> Add Beneficiary
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-beneficiaries', this)" data-label="Add Beneficiary" data-icon="fa-hand-holding-heart">
+                <i class="fas fa-hand-holding-heart"></i> Add Beneficiary
             </button>
         </div>
         <div id="form-beneficiaries" class="form-panel">
@@ -1135,8 +1135,8 @@
     <div id="tab-toda" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-bus"></i> TODA Registry</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-toda', this)" data-label="Register Vehicle">
-                <i class="fas fa-plus"></i> Register Vehicle
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-toda', this)" data-label="Register Vehicle" data-icon="fa-bus">
+                <i class="fas fa-bus"></i> Register Vehicle
             </button>
         </div>
         <div id="form-toda" class="form-panel">
@@ -1189,8 +1189,8 @@
     <div id="tab-emergency" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-exclamation-triangle"></i> Emergency Logs</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-emergency', this)" data-label="Log Emergency">
-                <i class="fas fa-plus"></i> Log Emergency
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-emergency', this)" data-label="Log Emergency" data-icon="fa-triangle-exclamation">
+                <i class="fas fa-triangle-exclamation"></i> Log Emergency
             </button>
         </div>
         <div id="form-emergency" class="form-panel">
@@ -1238,8 +1238,8 @@
     <div id="tab-evacuation" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-house-chimney-medical"></i> Evacuation Centers</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-evacuation', this)" data-label="Add Center">
-                <i class="fas fa-plus"></i> Add Center
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-evacuation', this)" data-label="Add Center" data-icon="fa-building-columns">
+                <i class="fas fa-building-columns"></i> Add Center
             </button>
         </div>
         <div id="form-evacuation" class="form-panel">
@@ -1298,8 +1298,8 @@
     <div id="tab-relief-supplies" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-boxes-stacked"></i> Relief Supplies</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-relief', this)" data-label="Add Item">
-                <i class="fas fa-plus"></i> Add Item
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-relief', this)" data-label="Add Item" data-icon="fa-box-archive">
+                <i class="fas fa-box-archive"></i> Add Item
             </button>
         </div>
         <div id="form-relief" class="form-panel">
@@ -1363,8 +1363,8 @@
     <div id="tab-training" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-chalkboard-user"></i> Training & Seminar Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-training', this)" data-label="Add Training">
-                <i class="fas fa-plus"></i> Add Training
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-training', this)" data-label="Add Training" data-icon="fa-chalkboard-user">
+                <i class="fas fa-chalkboard-user"></i> Add Training
             </button>
         </div>
         <div id="form-training" class="form-panel">
@@ -1419,8 +1419,8 @@
     <div id="tab-clinic-staff" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-user-doctor"></i> Clinic Doctors & Staff</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-clinic-staff', this)" data-label="Add Staff">
-                <i class="fas fa-plus"></i> Add Staff
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-clinic-staff', this)" data-label="Add Staff" data-icon="fa-user-nurse">
+                <i class="fas fa-user-nurse"></i> Add Staff
             </button>
         </div>
         <div id="form-clinic-staff" class="form-panel">
