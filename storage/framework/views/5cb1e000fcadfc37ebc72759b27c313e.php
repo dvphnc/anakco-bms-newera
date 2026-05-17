@@ -146,8 +146,12 @@
                     <label class="form-label">Classifications</label>
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     <select id="tagsFilter">
                         <option value=""></option>
+=======
+                    <select id="tagsFilter" multiple>
+>>>>>>> Stashed changes
 =======
                     <select id="tagsFilter" multiple>
 >>>>>>> Stashed changes
@@ -246,6 +250,7 @@
 #filterPanel { transition: none; }
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 /* Audit B — Condensed row density */
 #residentsTable td,
@@ -258,12 +263,15 @@
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 </style>
 
 <script>
 $(document).ready(function () {
 
     /* ── Select2 init ─────────────────────────────────────────────────── */
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
@@ -276,13 +284,18 @@ $(document).ready(function () {
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     const s2Base = {
         dropdownParent: $('body'),
         allowClear: true,
         width: '100%',
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         minimumResultsForSearch: 0,
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -298,6 +311,7 @@ $(document).ready(function () {
     $('#purokFilter').select2($.extend({}, s2Base, { placeholder: 'All Puroks' }));
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     $('#genderFilter').select2($.extend({}, s2Base, { placeholder: 'All Genders' }));
     $('#statusFilter').select2($.extend({}, s2Base, { placeholder: 'All Statuses' }));
     $('#civilStatusFilter').select2($.extend({}, s2Base, { placeholder: 'Any Civil Status' }));
@@ -305,6 +319,8 @@ $(document).ready(function () {
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     $('#genderFilter').select2($.extend({}, s2Base, { placeholder: 'All Genders', minimumResultsForSearch: -1 }));
@@ -317,6 +333,9 @@ $(document).ready(function () {
         allowClear: false
     }));
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -374,7 +393,11 @@ $(document).ready(function () {
         if ($('#ageMax').val())             url.searchParams.set('age_max', $('#ageMax').val());
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         if ($('#tagsFilter').val()) url.searchParams.set('tags', $('#tagsFilter').val());
+=======
+        ($('#tagsFilter').val() || []).forEach(t => url.searchParams.append('tags', t));
+>>>>>>> Stashed changes
 =======
         ($('#tagsFilter').val() || []).forEach(t => url.searchParams.append('tags', t));
 >>>>>>> Stashed changes
@@ -398,8 +421,13 @@ $(document).ready(function () {
         if (p.get('age_max'))      { $('#ageMax').val(p.get('age_max')); any = true; }
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         const tag = p.get('tags');
         if (tag) { $('#tagsFilter').val(tag).trigger('change.select2'); any = true; }
+=======
+        const tags = p.getAll('tags');
+        if (tags.length)           { $('#tagsFilter').val(tags).trigger('change.select2'); any = true; }
+>>>>>>> Stashed changes
 =======
         const tags = p.getAll('tags');
         if (tags.length)           { $('#tagsFilter').val(tags).trigger('change.select2'); any = true; }
@@ -419,6 +447,7 @@ $(document).ready(function () {
         if ($('#statusFilter').val())                   n++;
         if ($('#civilStatusFilter').val())              n++;
         if ($('#ageMin').val() || $('#ageMax').val())   n++;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
         if ($('#tagsFilter').val())                      n++;
@@ -452,6 +481,8 @@ $(document).ready(function () {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         if (($('#tagsFilter').val() || []).length)      n++;
         const badge = document.getElementById('filterBadge');
         if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
@@ -471,6 +502,9 @@ $(document).ready(function () {
     const hasUrlFilters = loadFromUrl();
     if (hasUrlFilters || sessionStorage.getItem('fp_residents') === '1') {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -478,6 +512,7 @@ $(document).ready(function () {
         document.getElementById('filterToggleText').textContent = 'Hide Filters';
     }
     updateBadge();
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     // Auto-open panel if filters are active (even if localStorage says closed)
@@ -488,6 +523,8 @@ $(document).ready(function () {
             document.getElementById('filterToggleText').textContent = 'Hide Filters';
         }
     }, 50);
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -624,6 +661,7 @@ document.addEventListener('keydown', function (e) {
 });
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 /* ── Axios DELETE — DataTable row removal ──────────────────────────────── */
 $(document).on('click', '#residentsTable form[data-confirm] button[type="submit"]', function (e) {
@@ -682,6 +720,8 @@ $(document).on('click', '#residentsTable .res-status-toggle', function () {
             alert('Could not update status. Please try again.');
         });
 });
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======

@@ -41,9 +41,12 @@
     </div>
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Active')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-exclamation"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Active'])">
@@ -56,9 +59,12 @@
     </div>
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Under Investigation')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-magnifying-glass"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Under Investigation'])">
@@ -71,9 +77,12 @@
     </div>
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Settled')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-handshake"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Settled'])">
@@ -103,6 +112,11 @@
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+
+                
+>>>>>>> Stashed changes
 =======
 
                 
@@ -120,16 +134,30 @@
                     </div>
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Incident Type</label>
                     <select id="typeFilter">
                         <option value=""></option>
 =======
+=======
                 </div>
 
                 
                 <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Incident Type</label>
+                    <select id="typeFilter" multiple>
+                        <?php $__currentLoopData = $incidentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($t); ?>"><?php echo e($t); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+>>>>>>> Stashed changes
+                </div>
+
+                
+                <div class="form-group" style="grid-column:span 2">
+<<<<<<< Updated upstream
                     <label class="form-label">Incident Type</label>
                     <select id="typeFilter" multiple>
 >>>>>>> Stashed changes
@@ -173,6 +201,8 @@
 
                 
                 <div class="form-group" style="grid-column:span 2">
+=======
+>>>>>>> Stashed changes
                     <label class="form-label">Case Status</label>
                     <select id="statusFilter" multiple>
                         <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -192,6 +222,9 @@
                 </div>
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -321,6 +354,7 @@ $(document).ready(function () {
     /* ── Select2 init ─────────────────────────────────────────────────── */
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
        The browser won't paint until after this synchronous block, so no visual flash. */
     var $fp = $('#filterPanel');
@@ -336,6 +370,8 @@ $(document).ready(function () {
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     const s2Multi = {
@@ -355,6 +391,9 @@ $(document).ready(function () {
         minimumResultsForSearch: -1
     }));
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -391,6 +430,7 @@ $(document).ready(function () {
         }
     });
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     /* ── Axios DELETE ─────────────────────────────────────────────────── */
@@ -653,6 +693,85 @@ $(document).ready(function () {
     });
 
 >>>>>>> Stashed changes
+=======
+    /* ── URL persistence ──────────────────────────────────────────────── */
+    function saveToUrl() {
+        const url = new URL(window.location);
+        ['s','date_from','date_to'].forEach(k => url.searchParams.delete(k));
+        url.searchParams.delete('incident_type');
+        url.searchParams.delete('status');
+
+        if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
+        if ($('#dateFrom').val())    url.searchParams.set('date_from', $('#dateFrom').val());
+        if ($('#dateTo').val())      url.searchParams.set('date_to', $('#dateTo').val());
+        ($('#typeFilter').val()   || []).forEach(v => url.searchParams.append('incident_type', v));
+        ($('#statusFilter').val() || []).forEach(v => url.searchParams.append('status', v));
+
+        history.replaceState({}, '', url);
+        updateBadge();
+    }
+
+    function loadFromUrl() {
+        const p = new URLSearchParams(window.location.search);
+        let any = false;
+        if (p.get('s'))         { $('#searchInput').val(p.get('s')); any = true; }
+        if (p.get('date_from')) { $('#dateFrom').val(p.get('date_from')); any = true; }
+        if (p.get('date_to'))   { $('#dateTo').val(p.get('date_to')); any = true; }
+        const types    = p.getAll('incident_type');
+        const statuses = p.getAll('status');
+        if (types.length)    { $('#typeFilter').val(types).trigger('change.select2'); any = true; }
+        if (statuses.length) { $('#statusFilter').val(statuses).trigger('change.select2'); any = true; }
+        return any;
+    }
+
+    function updateBadge() {
+        let n = 0;
+        if ($('#searchInput').val())                   n++;
+        if (($('#typeFilter').val()   || []).length)   n++;
+        if (($('#statusFilter').val() || []).length)   n++;
+        if ($('#dateFrom').val() || $('#dateTo').val()) n++;
+        const badge = document.getElementById('filterBadge');
+        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
+        else       { badge.style.display = 'none'; }
+    }
+
+    /* ── Panel toggle ─────────────────────────────────────────────────── */
+    window.toggleFilters = function (key) {
+        const panel = document.getElementById('filterPanel');
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+        sessionStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+    };
+
+    // Quick-filter from stat cards — sets multi-select and opens panel
+    window.quickFilter = function (filterId, values) {
+        $('#' + filterId).val(values).trigger('change');
+        if (document.getElementById('filterPanel').style.display === 'none') {
+            document.getElementById('filterPanel').style.display = 'block';
+            document.getElementById('filterToggleText').textContent = 'Hide Filters';
+            sessionStorage.setItem('fp_blotter', '1');
+        }
+        saveToUrl();
+        table.ajax.reload();
+    };
+
+    const hasUrlFilters = loadFromUrl();
+    if (hasUrlFilters || sessionStorage.getItem('fp_blotter') === '1') {
+        document.getElementById('filterPanel').style.display = 'block';
+        document.getElementById('filterToggleText').textContent = 'Hide Filters';
+    }
+    updateBadge();
+
+    /* ── Event listeners ─────────────────────────────────────────────── */
+    let debounce;
+
+    $('#searchInput').on('input', function () {
+        clearTimeout(debounce);
+        debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380);
+    });
+
+>>>>>>> Stashed changes
     $('#typeFilter, #statusFilter').on('change', function () {
         saveToUrl(); table.ajax.reload();
     });
@@ -662,6 +781,9 @@ $(document).ready(function () {
     });
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

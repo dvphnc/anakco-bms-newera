@@ -43,8 +43,11 @@
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Pending')">
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-hourglass-half"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-hourglass-half"></i></div>
@@ -64,8 +67,11 @@
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Released')">
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-circle-check"></i></div>
@@ -94,6 +100,11 @@
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+
+                
+>>>>>>> Stashed changes
 =======
 
                 
@@ -109,6 +120,7 @@
                         <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
                                placeholder="Document no., resident name…">
                     </div>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
                 </div>
@@ -132,6 +144,9 @@
 =======
 >>>>>>> Stashed changes
                 </div>
+=======
+                </div>
+>>>>>>> Stashed changes
 =======
                 </div>
 >>>>>>> Stashed changes
@@ -278,6 +293,7 @@ $(document).ready(function () {
     /* ── Select2 init ─────────────────────────────────────────────────── */
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
        The browser won't paint until after this synchronous block, so no visual flash. */
     var $fp = $('#filterPanel');
@@ -294,6 +310,8 @@ $(document).ready(function () {
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     const s2Multi = {
@@ -320,6 +338,9 @@ $(document).ready(function () {
     $('#statusFilter').select2($.extend({}, s2Single, { placeholder: 'All statuses…' }));
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -354,6 +375,7 @@ $(document).ready(function () {
         }
     });
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     /* ── Axios DELETE ─────────────────────────────────────────────────── */
@@ -595,11 +617,86 @@ $(document).ready(function () {
     });
 
 >>>>>>> Stashed changes
+=======
+    /* ── URL persistence ──────────────────────────────────────────────── */
+    function saveToUrl() {
+        const url = new URL(window.location);
+        ['s', 'status'].forEach(k => url.searchParams.delete(k));
+        url.searchParams.delete('document_type');
+
+        if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
+        if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
+        ($('#typeFilter').val() || []).forEach(v => url.searchParams.append('document_type', v));
+
+        history.replaceState({}, '', url);
+        updateBadge();
+    }
+
+    function loadFromUrl() {
+        const p = new URLSearchParams(window.location.search);
+        let any = false;
+        if (p.get('s'))      { $('#searchInput').val(p.get('s')); any = true; }
+        if (p.get('status')) { $('#statusFilter').val(p.get('status')).trigger('change.select2'); any = true; }
+        const types = p.getAll('document_type');
+        if (types.length) { $('#typeFilter').val(types).trigger('change.select2'); any = true; }
+        return any;
+    }
+
+    function updateBadge() {
+        let n = 0;
+        if ($('#searchInput').val())                  n++;
+        if (($('#typeFilter').val() || []).length)    n++;
+        if ($('#statusFilter').val())                 n++;
+        const badge = document.getElementById('filterBadge');
+        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
+        else       { badge.style.display = 'none'; }
+    }
+
+    /* ── Panel toggle ─────────────────────────────────────────────────── */
+    window.toggleFilters = function (key) {
+        const panel = document.getElementById('filterPanel');
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+        sessionStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+    };
+
+    // Quick-filter from stat cards — sets select and opens panel
+    window.quickFilter = function (filterId, value) {
+        $('#' + filterId).val(value).trigger('change');
+        if (document.getElementById('filterPanel').style.display === 'none') {
+            document.getElementById('filterPanel').style.display = 'block';
+            document.getElementById('filterToggleText').textContent = 'Hide Filters';
+            sessionStorage.setItem('fp_documents', '1');
+        }
+        saveToUrl();
+        table.ajax.reload();
+    };
+
+    const hasUrlFilters = loadFromUrl();
+    if (hasUrlFilters || sessionStorage.getItem('fp_documents') === '1') {
+        document.getElementById('filterPanel').style.display = 'block';
+        document.getElementById('filterToggleText').textContent = 'Hide Filters';
+    }
+    updateBadge();
+
+    /* ── Event listeners ──────────────────────────────────────────────── */
+    let debounce;
+
+    $('#searchInput').on('input', function () {
+        clearTimeout(debounce);
+        debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380);
+    });
+
+>>>>>>> Stashed changes
     $('#typeFilter, #statusFilter').on('change', function () {
         saveToUrl(); table.ajax.reload();
     });
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
