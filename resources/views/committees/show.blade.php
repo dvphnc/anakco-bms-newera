@@ -308,28 +308,28 @@
 {{-- QUICK STATS --}}
 <div class="grid-4 mb-6">
     <div class="stat-card">
-        <div class="stat-icon" style="background:{{ $committee['color'] }}15;color:{{ $committee['color'] }}"><i class="fas fa-folder-open"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-folder-open"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ $photos->count() + $reports->count() + $resolutions->count() + $otherRecords->count() }}</div>
             <div class="stat-label">Total Records</div>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-calendar-check"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-calendar-check"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ $activities->count() + $accomplishments->count() }}</div>
             <div class="stat-label">Activities</div>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:var(--gold-glow);color:var(--gold)"><i class="fas fa-users"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-users"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($attendances->sum('total_attendees')) }}</div>
             <div class="stat-label">Total Attendees</div>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:var(--navy-pale);color:var(--navy)"><i class="fas fa-boxes-stacked"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-boxes-stacked"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ $inventory->count() }}</div>
             <div class="stat-label">Inventory Items</div>
