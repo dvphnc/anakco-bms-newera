@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AppointmentStatusLog;
 use App\Models\DocumentAppointment;
 use Illuminate\Http\Request;
 
@@ -33,9 +34,17 @@ class ResidentPortalController extends Controller
         $validated['appointment_number'] = DocumentAppointment::generateNumber();
         $validated['status']             = 'Pending';
 
-        DocumentAppointment::create($validated);
+        $appointment = DocumentAppointment::create($validated);
 
-        return redirect()->route('portal.confirmation', $validated['appointment_number']);
+        AppointmentStatusLog::create([
+            'appointment_id' => $appointment->id,
+            'from_status'    => null,
+            'to_status'      => 'Pending',
+            'changed_by'     => 'Resident',
+            'note'           => 'Request submitted via Resident Portal.',
+        ]);
+
+        return redirect()->route('portal.confirmation', $appointment->appointment_number);
     }
 
     public function confirmation(string $number)
@@ -78,6 +87,15 @@ class ResidentPortalController extends Controller
         $steps     = ['Pending', 'Confirmed', 'Processing', 'Ready', 'Released'];
         $stepIndex = array_search($appointment->status, $steps);
 
+        $logs = $appointment->statusLogs->map(fn ($l) => [
+            'from'       => $l->from_status,
+            'to'         => $l->to_status,
+            'by'         => $l->changed_by,
+            'note'       => $l->note,
+            'date'       => $l->created_at->format('M d, Y'),
+            'time'       => $l->created_at->format('g:i A'),
+        ]);
+
         return response()->json([
             'found'              => true,
             'appointment_number' => $appointment->appointment_number,
@@ -86,12 +104,15 @@ class ResidentPortalController extends Controller
             'preferred_date'     => $appointment->preferred_date->format('F j, Y'),
             'purpose'            => $appointment->purpose,
             'notes'              => $appointment->notes,
+            'processed_by'       => $appointment->processed_by,
             'released_at'        => $appointment->released_at?->format('F j, Y g:i A'),
-            'created_at'         => $appointment->created_at->format('M d, Y'),
+            'created_at'         => $appointment->created_at->format('M d, Y g:i A'),
+            'updated_at'         => $appointment->updated_at->format('M d, Y g:i A'),
             'status'             => $appointment->status,
             'cancelled'          => $appointment->status === 'Cancelled',
             'step_index'         => $stepIndex === false ? -1 : (int) $stepIndex,
             'steps'              => $steps,
+            'logs'               => $logs,
         ]);
     }
 }

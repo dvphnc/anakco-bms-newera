@@ -98,6 +98,15 @@ class AppointmentController extends Controller
         }
 
         $old = $appointment->toArray();
+
+        AppointmentStatusLog::create([
+            'appointment_id' => $appointment->id,
+            'from_status'    => $appointment->status,
+            'to_status'      => $validated['status'],
+            'changed_by'     => auth()->user()->name,
+            'note'           => $validated['notes'] ?? null,
+        ]);
+
         $appointment->update($validated);
 
         $this->logActivity('updated', $appointment, $old, $appointment->fresh()->toArray());
