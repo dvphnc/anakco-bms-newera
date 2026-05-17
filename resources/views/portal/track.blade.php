@@ -220,8 +220,8 @@
     @if(isset($appointment))
         @if($appointment)
             @php
-                $steps   = ['Pending','Confirmed','Processing','Ready','Released'];
-                $current = $appointment->status;
+                $steps     = ['Pending','Confirmed','Processing','Ready','Released'];
+                $current   = $appointment->status;
                 $cancelled = $current === 'Cancelled';
                 $stepIndex = array_search($current, $steps);
             @endphp
@@ -234,7 +234,7 @@
                     </div>
                     <div style="text-align:right">
                         <div style="font-size:.72rem;opacity:.7;margin-bottom:.2rem">Submitted</div>
-                        <div style="font-size:.85rem">{{ $appointment->created_at->format('M d, Y') }}</div>
+                        <div style="font-size:.85rem">{{ $appointment->created_at->format('M d, Y g:i A') }}</div>
                     </div>
                 </div>
                 <div class="result-body">
@@ -243,9 +243,12 @@
                         <tr><td>Document</td><td>{{ $appointment->document_type }}</td></tr>
                         <tr><td>Preferred Date</td><td>{{ $appointment->preferred_date->format('F j, Y') }}</td></tr>
                         @if($appointment->purpose)<tr><td>Purpose</td><td>{{ $appointment->purpose }}</td></tr>@endif
+                        @if($appointment->processed_by)<tr><td>Processed By</td><td>{{ $appointment->processed_by }}</td></tr>@endif
                         @if($appointment->notes)<tr><td>Staff Notes</td><td>{{ $appointment->notes }}</td></tr>@endif
                         @if($appointment->released_at)<tr><td>Released On</td><td>{{ $appointment->released_at->format('F j, Y g:i A') }}</td></tr>@endif
+                        <tr><td>Last Updated</td><td>{{ $appointment->updated_at->format('M d, Y g:i A') }}</td></tr>
                     </table>
+
                     @if(!$cancelled)
                     <div class="progress-section">
                         <h4>Progress</h4>
@@ -264,6 +267,28 @@
                         <i class="fas fa-ban"></i> This appointment has been <strong>cancelled</strong>.
                         @if($appointment->notes) {{ $appointment->notes }} @endif
                         Please visit the barangay hall or submit a new request.
+                    </div>
+                    @endif
+
+                    {{-- Status history timeline --}}
+                    @if($appointment->statusLogs->count())
+                    <div class="timeline-section">
+                        <h4 class="timeline-hd"><i class="fas fa-clock-rotate-left"></i> Status History</h4>
+                        <div class="timeline">
+                            @foreach($appointment->statusLogs as $log)
+                            <div class="tl-item {{ $loop->last ? 'tl-last' : '' }}">
+                                <div class="tl-dot tl-dot-{{ strtolower(str_replace(' ','-',$log->to_status)) }}"></div>
+                                <div class="tl-body">
+                                    <div class="tl-status">{{ $log->to_status }}</div>
+                                    <div class="tl-meta">
+                                        {{ $log->created_at->format('M d, Y · g:i A') }}
+                                        @if($log->changed_by) · <span style="color:var(--navy)">{{ $log->changed_by }}</span>@endif
+                                    </div>
+                                    @if($log->note)<div class="tl-note">{{ $log->note }}</div>@endif
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
                     @endif
                 </div>
@@ -337,6 +362,28 @@
         return '<tr><td>' + label + '</td><td>' + esc(value) + '</td></tr>';
     }
 
+    function renderTimeline(logs) {
+        if (!logs || !logs.length) return '';
+        var items = logs.map(function (l, i) {
+            var isLast = i === logs.length - 1;
+            var slug   = l.to.toLowerCase().replace(/\s+/g, '-');
+            var note   = l.note ? '<div class="tl-note">' + esc(l.note) + '</div>' : '';
+            var by     = l.by ? ' · <span style="color:var(--navy)">' + esc(l.by) + '</span>' : '';
+            return '<div class="tl-item' + (isLast ? ' tl-last' : '') + '">' +
+                '<div class="tl-dot tl-dot-' + slug + '"></div>' +
+                '<div class="tl-body">' +
+                    '<div class="tl-status">' + esc(l.to) + '</div>' +
+                    '<div class="tl-meta">' + esc(l.date) + ' · ' + esc(l.time) + by + '</div>' +
+                    note +
+                '</div>' +
+                '</div>';
+        }).join('');
+        return '<div class="timeline-section">' +
+            '<h4 class="timeline-hd"><i class="fas fa-clock-rotate-left"></i> Status History</h4>' +
+            '<div class="timeline">' + items + '</div>' +
+            '</div>';
+    }
+
     function renderResult(d) {
         if (!d.found) {
             return '<div class="not-found">' +
@@ -347,12 +394,14 @@
         }
 
         var details = '<table class="detail-table">' +
-            row('Name', d.resident_name) +
-            row('Document', d.document_type) +
+            row('Name',         d.resident_name) +
+            row('Document',     d.document_type) +
             row('Preferred Date', d.preferred_date) +
-            row('Purpose', d.purpose) +
-            row('Staff Notes', d.notes) +
-            row('Released On', d.released_at) +
+            row('Purpose',      d.purpose) +
+            row('Processed By', d.processed_by) +
+            row('Staff Notes',  d.notes) +
+            row('Released On',  d.released_at) +
+            row('Last Updated', d.updated_at) +
             '</table>';
 
         var progress = '';
@@ -377,6 +426,8 @@
                 '</div>';
         }
 
+        var timeline = renderTimeline(d.logs || []);
+
         return '<div class="result-card">' +
             '<div class="result-header">' +
                 '<div>' +
@@ -388,7 +439,7 @@
                     '<div style="font-size:.85rem">' + esc(d.created_at) + '</div>' +
                 '</div>' +
             '</div>' +
-            '<div class="result-body">' + details + progress + '</div>' +
+            '<div class="result-body">' + details + progress + timeline + '</div>' +
             '</div>';
     }
 })();

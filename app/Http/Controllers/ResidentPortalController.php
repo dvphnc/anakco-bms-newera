@@ -65,10 +65,9 @@ class ResidentPortalController extends Controller
             'appointment_number' => 'required|string',
         ]);
 
-        $appointment = DocumentAppointment::where(
-            'appointment_number',
-            strtoupper(trim($request->appointment_number))
-        )->first();
+        $appointment = DocumentAppointment::with('statusLogs')
+            ->where('appointment_number', strtoupper(trim($request->appointment_number)))
+            ->first();
 
         return view('portal.track', compact('appointment'));
     }
