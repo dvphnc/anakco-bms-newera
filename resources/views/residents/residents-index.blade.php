@@ -345,8 +345,8 @@ $(document).ready(function () {
         if (p.get('civil_status')) { $('#civilStatusFilter').val(p.get('civil_status')).trigger('change.select2'); any = true; }
         if (p.get('age_min'))      { $('#ageMin').val(p.get('age_min')); any = true; }
         if (p.get('age_max'))      { $('#ageMax').val(p.get('age_max')); any = true; }
-        const tags = p.getAll('tags');
-        if (tags.length)           { $('#tagsFilter').val(tags).trigger('change.select2'); any = true; }
+        const tag = p.get('tags');
+        if (tag) { $('#tagsFilter').val(tag).trigger('change.select2'); any = true; }
         return any;
     }
 
@@ -358,7 +358,7 @@ $(document).ready(function () {
         if ($('#statusFilter').val())                   n++;
         if ($('#civilStatusFilter').val())              n++;
         if ($('#ageMin').val() || $('#ageMax').val())   n++;
-        if (($('#tagsFilter').val() || []).length)      n++;
+        if ($('#tagsFilter').val())                      n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');
         const chipN = document.getElementById('headerFilterCount');
