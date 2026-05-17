@@ -153,32 +153,6 @@
             <strong>Tip:</strong> Screenshot or note down your appointment number. Staff will confirm your schedule within 1–2 business days. Bring a valid ID when claiming your document.
         </div>
     </div>
-<<<<<<< Updated upstream
 </div>{{-- /.p-card --}}
 </div>{{-- /.portal-wrap-sm --}}
-=======
-</div>
-</div>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 @endsection
