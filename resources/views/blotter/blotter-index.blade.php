@@ -262,12 +262,12 @@ $(document).ready(function () {
     var $fp = $('#filterPanel');
     $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1' });
 
-    const s2Multi = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
-                      minimumResultsForSearch: 0,
-                      language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
+    const s2Single = { dropdownParent: $('body'), allowClear: true, width: '100%',
+                       minimumResultsForSearch: 0,
+                       language: { noResults: () => 'No matches' } };
 
-    $('#typeFilter').select2($.extend({}, s2Multi, { placeholder: 'All incident types…' }));
-    $('#statusFilter').select2($.extend({}, s2Multi, { placeholder: 'All statuses…' }));
+    $('#typeFilter').select2($.extend({}, s2Single, { placeholder: 'All incident types…' }));
+    $('#statusFilter').select2($.extend({}, s2Single, { placeholder: 'All statuses…' }));
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '' });
 

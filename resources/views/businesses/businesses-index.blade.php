@@ -107,14 +107,14 @@
     </div>
 </div>
 <div class="grid-2 mb-6">
-    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Expired'])">
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Expired')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-times-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Expired']) }}</div>
             <div class="stat-label">Marked Expired</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Suspended'])">
+    <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Suspended')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-pause-circle"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($summaryCounts['Suspended']) }}</div>
