@@ -422,7 +422,8 @@
                         </div>
                         <div class="form-group" style="grid-column:span 2">
                             <label class="form-label">Title <span style="color:var(--crimson)">*</span></label>
-                            <input type="text" name="title" class="form-control" placeholder="Record title" required>
+                            <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" placeholder="Record title" value="{{ old('title') }}" required>
+                            @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="form-group" style="grid-column:span 2">
                             <label class="form-label">Description</label>
@@ -501,7 +502,7 @@
                     @csrf
                     <input type="hidden" name="activity_type" value="Activity">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Activity Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control" placeholder="e.g. Barangay Assembly" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Activity Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control @error('title') is-invalid @enderror" placeholder="e.g. Barangay Assembly" value="{{ old('title') }}" required>@error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="activity_date" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Location</label><input type="text" name="location" class="form-control" placeholder="Venue"></div>
                         <div class="form-group"><label class="form-label">Participants</label><input type="number" name="participants_count" class="form-control" min="0" placeholder="0"></div>
@@ -554,7 +555,7 @@
                     @csrf
                     <input type="hidden" name="activity_type" value="Accomplishment">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}" required>@error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="activity_date" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Location</label><input type="text" name="location" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Beneficiaries</label><input type="number" name="participants_count" class="form-control" min="0"></div>
@@ -2199,6 +2200,46 @@ function closeMedDetails() {
 document.getElementById('medDetailsModal')?.addEventListener('click', function(e) {
     if (e.target === this) closeMedDetails();
 });
+
+// ── Partnership delete ───────────────────────────────────────
+function deletePartnership(id, name, slug) {
+    bmsConfirm({
+        title:   'Delete Partnership',
+        message: 'Delete the partnership with <strong>' + name + '</strong>? This cannot be undone.',
+        ok:      'Delete',
+        type:    'danger',
+    }, function() {
+        axios.delete('/committees/' + slug + '/partnerships/' + id)
+            .then(function(res) {
+                const row = document.querySelector('tr[data-pid="' + id + '"]');
+                if (row) row.remove();
+                bmsToast(res.data.message || 'Partnership deleted.', 'success');
+            })
+            .catch(function() {
+                bmsToast('Failed to delete partnership.', 'error');
+            });
+    });
+}
+
+// ── Relief supply delete ─────────────────────────────────────
+function deleteReliefSupply(id, name, slug) {
+    bmsConfirm({
+        title:   'Delete Relief Supply',
+        message: 'Delete <strong>' + name + '</strong> from the relief inventory? This cannot be undone.',
+        ok:      'Delete',
+        type:    'danger',
+    }, function() {
+        axios.delete('/committees/' + slug + '/relief/' + id)
+            .then(function(res) {
+                const row = document.querySelector('tr[data-rid="' + id + '"]');
+                if (row) row.remove();
+                bmsToast(res.data.message || 'Relief supply deleted.', 'success');
+            })
+            .catch(function() {
+                bmsToast('Failed to delete relief supply.', 'error');
+            });
+    });
+}
 
 // Live search + filter for medicine table
 function filterMeds() {
