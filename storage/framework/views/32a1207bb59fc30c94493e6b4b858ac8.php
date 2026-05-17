@@ -88,7 +88,8 @@
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Document Type</label>
-                    <select id="typeFilter" multiple>
+                    <select id="typeFilter">
+                        <option value=""></option>
                         <?php $__currentLoopData = $documentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <option value="<?php echo e($t); ?>"><?php echo e($t); ?></option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -218,27 +219,6 @@
 }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
-#filterPanel .select2-container--default .select2-selection--multiple {
-    padding: 3px 8px; cursor: pointer;
-    display: block; width: 100%; box-sizing: border-box;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__rendered {
-    padding: 0; display: flex; flex-wrap: wrap; gap: 3px; align-items: center; min-height: 30px; width: 100%;
-    overflow: visible; white-space: normal;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
-    color: var(--text-subtle); font-size: 13.5px; margin: 0 4px;
-    float: none; display: inline-block; white-space: nowrap;
-    flex: 1 0 auto; line-height: 30px;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice {
-    background: var(--navy); color: #fff; border: none; border-radius: 99px;
-    padding: 2px 8px; font-size: 12px; margin: 2px 2px 2px 0; display: inline-flex; align-items: center; gap: 5px;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-    color: rgba(255,255,255,.65); background: transparent; border: none; font-weight: normal; order: 1; padding: 0;
-}
-#filterPanel .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover { color: #fff; background: transparent; }
 </style>
 <script>
 $(document).ready(function () {
@@ -249,14 +229,11 @@ $(document).ready(function () {
     var $fp = $('#filterPanel');
     $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1' });
 
-    const s2Multi  = { dropdownParent: $('body'), allowClear: false, width: '100%', closeOnSelect: false,
-                       minimumResultsForSearch: 0,
-                       language: { noResults: () => 'No matches', searching: () => 'Searching…' } };
     const s2Single = { dropdownParent: $('body'), allowClear: true,  width: '100%',
                        minimumResultsForSearch: 0,
                        language: { noResults: () => 'No matches' } };
 
-    $('#typeFilter').select2($.extend({}, s2Multi,  { placeholder: 'All document types…' }));
+    $('#typeFilter').select2($.extend({}, s2Single, { placeholder: 'All document types…' }));
     $('#statusFilter').select2($.extend({}, s2Single, { placeholder: 'All statuses…' }));
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '' });
@@ -331,7 +308,7 @@ $(document).ready(function () {
         url.searchParams.delete('document_type');
         if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
         if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
-        ($('#typeFilter').val() || []).forEach(v => url.searchParams.append('document_type', v));
+        if ($('#typeFilter').val()) url.searchParams.set('document_type', $('#typeFilter').val());
         history.replaceState({}, '', url);
         updateBadge();
     }
@@ -340,14 +317,14 @@ $(document).ready(function () {
         let any = false;
         if (p.get('s'))      { $('#searchInput').val(p.get('s')); any = true; }
         if (p.get('status')) { $('#statusFilter').val(p.get('status')).trigger('change.select2'); any = true; }
-        const types = p.getAll('document_type');
-        if (types.length)    { $('#typeFilter').val(types).trigger('change.select2'); any = true; }
+        const type = p.get('document_type');
+        if (type) { $('#typeFilter').val(type).trigger('change.select2'); any = true; }
         return any;
     }
     function updateBadge() {
         let n = 0;
         if ($('#searchInput').val())               n++;
-        if (($('#typeFilter').val() || []).length) n++;
+        if ($('#typeFilter').val()) n++;
         if ($('#statusFilter').val())              n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');
