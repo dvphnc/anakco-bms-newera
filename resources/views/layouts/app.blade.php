@@ -733,49 +733,46 @@
             });
         }
         /* Fallback: also handle via open event */
-        $(document).on('select2:open', function () {
-            setTimeout(function () {
-                var $cont = $('.select2-container--open');
-                var $dd   = $('.select2-dropdown');
+        $(document).on('select2:open', function (e) {
+            /* Only fix filter-panel dropdowns. All other Select2 instances
+               (modals, forms, resident pickers) keep default behaviour. */
+            if (!$(e.target).closest('#filterPanel').length) return;
 
-                if (!$cont.length || !$dd.length) return;
+            var $cont = $('.select2-container--open');
+            var $dd   = $('.select2-dropdown');
+            if (!$cont.length || !$dd.length) return;
 
-                /* Only apply filter-panel fixes to selects inside #filterPanel.
-                   All other Select2 instances (modals, forms, resident pickers)
-                   are left with their default behaviour. */
-                if (!$cont.closest('#filterPanel').length) return;
+            /* ── Position & height ────────────────────────────────────────
+               No setTimeout — run synchronously so the browser never paints
+               the "wrong" position (which caused the visible blink).
 
-                /* ── Always show the search field ─────────────────────────── */
-                /* The dropdown is appended to <body> (dropdownParent:$('body')),
-                   NOT inside $cont, so we search on $dd directly.
-                   Do NOT call .focus() here — it fires focusout on the
-                   .select2-container which Select2 interprets as "clicked
-                   outside" and immediately closes the dropdown. */
-                $dd.find('.select2-search--dropdown')
-                   .removeClass('select2-search--hide')
-                   .css('display', 'block');
-                $dd.find('.select2-search__field').css('display', 'block');
+               getBoundingClientRect() is viewport-relative. Because <body>
+               never scrolls (only .main-content does), viewport coords equal
+               document coords for any element appended to <body>.
+               → top: rect.bottom is the correct placement, no scroll offset
+                 needed. The old + mcScroll was double-counting.
 
-                /* ── Fix position & height ────────────────────────────────── */
-                /* .main-content is the scroll container, not window, so
-                   window.pageYOffset is always 0. Select2's built-in space
-                   calculation is wrong when the user has scrolled — it sees
-                   the element as being far below the viewport and assigns
-                   near-zero (or negative) space, making the dropdown tiny or
-                   opening above. We recalculate from viewport coordinates. */
-                var rect       = $cont[0].getBoundingClientRect();
-                var mcScroll   = (document.querySelector('.main-content') || {}).scrollTop || 0;
-                var docTop     = rect.bottom + mcScroll;
-                var spaceBelow = (window.innerHeight || 768) - rect.bottom - 6;
-                var maxH       = Math.max(140, Math.min(280, spaceBelow));
+               spaceBelow uses pure viewport maths, so max-height is always
+               correct regardless of how far .main-content has scrolled. */
+            var rect       = $cont[0].getBoundingClientRect();
+            var spaceBelow = (window.innerHeight || 768) - rect.bottom - 6;
+            var maxH       = Math.max(140, Math.min(280, spaceBelow));
 
-                $dd.css({ top: docTop + 'px', 'margin-top': '0' });
-                $dd.find('.select2-results__options').css('max-height', maxH + 'px');
-                $dd.removeClass('select2-dropdown--above').addClass('select2-dropdown--below');
-                $cont.find('.select2-selection')
-                     .css('border-bottom-left-radius', '0')
-                     .css('border-bottom-right-radius', '0');
-            }, 20);
+            $dd.css({ top: rect.bottom + 'px', 'margin-top': '0' });
+            $dd.find('.select2-results__options').css('max-height', maxH + 'px');
+            $dd.removeClass('select2-dropdown--above').addClass('select2-dropdown--below');
+            $cont.find('.select2-selection')
+                 .css('border-bottom-left-radius', '0')
+                 .css('border-bottom-right-radius', '0');
+
+            /* ── Search field ─────────────────────────────────────────────
+               Dropdown is on <body>, not inside $cont, so target $dd.
+               No .focus() call — that fires focusout on .select2-container
+               which Select2 reads as "clicked outside" → closes immediately. */
+            $dd.find('.select2-search--dropdown')
+               .removeClass('select2-search--hide')
+               .css('display', 'block');
+            $dd.find('.select2-search__field').css('display', 'block');
         });
 
         $('.select2-resident').each(function() {
