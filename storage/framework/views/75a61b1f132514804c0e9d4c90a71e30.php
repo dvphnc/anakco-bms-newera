@@ -736,13 +736,18 @@
         $(document).on('select2:open', function () {
             setTimeout(function () {
                 var $cont = $('.select2-container--open');
-                /* With dropdownParent:$('body') the dropdown is appended to <body>,
-                   NOT inside $cont — so we must search on $('body') directly. */
-                var $dd = $('.select2-dropdown');
+                var $dd   = $('.select2-dropdown');
 
                 if (!$cont.length || !$dd.length) return;
 
+                /* Only apply filter-panel fixes to selects inside #filterPanel.
+                   All other Select2 instances (modals, forms, resident pickers)
+                   are left with their default behaviour. */
+                if (!$cont.closest('#filterPanel').length) return;
+
                 /* ── Always show the search field ─────────────────────────── */
+                /* The dropdown is appended to <body> (dropdownParent:$('body')),
+                   NOT inside $cont, so we search on $dd directly. */
                 $dd.find('.select2-search--dropdown')
                    .removeClass('select2-search--hide')
                    .css('display', 'block');
@@ -750,13 +755,15 @@
                 if ($f.length) { $f[0].focus(); }
 
                 /* ── Fix position & height ────────────────────────────────── */
-                /* .main-content is the scroll container, not window — so
-                   window.pageYOffset is always 0 and Select2's built-in space
-                   calculation is wrong when the user has scrolled.
-                   We recalculate everything from viewport coordinates. */
+                /* .main-content is the scroll container, not window, so
+                   window.pageYOffset is always 0. Select2's built-in space
+                   calculation is wrong when the user has scrolled — it sees
+                   the element as being far below the viewport and assigns
+                   near-zero (or negative) space, making the dropdown tiny or
+                   opening above. We recalculate from viewport coordinates. */
                 var rect       = $cont[0].getBoundingClientRect();
                 var mcScroll   = (document.querySelector('.main-content') || {}).scrollTop || 0;
-                var docTop     = rect.bottom + mcScroll;          // position in document
+                var docTop     = rect.bottom + mcScroll;
                 var spaceBelow = (window.innerHeight || 768) - rect.bottom - 6;
                 var maxH       = Math.max(140, Math.min(280, spaceBelow));
 
