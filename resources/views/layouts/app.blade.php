@@ -1028,12 +1028,11 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
     }, true);
     // Re-enable on back-button restore (bfcache)
+    // Also force a full reload so Select2, DataTables, and all JS re-initialise
+    // cleanly instead of running against a frozen DOM snapshot.
     window.addEventListener('pageshow', function(e) {
         if (e.persisted) {
-            document.querySelectorAll('button[type="submit"]').forEach(function(btn) {
-                btn.disabled = false;
-                if (btn.dataset.originalHtml) btn.innerHTML = btn.dataset.originalHtml;
-            });
+            window.location.reload();
         }
     });
 
