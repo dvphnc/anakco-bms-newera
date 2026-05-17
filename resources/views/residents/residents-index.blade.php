@@ -251,6 +251,11 @@
 $(document).ready(function () {
 
     /* ── Select2 init ─────────────────────────────────────────────────── */
+    /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
+       The browser won't paint until after this synchronous block, so no visual flash. */
+    var $fp = $('#filterPanel');
+    $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1' });
+
     const s2Base = {
         dropdownParent: $('body'),
         allowClear: true,
@@ -273,6 +278,8 @@ $(document).ready(function () {
         closeOnSelect: false,
         allowClear: false
     }));
+
+    $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '' });
 
     /* ── DataTable ────────────────────────────────────────────────────── */
     var table = $('#residentsTable').DataTable({
