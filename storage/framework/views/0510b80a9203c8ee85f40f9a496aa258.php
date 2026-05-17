@@ -307,28 +307,28 @@
 
 <div class="grid-4 mb-6">
     <div class="stat-card">
-        <div class="stat-icon" style="background:<?php echo e($committee['color']); ?>15;color:<?php echo e($committee['color']); ?>"><i class="fas fa-folder-open"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-folder-open"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e($photos->count() + $reports->count() + $resolutions->count() + $otherRecords->count()); ?></div>
             <div class="stat-label">Total Records</div>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-calendar-check"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-calendar-check"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e($activities->count() + $accomplishments->count()); ?></div>
             <div class="stat-label">Activities</div>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:var(--gold-glow);color:var(--gold)"><i class="fas fa-users"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-users"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($attendances->sum('total_attendees'))); ?></div>
             <div class="stat-label">Total Attendees</div>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:var(--navy-pale);color:var(--navy)"><i class="fas fa-boxes-stacked"></i></div>
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-boxes-stacked"></i></div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e($inventory->count()); ?></div>
             <div class="stat-label">Inventory Items</div>
@@ -402,8 +402,8 @@
     <div id="tab-records" class="tab-content active">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-folder-open"></i> Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-records', this)" data-label="Upload Record">
-                <i class="fas fa-plus"></i> Upload Record
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-records', this)" data-label="Upload Record" data-icon="fa-cloud-arrow-up">
+                <i class="fas fa-cloud-arrow-up"></i> Upload Record
             </button>
         </div>
         <div id="form-records" class="form-panel">
@@ -422,7 +422,22 @@
                         </div>
                         <div class="form-group" style="grid-column:span 2">
                             <label class="form-label">Title <span style="color:var(--crimson)">*</span></label>
-                            <input type="text" name="title" class="form-control" placeholder="Record title" required>
+                            <input type="text" name="title" class="form-control <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="Record title" value="<?php echo e(old('title')); ?>" required>
+                            <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                         <div class="form-group" style="grid-column:span 2">
                             <label class="form-label">Description</label>
@@ -490,8 +505,8 @@
     <div id="tab-activities" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-calendar-check"></i> Activities</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-activities', this)" data-label="Log Activity">
-                <i class="fas fa-plus"></i> Log Activity
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-activities', this)" data-label="Log Activity" data-icon="fa-calendar-plus">
+                <i class="fas fa-calendar-plus"></i> Log Activity
             </button>
         </div>
         <div id="form-activities" class="form-panel">
@@ -501,7 +516,21 @@
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="activity_type" value="Activity">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Activity Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control" placeholder="e.g. Barangay Assembly" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Activity Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="e.g. Barangay Assembly" value="<?php echo e(old('title')); ?>" required><?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="activity_date" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Location</label><input type="text" name="location" class="form-control" placeholder="Venue"></div>
                         <div class="form-group"><label class="form-label">Participants</label><input type="number" name="participants_count" class="form-control" min="0" placeholder="0"></div>
@@ -543,8 +572,8 @@
     <div id="tab-accomplishments" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-trophy"></i> Accomplishments</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-accomplishments', this)" data-label="Log Accomplishment">
-                <i class="fas fa-plus"></i> Log Accomplishment
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-accomplishments', this)" data-label="Log Accomplishment" data-icon="fa-trophy">
+                <i class="fas fa-trophy"></i> Log Accomplishment
             </button>
         </div>
         <div id="form-accomplishments" class="form-panel">
@@ -554,7 +583,21 @@
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="activity_type" value="Accomplishment">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('title')); ?>" required><?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="activity_date" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Location</label><input type="text" name="location" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Beneficiaries</label><input type="number" name="participants_count" class="form-control" min="0"></div>
@@ -597,8 +640,8 @@
     <div id="tab-attendance" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-users"></i> Attendance Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-attendance', this)" data-label="Record Attendance">
-                <i class="fas fa-plus"></i> Record Attendance
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-attendance', this)" data-label="Record Attendance" data-icon="fa-clipboard-list">
+                <i class="fas fa-clipboard-list"></i> Record Attendance
             </button>
         </div>
         <div id="form-attendance" class="form-panel">
@@ -607,7 +650,21 @@
                 <form method="POST" action="<?php echo e(route('committees.storeAttendance', $committee['slug'])); ?>" enctype="multipart/form-data">
                     <?php echo csrf_field(); ?>
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Event Name <span style="color:var(--crimson)">*</span></label><input type="text" name="event_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Event Name <span style="color:var(--crimson)">*</span></label><input type="text" name="event_name" class="form-control <?php $__errorArgs = ['event_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('event_name')); ?>" required><?php $__errorArgs = ['event_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="event_date" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Venue</label><input type="text" name="venue" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Total Attendees <span style="color:var(--crimson)">*</span></label><input type="number" name="total_attendees" class="form-control" min="0" required></div>
@@ -647,8 +704,8 @@
     <div id="tab-inventory" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-boxes-stacked"></i> Inventory</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-inventory', this)" data-label="Add Item">
-                <i class="fas fa-plus"></i> Add Item
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-inventory', this)" data-label="Add Item" data-icon="fa-circle-plus">
+                <i class="fas fa-circle-plus"></i> Add Item
             </button>
         </div>
         <div id="form-inventory" class="form-panel">
@@ -657,8 +714,22 @@
                 <form method="POST" action="<?php echo e(route('committees.storeInventory', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?>
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Item Name <span style="color:var(--crimson)">*</span></label><input type="text" name="item_name" class="form-control" required></div>
-                        <div class="form-group"><label class="form-label">Category</label><input type="text" name="category" class="form-control"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Item Name <span style="color:var(--crimson)">*</span></label><input type="text" name="item_name" class="form-control <?php $__errorArgs = ['item_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('item_name')); ?>" required><?php $__errorArgs = ['item_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
+                        <div class="form-group"><label class="form-label">Category</label><input type="text" name="category" class="form-control" value="<?php echo e(old('category')); ?>"></div>
                         <div class="form-group"><label class="form-label">Quantity <span style="color:var(--crimson)">*</span></label><input type="number" name="quantity" class="form-control" min="0" required></div>
                         <div class="form-group"><label class="form-label">Unit</label><input type="text" name="unit" class="form-control" placeholder="pcs, sets"></div>
                         <div class="form-group"><label class="form-label">Condition <span style="color:var(--crimson)">*</span></label><select name="condition" class="form-control" required><?php $__currentLoopData = ['Good','Fair','Poor','For Disposal']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option value="<?php echo e($c); ?>"><?php echo e($c); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
@@ -697,8 +768,8 @@
     <div id="tab-partnerships" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-handshake"></i> Partnership Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-partnership', this)" data-label="Add Partnership">
-                <i class="fas fa-plus"></i> Add Partnership
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-partnership', this)" data-label="Add Partnership" data-icon="fa-handshake">
+                <i class="fas fa-handshake"></i> Add Partnership
             </button>
         </div>
         <div id="form-partnership" class="form-panel">
@@ -707,7 +778,21 @@
                 <form method="POST" action="<?php echo e(route('committees.storePartnership', $committee['slug'])); ?>" enctype="multipart/form-data">
                     <?php echo csrf_field(); ?>
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Partner Name / Organization <span style="color:var(--crimson)">*</span></label><input type="text" name="partner_name" class="form-control" placeholder="e.g. Quezon City Health Department" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Partner Name / Organization <span style="color:var(--crimson)">*</span></label><input type="text" name="partner_name" class="form-control <?php $__errorArgs = ['partner_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="e.g. Quezon City Health Department" value="<?php echo e(old('partner_name')); ?>" required><?php $__errorArgs = ['partner_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Partner Type <span style="color:var(--crimson)">*</span></label><select name="partner_type" class="form-control" required><?php $__currentLoopData = ['Government','NGO','Private','Community','Other']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($pt); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
                         <div class="form-group"><label class="form-label">MOU / MOA Date</label><input type="date" name="mou_date" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Validity Date</label><input type="date" name="validity_date" class="form-control"></div>
@@ -728,7 +813,7 @@
             <thead><tr><th>Organization</th><th>Type</th><th>MOU Date</th><th>Valid Until</th><th>Contact Person</th><th>Contact</th><th>MOU File</th><th></th></tr></thead>
             <tbody>
                 <?php $__currentLoopData = $partnerships; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <tr>
+                <tr data-pid="<?php echo e($p->id); ?>">
                     <td>
                         <div style="font-weight:600;color:var(--navy)"><?php echo e($p->partner_name); ?></div>
                         <?php if($p->description): ?><div style="font-size:11px;color:var(--text-muted);margin-top:2px"><?php echo e(Str::limit($p->description, 60)); ?></div><?php endif; ?>
@@ -744,13 +829,11 @@
                     <td class="td-muted"><?php echo e($p->contact_number ?? '—'); ?></td>
                     <td><?php if($p->file_path): ?><a href="<?php echo e(asset('storage/'.$p->file_path)); ?>" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a><?php else: ?><span class="td-muted">—</span><?php endif; ?></td>
                     <td>
-                        <form method="POST" action="<?php echo e(route('committees.destroyPartnership', [$committee['slug'], $p->id])); ?>"
-                              data-confirm="Delete this partnership record? This cannot be undone."
-                              data-confirm-title="Delete Partnership"
-                              data-confirm-ok="Delete">
-                            <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                            <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
-                        </form>
+                        <button type="button"
+                                onclick="deletePartnership(<?php echo e($p->id); ?>, '<?php echo e(addslashes($p->partner_name)); ?>', '<?php echo e($committee['slug']); ?>')"
+                                class="btn btn-danger btn-sm btn-icon" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -768,8 +851,8 @@
     <div id="tab-bpso" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-shield-halved"></i> BPSO Members</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-bpso', this)" data-label="Add Member">
-                <i class="fas fa-plus"></i> Add Member
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-bpso', this)" data-label="Add Member" data-icon="fa-user-plus">
+                <i class="fas fa-user-plus"></i> Add Member
             </button>
         </div>
         <div id="form-bpso" class="form-panel">
@@ -778,8 +861,22 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="bpso">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control" required></div>
-                        <div class="form-group"><label class="form-label">Rank</label><input type="text" name="rank" class="form-control" placeholder="e.g. Senior BPSO"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control <?php $__errorArgs = ['full_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('full_name')); ?>" required><?php $__errorArgs = ['full_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
+                        <div class="form-group"><label class="form-label">Rank</label><input type="text" name="rank" class="form-control" placeholder="e.g. Senior BPSO" value="<?php echo e(old('rank')); ?>"></div>
                         <div class="form-group"><label class="form-label">Badge No.</label><input type="text" name="badge_number" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Contact</label><input type="text" name="contact_number" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Assignment</label><input type="text" name="assignment" class="form-control" placeholder="Area/Post"></div>
@@ -814,8 +911,8 @@
     <div id="tab-patrol" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-binoculars"></i> Patrol Logs</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-patrol', this)" data-label="Log Patrol">
-                <i class="fas fa-plus"></i> Log Patrol
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-patrol', this)" data-label="Log Patrol" data-icon="fa-binoculars">
+                <i class="fas fa-binoculars"></i> Log Patrol
             </button>
         </div>
         <div id="form-patrol" class="form-panel">
@@ -863,8 +960,8 @@
     <div id="tab-health-records" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-notes-medical"></i> Health Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-health', this)" data-label="Add Record">
-                <i class="fas fa-plus"></i> Add Record
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-health', this)" data-label="Add Record" data-icon="fa-notes-medical">
+                <i class="fas fa-notes-medical"></i> Add Record
             </button>
         </div>
         <div id="form-health" class="form-panel">
@@ -873,7 +970,21 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="health">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Patient Name <span style="color:var(--crimson)">*</span></label><input type="text" name="patient_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Patient Name <span style="color:var(--crimson)">*</span></label><input type="text" name="patient_name" class="form-control <?php $__errorArgs = ['patient_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('patient_name')); ?>" required><?php $__errorArgs = ['patient_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Visit Date <span style="color:var(--crimson)">*</span></label><input type="date" name="visit_date" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Age</label><input type="number" name="age" class="form-control" min="0"></div>
                         <div class="form-group"><label class="form-label">Gender</label><select name="gender" class="form-control"><option value="">—</option><option>Male</option><option>Female</option></select></div>
@@ -916,8 +1027,8 @@
     <div id="tab-scholars" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-graduation-cap"></i> Scholars</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-scholars', this)" data-label="Add Scholar">
-                <i class="fas fa-plus"></i> Add Scholar
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-scholars', this)" data-label="Add Scholar" data-icon="fa-graduation-cap">
+                <i class="fas fa-graduation-cap"></i> Add Scholar
             </button>
         </div>
         <div id="form-scholars" class="form-panel">
@@ -926,9 +1037,37 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="scholar">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control" required></div>
-                        <div class="form-group"><label class="form-label">Start Date</label><input type="date" name="start_date" class="form-control"></div>
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">School <span style="color:var(--crimson)">*</span></label><input type="text" name="school" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control <?php $__errorArgs = ['full_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('full_name')); ?>" required><?php $__errorArgs = ['full_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
+                        <div class="form-group"><label class="form-label">Start Date</label><input type="date" name="start_date" class="form-control" value="<?php echo e(old('start_date')); ?>"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">School <span style="color:var(--crimson)">*</span></label><input type="text" name="school" class="form-control <?php $__errorArgs = ['school'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('school')); ?>" required><?php $__errorArgs = ['school'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Course / Grade Level</label><input type="text" name="course_grade_level" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Year Level</label><input type="text" name="year_level" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Scholarship Type</label><input type="text" name="scholarship_type" class="form-control" placeholder="e.g. CHED, Barangay"></div>
@@ -968,8 +1107,8 @@
     <div id="tab-projects" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-hard-hat"></i> Projects</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-projects', this)" data-label="Add Project">
-                <i class="fas fa-plus"></i> Add Project
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-projects', this)" data-label="Add Project" data-icon="fa-hard-hat">
+                <i class="fas fa-hard-hat"></i> Add Project
             </button>
         </div>
         <div id="form-projects" class="form-panel">
@@ -978,7 +1117,21 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="project">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Project Name <span style="color:var(--crimson)">*</span></label><input type="text" name="project_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Project Name <span style="color:var(--crimson)">*</span></label><input type="text" name="project_name" class="form-control <?php $__errorArgs = ['project_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('project_name')); ?>" required><?php $__errorArgs = ['project_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Type</label><select name="project_type" class="form-control"><option value="">—</option><?php $__currentLoopData = ['Road','Drainage','Building','Electrical','Water','Other']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($t); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Location</label><input type="text" name="location" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-control"><?php $__currentLoopData = ['Planned','Ongoing','Completed','On Hold','Cancelled']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($s); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
@@ -1028,8 +1181,8 @@
     <div id="tab-env-programs" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-leaf"></i> Environmental Programs</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-env', this)" data-label="Add Program">
-                <i class="fas fa-plus"></i> Add Program
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-env', this)" data-label="Add Program" data-icon="fa-leaf">
+                <i class="fas fa-leaf"></i> Add Program
             </button>
         </div>
         <div id="form-env" class="form-panel">
@@ -1038,8 +1191,22 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="environment">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Program Name <span style="color:var(--crimson)">*</span></label><input type="text" name="program_name" class="form-control" required></div>
-                        <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="program_date" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Program Name <span style="color:var(--crimson)">*</span></label><input type="text" name="program_name" class="form-control <?php $__errorArgs = ['program_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('program_name')); ?>" required><?php $__errorArgs = ['program_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
+                        <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="program_date" class="form-control" value="<?php echo e(old('program_date')); ?>" required></div>
                         <div class="form-group"><label class="form-label">Type</label><select name="program_type" class="form-control"><option value="">—</option><?php $__currentLoopData = ['Clean-up Drive','Tree Planting','Waste Management','Coastal Clean-up','Anti-littering','Other']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($t); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
                         <div class="form-group"><label class="form-label">Location</label><input type="text" name="location" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-control"><?php $__currentLoopData = ['Planned','Completed','Cancelled']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($s); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
@@ -1082,8 +1249,8 @@
     <div id="tab-beneficiaries" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-hand-holding-heart"></i> Beneficiaries</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-beneficiaries', this)" data-label="Add Beneficiary">
-                <i class="fas fa-plus"></i> Add Beneficiary
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-beneficiaries', this)" data-label="Add Beneficiary" data-icon="fa-hand-holding-heart">
+                <i class="fas fa-hand-holding-heart"></i> Add Beneficiary
             </button>
         </div>
         <div id="form-beneficiaries" class="form-panel">
@@ -1092,8 +1259,22 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="livelihood">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control" required></div>
-                        <div class="form-group"><label class="form-label">Date Enrolled</label><input type="date" name="date_enrolled" class="form-control"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control <?php $__errorArgs = ['full_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('full_name')); ?>" required><?php $__errorArgs = ['full_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
+                        <div class="form-group"><label class="form-label">Date Enrolled</label><input type="date" name="date_enrolled" class="form-control" value="<?php echo e(old('date_enrolled')); ?>"></div>
                         <div class="form-group"><label class="form-label">Address</label><input type="text" name="address" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Contact</label><input type="text" name="contact_number" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Program Name <span style="color:var(--crimson)">*</span></label><input type="text" name="program_name" class="form-control" required></div>
@@ -1134,8 +1315,8 @@
     <div id="tab-toda" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-bus"></i> TODA Registry</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-toda', this)" data-label="Register Vehicle">
-                <i class="fas fa-plus"></i> Register Vehicle
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-toda', this)" data-label="Register Vehicle" data-icon="fa-bus">
+                <i class="fas fa-bus"></i> Register Vehicle
             </button>
         </div>
         <div id="form-toda" class="form-panel">
@@ -1144,7 +1325,21 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="toda">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Operator Name <span style="color:var(--crimson)">*</span></label><input type="text" name="operator_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Operator Name <span style="color:var(--crimson)">*</span></label><input type="text" name="operator_name" class="form-control <?php $__errorArgs = ['operator_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('operator_name')); ?>" required><?php $__errorArgs = ['operator_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Driver Name</label><input type="text" name="driver_name" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Vehicle Type</label><select name="vehicle_type" class="form-control"><option value="">—</option><?php $__currentLoopData = ['Tricycle','Jeepney','E-bike','UV Express','Other']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($t); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
                         <div class="form-group"><label class="form-label">Plate Number</label><input type="text" name="plate_number" class="form-control"></div>
@@ -1188,8 +1383,8 @@
     <div id="tab-emergency" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-exclamation-triangle"></i> Emergency Logs</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-emergency', this)" data-label="Log Emergency">
-                <i class="fas fa-plus"></i> Log Emergency
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-emergency', this)" data-label="Log Emergency" data-icon="fa-triangle-exclamation">
+                <i class="fas fa-triangle-exclamation"></i> Log Emergency
             </button>
         </div>
         <div id="form-emergency" class="form-panel">
@@ -1201,8 +1396,22 @@
                         <div class="form-group"><label class="form-label">Incident Type <span style="color:var(--crimson)">*</span></label><select name="incident_type" class="form-control" required><?php $__currentLoopData = ['Flood','Fire','Earthquake','Typhoon','Landslide','Accident','Medical Emergency','Other']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($t); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="incident_date" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-control"><?php $__currentLoopData = ['Active','Resolved','Monitoring']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($s); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Location <span style="color:var(--crimson)">*</span></label><input type="text" name="location" class="form-control" required></div>
-                        <div class="form-group"><label class="form-label">Reported By</label><input type="text" name="reported_by" class="form-control"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Location <span style="color:var(--crimson)">*</span></label><input type="text" name="location" class="form-control <?php $__errorArgs = ['location'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('location')); ?>" required><?php $__errorArgs = ['location'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
+                        <div class="form-group"><label class="form-label">Reported By</label><input type="text" name="reported_by" class="form-control" value="<?php echo e(old('reported_by')); ?>"></div>
                         <div class="form-group"><label class="form-label">Affected Families</label><input type="number" name="affected_families" class="form-control" min="0"></div>
                         <div class="form-group"><label class="form-label">Affected Persons</label><input type="number" name="affected_persons" class="form-control" min="0"></div>
                         <div class="form-group" style="grid-column:span 3"><label class="form-label">Description</label><input type="text" name="description" class="form-control"></div>
@@ -1237,8 +1446,8 @@
     <div id="tab-evacuation" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-house-chimney-medical"></i> Evacuation Centers</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-evacuation', this)" data-label="Add Center">
-                <i class="fas fa-plus"></i> Add Center
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-evacuation', this)" data-label="Add Center" data-icon="fa-building-columns">
+                <i class="fas fa-building-columns"></i> Add Center
             </button>
         </div>
         <div id="form-evacuation" class="form-panel">
@@ -1247,7 +1456,21 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="evacuation">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Center Name <span style="color:var(--crimson)">*</span></label><input type="text" name="center_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Center Name <span style="color:var(--crimson)">*</span></label><input type="text" name="center_name" class="form-control <?php $__errorArgs = ['center_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('center_name')); ?>" required><?php $__errorArgs = ['center_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-control"><?php $__currentLoopData = ['Available','Active','Full','Closed']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($s); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Location <span style="color:var(--crimson)">*</span></label><input type="text" name="location" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Capacity</label><input type="number" name="capacity" class="form-control" min="0"></div>
@@ -1298,8 +1521,8 @@
     <div id="tab-relief-supplies" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-boxes-stacked"></i> Relief Supplies</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-relief', this)" data-label="Add Item">
-                <i class="fas fa-plus"></i> Add Item
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-relief', this)" data-label="Add Item" data-icon="fa-box-archive">
+                <i class="fas fa-box-archive"></i> Add Item
             </button>
         </div>
         <div id="form-relief" class="form-panel">
@@ -1308,7 +1531,21 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="relief">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Item Name <span style="color:var(--crimson)">*</span></label><input type="text" name="item_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Item Name <span style="color:var(--crimson)">*</span></label><input type="text" name="item_name" class="form-control <?php $__errorArgs = ['item_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('item_name')); ?>" required><?php $__errorArgs = ['item_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Category <span style="color:var(--crimson)">*</span></label><select name="category" class="form-control" required><?php $__currentLoopData = ['Food','Non-food','Medicine','PPE','Equipment','Other']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($c); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
                         <div class="form-group"><label class="form-label">Quantity <span style="color:var(--crimson)">*</span></label><input type="number" name="quantity" class="form-control" min="0" value="0" required></div>
                         <div class="form-group"><label class="form-label">Unit</label><input type="text" name="unit" class="form-control" placeholder="e.g. pcs, packs, boxes, sacks"></div>
@@ -1329,7 +1566,7 @@
             <thead><tr><th>Item</th><th>Category</th><th style="text-align:right">Qty</th><th>Unit</th><th>Source</th><th>Date Received</th><th>Status</th><th>Remarks</th><th></th></tr></thead>
             <tbody>
                 <?php $__currentLoopData = $specificData['relief_supplies']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rs): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <tr>
+                <tr data-rid="<?php echo e($rs->id); ?>">
                     <td style="font-weight:600;color:var(--navy)"><?php echo e($rs->item_name); ?></td>
                     <td><span class="badge badge-navy"><?php echo e($rs->category); ?></span></td>
                     <td style="text-align:right;font-weight:700;color:var(--navy)"><?php echo e(number_format($rs->quantity)); ?></td>
@@ -1339,13 +1576,11 @@
                     <td><span class="badge <?php echo e(match($rs->status) { 'Available'=>'badge-green','Distributed'=>'badge-yellow',default=>'badge-gray' }); ?>"><?php echo e($rs->status); ?></span></td>
                     <td class="td-muted"><?php echo e($rs->remarks ?? '—'); ?></td>
                     <td>
-                        <form method="POST" action="<?php echo e(route('committees.destroyRelief', [$committee['slug'], $rs->id])); ?>"
-                              data-confirm="Delete this relief supply record? This cannot be undone."
-                              data-confirm-title="Delete Relief Record"
-                              data-confirm-ok="Delete">
-                            <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                            <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
-                        </form>
+                        <button type="button"
+                                onclick="deleteReliefSupply(<?php echo e($rs->id); ?>, '<?php echo e(addslashes($rs->item_name)); ?>', '<?php echo e($committee['slug']); ?>')"
+                                class="btn btn-danger btn-sm btn-icon" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -1363,8 +1598,8 @@
     <div id="tab-training" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-chalkboard-user"></i> Training & Seminar Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-training', this)" data-label="Add Training">
-                <i class="fas fa-plus"></i> Add Training
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-training', this)" data-label="Add Training" data-icon="fa-chalkboard-user">
+                <i class="fas fa-chalkboard-user"></i> Add Training
             </button>
         </div>
         <div id="form-training" class="form-panel">
@@ -1373,7 +1608,21 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>" enctype="multipart/form-data">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="training">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control" placeholder="e.g. Anti-Drug Campaign Seminar" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="e.g. Anti-Drug Campaign Seminar" value="<?php echo e(old('title')); ?>" required><?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Type <span style="color:var(--crimson)">*</span></label><select name="training_type" class="form-control" required><?php $__currentLoopData = ['Training','Seminar','Workshop','Drill','Other']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($t); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="training_date" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Duration</label><input type="text" name="duration" class="form-control" placeholder="e.g. 3 days, 8 hours"></div>
@@ -1419,8 +1668,8 @@
     <div id="tab-clinic-staff" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-user-doctor"></i> Clinic Doctors & Staff</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-clinic-staff', this)" data-label="Add Staff">
-                <i class="fas fa-plus"></i> Add Staff
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-clinic-staff', this)" data-label="Add Staff" data-icon="fa-user-nurse">
+                <i class="fas fa-user-nurse"></i> Add Staff
             </button>
         </div>
         <div id="form-clinic-staff" class="form-panel">
@@ -1429,7 +1678,21 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="clinic-staff">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control <?php $__errorArgs = ['full_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('full_name')); ?>" required><?php $__errorArgs = ['full_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Position <span style="color:var(--crimson)">*</span></label><select name="position" class="form-control" required><?php $__currentLoopData = ['Doctor','Nurse','Midwife','BHW','Dentist','Other']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($p); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
                         <div class="form-group"><label class="form-label">Specialization</label><input type="text" name="specialization" class="form-control" placeholder="e.g. Pediatrics"></div>
                         <div class="form-group"><label class="form-label">Affiliation</label><input type="text" name="affiliation" class="form-control" placeholder="e.g. DOH, RHU, Private"></div>
@@ -1470,8 +1733,8 @@
     <div id="tab-medicine-inventory" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-pills"></i> Pharmacy Inventory</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-medicine', this)" data-label="Add Medicine">
-                <i class="fas fa-plus"></i> Add Medicine
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-medicine', this)" data-label="Add Medicine" data-icon="fa-pills">
+                <i class="fas fa-pills"></i> Add Medicine
             </button>
         </div>
 
@@ -1483,7 +1746,21 @@
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="medicine">
                     <div class="form-grid-3" style="gap:12px">
                         
-                        <div class="form-group"><label class="form-label">Generic Name <span style="color:var(--crimson)">*</span></label><input type="text" name="medicine_name" class="form-control" placeholder="e.g. Paracetamol" required></div>
+                        <div class="form-group"><label class="form-label">Generic Name <span style="color:var(--crimson)">*</span></label><input type="text" name="medicine_name" class="form-control <?php $__errorArgs = ['medicine_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="e.g. Paracetamol" value="<?php echo e(old('medicine_name')); ?>" required><?php $__errorArgs = ['medicine_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Brand Name</label><input type="text" name="brand_name" class="form-control" placeholder="e.g. Biogesic"></div>
                         <div class="form-group"><label class="form-label">Alt. Generic Name</label><input type="text" name="generic_name" class="form-control" placeholder="INN / USAN"></div>
                         
@@ -1831,8 +2108,8 @@
     <div id="tab-sweepers" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-broom"></i> Street Sweeper Registry</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-sweepers', this)" data-label="Add Sweeper">
-                <i class="fas fa-plus"></i> Add Sweeper
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-sweepers', this)" data-label="Add Sweeper" data-icon="fa-broom">
+                <i class="fas fa-broom"></i> Add Sweeper
             </button>
         </div>
         <div id="form-sweepers" class="form-panel">
@@ -1841,7 +2118,21 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="sweeper">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control <?php $__errorArgs = ['full_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('full_name')); ?>" required><?php $__errorArgs = ['full_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-control"><?php $__currentLoopData = ['Active','Inactive','On Leave']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($s); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
                         <div class="form-group"><label class="form-label">Assigned Zone / Area</label><input type="text" name="assigned_zone" class="form-control" placeholder="e.g. Purok 3 — Main Road"></div>
                         <div class="form-group"><label class="form-label">Contact Number</label><input type="text" name="contact_number" class="form-control"></div>
@@ -1882,8 +2173,8 @@
     <div id="tab-contracts" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-file-signature"></i> Permits & Contracts</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-contracts', this)" data-label="Add Contract">
-                <i class="fas fa-plus"></i> Add Contract
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-contracts', this)" data-label="Add Contract" data-icon="fa-file-signature">
+                <i class="fas fa-file-signature"></i> Add Contract
             </button>
         </div>
         <div id="form-contracts" class="form-panel">
@@ -1893,7 +2184,21 @@
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="contract">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group"><label class="form-label">Contract Number</label><input type="text" name="contract_number" class="form-control" placeholder="e.g. BNE-2026-001"></div>
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Contractor / Supplier Name <span style="color:var(--crimson)">*</span></label><input type="text" name="contractor_name" class="form-control" required></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Contractor / Supplier Name <span style="color:var(--crimson)">*</span></label><input type="text" name="contractor_name" class="form-control <?php $__errorArgs = ['contractor_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('contractor_name')); ?>" required><?php $__errorArgs = ['contractor_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group" style="grid-column:span 3"><label class="form-label">Scope of Work</label><input type="text" name="scope_of_work" class="form-control" placeholder="Brief description of the contract"></div>
                         <div class="form-group"><label class="form-label">Contract Amount (₱)</label><input type="number" name="contract_amount" class="form-control" min="0" step="0.01"></div>
                         <div class="form-group"><label class="form-label">Start Date</label><input type="date" name="start_date" class="form-control"></div>
@@ -1941,8 +2246,8 @@
     <div id="tab-financials" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-money-bill-wave"></i> Financial Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-financials', this)" data-label="Add Record">
-                <i class="fas fa-plus"></i> Add Record
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-financials', this)" data-label="Add Record" data-icon="fa-file-invoice-dollar">
+                <i class="fas fa-file-invoice-dollar"></i> Add Record
             </button>
         </div>
         <div id="form-financials" class="form-panel">
@@ -1951,7 +2256,21 @@
                 <form method="POST" action="<?php echo e(route('committees.storeSpecific', $committee['slug'])); ?>" enctype="multipart/form-data">
                     <?php echo csrf_field(); ?> <input type="hidden" name="specific_type" value="financial">
                     <div class="form-grid-3" style="gap:12px">
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title / Description <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control" required placeholder="e.g. Road Repair Fund Utilization Q1"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Title / Description <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="e.g. Road Repair Fund Utilization Q1" value="<?php echo e(old('title')); ?>" required><?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?></div>
                         <div class="form-group"><label class="form-label">Type <span style="color:var(--crimson)">*</span></label><select name="type" class="form-control" required><?php $__currentLoopData = ['Budget','Utilization','Liquidation']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option><?php echo e($t); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
                         <div class="form-group"><label class="form-label">Amount (₱) <span style="color:var(--crimson)">*</span></label><input type="number" name="amount" class="form-control" min="0" step="0.01" required></div>
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="date" class="form-control" required></div>
@@ -2030,9 +2349,10 @@ function toggleForm(id, btnEl) {
     const isOpen = panel.classList.toggle('open');
     if (btnEl) {
         const label = btnEl.dataset.label || 'Add';
+        const icon  = btnEl.dataset.icon  || 'fa-plus';
         btnEl.innerHTML = isOpen
             ? '<i class="fas fa-times"></i> Cancel'
-            : '<i class="fas fa-plus"></i> ' + label;
+            : '<i class="fas ' + icon + '"></i> ' + label;
         btnEl.className = isOpen ? 'btn btn-secondary btn-sm' : 'btn btn-primary btn-sm';
     }
 }
@@ -2205,6 +2525,46 @@ function closeMedDetails() {
 document.getElementById('medDetailsModal')?.addEventListener('click', function(e) {
     if (e.target === this) closeMedDetails();
 });
+
+// ── Partnership delete ───────────────────────────────────────
+function deletePartnership(id, name, slug) {
+    bmsConfirm({
+        title:   'Delete Partnership',
+        message: 'Delete the partnership with <strong>' + name + '</strong>? This cannot be undone.',
+        ok:      'Delete',
+        type:    'danger',
+    }, function() {
+        axios.delete('/committees/' + slug + '/partnerships/' + id)
+            .then(function(res) {
+                const row = document.querySelector('tr[data-pid="' + id + '"]');
+                if (row) row.remove();
+                bmsToast(res.data.message || 'Partnership deleted.', 'success');
+            })
+            .catch(function() {
+                bmsToast('Failed to delete partnership.', 'error');
+            });
+    });
+}
+
+// ── Relief supply delete ─────────────────────────────────────
+function deleteReliefSupply(id, name, slug) {
+    bmsConfirm({
+        title:   'Delete Relief Supply',
+        message: 'Delete <strong>' + name + '</strong> from the relief inventory? This cannot be undone.',
+        ok:      'Delete',
+        type:    'danger',
+    }, function() {
+        axios.delete('/committees/' + slug + '/relief/' + id)
+            .then(function(res) {
+                const row = document.querySelector('tr[data-rid="' + id + '"]');
+                if (row) row.remove();
+                bmsToast(res.data.message || 'Relief supply deleted.', 'success');
+            })
+            .catch(function() {
+                bmsToast('Failed to delete relief supply.', 'error');
+            });
+    });
+}
 
 // Live search + filter for medicine table
 function filterMeds() {
