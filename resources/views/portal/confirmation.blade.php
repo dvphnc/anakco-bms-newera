@@ -98,6 +98,35 @@
         border-radius: var(--radius-sm);
         padding: .7rem 1rem;
     }
+
+    .apt-number-wrap {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+    .copy-btn {
+        position: absolute;
+        top: .5rem;
+        right: .5rem;
+        background: rgba(255,255,255,.15);
+        border: 1px solid rgba(255,255,255,.25);
+        color: #fff;
+        border-radius: 4px;
+        padding: .2rem .5rem;
+        font-size: .65rem;
+        cursor: pointer;
+        letter-spacing: .04em;
+        transition: background .15s;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,.25); }
+    .copy-btn.copied { color: #86efac; border-color: #86efac; }
+
+    .submitted-stamp {
+        font-size: .72rem;
+        color: #9ca3af;
+        margin-bottom: 1.25rem;
+    }
+    .submitted-stamp strong { color: #6b7280; }
 </style>
 @endpush
 
@@ -109,9 +138,20 @@
         <h2>Request Submitted Successfully!</h2>
         <p>Your document request has been received. Save your appointment number below — you will need it to track your status.</p>
 
-        <div class="apt-number-box">
-            <div class="label">Your Appointment Number</div>
-            <div class="number">{{ $appointment->appointment_number }}</div>
+        <div class="apt-number-wrap">
+            <div class="apt-number-box" style="margin-bottom:0">
+                <div class="label">Your Appointment Number</div>
+                <div class="number" id="aptNumDisplay">{{ $appointment->appointment_number }}</div>
+            </div>
+            <button class="copy-btn" id="copyBtn" onclick="copyAptNum()" title="Copy to clipboard">
+                <i class="fas fa-copy"></i> Copy
+            </button>
+        </div>
+
+        <div class="submitted-stamp">
+            <i class="fas fa-clock"></i>&nbsp;
+            Submitted on <strong>{{ $appointment->created_at->format('F j, Y') }}</strong>
+            at <strong>{{ $appointment->created_at->format('g:i A') }}</strong>
         </div>
 
         <table class="detail-table">
@@ -119,6 +159,16 @@
                 <td>Name</td>
                 <td>{{ $appointment->resident_name }}</td>
             </tr>
+            <tr>
+                <td>Contact Number</td>
+                <td>{{ $appointment->contact_number }}</td>
+            </tr>
+            @if($appointment->email)
+            <tr>
+                <td>Email</td>
+                <td>{{ $appointment->email }}</td>
+            </tr>
+            @endif
             <tr>
                 <td>Document</td>
                 <td>{{ $appointment->document_type }}</td>
