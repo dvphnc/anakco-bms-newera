@@ -747,12 +747,14 @@
 
                 /* ── Always show the search field ─────────────────────────── */
                 /* The dropdown is appended to <body> (dropdownParent:$('body')),
-                   NOT inside $cont, so we search on $dd directly. */
+                   NOT inside $cont, so we search on $dd directly.
+                   Do NOT call .focus() here — it fires focusout on the
+                   .select2-container which Select2 interprets as "clicked
+                   outside" and immediately closes the dropdown. */
                 $dd.find('.select2-search--dropdown')
                    .removeClass('select2-search--hide')
                    .css('display', 'block');
-                var $f = $dd.find('.select2-search__field').css('display', 'block');
-                if ($f.length) { $f[0].focus(); }
+                $dd.find('.select2-search__field').css('display', 'block');
 
                 /* ── Fix position & height ────────────────────────────────── */
                 /* .main-content is the scroll container, not window, so
