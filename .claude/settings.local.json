@@ -16,7 +16,8 @@
       "Bash(Select-Object -ExpandProperty Lines)",
       "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\resources\\\\views\\\\blotter\\\\blotter-index.blade.php\")",
       "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\resources\\\\views\\\\businesses\\\\businesses-index.blade.php\")",
-      "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\resources\\\\views\\\\appointments\\\\index.blade.php\")"
+      "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\resources\\\\views\\\\appointments\\\\index.blade.php\")",
+      "Bash(grep -c *)"
     ]
   }
 }
