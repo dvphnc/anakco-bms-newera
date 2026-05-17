@@ -159,5 +159,8 @@
 =======
 </div>
 </div>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 @endsection

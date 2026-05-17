@@ -112,9 +112,12 @@
         </div>
     </div>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Active')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-check-circle"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Active'])">
         <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-check-circle"></i></div>
 >>>>>>> Stashed changes
@@ -124,9 +127,12 @@
         </div>
     </div>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('expiryFilter', 'expiring_soon')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-clock"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
     <div class="stat-card" style="cursor:pointer;border-color:#fde68a" onclick="quickFilter('expiryFilter', 'expiring_soon')">
         <div class="stat-icon" style="background:#fffbeb;color:#b45309"><i class="fas fa-clock"></i></div>
 >>>>>>> Stashed changes
@@ -136,9 +142,12 @@
         </div>
     </div>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('expiryFilter', 'expired')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-triangle-exclamation"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
     <div class="stat-card" style="cursor:pointer;border-color:#fecaca" onclick="quickFilter('expiryFilter', 'expired')">
         <div class="stat-icon" style="background:#fef2f2;color:#ef4444"><i class="fas fa-triangle-exclamation"></i></div>
 >>>>>>> Stashed changes
@@ -150,9 +159,12 @@
 </div>
 <div class="grid-2 mb-6">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Expired')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-times-circle"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Expired'])">
         <div class="stat-icon" style="background:rgba(155,28,28,0.08);color:#9B1C1C"><i class="fas fa-times-circle"></i></div>
 >>>>>>> Stashed changes
@@ -162,9 +174,12 @@
         </div>
     </div>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Suspended')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-pause-circle"></i></div>
 =======
+=======
+>>>>>>> Stashed changes
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', ['Suspended'])">
         <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-pause-circle"></i></div>
 >>>>>>> Stashed changes
@@ -184,7 +199,11 @@
         </div>
         <button type="button" class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleFilters('businesses')">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             <i class="fas fa-sliders"></i>
+=======
+            <i class="fas fa-sliders" id="filterToggleIcon"></i>
+>>>>>>> Stashed changes
 =======
             <i class="fas fa-sliders" id="filterToggleIcon"></i>
 >>>>>>> Stashed changes
@@ -195,6 +214,11 @@
         <div class="card-body" style="padding:20px 22px">
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+
+                
+>>>>>>> Stashed changes
 =======
 
                 
@@ -206,6 +230,7 @@
                         <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
                                placeholder="Business name, owner, permit number…">
                     </div>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
                 </div>
                 <div class="form-group" style="grid-column:span 2">
@@ -237,6 +262,9 @@
 =======
 >>>>>>> Stashed changes
                 </div>
+=======
+                </div>
+>>>>>>> Stashed changes
 
                 
                 <div class="form-group" style="grid-column:span 2">
@@ -378,6 +406,7 @@
 $(document).ready(function () {
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
        The browser won't paint until after this synchronous block, so no visual flash. */
     var $fp = $('#filterPanel');
@@ -395,6 +424,8 @@ $(document).ready(function () {
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 
 =======
+=======
+>>>>>>> Stashed changes
     /* ── Select2 init ─────────────────────────────────────────────────── */
     const s2Multi = {
         dropdownParent: $('body'),
@@ -420,6 +451,9 @@ $(document).ready(function () {
     $('#expiryFilter').select2($.extend({}, s2Single, { placeholder: 'All', minimumResultsForSearch: -1 }));
 
     /* ── DataTable ────────────────────────────────────────────────────── */
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     var table = $('#businessesTable').DataTable({
         processing: true,
@@ -459,6 +493,7 @@ $(document).ready(function () {
         }
     });
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     /* ── Axios DELETE ─────────────────────────────────────────────────── */
     $('#businessesTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
@@ -569,6 +604,8 @@ $(document).ready(function () {
     $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380); });
     $('#typeFilter, #statusFilter, #expiryFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
 =======
+=======
+>>>>>>> Stashed changes
     /* ── URL persistence ──────────────────────────────────────────────── */
     function saveToUrl() {
         const url = new URL(window.location);
@@ -653,6 +690,9 @@ $(document).ready(function () {
         saveToUrl(); table.ajax.reload();
     });
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
