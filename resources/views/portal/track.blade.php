@@ -152,6 +152,76 @@
     .not-found h3 { font-size: 1rem; color: var(--navy); margin-bottom: .35rem; }
     .not-found p { font-size: .82rem; color: #6b7280; }
 
+    /* ── Status history timeline ─────────────────────── */
+    .timeline-section { margin-top: 1.75rem; border-top: 1px solid #f0f0f0; padding-top: 1.25rem; }
+    .timeline-hd {
+        font-size: .75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #6b7280;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .tl-item {
+        display: flex;
+        gap: .875rem;
+        position: relative;
+        padding-bottom: 1.1rem;
+    }
+    .tl-item::before {
+        content: '';
+        position: absolute;
+        left: 7px;
+        top: 16px;
+        bottom: 0;
+        width: 2px;
+        background: #e5e7eb;
+    }
+    .tl-item.tl-last { padding-bottom: 0; }
+    .tl-item.tl-last::before { display: none; }
+    .tl-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 2px;
+        border: 2px solid currentColor;
+        position: relative;
+        z-index: 1;
+        background: #fff;
+    }
+    .tl-dot-pending     { color: var(--gold); }
+    .tl-dot-confirmed   { color: var(--navy); }
+    .tl-dot-processing  { color: #2563eb; }
+    .tl-dot-ready       { color: #16a34a; }
+    .tl-dot-released    { color: #6b7280; }
+    .tl-dot-cancelled   { color: var(--crimson); }
+    .tl-body { flex: 1; min-width: 0; }
+    .tl-status {
+        font-size: .83rem;
+        font-weight: 700;
+        color: var(--navy);
+        line-height: 1.3;
+    }
+    .tl-meta {
+        font-size: .73rem;
+        color: #9ca3af;
+        margin-top: .1rem;
+    }
+    .tl-note {
+        font-size: .77rem;
+        color: #6b7280;
+        background: #f9fafb;
+        border-radius: 4px;
+        padding: .3rem .6rem;
+        margin-top: .35rem;
+        border-left: 2px solid #e5e7eb;
+    }
+
     /* ── Mobile: vertical timeline for progress steps ── */
     @media (max-width: 600px) {
         .search-row { flex-direction: column; }
