@@ -402,8 +402,8 @@
     <div id="tab-records" class="tab-content active">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-folder-open"></i> Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-records', this)" data-label="Upload Record">
-                <i class="fas fa-plus"></i> Upload Record
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-records', this)" data-label="Upload Record" data-icon="fa-cloud-arrow-up">
+                <i class="fas fa-cloud-arrow-up"></i> Upload Record
             </button>
         </div>
         <div id="form-records" class="form-panel">
@@ -490,8 +490,8 @@
     <div id="tab-activities" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-calendar-check"></i> Activities</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-activities', this)" data-label="Log Activity">
-                <i class="fas fa-plus"></i> Log Activity
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-activities', this)" data-label="Log Activity" data-icon="fa-calendar-plus">
+                <i class="fas fa-calendar-plus"></i> Log Activity
             </button>
         </div>
         <div id="form-activities" class="form-panel">
@@ -543,8 +543,8 @@
     <div id="tab-accomplishments" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-trophy"></i> Accomplishments</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-accomplishments', this)" data-label="Log Accomplishment">
-                <i class="fas fa-plus"></i> Log Accomplishment
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-accomplishments', this)" data-label="Log Accomplishment" data-icon="fa-trophy">
+                <i class="fas fa-trophy"></i> Log Accomplishment
             </button>
         </div>
         <div id="form-accomplishments" class="form-panel">
@@ -597,8 +597,8 @@
     <div id="tab-attendance" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-users"></i> Attendance Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-attendance', this)" data-label="Record Attendance">
-                <i class="fas fa-plus"></i> Record Attendance
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-attendance', this)" data-label="Record Attendance" data-icon="fa-clipboard-list">
+                <i class="fas fa-clipboard-list"></i> Record Attendance
             </button>
         </div>
         <div id="form-attendance" class="form-panel">
@@ -647,8 +647,8 @@
     <div id="tab-inventory" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-boxes-stacked"></i> Inventory</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-inventory', this)" data-label="Add Item">
-                <i class="fas fa-plus"></i> Add Item
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-inventory', this)" data-label="Add Item" data-icon="fa-circle-plus">
+                <i class="fas fa-circle-plus"></i> Add Item
             </button>
         </div>
         <div id="form-inventory" class="form-panel">
@@ -697,8 +697,8 @@
     <div id="tab-partnerships" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-handshake"></i> Partnership Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-partnership', this)" data-label="Add Partnership">
-                <i class="fas fa-plus"></i> Add Partnership
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-partnership', this)" data-label="Add Partnership" data-icon="fa-handshake">
+                <i class="fas fa-handshake"></i> Add Partnership
             </button>
         </div>
         <div id="form-partnership" class="form-panel">
@@ -769,8 +769,8 @@
     <div id="tab-bpso" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-shield-halved"></i> BPSO Members</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-bpso', this)" data-label="Add Member">
-                <i class="fas fa-plus"></i> Add Member
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-bpso', this)" data-label="Add Member" data-icon="fa-user-plus">
+                <i class="fas fa-user-plus"></i> Add Member
             </button>
         </div>
         <div id="form-bpso" class="form-panel">
@@ -815,8 +815,8 @@
     <div id="tab-patrol" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-binoculars"></i> Patrol Logs</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-patrol', this)" data-label="Log Patrol">
-                <i class="fas fa-plus"></i> Log Patrol
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-patrol', this)" data-label="Log Patrol" data-icon="fa-binoculars">
+                <i class="fas fa-binoculars"></i> Log Patrol
             </button>
         </div>
         <div id="form-patrol" class="form-panel">
@@ -864,8 +864,8 @@
     <div id="tab-health-records" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-notes-medical"></i> Health Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-health', this)" data-label="Add Record">
-                <i class="fas fa-plus"></i> Add Record
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-health', this)" data-label="Add Record" data-icon="fa-notes-medical">
+                <i class="fas fa-notes-medical"></i> Add Record
             </button>
         </div>
         <div id="form-health" class="form-panel">
@@ -917,8 +917,8 @@
     <div id="tab-scholars" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-graduation-cap"></i> Scholars</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-scholars', this)" data-label="Add Scholar">
-                <i class="fas fa-plus"></i> Add Scholar
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-scholars', this)" data-label="Add Scholar" data-icon="fa-graduation-cap">
+                <i class="fas fa-graduation-cap"></i> Add Scholar
             </button>
         </div>
         <div id="form-scholars" class="form-panel">
