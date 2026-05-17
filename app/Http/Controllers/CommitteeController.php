@@ -246,7 +246,14 @@ class CommitteeController extends Controller
     // -------------------------------------------------------
     public function destroyPartnership(string $slug, int $id)
     {
-        CommitteePartnership::where('committee_slug', $slug)->findOrFail($id)->delete();
+        $record = CommitteePartnership::where('committee_slug', $slug)->findOrFail($id);
+        $name   = $record->partner_name;
+        $record->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => "Partnership with {$name} deleted."]);
+        }
+
         return back()->with('success', 'Partnership record deleted.')->withFragment('partnerships');
     }
 
@@ -266,7 +273,14 @@ class CommitteeController extends Controller
 
     public function destroyRelief(string $slug, int $id)
     {
-        ReliefSupply::findOrFail($id)->delete();
+        $record = ReliefSupply::findOrFail($id);
+        $name   = $record->item_name;
+        $record->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => "{$name} removed from relief inventory."]);
+        }
+
         return back()->with('success', 'Relief supply deleted.')->withFragment('relief-supplies');
     }
 
