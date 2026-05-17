@@ -728,7 +728,7 @@
             <thead><tr><th>Organization</th><th>Type</th><th>MOU Date</th><th>Valid Until</th><th>Contact Person</th><th>Contact</th><th>MOU File</th><th></th></tr></thead>
             <tbody>
                 @foreach($partnerships as $p)
-                <tr>
+                <tr data-pid="{{ $p->id }}">
                     <td>
                         <div style="font-weight:600;color:var(--navy)">{{ $p->partner_name }}</div>
                         @if($p->description)<div style="font-size:11px;color:var(--text-muted);margin-top:2px">{{ Str::limit($p->description, 60) }}</div>@endif
@@ -743,13 +743,11 @@
                     <td class="td-muted">{{ $p->contact_number ?? '—' }}</td>
                     <td>@if($p->file_path)<a href="{{ asset('storage/'.$p->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
                     <td>
-                        <form method="POST" action="{{ route('committees.destroyPartnership', [$committee['slug'], $p->id]) }}"
-                              data-confirm="Delete this partnership record? This cannot be undone."
-                              data-confirm-title="Delete Partnership"
-                              data-confirm-ok="Delete">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
-                        </form>
+                        <button type="button"
+                                onclick="deletePartnership({{ $p->id }}, '{{ addslashes($p->partner_name) }}', '{{ $committee['slug'] }}')"
+                                class="btn btn-danger btn-sm btn-icon" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 @endforeach
@@ -1329,7 +1327,7 @@
             <thead><tr><th>Item</th><th>Category</th><th style="text-align:right">Qty</th><th>Unit</th><th>Source</th><th>Date Received</th><th>Status</th><th>Remarks</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['relief_supplies'] as $rs)
-                <tr>
+                <tr data-rid="{{ $rs->id }}">
                     <td style="font-weight:600;color:var(--navy)">{{ $rs->item_name }}</td>
                     <td><span class="badge badge-navy">{{ $rs->category }}</span></td>
                     <td style="text-align:right;font-weight:700;color:var(--navy)">{{ number_format($rs->quantity) }}</td>
@@ -1339,13 +1337,11 @@
                     <td><span class="badge {{ match($rs->status) { 'Available'=>'badge-green','Distributed'=>'badge-yellow',default=>'badge-gray' } }}">{{ $rs->status }}</span></td>
                     <td class="td-muted">{{ $rs->remarks ?? '—' }}</td>
                     <td>
-                        <form method="POST" action="{{ route('committees.destroyRelief', [$committee['slug'], $rs->id]) }}"
-                              data-confirm="Delete this relief supply record? This cannot be undone."
-                              data-confirm-title="Delete Relief Record"
-                              data-confirm-ok="Delete">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></button>
-                        </form>
+                        <button type="button"
+                                onclick="deleteReliefSupply({{ $rs->id }}, '{{ addslashes($rs->item_name) }}', '{{ $committee['slug'] }}')"
+                                class="btn btn-danger btn-sm btn-icon" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 @endforeach
@@ -1470,8 +1466,8 @@
     <div id="tab-medicine-inventory" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-pills"></i> Pharmacy Inventory</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-medicine', this)" data-label="Add Medicine">
-                <i class="fas fa-plus"></i> Add Medicine
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-medicine', this)" data-label="Add Medicine" data-icon="fa-pills">
+                <i class="fas fa-pills"></i> Add Medicine
             </button>
         </div>
 
@@ -1830,8 +1826,8 @@
     <div id="tab-sweepers" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-broom"></i> Street Sweeper Registry</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-sweepers', this)" data-label="Add Sweeper">
-                <i class="fas fa-plus"></i> Add Sweeper
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-sweepers', this)" data-label="Add Sweeper" data-icon="fa-broom">
+                <i class="fas fa-broom"></i> Add Sweeper
             </button>
         </div>
         <div id="form-sweepers" class="form-panel">
@@ -1881,8 +1877,8 @@
     <div id="tab-contracts" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-file-signature"></i> Permits & Contracts</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-contracts', this)" data-label="Add Contract">
-                <i class="fas fa-plus"></i> Add Contract
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-contracts', this)" data-label="Add Contract" data-icon="fa-file-signature">
+                <i class="fas fa-file-signature"></i> Add Contract
             </button>
         </div>
         <div id="form-contracts" class="form-panel">
@@ -1938,8 +1934,8 @@
     <div id="tab-financials" class="tab-content">
         <div class="panel-hd">
             <span class="panel-hd-title"><i class="fas fa-money-bill-wave"></i> Financial Records</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-financials', this)" data-label="Add Record">
-                <i class="fas fa-plus"></i> Add Record
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-financials', this)" data-label="Add Record" data-icon="fa-file-invoice-dollar">
+                <i class="fas fa-file-invoice-dollar"></i> Add Record
             </button>
         </div>
         <div id="form-financials" class="form-panel">
