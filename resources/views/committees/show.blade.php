@@ -471,7 +471,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-records" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-upload" style="color:var(--gold);margin-right:6px"></i> Upload New Record</div>
-                <form method="POST" action="{{ route('committees.storeRecord', $committee['slug']) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('committees.storeRecord', $committee['slug']) }}" enctype="multipart/form-data" data-axios="true">
                     @csrf
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group">
@@ -567,7 +567,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-activities" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Log New Activity</div>
-                <form method="POST" action="{{ route('committees.storeActivity', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeActivity', $committee['slug']) }}" data-axios="true">
                     @csrf
                     <input type="hidden" name="activity_type" value="Activity">
                     <div class="form-grid-3" style="gap:12px">
@@ -627,7 +627,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-accomplishments" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Log Accomplishment</div>
-                <form method="POST" action="{{ route('committees.storeActivity', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeActivity', $committee['slug']) }}" data-axios="true">
                     @csrf
                     <input type="hidden" name="activity_type" value="Accomplishment">
                     <div class="form-grid-3" style="gap:12px">
@@ -688,7 +688,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-attendance" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Record Attendance</div>
-                <form method="POST" action="{{ route('committees.storeAttendance', $committee['slug']) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('committees.storeAttendance', $committee['slug']) }}" enctype="multipart/form-data" data-axios="true">
                     @csrf
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Event Name <span style="color:var(--crimson)">*</span></label><input type="text" name="event_name" class="form-control @error('event_name') is-invalid @enderror" value="{{ old('event_name') }}" required>@error('event_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
@@ -759,7 +759,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-inventory" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Inventory Item</div>
-                <form method="POST" action="{{ route('committees.storeInventory', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeInventory', $committee['slug']) }}" data-axios="true">
                     @csrf
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Item Name <span style="color:var(--crimson)">*</span></label><input type="text" name="item_name" class="form-control @error('item_name') is-invalid @enderror" value="{{ old('item_name') }}" required>@error('item_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
@@ -2248,7 +2248,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </tbody>
         </table>
         @else
-        <div class="empty-state"><i class="fas fa-money-bill-wave"></i><p>No financial records yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-money-bill-wave"></i></div>
+            <h4>No Financial Records Yet</h4>
+            <p>Track budget allocations, fund utilizations, and liquidation reports.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-financials', document.querySelector('[data-icon=fa-file-invoice-dollar]'))">
+                <i class="fas fa-file-invoice-dollar"></i> Add First Record
+            </button>
+        </div>
         @endif
     </div>
     @endif
