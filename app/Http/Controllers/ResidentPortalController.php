@@ -81,6 +81,95 @@ class ResidentPortalController extends Controller
         return view('portal.track', compact('appointment'));
     }
 
+    /* ─────────────────────────────────────────────────────
+     |  BLOTTER REPORT — portal form
+     |──────────────────────────────────────────────────── */
+    public function blotterForm()
+    {
+        return view('portal.blotter-request', [
+            'incidentTypes' => BlotterRequest::$incidentTypes,
+        ]);
+    }
+
+    public function storeBlotter(Request $request)
+    {
+        $validated = $request->validate([
+            'complainant_name'     => 'required|string|max:255',
+            'contact_number'       => 'required|string|max:20',
+            'email'                => 'nullable|email|max:255',
+            'address'              => 'required|string|max:500',
+            'incident_type'        => 'required|string',
+            'incident_date'        => 'required|date|before_or_equal:today',
+            'incident_location'    => 'required|string|max:500',
+            'incident_description' => 'required|string|max:2000',
+            'respondent_name'      => 'nullable|string|max:255',
+        ]);
+
+        $validated['request_number'] = BlotterRequest::generateNumber();
+        $validated['status']         = 'Pending';
+
+        $blotter = BlotterRequest::create($validated);
+
+        $redirectUrl = route('portal.submitted', ['type' => 'blotter', 'number' => $blotter->request_number]);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['redirect' => $redirectUrl]);
+        }
+
+        return redirect($redirectUrl);
+    }
+
+    /* ─────────────────────────────────────────────────────
+     |  BUSINESS PERMIT REQUEST — portal form
+     |──────────────────────────────────────────────────── */
+    public function businessForm()
+    {
+        return view('portal.business-request', [
+            'businessTypes' => BusinessPermitRequest::$businessTypes,
+        ]);
+    }
+
+    public function storeBusiness(Request $request)
+    {
+        $validated = $request->validate([
+            'owner_name'       => 'required|string|max:255',
+            'contact_number'   => 'required|string|max:20',
+            'email'            => 'nullable|email|max:255',
+            'business_name'    => 'required|string|max:255',
+            'business_type'    => 'required|string',
+            'business_address' => 'required|string|max:500',
+            'operation_year'   => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
+            'purpose'          => 'nullable|string|max:500',
+        ]);
+
+        $validated['request_number'] = BusinessPermitRequest::generateNumber();
+        $validated['status']         = 'Pending';
+
+        $business = BusinessPermitRequest::create($validated);
+
+        $redirectUrl = route('portal.submitted', ['type' => 'business', 'number' => $business->request_number]);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['redirect' => $redirectUrl]);
+        }
+
+        return redirect($redirectUrl);
+    }
+
+    /* ─────────────────────────────────────────────────────
+     |  GENERIC SUBMITTED CONFIRMATION
+     |──────────────────────────────────────────────────── */
+    public function submitted(string $type, string $number)
+    {
+        $record = match($type) {
+            'blotter'  => BlotterRequest::where('request_number', $number)->firstOrFail(),
+            'business' => BusinessPermitRequest::where('request_number', $number)->firstOrFail(),
+            default    => abort(404),
+        };
+
+        return view('portal.submitted', compact('type', 'number', 'record'));
+    }
+
     public function trackLookup(Request $request)
     {
         $number      = strtoupper(trim($request->input('number', '')));

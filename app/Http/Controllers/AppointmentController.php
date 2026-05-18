@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PortalStatusUpdated;
 use App\Models\AppointmentStatusLog;
+use App\Models\BlotterRequest;
+use App\Models\BusinessPermitRequest;
 use App\Models\DocumentAppointment;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
 
 class AppointmentController extends Controller
