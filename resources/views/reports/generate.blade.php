@@ -152,7 +152,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">
+                    <button type="button" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="doGeneratePdf(document.getElementById('reportForm'))">
                         <i class="fas fa-file-pdf"></i> Generate PDF Report
                     </button>
                 </form>
@@ -173,7 +173,7 @@
                     ['label'=>date('Y').' Annual Summary','type'=>'annual',  'module'=>'summary',   'year'=>date('Y')],
                 ]; @endphp
                 @foreach($quick as $q)
-                <form method="POST" action="{{ route('reports.generate') }}">
+                <form method="POST" action="{{ route('reports.generate') }}" onsubmit="doGeneratePdf(this); return false;">
                     @csrf
                     <input type="hidden" name="report_type"   value="{{ $q['type'] }}">
                     <input type="hidden" name="report_module" value="{{ $q['module'] }}">
@@ -207,9 +207,9 @@
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Today</div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
                     @php $todayItems = [
-                        ['label'=>'Documents', 'value'=>$todayDocs,      'color'=>'#f59e0b','bg'=>'#fffbeb'],
-                        ['label'=>'Residents', 'value'=>$todayResidents, 'color'=>'#22c55e','bg'=>'#f0fdf4'],
-                        ['label'=>'Blotter',   'value'=>$todayBlotter,   'color'=>'#ef4444','bg'=>'#fef2f2'],
+                        ['label'=>'Documents', 'value'=>$todayDocs,      'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.07)'],
+                        ['label'=>'Residents', 'value'=>$todayResidents, 'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.09)'],
+                        ['label'=>'Blotter',   'value'=>$todayBlotter,   'color'=>'#9b1c1c','bg'=>'rgba(155,28,28,0.07)'],
                     ]; @endphp
                     @foreach($todayItems as $t)
                     <div style="text-align:center;padding:8px 6px;background:{{ $t['bg'] }};border-radius:var(--radius-sm)">
@@ -221,9 +221,9 @@
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">This Month — {{ now()->format('F') }}</div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
                     @php $monthItems = [
-                        ['label'=>'Documents', 'value'=>$thisMonthDocs, 'color'=>'#f59e0b','bg'=>'#fffbeb'],
-                        ['label'=>'Residents', 'value'=>$thisMonthRes,  'color'=>'#22c55e','bg'=>'#f0fdf4'],
-                        ['label'=>'Blotter',   'value'=>$thisMonthBlt,  'color'=>'#ef4444','bg'=>'#fef2f2'],
+                        ['label'=>'Documents', 'value'=>$thisMonthDocs, 'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.07)'],
+                        ['label'=>'Residents', 'value'=>$thisMonthRes,  'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.09)'],
+                        ['label'=>'Blotter',   'value'=>$thisMonthBlt,  'color'=>'#9b1c1c','bg'=>'rgba(155,28,28,0.07)'],
                     ]; @endphp
                     @foreach($monthItems as $t)
                     <div style="text-align:center;padding:8px 6px;background:{{ $t['bg'] }};border-radius:var(--radius-sm)">
