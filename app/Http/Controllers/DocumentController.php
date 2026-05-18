@@ -128,7 +128,7 @@ class DocumentController extends Controller
             'fee_paid'      => 'nullable|numeric|min:0',
             'or_number'     => 'nullable|string|max:100',
             'released_at'   => 'nullable|date',
-            'status'        => 'required|in:Pending,Processing,Released,Cancelled',
+            'status'        => 'required|in:' . implode(',', Document::$statuses),
         ], [
             'resident_id.required'   => 'Please select a resident.',
             'resident_id.exists'     => 'The selected resident was not found. Please search again.',
@@ -174,7 +174,7 @@ class DocumentController extends Controller
             'fee_paid' => 'nullable|numeric|min:0',
             'or_number' => 'nullable|string|max:100',
             'released_at' => 'nullable|date',
-            'status' => 'required|in:Pending,Processing,Released,Cancelled',
+            'status' => 'required|in:' . implode(',', Document::$statuses),
         ], [
             'document_type.required' => 'Please select a document type.',
             'purpose.required'       => 'Please describe the purpose of this document (e.g. Employment, Loan).',
@@ -197,14 +197,23 @@ class DocumentController extends Controller
     public function quickStatus(Request $request, Document $document)
     {
         $validated = $request->validate([
-            'status' => 'required|in:Pending,Processing,Released,Cancelled',
+            'status' => 'required|in:' . implode(',', Document::$statuses),
         ]);
+
         if ($validated['status'] === 'Released' && $document->status !== 'Released') {
             $validated['released_at'] = now();
         }
+
         $old = $document->getOriginal();
         $document->update($validated);
         $this->logActivity('updated', $document, $old, $document->fresh()->toArray());
+
+        // Reverse-sync: update the linked appointment WITHOUT re-triggering the Observer.
+        // We use a direct query update (not Eloquent save) to bypass model events.
+        if ($document->appointment_id) {
+            DocumentAppointment::where('id', $document->appointment_id)
+                ->update(['status' => $validated['status']]);
+        }
 
         return response()->json([
             'success' => true,
