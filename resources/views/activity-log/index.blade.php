@@ -64,7 +64,7 @@ $moduleMap = [
         </div>
     </a>
     <a href="{{ route('activity-log.index') }}" style="text-decoration:none">
-        <div class="stat-card" style="padding:16px;cursor:pointer;{{ !request('period') && !request('module') && !request('action') ? 'border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,101,52,0.08)' : '' }}">
+        <div class="stat-card" style="padding:16px;cursor:pointer;{{ !request('period') && !request('module') && !request('action') ? 'border-color:var(--navy);box-shadow:0 0 0 3px var(--navy-pale)' : '' }}">
             <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.06);color:var(--navy-mid);font-size:16px"><i class="fas fa-clock-rotate-left"></i></div>
             <div class="stat-info">
                 <div class="stat-number" style="font-size:24px">{{ number_format($actionTotals['created'] + $actionTotals['updated'] + $actionTotals['deleted']) }}</div>
