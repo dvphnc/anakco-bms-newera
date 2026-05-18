@@ -1294,10 +1294,22 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
         @if(isset($specificData['projects']) && $specificData['projects']->count())
         <table>
-            <thead><tr><th>Project</th><th>Type</th><th>Location</th><th>Budget</th><th>Progress</th><th>Status</th></tr></thead>
+            <thead><tr><th>Project</th><th>Type</th><th>Location</th><th>Budget</th><th>Progress</th><th>Status</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['projects'] as $p)
-                <tr>
+                <tr
+                    data-id="{{ $p->id }}"
+                    data-name="{{ addslashes($p->project_name) }}"
+                    data-ptype="{{ $p->project_type ?? '' }}"
+                    data-location="{{ addslashes($p->location ?? '') }}"
+                    data-status="{{ $p->status }}"
+                    data-budget="{{ $p->budget ?? '' }}"
+                    data-cost="{{ $p->actual_cost ?? '' }}"
+                    data-pct="{{ $p->completion_percentage ?? 0 }}"
+                    data-start="{{ $p->start_date?->format('Y-m-d') ?? '' }}"
+                    data-end="{{ $p->end_date?->format('Y-m-d') ?? '' }}"
+                    data-remarks="{{ addslashes($p->remarks ?? '') }}"
+                >
                     <td style="font-weight:600">{{ $p->project_name }}</td>
                     <td class="td-muted">{{ $p->project_type ?? '—' }}</td>
                     <td class="td-muted">{{ $p->location ?? '—' }}</td>
@@ -1311,6 +1323,12 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         </div>
                     </td>
                     <td><span class="badge {{ match($p->status) { 'Completed'=>'badge-green','Ongoing'=>'badge-yellow','Cancelled'=>'badge-red','On Hold'=>'badge-orange',default=>'badge-gray' } }}">{{ $p->status }}</span></td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('project', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('project','{{ $p->id }}','{{ addslashes($p->project_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
