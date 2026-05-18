@@ -30,7 +30,9 @@
       "Bash(php -r *)",
       "Bash(curl -s -I http://anakco_bms.test/)",
       "Bash(grep -o '\"[^\"]*\"$')",
-      "Bash(curl -v http://anakco_bms.test/login)"
+      "Bash(curl -v http://anakco_bms.test/login)",
+      "Bash(mkdir -p /d/laragon/www/anakco_bms/storage/framework/views)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://anakco_bms.test/login)"
     ]
   }
 }
