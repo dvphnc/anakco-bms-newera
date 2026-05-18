@@ -280,6 +280,47 @@ class BusinessController extends Controller
         return redirect()->route('businesses.index')->with('success', 'Business permit updated successfully.');
     }
 
+    /**
+     * Axios PATCH — quick status update for portal-sourced business applications.
+     */
+    public function quickStatus(Request $request, Business $business)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:Active,Expired,Suspended,Cancelled,Pending,For Review',
+            'notes'  => 'nullable|string|max:500',
+        ]);
+
+        if (in_array($validated['status'], ['Active']) && ! $business->permit_date) {
+            $validated['permit_date'] = now()->toDateString();
+            $validated['expiry_date'] = now()->addYear()->toDateString();
+        }
+
+        $old = $business->getOriginal();
+        $business->update($validated);
+        $this->logActivity('updated', $business, $old, $business->fresh()->toArray());
+
+        // Email notification for portal-sourced business applications
+        if ($business->source === 'portal' && $business->email) {
+            try {
+                Mail::to($business->email)->send(new PortalStatusUpdated(
+                    type:          'business',
+                    requestNumber: $business->permit_number,
+                    residentName:  $business->owner_name,
+                    newStatus:     $business->status,
+                    notes:         $validated['notes'] ?? null,
+                ));
+            } catch (\Exception $e) {
+                logger()->warning('Portal business email failed: ' . $e->getMessage());
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Business permit status updated to {$business->status}.",
+            'status'  => $business->status,
+        ]);
+    }
+
     public function destroy(Request $request, Business $business)
     {
         $num = $business->permit_number;

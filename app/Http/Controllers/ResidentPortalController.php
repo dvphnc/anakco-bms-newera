@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppointmentStatusLog;
-use App\Models\BlotterRequest;
-use App\Models\BusinessPermitRequest;
+use App\Models\BlotterCase;
+use App\Models\Business;
 use App\Models\DocumentAppointment;
 use Illuminate\Http\Request;
 
@@ -86,9 +86,9 @@ class ResidentPortalController extends Controller
      |──────────────────────────────────────────────────── */
     public function blotterForm()
     {
-        return view('portal.blotter-request', [
-            'incidentTypes' => BlotterRequest::$incidentTypes,
-        ]);
+        $incidentTypes = ['Noise Complaint', 'Physical Assault', 'Verbal Abuse', 'Theft',
+                          'Trespassing', 'Domestic Dispute', 'Property Damage', 'Threat', 'Other'];
+        return view('portal.blotter-request', compact('incidentTypes'));
     }
 
     public function storeBlotter(Request $request)
@@ -105,12 +105,22 @@ class ResidentPortalController extends Controller
             'respondent_name'      => 'nullable|string|max:255',
         ]);
 
-        $validated['request_number'] = BlotterRequest::generateNumber();
-        $validated['status']         = 'Pending';
+        $case = BlotterCase::create([
+            'case_number'         => BlotterCase::generateCaseNumber(),
+            'source'              => 'portal',
+            'incident_type'       => $validated['incident_type'],
+            'incident_date'       => $validated['incident_date'],
+            'incident_location'   => $validated['incident_location'],
+            'incident_details'    => $validated['incident_description'],
+            'complainant_name'    => $validated['complainant_name'],
+            'complainant_address' => $validated['address'],
+            'complainant_contact' => $validated['contact_number'],
+            'email'               => $validated['email'] ?? null,
+            'respondent_name'     => $validated['respondent_name'] ?? null,
+            'status'              => 'Active',
+        ]);
 
-        $blotter = BlotterRequest::create($validated);
-
-        $redirectUrl = route('portal.submitted', ['type' => 'blotter', 'number' => $blotter->request_number]);
+        $redirectUrl = route('portal.submitted', ['type' => 'blotter', 'number' => $case->case_number]);
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['redirect' => $redirectUrl]);
