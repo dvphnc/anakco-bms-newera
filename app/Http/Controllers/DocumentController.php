@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\DocumentAppointment;
 use App\Models\Resident;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
@@ -21,32 +22,46 @@ class DocumentController extends Controller
                 ->select('documents.*');
 
             return DataTables::of($query)
-                ->addColumn('number_col', fn ($d) => '<span class="td-mono">'.e($d->doc_number).'</span>')
+                ->addColumn('number_col', function ($d) {
+                    $badge = $d->source === 'portal'
+                        ? ' <span class="badge badge-blue" style="font-size:10px;margin-left:4px;vertical-align:middle">Portal</span>'
+                        : '';
+                    return '<span class="td-mono">'.e($d->doc_number).'</span>'.$badge;
+                })
                 ->addColumn('resident_col', function ($d) {
-                    $name = $d->resident ? e($d->resident->last_name.', '.$d->resident->first_name) : '—';
-                    $purok = $d->resident?->purok?->name ? '<div class="td-muted">'.e($d->resident->purok->name).'</div>' : '';
-
-                    return '<div style="font-weight:600;font-size:13px">'.$name.'</div>'.$purok;
+                    if ($d->source === 'portal') {
+                        $name = e($d->resident_name_portal ?? '—');
+                        $sub  = '<div class="td-muted" style="font-size:11px">Portal Submission</div>';
+                    } else {
+                        $name = $d->resident
+                            ? e($d->resident->last_name.', '.$d->resident->first_name)
+                            : '—';
+                        $sub  = $d->resident?->purok?->name
+                            ? '<div class="td-muted">'.e($d->resident->purok->name).'</div>'
+                            : '';
+                    }
+                    return '<div style="font-weight:600;font-size:13px">'.$name.'</div>'.$sub;
                 })
                 ->addColumn('type_col', fn ($d) => '<span class="badge badge-navy" style="white-space:normal;line-height:1.4">'.e($d->document_type).'</span>')
                 ->addColumn('purpose_col', fn ($d) => '<span class="td-muted" style="max-width:180px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'.e($d->purpose ?? '—').'</span>')
                 ->addColumn('fee_col', function ($d) {
                     $fee = $d->fee_paid ?? 0;
-
                     return $fee > 0
                         ? '<span style="font-weight:600;color:var(--navy)">₱'.number_format($fee, 2).'</span>'
                         : '<span class="badge badge-green">Free</span>';
                 })
                 ->addColumn('date_col', fn ($d) => '<span class="td-muted">'.$d->created_at->format('M d, Y').'</span>')
                 ->addColumn('status_col', function ($d) {
+                    // Identical CSS classes to AppointmentController — single source of truth
                     $cls = match ($d->status) {
-                        'Released' => 'badge-green',
+                        'Pending'    => 'badge-yellow',
+                        'Confirmed'  => 'badge-navy',
                         'Processing' => 'badge-blue',
-                        'Pending' => 'badge-yellow',
-                        'Cancelled' => 'badge-gray',
-                        default => 'badge-gray'
+                        'Ready'      => 'badge-green',
+                        'Released'   => 'badge-gray',
+                        'Cancelled'  => 'badge-red',
+                        default      => 'badge-gray',
                     };
-
                     return '<span class="badge '.$cls.'">'.$d->status.'</span>';
                 })
                 ->addColumn('actions', function ($d) {
@@ -60,7 +75,9 @@ class DocumentController extends Controller
                             <button class="btn btn-primary btn-sm btn-icon doc-status-btn"
                                     title="Update Status"
                                     data-id="'.$d->id.'"
-                                    data-status="'.e($d->status).'">
+                                    data-num="'.e($d->doc_number).'"
+                                    data-status="'.e($d->status).'"
+                                    data-source="'.e($d->source).'">
                                 <i class="fas fa-rotate"></i>
                             </button>
                             <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
@@ -79,6 +96,7 @@ class DocumentController extends Controller
                         $s = $request->search['value'];
                         $query->where(fn ($q) => $q
                             ->where('doc_number', 'like', "%$s%")
+                            ->orWhere('resident_name_portal', 'like', "%$s%")
                             ->orWhereHas('resident', fn ($r) => $r
                                 ->where('first_name', 'like', "%$s%")
                                 ->orWhere('last_name', 'like', "%$s%")));

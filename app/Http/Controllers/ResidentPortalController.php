@@ -36,8 +36,8 @@ class ResidentPortalController extends Controller
 
         $validated['appointment_number'] = DocumentAppointment::generateNumber();
         $validated['status']             = 'Pending';
+        $validated['source']             = 'portal';
 
-        $validated['source'] = 'portal';
         $appointment = DocumentAppointment::create($validated);
 
         AppointmentStatusLog::create([
@@ -46,6 +46,20 @@ class ResidentPortalController extends Controller
             'to_status'      => 'Pending',
             'changed_by'     => 'Resident',
             'note'           => 'Request submitted via Resident Portal.',
+        ]);
+
+        // Create the mirrored Document record so this submission is visible
+        // in the Document Issuance module from day one. The Observer keeps
+        // it in sync as the appointment status advances.
+        Document::create([
+            'appointment_id'       => $appointment->id,
+            'source'               => 'portal',
+            'resident_id'          => null,
+            'resident_name_portal' => $appointment->resident_name,
+            'document_type'        => $appointment->document_type,
+            'purpose'              => $appointment->purpose ?? 'Portal Request',
+            'status'               => 'Pending',
+            'doc_number'           => Document::generateDocNumber(),
         ]);
 
         $redirectUrl = route('portal.confirmation', $appointment->appointment_number);
