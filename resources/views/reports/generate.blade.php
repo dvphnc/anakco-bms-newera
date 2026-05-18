@@ -358,7 +358,7 @@
                     @endphp
                     <div style="background:{{ $c['bg'] }};border:1px solid {{ $c['border'] }};border-radius:var(--radius-sm);padding:12px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
                         <div style="font-size:22px;font-weight:800;color:{{ $c['num'] }}">{{ $purok->residents_count }}</div>
-                        <div style="display:inline-block;background:{{ $c['badge'] }};color:{{ $c['text'] }};font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;margin:3px 0">{{ $pct }}%</div>
+                        <div style="display:inline-block;background:{{ $c['badge'] }};color:{{ $c['text'] }};font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px;margin:3px 0">{{ $pct }}%</div>
                         <div style="font-size:12px;font-weight:600;color:{{ $c['text'] }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">{{ $purok->name }}</div>
                     </div>
                     @endforeach
@@ -495,7 +495,7 @@ new Chart(document.getElementById('trendChart'), {
 });
 
 // Docs by type
-const palette = ['#0D2144','#C8861A','#22c55e','#3b82f6','#7c3aed','#ef4444','#f97316','#0891b2'];
+const palette = ['#0D2144','#C8861A','#3d7a55','#3a5fa0','#5e4b8b','#9b3535','#a05828','#2a7a8a'];
 new Chart(document.getElementById('docTypeChart'), {
     type: 'doughnut',
     data: {
@@ -506,7 +506,7 @@ new Chart(document.getElementById('docTypeChart'), {
 });
 
 // Blotter by type
-const bPalette = ['#ef4444','#C8861A','#0D2144','#3b82f6','#7c3aed','#22c55e','#f97316','#0891b2'];
+const bPalette = ['#9b3535','#C8861A','#0D2144','#3a5fa0','#5e4b8b','#3d7a55','#a05828','#2a7a8a'];
 new Chart(document.getElementById('blotterTypeChart'), {
     type: 'doughnut',
     data: {
