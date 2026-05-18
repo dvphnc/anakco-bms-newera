@@ -926,7 +926,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 @endforeach
             </tbody>
         </table>
-        @else<div class="empty-state"><i class="fas fa-shield-halved"></i><p>No BPSO members yet.</p></div>@endif
+        @else
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-shield-halved"></i></div>
+            <h4>No BPSO Members Yet</h4>
+            <p>Register Barangay Peace and Security Officers assigned to this committee.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-bpso', document.querySelector('[data-icon=fa-user-plus]'))">
+                <i class="fas fa-user-plus"></i> Add First Member
+            </button>
+        </div>
+        @endif
     </div>
 
     <div id="tab-patrol" class="tab-content">
@@ -972,7 +981,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 @endforeach
             </tbody>
         </table>
-        @else<div class="empty-state"><i class="fas fa-binoculars"></i><p>No patrol logs yet.</p></div>@endif
+        @else
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-binoculars"></i></div>
+            <h4>No Patrol Logs Yet</h4>
+            <p>Record patrol schedules, area coverage, and security observations.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-patrol', document.querySelector('[data-icon=fa-binoculars]'))">
+                <i class="fas fa-binoculars"></i> Log First Patrol
+            </button>
+        </div>
+        @endif
     </div>
     @endif
 
@@ -1025,7 +1043,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 @endforeach
             </tbody>
         </table>
-        @else<div class="empty-state"><i class="fas fa-notes-medical"></i><p>No health records yet.</p></div>@endif
+        @else
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-notes-medical"></i></div>
+            <h4>No Health Records Yet</h4>
+            <p>Log patient visits, programs served, and health interventions.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-health', document.querySelector('[data-icon=fa-notes-medical]'))">
+                <i class="fas fa-notes-medical"></i> Add First Record
+            </button>
+        </div>
+        @endif
     </div>
     @endif
 
@@ -1077,7 +1104,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 @endforeach
             </tbody>
         </table>
-        @else<div class="empty-state"><i class="fas fa-graduation-cap"></i><p>No scholars yet.</p></div>@endif
+        @else
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-graduation-cap"></i></div>
+            <h4>No Scholars Yet</h4>
+            <p>Register barangay scholarship recipients and track their academic progress.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-scholars', document.querySelector('[data-icon=fa-graduation-cap]'))">
+                <i class="fas fa-graduation-cap"></i> Add First Scholar
+            </button>
+        </div>
+        @endif
     </div>
     @endif
 
@@ -2378,4 +2414,17 @@ function filterMeds() {
         const matchQ   = !q   || generic.includes(q) || brand.includes(q);
         const matchCat = !cat || rowCat === cat;
         const matchSt  = !status
-            || (status === 'low' 
+            || (status === 'low'      && isLow)
+            || (status === 'expired'  && isExpired)
+            || (status === 'expiring' && isExpiring);
+
+        const show = matchQ && matchCat && matchSt;
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+
+    const countEl = document.getElementById('medCount');
+    if (countEl) countEl.textContent = 'Showing ' + visible + ' of ' + rows.length;
+}
+</script>
+@endpush
