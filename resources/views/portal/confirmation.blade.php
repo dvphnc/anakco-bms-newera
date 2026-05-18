@@ -205,4 +205,37 @@
     </div>
 </div>{{-- /.p-card --}}
 </div>{{-- /.portal-wrap-sm --}}
+@push('scripts')
+<script>
+function copyAptNum() {
+    var text = document.getElementById('aptNumDisplay').textContent.trim();
+    var btn  = document.getElementById('copyBtn');
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function () { showCopied(btn); });
+    } else {
+        // Fallback for non-HTTPS / older browsers
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity  = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try { document.execCommand('copy'); showCopied(btn); } catch (e) {}
+        document.body.removeChild(ta);
+    }
+}
+
+function showCopied(btn) {
+    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+    btn.classList.add('copied');
+    setTimeout(function () {
+        btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+        btn.classList.remove('copied');
+    }, 2000);
+}
+</script>
+@endpush
+
 @endsection

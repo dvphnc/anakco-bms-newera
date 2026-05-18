@@ -82,13 +82,16 @@
                 <a href="{{ route('documents.edit', $document) }}" class="btn btn-secondary" style="justify-content:flex-start">
                     <i class="fas fa-pen" style="color:var(--navy)"></i> Edit Document
                 </a>
-                @if($document->status === 'Pending' || $document->status === 'Processing')
+                @if(in_array($document->status, ['Pending', 'Confirmed', 'Processing', 'Ready']))
                 <form method="POST" action="{{ route('documents.update', $document) }}">
                     @csrf @method('PUT')
                     <input type="hidden" name="status" value="Released">
                     <input type="hidden" name="resident_id" value="{{ $document->resident_id }}">
                     <input type="hidden" name="document_type" value="{{ $document->document_type }}">
-                    <input type="hidden" name="purpose" value="{{ $document->purpose }}">
+                    <input type="hidden" name="purpose" value="{{ $document->purpose ?? 'Portal Request' }}">
+                    <input type="hidden" name="requestor_name" value="{{ $document->requestor_name }}">
+                    <input type="hidden" name="requestor_relationship" value="{{ $document->requestor_relationship }}">
+                    <input type="hidden" name="requestor_contact" value="{{ $document->requestor_contact }}">
                     <button type="submit" class="btn btn-gold" style="width:100%;justify-content:flex-start">
                         <i class="fas fa-circle-check"></i> Mark as Released
                     </button>
