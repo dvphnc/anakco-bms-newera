@@ -87,7 +87,7 @@
 
         {{-- Representative fields --}}
         <div id="repPanel" style="{{ $isRep ? '' : 'display:none;' }}margin-bottom:8px">
-            <div class="form-grid-2 mb-2">
+            <div class="form-grid-2 mb-2" style="margin-top:16px">
                 <div class="form-group">
                     <label class="form-label">Representative Name <span style="color:var(--crimson)">*</span></label>
                     <input type="text" name="requestor_name" id="requestorName"
