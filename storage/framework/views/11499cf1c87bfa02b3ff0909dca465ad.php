@@ -101,24 +101,32 @@
     <div id="left-col" style="display:flex;flex-direction:column;gap:14px">
 
         
-        <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex-wrap:nowrap">
-            <?php $__currentLoopData = $quick; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $q): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div style="flex-shrink:0;position:relative">
-                <input type="hidden" class="qg-type"    value="<?php echo e($q['type']); ?>">
-                <input type="hidden" class="qg-module"  value="<?php echo e($q['module']); ?>">
-                <input type="hidden" class="qg-year"    value="<?php echo e($q['year']); ?>">
-                <input type="hidden" class="qg-month"   value="<?php echo e($q['month']   ?? ''); ?>">
-                <input type="hidden" class="qg-quarter" value="<?php echo e($q['quarter'] ?? ''); ?>">
-                <button type="button" title="<?php echo e($q['label']); ?>"
-                        onclick="quickGenerate(this)"
-                        style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;white-space:nowrap;font-family:'Poppins',sans-serif;transition:all 0.15s"
-                        onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
-                        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
-                    <i class="fas fa-file-pdf" style="color:#9b3535;font-size:16px"></i><?php echo e($q['short']); ?>
-
-                </button>
+        <div class="card">
+            <div class="card-header" style="padding:12px 20px">
+                <span class="card-title" style="font-size:13px">
+                    <i class="fas fa-bolt" style="color:var(--gold)"></i> Quick Generate
+                </span>
             </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <div class="card-body" style="padding:12px">
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                    <?php $__currentLoopData = $quick; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $q): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div style="position:relative">
+                        <input type="hidden" class="qg-type"    value="<?php echo e($q['type']); ?>">
+                        <input type="hidden" class="qg-module"  value="<?php echo e($q['module']); ?>">
+                        <input type="hidden" class="qg-year"    value="<?php echo e($q['year']); ?>">
+                        <input type="hidden" class="qg-month"   value="<?php echo e($q['month']   ?? ''); ?>">
+                        <input type="hidden" class="qg-quarter" value="<?php echo e($q['quarter'] ?? ''); ?>">
+                        <button type="button" onclick="quickGenerate(this)" title="<?php echo e($q['label']); ?>"
+                                style="width:100%;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer;font-family:'Poppins',sans-serif;transition:all 0.15s;padding:8px"
+                                onmouseover="this.style.borderColor='var(--navy)';this.style.background='var(--navy-pale)'"
+                                onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface2)'">
+                            <i class="fas fa-file-pdf" style="color:#9b3535;font-size:20px"></i>
+                            <span style="font-size:11px;font-weight:600;color:var(--text-muted);text-align:center;line-height:1.3"><?php echo e($q['short']); ?></span>
+                        </button>
+                    </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+            </div>
         </div>
 
         
