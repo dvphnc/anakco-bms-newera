@@ -374,7 +374,41 @@
 
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@keyframes bms-pdf-spin { to { transform: rotate(360deg); } }
+#reportModule + .select2-container,
+#reportYear   + .select2-container,
+#reportMonth  + .select2-container,
+#reportQuarter + .select2-container { width: 100% !important; }
+</style>
 <script>
+$(function(){
+    $('#reportModule, #reportYear, #reportMonth, #reportQuarter').select2({
+        minimumResultsForSearch: -1,
+        width: '100%'
+    });
+});
+
+function doGeneratePdf(formEl) {
+    var overlay = document.getElementById('pdf-overlay');
+    overlay.style.display = 'flex';
+    var fd = new FormData(formEl);
+    axios.post(formEl.action, fd, { responseType: 'blob' })
+        .then(function(res) {
+            var blob = new Blob([res.data], { type: 'application/pdf' });
+            var url  = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
+        })
+        .catch(function() {
+            bmsToast('Failed to generate PDF report. Please try again.', 'error');
+        })
+        .finally(function() {
+            overlay.style.display = 'none';
+        });
+    return false;
+}
+
 function selectType(val) {
     document.querySelectorAll('[id^="type-card-"]').forEach(el => {
         el.style.borderColor = 'var(--border)';

@@ -49,16 +49,22 @@
 </div>
 
 
+<div id="pdf-overlay" style="display:none;position:fixed;inset:0;background:rgba(13,33,68,0.62);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px">
+    <div style="width:56px;height:56px;border:4px solid rgba(200,134,26,0.3);border-top-color:#C8861A;border-radius:50%;animation:bms-pdf-spin 0.75s linear infinite"></div>
+    <div style="color:#fff;font-size:14px;font-weight:600;letter-spacing:0.04em">Generating PDF…</div>
+</div>
+
+
 <div class="grid-4 mb-6">
     <?php $strips = [
-        ['label'=>'Total Residents',  'value'=>number_format($totalResidents),  'icon'=>'fa-users',        'color'=>'#22c55e','bg'=>'#f0fdf4'],
-        ['label'=>'Households',       'value'=>number_format($totalHouseholds), 'icon'=>'fa-house',        'color'=>'#3b82f6','bg'=>'#eff6ff'],
-        ['label'=>'Documents '.$currentYear, 'value'=>number_format($totalDocs),'icon'=>'fa-file-alt',    'color'=>'#f59e0b','bg'=>'#fffbeb'],
-        ['label'=>'Blotter '.$currentYear,   'value'=>number_format($totalBlotter),'icon'=>'fa-gavel',    'color'=>'#ef4444','bg'=>'#fef2f2'],
-        ['label'=>'Active Businesses','value'=>number_format($totalBusinesses), 'icon'=>'fa-store',        'color'=>'#f59e0b','bg'=>'#fffbeb'],
-        ['label'=>'Male Residents',   'value'=>number_format($totalMale),       'icon'=>'fa-person',       'color'=>'#3b82f6','bg'=>'#eff6ff'],
-        ['label'=>'Female Residents', 'value'=>number_format($totalFemale),     'icon'=>'fa-person-dress', 'color'=>'#f97316','bg'=>'#fff7ed'],
-        ['label'=>'Active Residents', 'value'=>number_format($activeResidents), 'icon'=>'fa-circle-check', 'color'=>'#22c55e','bg'=>'#f0fdf4'],
+        ['label'=>'Total Residents',       'value'=>number_format($totalResidents),  'icon'=>'fa-users',        'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
+        ['label'=>'Households',            'value'=>number_format($totalHouseholds), 'icon'=>'fa-house',        'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.1)'],
+        ['label'=>'Documents '.$currentYear,'value'=>number_format($totalDocs),     'icon'=>'fa-file-alt',     'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
+        ['label'=>'Blotter '.$currentYear, 'value'=>number_format($totalBlotter),   'icon'=>'fa-gavel',        'color'=>'#9b1c1c','bg'=>'rgba(155,28,28,0.08)'],
+        ['label'=>'Active Businesses',     'value'=>number_format($totalBusinesses), 'icon'=>'fa-store',       'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.1)'],
+        ['label'=>'Male Residents',        'value'=>number_format($totalMale),       'icon'=>'fa-person',      'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
+        ['label'=>'Female Residents',      'value'=>number_format($totalFemale),     'icon'=>'fa-person-dress','color'=>'#C8861A','bg'=>'rgba(200,134,26,0.1)'],
+        ['label'=>'Active Residents',      'value'=>number_format($activeResidents), 'icon'=>'fa-circle-check','color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
     ]; ?>
     <?php $__currentLoopData = $strips; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
     <div class="stat-card">
@@ -87,7 +93,7 @@
                 </span>
             </div>
             <div class="card-body" style="padding:20px 20px 24px">
-                <form method="POST" action="<?php echo e(route('reports.generate')); ?>">
+                <form method="POST" action="<?php echo e(route('reports.generate')); ?>" id="reportForm">
                     <?php echo csrf_field(); ?>
 
                     
@@ -108,7 +114,7 @@
 
                     <div class="form-group" style="margin-bottom:16px">
                         <label class="form-label">Module</label>
-                        <select name="report_module" class="form-control" required>
+                        <select name="report_module" id="reportModule" class="form-control" required>
                             <option value="summary">📊 Full Summary</option>
                             <option value="residents">👥 Residents</option>
                             <option value="documents">📄 Documents</option>
@@ -119,7 +125,7 @@
 
                     <div class="form-group" style="margin-bottom:16px">
                         <label class="form-label">Year</label>
-                        <select name="year" class="form-control" required>
+                        <select name="year" id="reportYear" class="form-control" required>
                             <?php for($y=date('Y');$y>=2020;$y--): ?>
                                 <option value="<?php echo e($y); ?>" <?php echo e($y==date('Y')?'selected':''); ?>><?php echo e($y); ?></option>
                             <?php endfor; ?>
@@ -128,7 +134,7 @@
 
                     <div id="month-field" class="form-group" style="margin-bottom:16px">
                         <label class="form-label">Month</label>
-                        <select name="month" class="form-control">
+                        <select name="month" id="reportMonth" class="form-control">
                             <?php $__currentLoopData = ['January','February','March','April','May','June','July','August','September','October','November','December']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i=>$m): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <option value="<?php echo e($i+1); ?>" <?php echo e(($i+1)==date('n')?'selected':''); ?>><?php echo e($m); ?></option>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -137,7 +143,7 @@
 
                     <div id="quarter-field" class="form-group" style="display:none;margin-bottom:16px">
                         <label class="form-label">Quarter</label>
-                        <select name="quarter" class="form-control">
+                        <select name="quarter" id="reportQuarter" class="form-control">
                             <option value="1">Q1 — Jan to Mar</option>
                             <option value="2">Q2 — Apr to Jun</option>
                             <option value="3">Q3 — Jul to Sep</option>
@@ -145,7 +151,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">
+                    <button type="button" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="doGeneratePdf(document.getElementById('reportForm'))">
                         <i class="fas fa-file-pdf"></i> Generate PDF Report
                     </button>
                 </form>
@@ -166,7 +172,7 @@
                     ['label'=>date('Y').' Annual Summary','type'=>'annual',  'module'=>'summary',   'year'=>date('Y')],
                 ]; ?>
                 <?php $__currentLoopData = $quick; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $q): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <form method="POST" action="<?php echo e(route('reports.generate')); ?>">
+                <form method="POST" action="<?php echo e(route('reports.generate')); ?>" onsubmit="doGeneratePdf(this); return false;">
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="report_type"   value="<?php echo e($q['type']); ?>">
                     <input type="hidden" name="report_module" value="<?php echo e($q['module']); ?>">
@@ -200,9 +206,9 @@
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Today</div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
                     <?php $todayItems = [
-                        ['label'=>'Documents', 'value'=>$todayDocs,      'color'=>'#f59e0b','bg'=>'#fffbeb'],
-                        ['label'=>'Residents', 'value'=>$todayResidents, 'color'=>'#22c55e','bg'=>'#f0fdf4'],
-                        ['label'=>'Blotter',   'value'=>$todayBlotter,   'color'=>'#ef4444','bg'=>'#fef2f2'],
+                        ['label'=>'Documents', 'value'=>$todayDocs,      'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.07)'],
+                        ['label'=>'Residents', 'value'=>$todayResidents, 'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.09)'],
+                        ['label'=>'Blotter',   'value'=>$todayBlotter,   'color'=>'#9b1c1c','bg'=>'rgba(155,28,28,0.07)'],
                     ]; ?>
                     <?php $__currentLoopData = $todayItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div style="text-align:center;padding:8px 6px;background:<?php echo e($t['bg']); ?>;border-radius:var(--radius-sm)">
@@ -214,9 +220,9 @@
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">This Month — <?php echo e(now()->format('F')); ?></div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
                     <?php $monthItems = [
-                        ['label'=>'Documents', 'value'=>$thisMonthDocs, 'color'=>'#f59e0b','bg'=>'#fffbeb'],
-                        ['label'=>'Residents', 'value'=>$thisMonthRes,  'color'=>'#22c55e','bg'=>'#f0fdf4'],
-                        ['label'=>'Blotter',   'value'=>$thisMonthBlt,  'color'=>'#ef4444','bg'=>'#fef2f2'],
+                        ['label'=>'Documents', 'value'=>$thisMonthDocs, 'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.07)'],
+                        ['label'=>'Residents', 'value'=>$thisMonthRes,  'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.09)'],
+                        ['label'=>'Blotter',   'value'=>$thisMonthBlt,  'color'=>'#9b1c1c','bg'=>'rgba(155,28,28,0.07)'],
                     ]; ?>
                     <?php $__currentLoopData = $monthItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div style="text-align:center;padding:8px 6px;background:<?php echo e($t['bg']); ?>;border-radius:var(--radius-sm)">
@@ -367,7 +373,41 @@
 
 <?php $__env->startPush('scripts'); ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@keyframes bms-pdf-spin { to { transform: rotate(360deg); } }
+#reportModule + .select2-container,
+#reportYear   + .select2-container,
+#reportMonth  + .select2-container,
+#reportQuarter + .select2-container { width: 100% !important; }
+</style>
 <script>
+$(function(){
+    $('#reportModule, #reportYear, #reportMonth, #reportQuarter').select2({
+        minimumResultsForSearch: -1,
+        width: '100%'
+    });
+});
+
+function doGeneratePdf(formEl) {
+    var overlay = document.getElementById('pdf-overlay');
+    overlay.style.display = 'flex';
+    var fd = new FormData(formEl);
+    axios.post(formEl.action, fd, { responseType: 'blob' })
+        .then(function(res) {
+            var blob = new Blob([res.data], { type: 'application/pdf' });
+            var url  = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
+        })
+        .catch(function() {
+            bmsToast('Failed to generate PDF report. Please try again.', 'error');
+        })
+        .finally(function() {
+            overlay.style.display = 'none';
+        });
+    return false;
+}
+
 function selectType(val) {
     document.querySelectorAll('[id^="type-card-"]').forEach(el => {
         el.style.borderColor = 'var(--border)';
