@@ -3168,14 +3168,16 @@ function openEditAttendance(tr) {
 document.getElementById('editAttendanceForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/{{ $committee['slug'] }}/attendance/' + _editAttId, 'editAttendanceModal', function(rec) {
-        var row = document.querySelector('tr[data-id="' + _editAttId + '"]');
+        var row = document.querySelector('[data-id="' + _editAttId + '"]');
         if (row) {
             row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.event_name + '</span>';
+            var d = rec.event_date ? rec.event_date.substring(0,10) : '';
+            if (d) row.cells[1].textContent = new Date(d + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
             row.cells[2].textContent = rec.venue || '—';
             row.cells[3].innerHTML = '<span style="text-align:right;font-weight:700;color:var(--navy)">' + Number(rec.total_attendees).toLocaleString() + '</span>';
             row.cells[4].textContent = rec.notes || '—';
             row.dataset.event     = rec.event_name;
-            row.dataset.date      = rec.event_date ? rec.event_date.substring(0,10) : '';
+            row.dataset.date      = d;
             row.dataset.venue     = rec.venue || '';
             row.dataset.attendees = rec.total_attendees;
             row.dataset.notes     = rec.notes || '';
@@ -3199,12 +3201,14 @@ function openEditInventory(tr) {
 document.getElementById('editInventoryForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/{{ $committee['slug'] }}/inventory/' + _editInvId, 'editInventoryModal', function(rec) {
-        var row = document.querySelector('tr[data-id="' + _editInvId + '"]');
+        var row = document.querySelector('[data-id="' + _editInvId + '"]');
         if (row) {
             row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.item_name + '</span>';
             row.cells[1].textContent = rec.category || '—';
             row.cells[2].innerHTML = '<span style="text-align:right;font-weight:700;color:var(--navy)">' + Number(rec.quantity).toLocaleString() + '</span>';
             row.cells[3].textContent = rec.unit || '—';
+            var condMap = {Good:'badge-green',Fair:'badge-yellow',Poor:'badge-red'};
+            row.cells[4].innerHTML = '<span class="badge ' + (condMap[rec.condition] || 'badge-gray') + '">' + rec.condition + '</span>';
             row.cells[5].textContent = rec.remarks || '—';
             row.dataset.name      = rec.item_name;
             row.dataset.category  = rec.category || '';
