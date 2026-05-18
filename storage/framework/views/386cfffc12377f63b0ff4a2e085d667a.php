@@ -204,6 +204,39 @@
     </div>
 </div>
 </div>
+<?php $__env->startPush('scripts'); ?>
+<script>
+function copyAptNum() {
+    var text = document.getElementById('aptNumDisplay').textContent.trim();
+    var btn  = document.getElementById('copyBtn');
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function () { showCopied(btn); });
+    } else {
+        // Fallback for non-HTTPS / older browsers
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity  = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try { document.execCommand('copy'); showCopied(btn); } catch (e) {}
+        document.body.removeChild(ta);
+    }
+}
+
+function showCopied(btn) {
+    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+    btn.classList.add('copied');
+    setTimeout(function () {
+        btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+        btn.classList.remove('copied');
+    }, 2000);
+}
+</script>
+<?php $__env->stopPush(); ?>
+
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.portal', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\anakco_bms\resources\views/portal/confirmation.blade.php ENDPATH**/ ?>
