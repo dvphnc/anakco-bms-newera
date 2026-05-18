@@ -993,16 +993,30 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
         @if(isset($specificData['bpso']) && $specificData['bpso']->count())
         <table>
-            <thead><tr><th>Name</th><th>Rank</th><th>Badge No.</th><th>Contact</th><th>Assignment</th><th>Status</th></tr></thead>
+            <thead><tr><th>Name</th><th>Rank</th><th>Badge No.</th><th>Contact</th><th>Assignment</th><th>Status</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['bpso'] as $b)
-                <tr>
+                <tr
+                    data-id="{{ $b->id }}"
+                    data-name="{{ addslashes($b->full_name) }}"
+                    data-rank="{{ addslashes($b->rank ?? '') }}"
+                    data-badge="{{ addslashes($b->badge_number ?? '') }}"
+                    data-contact="{{ addslashes($b->contact_number ?? '') }}"
+                    data-assignment="{{ addslashes($b->assignment ?? '') }}"
+                    data-status="{{ $b->status }}"
+                >
                     <td style="font-weight:600">{{ $b->full_name }}</td>
                     <td class="td-muted">{{ $b->rank ?? '—' }}</td>
                     <td class="td-mono">{{ $b->badge_number ?? '—' }}</td>
                     <td class="td-muted">{{ $b->contact_number ?? '—' }}</td>
                     <td class="td-muted">{{ $b->assignment ?? '—' }}</td>
                     <td><span class="badge {{ $b->status === 'Active' ? 'badge-green' : ($b->status === 'On Leave' ? 'badge-yellow' : 'badge-gray') }}">{{ $b->status }}</span></td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('bpso', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('bpso','{{ $b->id }}','{{ addslashes($b->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -1048,16 +1062,30 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
         @if(isset($specificData['patrol_logs']) && $specificData['patrol_logs']->count())
         <table>
-            <thead><tr><th>Date</th><th>Shift</th><th>Area</th><th>Personnel</th><th>Findings</th><th>Reported By</th></tr></thead>
+            <thead><tr><th>Date</th><th>Shift</th><th>Area</th><th>Personnel</th><th>Findings</th><th>Reported By</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['patrol_logs'] as $p)
-                <tr>
+                <tr
+                    data-id="{{ $p->id }}"
+                    data-date="{{ $p->patrol_date->format('Y-m-d') }}"
+                    data-shift="{{ $p->shift ?? '' }}"
+                    data-area="{{ addslashes($p->area_covered) }}"
+                    data-personnel="{{ $p->personnel_count ?? 0 }}"
+                    data-findings="{{ addslashes($p->findings ?? '') }}"
+                    data-by="{{ addslashes($p->reported_by ?? '') }}"
+                >
                     <td class="td-muted">{{ $p->patrol_date->format('M d, Y') }}</td>
                     <td><span class="badge badge-navy">{{ $p->shift ?? '—' }}</span></td>
                     <td style="font-weight:600">{{ $p->area_covered }}</td>
                     <td style="font-weight:600;color:var(--navy)">{{ $p->personnel_count }}</td>
                     <td class="td-muted">{{ $p->findings ?? '—' }}</td>
                     <td class="td-muted">{{ $p->reported_by ?? '—' }}</td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('patrol', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('patrol','{{ $p->id }}','{{ addslashes($p->area_covered) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
