@@ -123,25 +123,44 @@ class DocumentController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'resident_id'   => 'required|exists:residents,id',
-            'document_type' => 'required|string',
-            'purpose'       => 'required|string|max:500',
-            'fee_paid'      => 'nullable|numeric|min:0',
-            'or_number'     => 'nullable|string|max:100',
-            'released_at'   => 'nullable|date',
-            'status'        => 'required|in:' . implode(',', Document::$statuses),
-        ], [
-            'resident_id.required'   => 'Please select a resident.',
-            'resident_id.exists'     => 'The selected resident was not found. Please search again.',
-            'document_type.required' => 'Please select a document type.',
-            'purpose.required'       => 'Please describe the purpose of this document (e.g. Employment, Loan).',
-            'purpose.max'            => 'Purpose must not exceed 500 characters.',
-            'fee_paid.numeric'       => 'Fee must be a valid number.',
-            'fee_paid.min'           => 'Fee cannot be a negative amount.',
-            'or_number.max'          => 'OR Number must not exceed 100 characters.',
-            'released_at.date'       => 'Please enter a valid release date.',
+        $rules = [
+            'resident_id'       => 'required|exists:residents,id',
+            'document_type'     => 'required|string',
+            'purpose'           => 'required|string|max:500',
+            'fee_paid'          => 'nullable|numeric|min:0',
+            'or_number'         => 'nullable|string|max:100',
+            'released_at'       => 'nullable|date',
+            'status'            => 'required|in:' . implode(',', Document::$statuses),
+            'requestor_contact' => 'nullable|string|max:255',
+        ];
+
+        if ($request->boolean('is_representative')) {
+            $rules['requestor_name']         = 'required|string|max:255';
+            $rules['requestor_relationship'] = 'required|string|max:100';
+        }
+
+        $validated = $request->validate($rules, [
+            'resident_id.required'            => 'Please select a resident.',
+            'resident_id.exists'              => 'The selected resident was not found. Please search again.',
+            'document_type.required'          => 'Please select a document type.',
+            'purpose.required'                => 'Please describe the purpose of this document (e.g. Employment, Loan).',
+            'purpose.max'                     => 'Purpose must not exceed 500 characters.',
+            'fee_paid.numeric'                => 'Fee must be a valid number.',
+            'fee_paid.min'                    => 'Fee cannot be a negative amount.',
+            'or_number.max'                   => 'OR Number must not exceed 100 characters.',
+            'released_at.date'                => 'Please enter a valid release date.',
+            'requestor_name.required'         => 'Please enter the representative\'s name.',
+            'requestor_relationship.required' => 'Please select the representative\'s relationship to the resident.',
         ]);
+
+        // Auto-fill requestor from resident when no representative
+        if (! $request->boolean('is_representative')) {
+            $resident = Resident::find($validated['resident_id']);
+            $validated['requestor_name']         = $resident?->full_name ?? '';
+            $validated['requestor_relationship'] = null;
+            $validated['requestor_contact']      = null;
+        }
+
         $validated['doc_number'] = Document::generateDocNumber();
         $validated['issued_by']  = auth()->id();
         if ($validated['status'] === 'Released' && empty($validated['released_at'])) {
@@ -162,10 +181,11 @@ class DocumentController extends Controller
 
     public function edit(Document $document)
     {
-        $residents = Resident::active()->orderBy('last_name')->get();
+        $residents     = Resident::active()->orderBy('last_name')->get();
         $documentTypes = ['Barangay Clearance', 'Certificate of Residency', 'Certificate of Indigency', 'Good Moral Character', 'Business Clearance', 'Certificate of Live Birth', 'Other'];
+        $relationships = ['Son', 'Daughter', 'Parent / Guardian', 'Spouse', 'Sibling', 'Cousin', 'Nephew / Niece', 'Legal Guardian', 'Attorney-in-Fact (SPA)', 'Other'];
 
-        return view('documents.documents-edit', compact('document', 'residents', 'documentTypes'));
+        return view('documents.documents-edit', compact('document', 'residents', 'documentTypes', 'relationships'));
     }
 
     public function update(Request $request, Document $document)
