@@ -63,8 +63,8 @@ $moduleMap = [
         </div>
     </a>
     <a href="<?php echo e(route('activity-log.index')); ?>" style="text-decoration:none">
-        <div class="stat-card" style="padding:16px;cursor:pointer;<?php echo e(!request('period') && !request('module') && !request('action') ? 'border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,101,52,0.08)' : ''); ?>">
-            <div class="stat-icon" style="width:40px;height:40px;background:rgba(22,101,52,0.08);color:#16a34a;font-size:16px"><i class="fas fa-clock-rotate-left"></i></div>
+        <div class="stat-card" style="padding:16px;cursor:pointer;<?php echo e(!request('period') && !request('module') && !request('action') ? 'border-color:var(--navy);box-shadow:0 0 0 3px var(--navy-pale)' : ''); ?>">
+            <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.06);color:var(--navy-mid);font-size:16px"><i class="fas fa-clock-rotate-left"></i></div>
             <div class="stat-info">
                 <div class="stat-number" style="font-size:24px"><?php echo e(number_format($actionTotals['created'] + $actionTotals['updated'] + $actionTotals['deleted'])); ?></div>
                 <div class="stat-label">All Logs</div>
@@ -92,9 +92,9 @@ $moduleMap = [
             <?php if($latestMonth && $prevMonth): ?>
                 This month so far: <strong><?php echo e(number_format($latestMonth['total'])); ?></strong>
                 <?php if($latestMonth['total'] > $prevMonth['total']): ?>
-                    — <span style="color:#16a34a"><i class="fas fa-arrow-up"></i> up from <?php echo e($prevMonth['total']); ?> last month.</span>
+                    — <span style="color:#2e6b47"><i class="fas fa-arrow-up"></i> up from <?php echo e($prevMonth['total']); ?> last month.</span>
                 <?php elseif($latestMonth['total'] < $prevMonth['total']): ?>
-                    — <span style="color:var(--crimson)"><i class="fas fa-arrow-down"></i> down from <?php echo e($prevMonth['total']); ?> last month.</span>
+                    — <span style="color:#8b2e2e"><i class="fas fa-arrow-down"></i> down from <?php echo e($prevMonth['total']); ?> last month.</span>
                 <?php else: ?>
                     — same as last month.
                 <?php endif; ?>
@@ -109,9 +109,9 @@ $moduleMap = [
     <div class="card-header">
         <span class="card-title"><i class="fas fa-chart-bar"></i> Activity This Week</span>
         <div style="display:flex;gap:14px;font-size:13px;color:var(--text-muted)">
-            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#16a34a;display:inline-block"></span>Created</span>
-            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#f59e0b;display:inline-block"></span>Updated</span>
-            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#ef4444;display:inline-block"></span>Deleted</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#4a8c5c;display:inline-block"></span>Created</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#C8861A;display:inline-block"></span>Updated</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#b04444;display:inline-block"></span>Deleted</span>
         </div>
     </div>
     <div class="card-body">
@@ -125,9 +125,9 @@ $moduleMap = [
         ?>
         <div class="chart-insight" style="margin-top:14px">
             <strong><?php echo e(number_format($totalWeek)); ?></strong> total actions this week —
-            <span style="color:#166534"><strong><?php echo e($createdWk); ?></strong> created</span>,
-            <span style="color:#92400e"><strong><?php echo e($updatedWk); ?></strong> updated</span>,
-            <span style="color:#991b1b"><strong><?php echo e($deletedWk); ?></strong> deleted</span>.
+            <span style="color:#2e6b47"><strong><?php echo e($createdWk); ?></strong> created</span>,
+            <span style="color:#7a5200"><strong><?php echo e($updatedWk); ?></strong> updated</span>,
+            <span style="color:#8b2e2e"><strong><?php echo e($deletedWk); ?></strong> deleted</span>.
         </div>
     </div>
 </div>
@@ -222,9 +222,9 @@ function initCharts() {
         data: {
             labels: weeklyData.map(d => d.label),
             datasets: [
-                { label: 'Created', data: weeklyData.map(d => d.created), backgroundColor: '#16a34a', borderRadius: 3 },
-                { label: 'Updated', data: weeklyData.map(d => d.updated), backgroundColor: '#f59e0b', borderRadius: 3 },
-                { label: 'Deleted', data: weeklyData.map(d => d.deleted), backgroundColor: '#ef4444', borderRadius: 3 },
+                { label: 'Created', data: weeklyData.map(d => d.created), backgroundColor: '#4a8c5c', borderRadius: 3 },
+                { label: 'Updated', data: weeklyData.map(d => d.updated), backgroundColor: '#C8861A', borderRadius: 3 },
+                { label: 'Deleted', data: weeklyData.map(d => d.deleted), backgroundColor: '#b04444', borderRadius: 3 },
             ]
         },
         options: {
