@@ -36,10 +36,12 @@
                 <div style="font-size:15px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:10px">{{ $document->document_type }}</div>
                 @php
                     $cls = match($document->status) {
-                        'Released'   => 'badge-green',
-                        'Processing' => 'badge-blue',
                         'Pending'    => 'badge-yellow',
-                        'Cancelled'  => 'badge-gray',
+                        'Confirmed'  => 'badge-navy',
+                        'Processing' => 'badge-blue',
+                        'Ready'      => 'badge-green',
+                        'Released'   => 'badge-gray',
+                        'Cancelled'  => 'badge-red',
                         default      => 'badge-gray'
                     };
                 @endphp
@@ -47,16 +49,28 @@
             </div>
             <div style="padding:16px 20px;border-top:1px solid var(--border)">
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Resident</div>
+                @if($document->resident)
                 <a href="{{ route('residents.show', $document->resident) }}"
                    style="display:flex;align-items:center;gap:10px;color:var(--navy)">
                     <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:#fff;font-size:13px">
-                        {{ strtoupper(substr($document->resident->first_name ?? 'R', 0, 1)) }}
+                        {{ strtoupper(substr($document->resident->first_name, 0, 1)) }}
                     </div>
                     <div>
-                        <div style="font-weight:600;font-size:14px">{{ $document->resident->full_name ?? '—' }}</div>
+                        <div style="font-weight:600;font-size:14px">{{ $document->resident->full_name }}</div>
                         <div class="td-muted">{{ $document->resident->purok->name ?? '' }}</div>
                     </div>
                 </a>
+                @else
+                <div style="display:flex;align-items:center;gap:10px">
+                    <div style="width:36px;height:36px;border-radius:50%;background:rgba(200,134,26,0.15);border:1px solid rgba(200,134,26,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px">
+                        <i class="fas fa-globe" style="color:var(--gold)"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;font-size:14px">{{ $document->resident_name_portal ?? '—' }}</div>
+                        <div class="td-muted">Portal Submission</div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
 
