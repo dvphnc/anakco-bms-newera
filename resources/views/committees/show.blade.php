@@ -1687,7 +1687,15 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div class="evac-grid">
             @foreach($specificData['evacuation_centers'] as $ec)
             @php $occ = $ec->capacity > 0 ? round(($ec->current_occupancy / $ec->capacity) * 100) : 0; @endphp
-            <div class="evac-card">
+            <div class="evac-card"
+                data-id="{{ $ec->id }}"
+                data-name="{{ addslashes($ec->center_name) }}"
+                data-location="{{ addslashes($ec->location) }}"
+                data-capacity="{{ $ec->capacity ?? 0 }}"
+                data-contact="{{ addslashes($ec->contact_person ?? '') }}"
+                data-phone="{{ addslashes($ec->contact_number ?? '') }}"
+                data-status="{{ $ec->status }}"
+            >
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
                     <div>
                         <div style="font-weight:700;font-size:14px;color:var(--navy)">{{ $ec->center_name }}</div>
@@ -1707,6 +1715,10 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <i class="fas fa-user" style="margin-right:4px"></i>{{ $ec->contact_person }} — {{ $ec->contact_number ?? '—' }}
                 </div>
                 @endif
+                <div style="display:flex;gap:6px;margin-top:10px;justify-content:flex-end">
+                    <button type="button" onclick="openEditSpecific('evacuation', this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                    <button type="button" onclick="deleteSpecific('evacuation','{{ $ec->id }}','{{ addslashes($ec->center_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                </div>
             </div>
             @endforeach
         </div>
