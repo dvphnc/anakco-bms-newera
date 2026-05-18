@@ -36,9 +36,15 @@
 }
 .dash-tab-btn {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     padding: 8px 18px;
     min-height: 38px;
     font-size: 13px;
+=======
+    padding: 10px 22px;
+    min-height: 44px;
+    font-size: 14px;
+>>>>>>> Stashed changes
 =======
     padding: 10px 22px;
     min-height: 44px;
@@ -101,6 +107,7 @@
     transition:background .2s, color .2s;
 }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 .dash-stat-number { font-size:22px; font-weight:800; color:var(--navy); line-height:1.1; letter-spacing:-0.01em; }
 .dash-stat-label  { font-size:12px; color:var(--text-muted); margin-top:3px; font-weight:400; line-height:1.4; }
 
@@ -141,6 +148,10 @@
 .dash-stat-number { font-size:28px; font-weight:700; color:var(--text); line-height:1.1; }
 .dash-stat-label  { font-size:14px; color:var(--text-muted); margin-top:4px; }
 >>>>>>> Stashed changes
+=======
+.dash-stat-number { font-size:28px; font-weight:700; color:var(--text); line-height:1.1; }
+.dash-stat-label  { font-size:14px; color:var(--text-muted); margin-top:4px; }
+>>>>>>> Stashed changes
 
 /* ── Mid Row: Chart + Quick Access ───────────────────────── */
 .dash-mid { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px; }
@@ -166,6 +177,9 @@
 .quick-item:hover { background:var(--navy-pale); border-color:var(--qa-color, var(--navy)); }
 .quick-icon { width:38px; height:38px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:16px; }
 .quick-label { font-size:13px; font-weight:600; color:var(--text); text-align:center; }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 /* ── Bottom 2-col ────────────────────────────────────────── */
@@ -182,8 +196,13 @@
 .feed-icon { width:30px; height:30px; border-radius:50%; background:#F1F5F9; color:var(--navy); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; }
 .feed-body { flex:1; min-width:0; }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 .feed-title { font-size:13px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .feed-sub   { font-size:12px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+=======
+.feed-title { font-size:14px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.feed-sub   { font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+>>>>>>> Stashed changes
 =======
 .feed-title { font-size:14px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .feed-sub   { font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
@@ -230,7 +249,11 @@
                 pointer-events:none"></div>
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div style="position:relative;display:flex;align-items:center;justify-content:space-between;
+=======
+    <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;
+>>>>>>> Stashed changes
 =======
     <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;
 >>>>>>> Stashed changes
@@ -259,6 +282,7 @@
             </div>
         </div>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
         <div style="text-align:right">
@@ -294,6 +318,8 @@
                 </span>
             </div>
 =======
+=======
+>>>>>>> Stashed changes
         
         <div style="display:flex;align-items:center;gap:12px;
                     background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);
@@ -324,6 +350,9 @@
             <div style="font-size:16px;font-weight:600;color:#fff;margin-top:2px">
                 Welcome back, <span style="color:var(--gold-light)"><?php echo e(auth()->user()->name); ?></span>
             </div>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
                 <button id="startTourBtn"
@@ -344,11 +373,14 @@
                           min-height:34px;font-size:12px;padding:6px 14px"
                    class="btn btn-sm">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     <i class="fas fa-file-circle-plus"></i> New Document
                 </a>
             </div>
         </div>
 =======
+=======
+>>>>>>> Stashed changes
                     <i class="fas fa-file-plus"></i> New Document
                 </a>
             </div>
@@ -398,6 +430,9 @@
                         color:rgba(255,255,255,0.55)">Ctrl+K</kbd>
             Global Search
         </span>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     </div>
 
@@ -406,6 +441,7 @@
 
 
 <?php
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     $alertCount = $seniorBdays->count() + $regularBdays->count()
                 + ($expiringPermits->count() ? 1 : 0)
@@ -419,6 +455,8 @@
         <span><?php echo e($alertCount); ?> Notice<?php echo e($alertCount > 1 ? 's' : ''); ?> — Birthdays, Permits & More</span>
         <i class="fas fa-chevron-down tray-caret"></i>
 =======
+=======
+>>>>>>> Stashed changes
     $diskTotal = @disk_total_space(storage_path()) ?: 1;
     $diskFree  = @disk_free_space(storage_path()) ?: $diskTotal;
     $diskUsed  = $diskTotal - $diskFree;
@@ -764,8 +802,11 @@
 
         <div class="card" id="tour-quickaccess">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             <div class="card-header card-header-plain">
 =======
+=======
+>>>>>>> Stashed changes
             <div class="card-header">
 >>>>>>> Stashed changes
                 <span class="card-title"><i class="fas fa-bolt"></i> Quick Access</span>
@@ -833,12 +874,20 @@
                     $bIsOpen   = in_array($b->status, ['Active', 'Under Investigation']);
                     $bDaysOpen = $bIsOpen && $b->incident_date
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                         ? (int)\Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
                 ?>
                 <a href="<?php echo e(route('blotter.show', $b->id)); ?>" class="feed-row">
                     <div class="feed-icon"
                          style="<?php echo e($bIsOpen && $bDaysOpen >= 30 ? 'outline:2px solid var(--crimson);outline-offset:-2px;' : ''); ?>">
                         <i class="fas fa-gavel"></i>
+=======
+                        ? \Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
+                ?>
+                <a href="<?php echo e(route('blotter.show', $b->id)); ?>" class="feed-row">
+                    <div class="feed-icon" style="background:#fef2f2<?php echo e($bIsOpen && $bDaysOpen >= 30 ? ';outline:2px solid #dc2626;outline-offset:-2px' : ''); ?>">
+                        <i class="fas fa-gavel" style="color:#dc2626"></i>
+>>>>>>> Stashed changes
 =======
                         ? \Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
                 ?>
@@ -1177,7 +1226,11 @@ document.addEventListener('DOMContentLoaded', function () {
         id: 'tabs',
         title: 'Dashboard Tabs',
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         text: 'Switch between <strong>Overview</strong> (today\'s summary) and <strong>Analytics</strong> (charts and demographics). For appointments, use the dedicated Appointments page from the sidebar.',
+=======
+        text: 'Switch between <strong>Overview</strong> (today\'s summary), <strong>Analytics</strong> (charts and demographics), and <strong>Appointments</strong> (document requests from residents). The orange number on Appointments shows pending items.',
+>>>>>>> Stashed changes
 =======
         text: 'Switch between <strong>Overview</strong> (today\'s summary), <strong>Analytics</strong> (charts and demographics), and <strong>Appointments</strong> (document requests from residents). The orange number on Appointments shows pending items.',
 >>>>>>> Stashed changes

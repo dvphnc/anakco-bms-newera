@@ -153,6 +153,7 @@
     .not-found p { font-size: .82rem; color: #6b7280; }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     /* ── Status history timeline ─────────────────────── */
     .timeline-section { margin-top: 1.75rem; border-top: 1px solid #f0f0f0; padding-top: 1.25rem; }
     .timeline-hd {
@@ -227,6 +228,9 @@
 =======
     /* Mobile: vertical timeline for progress steps */
 >>>>>>> Stashed changes
+=======
+    /* Mobile: vertical timeline for progress steps */
+>>>>>>> Stashed changes
     @media (max-width: 600px) {
         .search-row { flex-direction: column; }
         .search-row .btn { width: 100%; justify-content: center; }
@@ -236,7 +240,11 @@
             align-items: flex-start;
             gap: 0;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             padding-left: .5rem;
+=======
+            padding-left: .25rem;
+>>>>>>> Stashed changes
 =======
             padding-left: .25rem;
 >>>>>>> Stashed changes
@@ -248,25 +256,35 @@
             flex: none;
             width: 100%;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             padding: .3rem 0;
             text-align: left;
         }
         /* Vertical connector: runs downward from each dot */
         .prog-step::before {
 =======
+=======
+>>>>>>> Stashed changes
             padding: .35rem 0;
         }
         /* Vertical connector line */
         .prog-step::before {
             content: '';
             position: absolute;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             top: 28px;
             left: 13px;
             right: auto;
             width: 2px;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             height: calc(100% + 2px);
+=======
+            height: calc(100% - 8px);
+>>>>>>> Stashed changes
 =======
             height: calc(100% - 8px);
 >>>>>>> Stashed changes
@@ -275,9 +293,12 @@
         .prog-step:last-child::before { display: none; }
         .prog-step.done::before { background: var(--navy); }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         .prog-dot { flex-shrink: 0; margin: 0; }
         .prog-label { font-size: .82rem; margin-top: 0; }
 =======
+=======
+>>>>>>> Stashed changes
         .prog-dot {
             flex-shrink: 0;
             margin: 0;
@@ -286,6 +307,9 @@
             font-size: .82rem;
             margin-top: 0;
         }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
 </style>
@@ -409,6 +433,9 @@
 =======
 </div>
 </div>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 @endsection
 

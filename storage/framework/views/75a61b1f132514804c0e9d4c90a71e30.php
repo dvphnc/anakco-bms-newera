@@ -12,7 +12,10 @@
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css">
     <link rel="stylesheet" href="https://unpkg.com/shepherd.js@11/dist/css/shepherd.css">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 
@@ -159,6 +162,9 @@
 =======
         .topbar-title { font-size:18px; font-weight:700; color:var(--navy); line-height:1.2; letter-spacing:-0.01em; }
         .topbar-subtitle { font-size:13px; color:var(--text-subtle); font-weight:300; }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         .topbar-right { display:flex; align-items:center; gap:10px; }
         .topbar-date {
@@ -194,6 +200,7 @@
         .alert-close   { background:none; border:none; color:var(--text-subtle); font-size:14px; padding:2px; flex-shrink:0; }
         .alert-close:hover { color:var(--text); }
 
+<<<<<<< Updated upstream
         /* ── Alert Tray (collapsible notices strip — dashboard & module pages) ── */
         .alert-tray     { margin-bottom:18px; border-radius:var(--radius); overflow:hidden;
                           border:1px solid var(--gold-border); background:var(--gold-pale); }
@@ -237,6 +244,18 @@
 =======
         .btn { display:inline-flex; align-items:center; gap:7px; padding:10px 20px; min-height:48px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; border:1px solid transparent; cursor:pointer; transition:all 0.15s; font-family:'Poppins',sans-serif; white-space:nowrap; }
 >>>>>>> Stashed changes
+=======
+        .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; gap:16px; flex-wrap:wrap; }
+        .page-title { font-size:22px; font-weight:700; color:var(--navy); line-height:1.2; letter-spacing:-0.01em; }
+        .page-subtitle { font-size:13px; color:var(--text-muted); margin-top:2px; font-weight:300; }
+        .page-actions  { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        .page-breadcrumb { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-muted); margin-top:5px; }
+        .page-breadcrumb a { color:var(--text-muted); transition:color .15s; }
+        .page-breadcrumb a:hover { color:var(--navy); text-decoration:underline; }
+        .page-breadcrumb .bc-sep { font-size:9px; opacity:0.5; }
+
+        .btn { display:inline-flex; align-items:center; gap:7px; padding:10px 20px; min-height:48px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; border:1px solid transparent; cursor:pointer; transition:all 0.15s; font-family:'Poppins',sans-serif; white-space:nowrap; }
+>>>>>>> Stashed changes
         .btn:focus-visible { outline:2px solid var(--gold); outline-offset:2px; box-shadow:0 0 0 4px rgba(200,134,26,0.18); }
         .btn-primary:focus-visible,
         .btn-gold:focus-visible { outline-color:var(--navy); box-shadow:0 0 0 4px var(--navy-pale); }
@@ -251,7 +270,11 @@
         .btn-danger    { background:var(--crimson-pale); color:var(--crimson); border-color:var(--crimson-border); }
         .btn-danger:hover { background:rgba(155,28,28,0.12); }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         .btn-sm   { padding:6px 13px; font-size:12px; min-height:34px; }
+=======
+        .btn-sm   { padding:7px 14px; font-size:13px; min-height:38px; }
+>>>>>>> Stashed changes
 =======
         .btn-sm   { padding:7px 14px; font-size:13px; min-height:38px; }
 >>>>>>> Stashed changes
@@ -284,6 +307,7 @@
 
         .table-responsive { overflow-x:auto; -webkit-overflow-scrolling:touch; }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         table { width:100%; border-collapse:collapse; font-size:13px; min-width:600px; }
         thead th { padding:9px 14px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--navy); background:var(--surface2); border-bottom:2px solid var(--border2); white-space:nowrap; }
         tbody tr { border-bottom:1px solid var(--border); transition:background 0.1s; }
@@ -292,6 +316,16 @@
         tbody td { padding:11px 14px; color:var(--text); vertical-align:middle; font-size:13px; line-height:1.55; }
         .td-muted { color:var(--text-muted); font-size:12px; line-height:1.5; }
         .td-mono  { font-family:'Courier New',monospace; color:var(--text-muted); font-size:12px; }
+=======
+        table { width:100%; border-collapse:collapse; font-size:14px; min-width:600px; }
+        thead th { padding:11px 16px; text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--navy); background:var(--surface2); border-bottom:2px solid var(--border2); white-space:nowrap; }
+        tbody tr { border-bottom:1px solid var(--border); transition:background 0.1s; }
+        tbody tr:last-child { border-bottom:none; }
+        tbody tr:hover { background:var(--navy-pale); }
+        tbody td { padding:13px 16px; color:var(--text); vertical-align:middle; font-size:14px; line-height:1.55; }
+        .td-muted { color:var(--text-muted); font-size:13px; line-height:1.5; }
+        .td-mono  { font-family:'Courier New',monospace; color:var(--text-muted); font-size:13px; }
+>>>>>>> Stashed changes
 =======
         table { width:100%; border-collapse:collapse; font-size:14px; min-width:600px; }
         thead th { padding:11px 16px; text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--navy); background:var(--surface2); border-bottom:2px solid var(--border2); white-space:nowrap; }
@@ -329,6 +363,7 @@
         .form-actions { display:flex; align-items:center; gap:10px; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         .stat-card { background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-lg); padding:22px; display:flex; align-items:center; gap:18px; box-shadow:0 1px 4px rgba(13,33,68,0.07),0 4px 16px rgba(13,33,68,0.04); transition:border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
         .stat-card:hover { border-color:var(--gold-border); box-shadow:0 4px 20px rgba(200,134,26,0.14),0 1px 4px rgba(13,33,68,0.08); transform:translateY(-2px); }
         .stat-icon { width:52px; height:52px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
@@ -336,12 +371,17 @@
         .stat-number { font-size:28px; font-weight:700; color:var(--navy); line-height:1.1; }
         .stat-label  { font-size:12px; color:var(--text-subtle); margin-top:5px; font-weight:500; letter-spacing:0.02em; }
 =======
+=======
+>>>>>>> Stashed changes
         .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:22px; display:flex; align-items:center; gap:18px; box-shadow:var(--shadow-sm); transition:border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
         .stat-card:hover { border-color:var(--gold-border); box-shadow:var(--shadow-gold); transform:translateY(-2px); }
         .stat-icon { width:52px; height:52px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
         .stat-info { flex:1; min-width:0; }
         .stat-number { font-size:30px; font-weight:700; color:var(--navy); line-height:1; }
         .stat-label  { font-size:13px; color:var(--text-muted); margin-top:4px; font-weight:400; }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
         .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
@@ -737,7 +777,10 @@
     <script src="https://unpkg.com/tippy.js@6/dist/tippy.umd.min.js"></script>
     <script src="https://unpkg.com/shepherd.js@11/dist/js/shepherd.min.js"></script>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     <script>
@@ -933,6 +976,7 @@
     })();
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     // ── Shared alert auto-dismiss (progress bar + fade-collapse) ────────
     function bmsAlertAutoDismiss(el) {
         var bar = document.createElement('div');
@@ -1010,6 +1054,8 @@
     });
 
 =======
+=======
+>>>>>>> Stashed changes
     // ── Toast notification ───────────────────────────────────────────────
     function bmsToast(message, type) {
         type = type || 'success';
@@ -1039,6 +1085,9 @@
         }, 4500);
     }
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     // ── Global Confirmation Modal ────────────────────────────────────────
     let _bmsCallback = null;
@@ -1050,9 +1099,14 @@
 
     document.getElementById('bmsConfirmOk').addEventListener('click', function () {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         const cb = _bmsCallback;
         bmsConfirmCancel();
         if (cb) cb();
+=======
+        bmsConfirmCancel();
+        if (_bmsCallback) _bmsCallback();
+>>>>>>> Stashed changes
 =======
         bmsConfirmCancel();
         if (_bmsCallback) _bmsCallback();
@@ -1122,6 +1176,7 @@
     }, true);
     // Re-enable on back-button restore (bfcache)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     // Also force a full reload so Select2, DataTables, and all JS re-initialise
     // cleanly instead of running against a frozen DOM snapshot.
     window.addEventListener('pageshow', function(e) {
@@ -1139,6 +1194,8 @@
     @keyframes alertShrink   { from { width:100%; } to { width:0%; } }
     @keyframes alertSlideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
 =======
+=======
+>>>>>>> Stashed changes
     window.addEventListener('pageshow', function(e) {
         if (e.persisted) {
             document.querySelectorAll('button[type="submit"]').forEach(function(btn) {
@@ -1171,6 +1228,9 @@
     <style>
     @keyframes alertShrink  { from { width:100%; } to { width:0%; } }
     @keyframes toastSlideIn { from { opacity:0; transform:translateX(16px); } to { opacity:1; transform:translateX(0); } }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     .alert-warning { background:var(--gold-pale); border:1px solid var(--gold-border); color:#78450a; }
     </style>
