@@ -21,7 +21,9 @@
       "Bash(curl -s http://anakco_bms.test/portal)",
       "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\storage\\\\logs\\\\laravel.log\" -Tail 30)",
       "Bash(xargs grep -l \"committee\\\\|Committee\")",
-      "Bash(php -r 'require '\\\\''vendor/autoload.php'\\\\''; $app = require '\\\\''bootstrap/app.php'\\\\''; echo '\\\\''Bootstrap OK'\\\\'';')"
+      "Bash(php -r 'require '\\\\''vendor/autoload.php'\\\\''; $app = require '\\\\''bootstrap/app.php'\\\\''; echo '\\\\''Bootstrap OK'\\\\'';')",
+      "Bash(php -l resources/views/committees/show.blade.php)",
+      "Bash(php -l app/Http/Controllers/CommitteeController.php)"
     ]
   }
 }
