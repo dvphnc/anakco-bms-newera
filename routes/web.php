@@ -154,6 +154,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('committees/{slug}/relief/{id}', [CommitteeController::class, 'destroyRelief'])
         ->name('committees.destroyRelief')->middleware('role:Admin,Secretary,Committee');
 
+    // Generic tab deletes
+    Route::delete('committees/{slug}/records/{id}',    [CommitteeController::class, 'destroyRecord'])    ->name('committees.destroyRecord');
+    Route::delete('committees/{slug}/activities/{id}', [CommitteeController::class, 'destroyActivity'])  ->name('committees.destroyActivity');
+    Route::delete('committees/{slug}/attendance/{id}', [CommitteeController::class, 'destroyAttendance'])->name('committees.destroyAttendance');
+    Route::delete('committees/{slug}/inventory/{id}',  [CommitteeController::class, 'destroyInventory']) ->name('committees.destroyInventory');
+    // Specific tab delete (single route, type-dispatched)
+    Route::delete('committees/{slug}/specific/{type}/{id}', [CommitteeController::class, 'destroySpecificItem'])->name('committees.destroySpecificItem');
+    // Generic tab updates
+    Route::patch('committees/{slug}/activities/{id}',  [CommitteeController::class, 'updateActivity'])   ->name('committees.updateActivity');
+    Route::patch('committees/{slug}/attendance/{id}',  [CommitteeController::class, 'updateAttendance']) ->name('committees.updateAttendance');
+    Route::patch('committees/{slug}/inventory/{id}',   [CommitteeController::class, 'updateInventory'])  ->name('committees.updateInventory');
+    Route::patch('committees/{slug}/partnerships/{id}',[CommitteeController::class, 'updatePartnership'])->name('committees.updatePartnership');
+    // Specific tab update
+    Route::patch('committees/{slug}/specific/{type}/{id}', [CommitteeController::class, 'updateSpecificItem'])->name('committees.updateSpecificItem');
+
     // ---------------------------------------------------
     // Appointments (Document Scheduling) — Admin + Secretary
     // ---------------------------------------------------
