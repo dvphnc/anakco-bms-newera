@@ -11,6 +11,8 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\HouseholdController;
 use App\Http\Controllers\OfficialController;
+use App\Http\Controllers\PortalBlotterController;
+use App\Http\Controllers\PortalBusinessController;
 use App\Http\Controllers\PurokController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResidentController;
