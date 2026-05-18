@@ -132,6 +132,25 @@
         }
         @media (max-width: 900px) { .sys-health { display: none; } }
 
+        /* ─── Live clock ─── */
+        .portal-clock {
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            font-size: .78rem;
+            font-weight: 600;
+            color: rgba(255,255,255,.8);
+            white-space: nowrap;
+            padding: .3rem .75rem;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 999px;
+            background: rgba(255,255,255,.06);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: .01em;
+        }
+        .portal-clock i { font-size: .7rem; opacity: .65; }
+        @media (max-width: 768px) { .portal-clock { display: none; } }
+
         /* ─── Desktop nav ─── */
         .portal-nav {
             display: flex;
@@ -568,138 +587,6 @@
         #portalToast.toast-error   { background: var(--crimson); }
         #portalToast.toast-warning { background: var(--gold); }
 
-        /* ═══════════════════════════════════════════════════════
-           FOOTER
-        ═══════════════════════════════════════════════════════ */
-        .portal-footer { background: var(--navy-dark); color: rgba(255,255,255,.55); }
-
-        .footer-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3.5rem clamp(1rem, 4vw, 2.5rem) 0;
-            display: grid;
-            grid-template-columns: 1.7fr 1fr 1fr 1.2fr auto;
-            gap: 2rem 2.5rem;
-            align-items: start;
-        }
-
-        /* Seal + brand column */
-        .footer-brand { display: flex; flex-direction: column; gap: .85rem; }
-        .footer-brand-top {
-            display: flex; align-items: center; gap: .85rem;
-        }
-        .footer-seal-sm {
-            width: 48px; height: 48px; flex-shrink: 0;
-        }
-        .footer-brand-name { font-weight: 700; font-size: .95rem; color: #fff; line-height: 1.25; }
-        .footer-brand-sub  { font-size: .72rem; opacity: .6; }
-        .footer-about      { font-size: .8rem; line-height: 1.75; max-width: 260px; }
-        .footer-legal-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
-            background: rgba(200,134,26,.15);
-            border: 1px solid rgba(200,134,26,.3);
-            color: var(--gold-light);
-            padding: .3rem .75rem;
-            border-radius: 999px;
-            font-size: .7rem;
-            font-weight: 600;
-            margin-top: .25rem;
-            width: fit-content;
-        }
-
-        /* Footer link columns */
-        .footer-col h4 {
-            font-size: .72rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .1em;
-            color: rgba(255,255,255,.35);
-            margin-bottom: 1rem; padding-bottom: .5rem;
-            border-bottom: 1px solid rgba(255,255,255,.08);
-        }
-        .footer-col a {
-            display: flex; align-items: center; gap: .5rem;
-            color: rgba(255,255,255,.55);
-            text-decoration: none; font-size: .82rem;
-            padding: .3rem 0;
-            transition: color .2s;
-        }
-        .footer-col a:hover { color: var(--gold-light); }
-        .footer-col a i { font-size: .72rem; width: 14px; opacity: .6; }
-
-        /* Republic seal column — standalone visual anchor */
-        .footer-republic {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding-left: 1.5rem;
-            border-left: 1px solid rgba(255,255,255,.08);
-        }
-        .footer-republic-img {
-            width: 148px;
-            height: 148px;
-            object-fit: contain;
-            filter: brightness(0) invert(1);
-            opacity: .45;
-            transition: opacity .3s;
-        }
-        .footer-republic:hover .footer-republic-img { opacity: .7; }
-
-        /* System Health widget */
-        .footer-health {
-            display: flex;
-            flex-direction: column;
-            gap: .55rem;
-        }
-        .footer-health h4 {
-            font-size: .72rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .1em;
-            color: rgba(255,255,255,.35);
-            margin-bottom: .45rem; padding-bottom: .5rem;
-            border-bottom: 1px solid rgba(255,255,255,.08);
-        }
-        .health-row {
-            display: flex;
-            align-items: center;
-            gap: .55rem;
-            font-size: .78rem;
-            color: rgba(255,255,255,.55);
-            line-height: 1.4;
-        }
-        .health-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .health-dot.ok      { background: #22c55e; box-shadow: 0 0 5px rgba(34,197,94,.5); }
-        .health-dot.warn    { background: #f59e0b; box-shadow: 0 0 5px rgba(245,158,11,.5); }
-        .health-dot.offline { background: #ef4444; box-shadow: 0 0 5px rgba(239,68,68,.5);  }
-        .health-label { color: rgba(255,255,255,.75); font-weight: 500; }
-
-        .footer-bottom {
-            max-width: 1100px;
-            margin: 2rem auto 0;
-            padding: 1.1rem clamp(1rem, 4vw, 2.5rem);
-            border-top: 1px solid rgba(255,255,255,.08);
-            display: flex;
-            align-items: center; justify-content: space-between;
-            gap: 1rem; flex-wrap: wrap;
-            font-size: .74rem;
-        }
-        .footer-pb {
-            display: flex; align-items: center; gap: .45rem;
-            color: rgba(255,255,255,.5);
-        }
-        .footer-pb strong { color: rgba(255,255,255,.75); }
-
-        @media (max-width: 900px) {
-            .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
-        }
-        @media (max-width: 560px) {
-            .footer-inner { grid-template-columns: 1fr; }
-            .footer-bottom { justify-content: center; text-align: center; }
-        }
     </style>
     <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
@@ -754,6 +641,9 @@
         <?php else: ?>
             <a href="<?php echo e(route('login')); ?>"><i class="fas fa-sign-in-alt fa-fw"></i> Staff Login</a>
         <?php endif; ?>
+        <a href="<?php echo e(route('portal.blotter')); ?>"><i class="fas fa-gavel fa-fw"></i> File a Blotter Report</a>
+        <a href="<?php echo e(route('portal.business')); ?>"><i class="fas fa-store fa-fw"></i> Business Permit</a>
+        <div class="drawer-divider"></div>
         <a href="<?php echo e(route('portal.request')); ?>" class="drawer-cta">
             <i class="fas fa-file-plus fa-fw"></i> Request a Document
         </a>
@@ -779,6 +669,12 @@
         Online &amp; Secure
     </div>
 
+    
+    <div class="portal-clock" id="portalClock" title="Current date &amp; time">
+        <i class="fas fa-clock"></i>
+        <span id="portalClockTime">--:-- --</span>
+    </div>
+
     <nav class="portal-nav" aria-label="Main navigation">
         <a href="<?php echo e(route('portal.index')); ?>" class="<?php echo e(request()->routeIs('portal.index') ? 'nav-active' : ''); ?>">
             <i class="fas fa-home"></i> Home
@@ -795,7 +691,13 @@
                 <i class="fas fa-sign-in-alt"></i> Staff Login
             </a>
         <?php endif; ?>
-        <a href="<?php echo e(route('portal.request')); ?>" class="nav-cta">
+        <a href="<?php echo e(route('portal.blotter')); ?>" class="<?php echo e(request()->routeIs('portal.blotter*') ? 'nav-active' : ''); ?>">
+            <i class="fas fa-gavel"></i> Blotter
+        </a>
+        <a href="<?php echo e(route('portal.business')); ?>" class="<?php echo e(request()->routeIs('portal.business*') ? 'nav-active' : ''); ?>">
+            <i class="fas fa-store"></i> Business Permit
+        </a>
+        <a href="<?php echo e(route('portal.request')); ?>" class="nav-cta <?php echo e(request()->routeIs('portal.request') || request()->routeIs('portal.store') ? 'nav-active' : ''); ?>">
             <i class="fas fa-file-plus"></i> Request Document
         </a>
     </nav>
@@ -816,80 +718,6 @@
 <main class="portal-main" id="main-content">
     <?php echo $__env->yieldContent('content'); ?>
 </main>
-
-
-<footer class="portal-footer" aria-label="Site footer">
-    <div class="footer-inner">
-
-        
-        <div class="footer-brand">
-            <div class="footer-brand-top">
-                <div class="footer-seal-sm">
-                    <?php echo $__env->make('partials._portal_seal', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
-                </div>
-                <div>
-                    <div class="footer-brand-name">Barangay New Era</div>
-                    <div class="footer-brand-sub">District VI, Quezon City</div>
-                </div>
-            </div>
-            <p class="footer-about">
-                Serving our residents with transparency, efficiency, and integrity.
-                Your trusted barangay government — now digital.
-            </p>
-            <div class="footer-legal-badge">
-                <i class="fas fa-shield-halved"></i>
-                RA 10173 Compliant · Data Privacy Act
-            </div>
-        </div>
-
-        
-        <div class="footer-col">
-            <h4>Services</h4>
-            <a href="<?php echo e(route('portal.request')); ?>?type=Barangay+Clearance">
-                <i class="fas fa-file-shield"></i> Barangay Clearance
-            </a>
-            <a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Indigency">
-                <i class="fas fa-hand-holding-heart"></i> Certificate of Indigency
-            </a>
-            <a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Residency">
-                <i class="fas fa-house-circle-check"></i> Certificate of Residency
-            </a>
-            <a href="<?php echo e(route('portal.request')); ?>?type=Business+Clearance">
-                <i class="fas fa-store"></i> Business Clearance
-            </a>
-        </div>
-
-        
-        <div class="footer-col">
-            <h4>Portal</h4>
-            <a href="<?php echo e(route('portal.index')); ?>"><i class="fas fa-home"></i> Home</a>
-            <a href="<?php echo e(route('portal.request')); ?>"><i class="fas fa-file-plus"></i> Request a Document</a>
-            <a href="<?php echo e(route('portal.track')); ?>"><i class="fas fa-search"></i> Track My Status</a>
-            <?php if(auth()->guard()->check()): ?>
-                <a href="<?php echo e(route('dashboard')); ?>"><i class="fas fa-tachometer-alt"></i> Staff Dashboard</a>
-            <?php else: ?>
-                <a href="<?php echo e(route('login')); ?>"><i class="fas fa-sign-in-alt"></i> Staff Login</a>
-            <?php endif; ?>
-        </div>
-
-        
-        <div class="footer-republic">
-            <img src="<?php echo e(asset('images/republika-seal.png')); ?>"
-                 alt="Seal of the Republic of the Philippines"
-                 width="80" height="80"
-                 style="object-fit:contain;filter:brightness(0) invert(1);opacity:.55;">
-            <p>Republic of the Philippines</p>
-        </div>
-    </div>
-
-    <div class="footer-bottom">
-        <span>&copy; <?php echo e(date('Y')); ?> Barangay New Era, District VI, Quezon City. All rights reserved.</span>
-        <div class="footer-pb">
-            <i class="fas fa-user-tie" style="color:var(--gold);font-size:.8rem"></i>
-            Punong Barangay: <strong>Robert S. Romano</strong>
-        </div>
-    </div>
-</footer>
 
 <script>
 /* ════════════════════════════════════════════════
@@ -918,6 +746,8 @@ function closeMobileNav() {
         { icon: 'fas fa-hand-holding-heart', label: 'Certificate of Indigency',    sub: 'For government assistance programs',            href: '<?php echo e(route("portal.request")); ?>?type=Certificate+of+Indigency' },
         { icon: 'fas fa-house-circle-check', label: 'Certificate of Residency',    sub: 'Proof of residence document',                   href: '<?php echo e(route("portal.request")); ?>?type=Certificate+of+Residency' },
         { icon: 'fas fa-store',              label: 'Business Clearance',          sub: 'For business registration and renewal',         href: '<?php echo e(route("portal.request")); ?>?type=Business+Clearance' },
+        { icon: 'fas fa-gavel',              label: 'File a Blotter Report',       sub: 'Report an incident to the barangay',            href: '<?php echo e(route("portal.blotter")); ?>' },
+        { icon: 'fas fa-file-contract',      label: 'Business Permit Application', sub: 'Apply for new permit or renewal',               href: '<?php echo e(route("portal.business")); ?>' },
         { icon: 'fas fa-search',             label: 'Track Appointment Status',    sub: 'Look up an existing appointment number',        href: '<?php echo e(route("portal.track")); ?>' },
         { icon: 'fas fa-home',               label: 'Portal Home',                 sub: 'Back to the main portal page',                  href: '<?php echo e(route("portal.index")); ?>' },
         { icon: 'fas fa-circle-question',    label: 'Frequently Asked Questions',  sub: 'Common questions about barangay documents',     href: '<?php echo e(route("portal.index")); ?>#faq' },
@@ -1026,6 +856,24 @@ function closeMobileNav() {
     document.addEventListener('input', function (e) {
         if (e.target === input) renderItems(input.value);
     });
+})();
+
+/* ════════════════════════════════════════════════
+   LIVE CLOCK
+════════════════════════════════════════════════ */
+(function () {
+    var el = document.getElementById('portalClockTime');
+    if (!el) return;
+    function tick() {
+        var now = new Date();
+        var h = now.getHours();
+        var m = String(now.getMinutes()).padStart(2, '0');
+        var ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        el.textContent = h + ':' + m + ' ' + ampm;
+    }
+    tick();
+    setInterval(tick, 1000);
 })();
 
 /* ════════════════════════════════════════════════
