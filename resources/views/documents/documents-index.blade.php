@@ -415,7 +415,7 @@ $(document).ready(function () {
 
     let debounce;
     $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380); });
-    $('#typeFilter, #statusFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
+    $('#typeFilter, #statusFilter, #sourceFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
         $('#typeFilter, #statusFilter, #sourceFilter').val(null).trigger('change');
@@ -424,14 +424,27 @@ $(document).ready(function () {
 });
 
 /* ── Quick Status Modal ───────────────────────────────────────────── */
+/* Identical badge-class map used in AppointmentController — single source of truth */
+const DOC_STATUS_CLS = {
+    Pending:    'badge-yellow',
+    Confirmed:  'badge-navy',
+    Processing: 'badge-blue',
+    Ready:      'badge-green',
+    Released:   'badge-gray',
+    Cancelled:  'badge-red',
+};
+
 var _docStatusId = null;
 
 $(document).on('click', '#documentsTable .doc-status-btn', function () {
     _docStatusId = $(this).data('id');
-    document.getElementById('docStatusNum').textContent = 'Doc #' + _docStatusId;
-    document.getElementById('docStatusSelect').value    = $(this).data('status');
-    document.getElementById('docStatusError').style.display = 'none';
-    document.getElementById('docStatusModal').style.display = 'flex';
+    const isPortal = $(this).data('source') === 'portal';
+
+    document.getElementById('docStatusNum').textContent         = $(this).data('num') || ('Doc #' + _docStatusId);
+    document.getElementById('docStatusSelect').value            = $(this).data('status');
+    document.getElementById('docStatusError').style.display     = 'none';
+    document.getElementById('docPortalNote').style.display      = isPortal ? '' : 'none';
+    document.getElementById('docStatusModal').style.display     = 'flex';
 });
 
 function closeDocStatusModal() {
@@ -444,29 +457,33 @@ document.addEventListener('keydown', function (e) {
 
 function saveDocStatus() {
     if (!_docStatusId) return;
-    const btn    = document.getElementById('docStatusSaveBtn');
-    const errDiv = document.getElementById('docStatusError');
-    const status = document.getElementById('docStatusSelect').value;
 
-    errDiv.style.display = 'none';
-    btn.disabled   = true;
-    btn.innerHTML  = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Saving…';
+    const btn     = document.getElementById('docStatusSaveBtn');
+    const spinner = document.getElementById('docStatusSpinner');
+    const icon    = document.getElementById('docStatusSaveIcon');
+    const errDiv  = document.getElementById('docStatusError');
+    const status  = document.getElementById('docStatusSelect').value;
+
+    errDiv.style.display    = 'none';
+    btn.disabled            = true;
+    spinner.style.display   = '';
+    icon.style.display      = 'none';
 
     axios.patch('/documents/' + _docStatusId + '/status', { status: status })
         .then(function (res) {
-            const dt  = $('#documentsTable').DataTable();
+            // Inline badge update — no full table reload needed for the status cell
             const row = $('button.doc-status-btn[data-id="' + _docStatusId + '"]').closest('tr');
             row.find('.doc-status-btn').data('status', res.data.status);
-
-            const clsMap = { Pending: 'badge-yellow', Processing: 'badge-blue', Released: 'badge-green', Cancelled: 'badge-gray' };
-            row.find('td .badge:not(.badge-navy)').first().each(function () {
-                $(this).removeClass('badge-yellow badge-blue badge-green badge-gray badge-red')
-                       .addClass(clsMap[res.data.status] || 'badge-gray').text(res.data.status);
-            });
+            row.find('td .badge:not(.badge-navy):not(.badge-blue[style*="10px"])').first()
+               .removeClass(Object.values(DOC_STATUS_CLS).join(' '))
+               .addClass(DOC_STATUS_CLS[res.data.status] || 'badge-gray')
+               .text(res.data.status);
 
             closeDocStatusModal();
             bmsToast(res.data.message, 'success');
-            dt.ajax.reload(null, false);
+
+            // Full reload so the Appointments column also reflects the reverse-sync
+            $('#documentsTable').DataTable().ajax.reload(null, false);
         })
         .catch(function (err) {
             const msg = err.response?.data?.message || 'Failed to update status.';
@@ -474,10 +491,13 @@ function saveDocStatus() {
             errDiv.style.display = 'block';
         })
         .finally(function () {
-            btn.disabled  = false;
-            btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Status';
+            btn.disabled          = false;
+            spinner.style.display = 'none';
+            icon.style.display    = '';
         });
 }
+
+
 
 </script>
 @endpush
