@@ -3021,6 +3021,15 @@ unset($__errorArgs, $__bag); ?></div>
 
 <?php $__env->startPush('scripts'); ?>
 <script>
+// ── Reload helper: navigate to current page + tab, bypassing cache ──
+function _bmsReloadTab(tabId) {
+    var base = window.location.pathname;
+    var hash = tabId ? '#' + tabId : '';
+    // Use a ?_t= cache-buster so the browser fetches fresh HTML, then the
+    // DOMContentLoaded hash handler opens the right tab automatically.
+    window.location.href = base + '?_t=' + Date.now() + hash;
+}
+
 // ── Axios Form Utility ──────────────────────────────────────
 function axiosForm(form) {
     const btn         = form.querySelector('[type="submit"]');
@@ -3036,70 +3045,63 @@ function axiosForm(form) {
     })
     .then(function(res) {
         const d = res.data;
-        bmsToast(d.message || 'Saved successfully.', 'success');
 
-        // close the form panel
-        const panel = form.closest('.form-panel');
-        if (panel) {
-            panel.classList.remove('open');
-            const panelId  = panel.id;
-            const trigBtn  = document.querySelector('[onclick*="' + panelId + '"][data-label]');
-            if (trigBtn) {
-                const lbl  = trigBtn.dataset.label  || 'Add';
-                const ico  = trigBtn.dataset.icon   || 'fa-plus';
-                trigBtn.innerHTML = '<i class="fas ' + ico + '"></i> ' + lbl;
-                trigBtn.className = 'btn btn-primary btn-sm';
-            }
+        // Determine the target tab (server hint > current active tab)
+        var tabId = d.tab_id || '';
+        if (!tabId) {
+            var at = document.querySelector('.tab-content.active');
+            if (at) tabId = at.id.replace(/^tab-/, '');
         }
-        form.reset();
 
-        // inject new row or remove empty state then create table
+        // Try seamless row injection when the server returned HTML and the
+        // table already exists in the DOM.
         if (d.row_html) {
             const tabEl = form.closest('.tab-content');
             if (tabEl) {
-                // remove empty enhanced state if present
                 const empty = tabEl.querySelector('.empty-enhanced');
                 if (empty) empty.remove();
-
-                let tbody = tabEl.querySelector('table tbody');
-                if (!tbody) {
-                    // no table yet — reload tab content via soft reload
-                    window.location.reload();
+                const tbody = tabEl.querySelector('table tbody');
+                if (tbody) {
+                    tbody.insertAdjacentHTML('afterbegin', d.row_html);
+                    // Update the tab-count pill
+                    if (d.tab_id && d.new_count !== undefined) {
+                        const countEl = document.querySelector('#tab-btn-' + d.tab_id + ' .tab-count');
+                        if (countEl) countEl.textContent = d.new_count;
+                    }
+                    bmsToast(d.message || 'Saved successfully.', 'success');
+                    // Close and reset the form panel
+                    const panel = form.closest('.form-panel');
+                    if (panel) {
+                        panel.classList.remove('open');
+                        const trigBtn = document.querySelector('[onclick*="' + panel.id + '"][data-label]');
+                        if (trigBtn) {
+                            trigBtn.innerHTML = '<i class="fas ' + (trigBtn.dataset.icon || 'fa-plus') + '"></i> ' + (trigBtn.dataset.label || 'Add');
+                            trigBtn.className = 'btn btn-primary btn-sm';
+                        }
+                    }
+                    form.reset();
+                    if (btn) { btn.classList.remove('btn-loading'); btn.innerHTML = origHtml; btn.className = origClass; }
                     return;
                 }
-                tbody.insertAdjacentHTML('afterbegin', d.row_html);
             }
         }
 
-        // update tab count badge
-        if (d.tab_id !== undefined && d.new_count !== undefined) {
-            const countEl = document.querySelector('#tab-btn-' + d.tab_id + ' .tab-count');
-            if (countEl) countEl.textContent = d.new_count;
-        }
-
-        // update stat card numbers
-        if (d.stat_records !== undefined) {
-            const statEls = document.querySelectorAll('.stat-number');
-            // first stat card = total records
-            // update will happen on next page load; soft reload if needed
-        }
+        // Fallback: reload to the correct tab (first-add with no table, or
+        // specific-tab items where row_html is not generated server-side).
+        sessionStorage.setItem('_bmsToast', JSON.stringify({ msg: d.message || 'Saved successfully.', type: 'success' }));
+        _bmsReloadTab(tabId);
     })
     .catch(function(err) {
-        const data = err.response?.data;
+        const data = err.response && err.response.data;
         if (data && data.errors) {
             const first = Object.values(data.errors).flat()[0];
             bmsToast(first, 'error');
-            // show inline error on relevant field
             Object.entries(data.errors).forEach(function([field, msgs]) {
                 const input = form.querySelector('[name="' + field + '"]');
                 if (input) {
                     input.classList.add('is-invalid');
                     let fb = input.parentElement.querySelector('.invalid-feedback');
-                    if (!fb) {
-                        fb = document.createElement('div');
-                        fb.className = 'invalid-feedback';
-                        input.parentElement.appendChild(fb);
-                    }
+                    if (!fb) { fb = document.createElement('div'); fb.className = 'invalid-feedback'; input.parentElement.appendChild(fb); }
                     fb.textContent = msgs[0];
                 }
             });
@@ -3108,13 +3110,18 @@ function axiosForm(form) {
         }
     })
     .finally(function() {
-        if (btn) {
-            btn.classList.remove('btn-loading');
-            btn.innerHTML = origHtml;
-            btn.className = origClass;
-        }
+        if (btn) { btn.classList.remove('btn-loading'); btn.innerHTML = origHtml; btn.className = origClass; }
     });
 }
+
+// Show any toast that was queued before a page reload (e.g. after first-add)
+document.addEventListener('DOMContentLoaded', function() {
+    var _t = sessionStorage.getItem('_bmsToast');
+    if (_t) {
+        sessionStorage.removeItem('_bmsToast');
+        try { var _o = JSON.parse(_t); bmsToast(_o.msg, _o.type); } catch(e) {}
+    }
+});
 
 // wire all data-axios forms
 document.addEventListener('DOMContentLoaded', function() {
@@ -3423,12 +3430,21 @@ function axiosPatch(form, url, modalId, rowUpdater) {
     var orig = btn ? btn.innerHTML : '';
     if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:#C8861A"></i> Saving…'; }
     var fd = new FormData(form);
-    // FormData with _method=PATCH won't work as PATCH; send as POST with _method override
     axios.post(url, fd, { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
         .then(function(res) {
-            bmsToast(res.data.message || 'Updated.', 'success');
             closeCrudModal(modalId);
-            if (rowUpdater && res.data.record) rowUpdater(res.data.record);
+            if (rowUpdater && res.data.record) {
+                // Seamless: updater handles the DOM cells
+                rowUpdater(res.data.record);
+                bmsToast(res.data.message || 'Updated.', 'success');
+                if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+            } else {
+                // No updater (specific-tab edit) — reload to current tab
+                var at = document.querySelector('.tab-content.active');
+                var tabId = at ? at.id.replace(/^tab-/, '') : '';
+                sessionStorage.setItem('_bmsToast', JSON.stringify({ msg: res.data.message || 'Updated.', type: 'success' }));
+                _bmsReloadTab(tabId);
+            }
         })
         .catch(function(err) {
             var data = err.response && err.response.data;
@@ -3437,8 +3453,6 @@ function axiosPatch(form, url, modalId, rowUpdater) {
             } else {
                 bmsToast((data && data.message) || 'Update failed.', 'error');
             }
-        })
-        .finally(function() {
             if (btn) { btn.disabled = false; btn.innerHTML = orig; }
         });
 }
