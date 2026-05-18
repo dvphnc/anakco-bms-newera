@@ -104,20 +104,20 @@
         {{-- Quick Generate Pills --}}
         <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex-wrap:nowrap">
             @foreach($quick as $q)
-            <form method="POST" action="{{ route('reports.generate') }}" onsubmit="doGeneratePdf(this); return false;" style="flex-shrink:0">
-                @csrf
-                <input type="hidden" name="report_type"   value="{{ $q['type'] }}">
-                <input type="hidden" name="report_module" value="{{ $q['module'] }}">
-                <input type="hidden" name="year"          value="{{ $q['year'] }}">
-                @if(isset($q['month']))   <input type="hidden" name="month"   value="{{ $q['month'] }}"> @endif
-                @if(isset($q['quarter'])) <input type="hidden" name="quarter" value="{{ $q['quarter'] }}"> @endif
-                <button type="submit" title="{{ $q['label'] }}"
+            <div style="flex-shrink:0;position:relative">
+                <input type="hidden" class="qg-type"    value="{{ $q['type'] }}">
+                <input type="hidden" class="qg-module"  value="{{ $q['module'] }}">
+                <input type="hidden" class="qg-year"    value="{{ $q['year'] }}">
+                <input type="hidden" class="qg-month"   value="{{ $q['month']   ?? '' }}">
+                <input type="hidden" class="qg-quarter" value="{{ $q['quarter'] ?? '' }}">
+                <button type="button" title="{{ $q['label'] }}"
+                        onclick="quickGenerate(this)"
                         style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;white-space:nowrap;font-family:'Poppins',sans-serif;transition:all 0.15s"
                         onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
                         onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
                     <i class="fas fa-file-pdf" style="color:#9b3535;font-size:11px"></i>{{ $q['short'] }}
                 </button>
-            </form>
+            </div>
             @endforeach
         </div>
 
