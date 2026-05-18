@@ -3003,20 +3003,21 @@ document.getElementById('medDetailsModal')?.addEventListener('click', function(e
 
 // ── Partnership delete ───────────────────────────────────────
 function deletePartnership(id, name, slug) {
+    var rowEl = document.querySelector('tr[data-pid="' + id + '"]');
     bmsConfirm({
         title:   'Delete Partnership',
-        message: 'Delete the partnership with <strong>' + name + '</strong>? This cannot be undone.',
+        message: 'Delete the partnership with ' + name + '? This cannot be undone.',
         ok:      'Delete',
         type:    'danger',
     }, function() {
         axios.delete('/committees/' + slug + '/partnerships/' + id)
             .then(function(res) {
-                const row = document.querySelector('tr[data-pid="' + id + '"]');
-                if (row) row.remove();
+                if (rowEl) rowEl.remove();
                 bmsToast(res.data.message || 'Partnership deleted.', 'success');
             })
-            .catch(function() {
-                bmsToast('Failed to delete partnership.', 'error');
+            .catch(function(err) {
+                var msg = err.response && err.response.data && err.response.data.message;
+                bmsToast(msg || 'Failed to delete partnership.', 'error');
             });
     });
 }
