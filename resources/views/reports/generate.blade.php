@@ -317,16 +317,16 @@
                 <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
                     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Gender Split</div>
                     <div style="display:flex;border-radius:99px;overflow:hidden;height:10px;margin-bottom:8px">
-                        <div style="width:{{ $malePct }}%;background:#3b82f6"></div>
-                        <div style="width:{{ $femalePct }}%;background:#ec4899"></div>
+                        <div style="width:{{ $malePct }}%;background:var(--navy)"></div>
+                        <div style="width:{{ $femalePct }}%;background:#8b4a68"></div>
                     </div>
                     <div style="display:flex;gap:20px">
                         <span style="font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
-                            <span style="width:10px;height:10px;border-radius:50%;background:#3b82f6;display:inline-block"></span>
+                            <span style="width:10px;height:10px;border-radius:50%;background:var(--navy);display:inline-block"></span>
                             Male — {{ number_format($totalMale) }} ({{ $malePct }}%)
                         </span>
                         <span style="font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
-                            <span style="width:10px;height:10px;border-radius:50%;background:#ec4899;display:inline-block"></span>
+                            <span style="width:10px;height:10px;border-radius:50%;background:#8b4a68;display:inline-block"></span>
                             Female — {{ number_format($totalFemale) }} ({{ $femalePct }}%)
                         </span>
                     </div>
@@ -342,12 +342,12 @@
                 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;flex:1">
                     @php
                         $purokColors = [
-                            ['bg'=>'#eff6ff','border'=>'#bfdbfe','num'=>'#1d4ed8','badge'=>'#dbeafe','text'=>'#1e40af'],
-                            ['bg'=>'#f0fdf4','border'=>'#bbf7d0','num'=>'#15803d','badge'=>'#dcfce7','text'=>'#166534'],
-                            ['bg'=>'#fffbeb','border'=>'#fde68a','num'=>'#b45309','badge'=>'#fef3c7','text'=>'#92400e'],
-                            ['bg'=>'#fdf4ff','border'=>'#e9d5ff','num'=>'#7e22ce','badge'=>'#f3e8ff','text'=>'#6b21a8'],
-                            ['bg'=>'#fff1f2','border'=>'#fecdd3','num'=>'#be123c','badge'=>'#ffe4e6','text'=>'#9f1239'],
-                            ['bg'=>'#f0fdfa','border'=>'#99f6e4','num'=>'#0f766e','badge'=>'#ccfbf1','text'=>'#115e59'],
+                            ['bg'=>'rgba(13,33,68,0.05)',   'border'=>'rgba(13,33,68,0.14)',  'num'=>'#0D2144', 'badge'=>'rgba(13,33,68,0.08)',   'text'=>'#3a4f6a'],
+                            ['bg'=>'rgba(200,134,26,0.06)', 'border'=>'rgba(200,134,26,0.2)', 'num'=>'#8a5e10', 'badge'=>'rgba(200,134,26,0.1)',  'text'=>'#7a5200'],
+                            ['bg'=>'rgba(61,122,85,0.05)',  'border'=>'rgba(61,122,85,0.18)', 'num'=>'#2e6b47', 'badge'=>'rgba(61,122,85,0.1)',   'text'=>'#2e6b47'],
+                            ['bg'=>'rgba(94,75,139,0.05)',  'border'=>'rgba(94,75,139,0.18)', 'num'=>'#5e4b8b', 'badge'=>'rgba(94,75,139,0.1)',   'text'=>'#4a3a70'],
+                            ['bg'=>'rgba(139,46,46,0.05)',  'border'=>'rgba(139,46,46,0.18)', 'num'=>'#8b2e2e', 'badge'=>'rgba(139,46,46,0.1)',   'text'=>'#6e2424'],
+                            ['bg'=>'rgba(14,107,107,0.05)', 'border'=>'rgba(14,107,107,0.18)','num'=>'#0e6b6b', 'badge'=>'rgba(14,107,107,0.1)',  'text'=>'#0a5252'],
                         ];
                     @endphp
                     @foreach($puroks as $i => $purok)
