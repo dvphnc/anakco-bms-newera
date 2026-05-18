@@ -368,6 +368,185 @@ class CommitteeController extends Controller
     }
 
     // -------------------------------------------------------
+    // DELETE — generic tabs
+    // -------------------------------------------------------
+    public function destroyRecord(string $slug, int $id)
+    {
+        $record = CommitteeRecord::where('committee_slug', $slug)->findOrFail($id);
+        if ($record->file_path) \Illuminate\Support\Facades\Storage::disk('public')->delete($record->file_path);
+        $record->delete();
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted.']);
+        }
+        return back()->with('success', 'Record deleted.')->withFragment('records');
+    }
+
+    public function destroyActivity(string $slug, int $id)
+    {
+        $activity = CommitteeActivity::where('committee_slug', $slug)->findOrFail($id);
+        $tab = $activity->activity_type === 'Accomplishment' ? 'accomplishments' : 'activities';
+        $activity->delete();
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Deleted successfully.']);
+        }
+        return back()->with('success', 'Deleted.')->withFragment($tab);
+    }
+
+    public function destroyAttendance(string $slug, int $id)
+    {
+        $att = CommitteeAttendance::where('committee_slug', $slug)->findOrFail($id);
+        if ($att->file_path) \Illuminate\Support\Facades\Storage::disk('public')->delete($att->file_path);
+        $att->delete();
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Attendance record deleted.']);
+        }
+        return back()->with('success', 'Attendance record deleted.')->withFragment('attendance');
+    }
+
+    public function destroyInventory(string $slug, int $id)
+    {
+        $item = CommitteeInventory::where('committee_slug', $slug)->findOrFail($id);
+        $item->delete();
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Inventory item deleted.']);
+        }
+        return back()->with('success', 'Item deleted.')->withFragment('inventory');
+    }
+
+    public function destroySpecificItem(string $slug, string $type, int $id)
+    {
+        $map = [
+            'bpso'        => BpsoMember::class,
+            'patrol'      => PatrolLog::class,
+            'training'    => TanodTraining::class,
+            'health'      => HealthRecord::class,
+            'clinic'      => ClinicStaff::class,
+            'scholar'     => Scholar::class,
+            'project'     => InfraProject::class,
+            'contract'    => InfraContract::class,
+            'financial'   => InfraFinancial::class,
+            'environment' => EnvironmentProgram::class,
+            'sweeper'     => StreetSweeper::class,
+            'beneficiary' => LivelihoodBeneficiary::class,
+            'toda'        => TodaVehicle::class,
+            'emergency'   => EmergencyLog::class,
+            'evacuation'  => EvacuationCenter::class,
+        ];
+        abort_unless(isset($map[$type]), 404);
+        $record = $map[$type]::findOrFail($id);
+        $record->delete();
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted.']);
+        }
+        return back()->with('success', 'Record deleted.');
+    }
+
+    // -------------------------------------------------------
+    // UPDATE — generic tabs
+    // -------------------------------------------------------
+    public function updateActivity(Request $request, string $slug, int $id)
+    {
+        $activity = CommitteeActivity::where('committee_slug', $slug)->findOrFail($id);
+        $v = $request->validate([
+            'title'              => 'required|string|max:255',
+            'activity_date'      => 'required|date',
+            'location'           => 'nullable|string|max:255',
+            'participants_count' => 'nullable|integer|min:0',
+            'status'             => 'required|string',
+            'description'        => 'nullable|string',
+        ]);
+        $activity->update($v);
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Updated successfully.', 'record' => $activity->fresh()]);
+        }
+        return back()->with('success', 'Updated.');
+    }
+
+    public function updateAttendance(Request $request, string $slug, int $id)
+    {
+        $att = CommitteeAttendance::where('committee_slug', $slug)->findOrFail($id);
+        $v = $request->validate([
+            'event_name'     => 'required|string|max:255',
+            'event_date'     => 'required|date',
+            'venue'          => 'nullable|string|max:255',
+            'total_attendees'=> 'required|integer|min:0',
+            'notes'          => 'nullable|string',
+        ]);
+        $att->update($v);
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Attendance updated.', 'record' => $att->fresh()]);
+        }
+        return back()->with('success', 'Attendance updated.');
+    }
+
+    public function updateInventory(Request $request, string $slug, int $id)
+    {
+        $item = CommitteeInventory::where('committee_slug', $slug)->findOrFail($id);
+        $v = $request->validate([
+            'item_name' => 'required|string|max:255',
+            'category'  => 'nullable|string|max:100',
+            'quantity'  => 'required|integer|min:0',
+            'unit'      => 'nullable|string|max:50',
+            'condition' => 'required|string',
+            'remarks'   => 'nullable|string',
+        ]);
+        $item->update($v);
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Inventory updated.', 'record' => $item->fresh()]);
+        }
+        return back()->with('success', 'Inventory updated.');
+    }
+
+    public function updatePartnership(Request $request, string $slug, int $id)
+    {
+        $p = CommitteePartnership::where('committee_slug', $slug)->findOrFail($id);
+        $v = $request->validate([
+            'partner_name'   => 'required|string|max:255',
+            'partner_type'   => 'required|in:Government,NGO,Private,Community,Other',
+            'mou_date'       => 'nullable|date',
+            'validity_date'  => 'nullable|date',
+            'contact_person' => 'nullable|string|max:255',
+            'contact_number' => 'nullable|string|max:20',
+            'description'    => 'nullable|string',
+        ]);
+        $p->update($v);
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Partnership updated.', 'record' => $p->fresh()]);
+        }
+        return back()->with('success', 'Partnership updated.');
+    }
+
+    public function updateSpecificItem(Request $request, string $slug, string $type, int $id)
+    {
+        $map = [
+            'bpso'        => [BpsoMember::class,        ['full_name'=>'required|string|max:255','rank'=>'nullable|string|max:100','badge_number'=>'nullable|string|max:50','contact_number'=>'nullable|string|max:20','assignment'=>'nullable|string|max:255','status'=>'required|in:Active,Inactive,On Leave']],
+            'patrol'      => [PatrolLog::class,          ['patrol_date'=>'required|date','shift'=>'nullable|string','area_covered'=>'required|string|max:255','personnel_count'=>'nullable|integer|min:0','reported_by'=>'nullable|string|max:255','findings'=>'nullable|string']],
+            'training'    => [TanodTraining::class,      ['title'=>'required|string|max:255','training_type'=>'required|string','training_date'=>'required|date','duration'=>'nullable|string|max:100','venue'=>'nullable|string|max:255','facilitator'=>'nullable|string|max:255','participants_count'=>'nullable|integer|min:0','notes'=>'nullable|string']],
+            'health'      => [HealthRecord::class,       ['patient_name'=>'required|string|max:255','visit_date'=>'required|date','age'=>'nullable|integer','gender'=>'nullable|string','program'=>'nullable|string','address'=>'nullable|string','attended_by'=>'nullable|string|max:255','diagnosis'=>'nullable|string','notes'=>'nullable|string']],
+            'clinic'      => [ClinicStaff::class,        ['full_name'=>'required|string|max:255','position'=>'nullable|string|max:100','specialization'=>'nullable|string|max:100','contact_number'=>'nullable|string|max:20','schedule'=>'nullable|string|max:255','status'=>'nullable|string']],
+            'scholar'     => [Scholar::class,            ['full_name'=>'required|string|max:255','school'=>'required|string|max:255','course_grade_level'=>'nullable|string|max:100','year_level'=>'nullable|string|max:50','scholarship_type'=>'nullable|string|max:100','grant_amount'=>'nullable|numeric|min:0','status'=>'required|string','start_date'=>'nullable|date']],
+            'project'     => [InfraProject::class,       ['project_name'=>'required|string|max:255','project_type'=>'nullable|string','location'=>'nullable|string|max:255','status'=>'required|string','budget'=>'nullable|numeric|min:0','actual_cost'=>'nullable|numeric|min:0','completion_percentage'=>'nullable|integer|min:0|max:100','start_date'=>'nullable|date','end_date'=>'nullable|date','remarks'=>'nullable|string']],
+            'contract'    => [InfraContract::class,      ['title'=>'required|string|max:255','contractor'=>'nullable|string|max:255','contract_amount'=>'nullable|numeric|min:0','start_date'=>'nullable|date','end_date'=>'nullable|date','status'=>'nullable|string','remarks'=>'nullable|string']],
+            'financial'   => [InfraFinancial::class,     ['title'=>'required|string|max:255','type'=>'required|string','fund_source'=>'nullable|string|max:255','amount'=>'nullable|numeric|min:0','date'=>'nullable|date','reference_number'=>'nullable|string|max:100']],
+            'environment' => [EnvironmentProgram::class, ['program_name'=>'required|string|max:255','program_date'=>'required|date','program_type'=>'nullable|string','location'=>'nullable|string|max:255','status'=>'required|string','volunteers'=>'nullable|integer|min:0','trees_planted'=>'nullable|integer|min:0','waste_collected_kg'=>'nullable|numeric|min:0','notes'=>'nullable|string']],
+            'sweeper'     => [StreetSweeper::class,      ['full_name'=>'required|string|max:255','area_assigned'=>'nullable|string|max:255','contact_number'=>'nullable|string|max:20','shift'=>'nullable|string','status'=>'nullable|string']],
+            'beneficiary' => [LivelihoodBeneficiary::class,['full_name'=>'required|string|max:255','program'=>'nullable|string|max:255','assistance_type'=>'nullable|string|max:100','amount'=>'nullable|numeric|min:0','date_granted'=>'nullable|date','status'=>'nullable|string','remarks'=>'nullable|string']],
+            'toda'        => [TodaVehicle::class,        ['operator_name'=>'required|string|max:255','plate_number'=>'nullable|string|max:20','vehicle_type'=>'nullable|string|max:50','toda_association'=>'nullable|string|max:255','contact_number'=>'nullable|string|max:20','status'=>'nullable|string']],
+            'emergency'   => [EmergencyLog::class,       ['incident_type'=>'required|string|max:255','incident_date'=>'required|date','location'=>'nullable|string|max:255','description'=>'nullable|string','casualties'=>'nullable|integer|min:0','response_action'=>'nullable|string','logged_by'=>'nullable|string|max:255']],
+            'evacuation'  => [EvacuationCenter::class,   ['center_name'=>'required|string|max:255','location'=>'nullable|string|max:255','capacity'=>'nullable|integer|min:0','contact_person'=>'nullable|string|max:255','contact_number'=>'nullable|string|max:20','status'=>'nullable|string']],
+        ];
+        abort_unless(isset($map[$type]), 404);
+        [$modelClass, $rules] = $map[$type];
+        $record = $modelClass::findOrFail($id);
+        $v = $request->validate($rules);
+        $record->update($v);
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Record updated.', 'record' => $record->fresh()]);
+        }
+        return back()->with('success', 'Record updated.');
+    }
+
+    // -------------------------------------------------------
     // Medicine stock adjustment
     // -------------------------------------------------------
     public function adjustMedicine(Request $request, string $slug, int $id)
