@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppointmentStatusLog;
+use App\Models\BlotterRequest;
+use App\Models\BusinessPermitRequest;
 use App\Models\DocumentAppointment;
 use Illuminate\Http\Request;
 

@@ -34,9 +34,19 @@ Route::get('/verify/business/{permitNumber}', [VerifyController::class, 'busines
 // -------------------------------------------------------
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/',                         [ResidentPortalController::class, 'index'])->name('index');
+    // Document request
     Route::get('/request',                  [ResidentPortalController::class, 'create'])->name('request');
     Route::post('/request',                 [ResidentPortalController::class, 'store'])->name('store');
     Route::get('/confirmation/{number}',    [ResidentPortalController::class, 'confirmation'])->name('confirmation');
+    // Blotter request
+    Route::get('/blotter',                  [ResidentPortalController::class, 'blotterForm'])->name('blotter');
+    Route::post('/blotter',                 [ResidentPortalController::class, 'storeBlotter'])->name('blotter.store');
+    // Business permit request
+    Route::get('/business',                 [ResidentPortalController::class, 'businessForm'])->name('business');
+    Route::post('/business',                [ResidentPortalController::class, 'storeBusiness'])->name('business.store');
+    // Generic submitted confirmation
+    Route::get('/submitted/{type}/{number}',[ResidentPortalController::class, 'submitted'])->name('submitted');
+    // Track
     Route::get('/track',                    [ResidentPortalController::class, 'trackForm'])->name('track');
     Route::post('/track',                   [ResidentPortalController::class, 'track'])->name('track.post');
     Route::get('/track/lookup',             [ResidentPortalController::class, 'trackLookup'])->name('track.lookup');
@@ -180,6 +190,32 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('appointments.updateStatus')->middleware('role:Admin,Secretary');
     Route::delete('appointments/{appointment}', [AppointmentController::class, 'destroy'])
         ->name('appointments.destroy')->middleware('role:Admin,Secretary');
+
+    // ---------------------------------------------------
+    // Portal Blotter Requests — Admin + Secretary
+    // ---------------------------------------------------
+    Route::get('portal-blotter', [PortalBlotterController::class, 'index'])
+        ->name('portal-blotter.index')->middleware('role:Admin,Secretary');
+    Route::patch('portal-blotter/{blotterRequest}/status', [PortalBlotterController::class, 'updateStatus'])
+        ->name('portal-blotter.updateStatus')->middleware('role:Admin,Secretary');
+    Route::delete('portal-blotter/{blotterRequest}', [PortalBlotterController::class, 'destroy'])
+        ->name('portal-blotter.destroy')->middleware('role:Admin,Secretary');
+
+    // ---------------------------------------------------
+    // Portal Business Permit Requests — Admin + Secretary
+    // ---------------------------------------------------
+    Route::get('portal-business', [PortalBusinessController::class, 'index'])
+        ->name('portal-business.index')->middleware('role:Admin,Secretary');
+    Route::patch('portal-business/{businessPermitRequest}/status', [PortalBusinessController::class, 'updateStatus'])
+        ->name('portal-business.updateStatus')->middleware('role:Admin,Secretary');
+    Route::delete('portal-business/{businessPermitRequest}', [PortalBusinessController::class, 'destroy'])
+        ->name('portal-business.destroy')->middleware('role:Admin,Secretary');
+
+    // ---------------------------------------------------
+    // Portal Pending Count — for sidebar badge (Admin + Secretary)
+    // ---------------------------------------------------
+    Route::get('portal/pending-count', [AppointmentController::class, 'portalPendingCount'])
+        ->name('portal.pending-count')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Reports — Admin + Secretary only
