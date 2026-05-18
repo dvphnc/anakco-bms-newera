@@ -45,7 +45,7 @@
         ['label' => 'This Month · Summary',   'short' => 'Summary',   'icon' => 'fa-chart-pie',    'type' => 'monthly',   'module' => 'summary',   'month' => date('n'), 'year' => date('Y')],
         ['label' => 'This Month · Documents',  'short' => 'Documents', 'icon' => 'fa-file-alt',     'type' => 'monthly',   'module' => 'documents', 'month' => date('n'), 'year' => date('Y')],
         ['label' => 'This Month · Blotter',    'short' => 'Blotter',   'icon' => 'fa-gavel',        'type' => 'monthly',   'module' => 'blotter',   'month' => date('n'), 'year' => date('Y')],
-        ['label' => 'This Quarter · Summary',  'short' => 'Q Summary', 'icon' => 'fa-calendar-week','type' => 'quarterly', 'module' => 'summary',   'quarter' => (int)ceil(date('n')/3), 'year' => date('Y')],
+        ['label' => 'This Quarter · Summary',  'short' => 'Quarterly', 'icon' => 'fa-calendar-week','type' => 'quarterly', 'module' => 'summary',   'quarter' => (int)ceil(date('n')/3), 'year' => date('Y')],
         ['label' => date('Y').' Annual',       'short' => 'Annual',    'icon' => 'fa-calendar',     'type' => 'annual',    'module' => 'summary',   'year' => date('Y')],
     ];
 @endphp
