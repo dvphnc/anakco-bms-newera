@@ -134,9 +134,10 @@ class ResidentPortalController extends Controller
      |──────────────────────────────────────────────────── */
     public function businessForm()
     {
-        return view('portal.business-request', [
-            'businessTypes' => BusinessPermitRequest::$businessTypes,
-        ]);
+        $businessTypes = ['Sari-Sari Store', 'Restaurant / Carinderia', 'Salon / Barbershop',
+                          'Repair Shop', 'Pharmacy / Drugstore', 'Laundry', 'Printing / Photocopy',
+                          'Retail Store', 'Online Selling / E-commerce', 'Other'];
+        return view('portal.business-request', compact('businessTypes'));
     }
 
     public function storeBusiness(Request $request)
@@ -148,16 +149,22 @@ class ResidentPortalController extends Controller
             'business_name'    => 'required|string|max:255',
             'business_type'    => 'required|string',
             'business_address' => 'required|string|max:500',
-            'operation_year'   => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
             'purpose'          => 'nullable|string|max:500',
         ]);
 
-        $validated['request_number'] = BusinessPermitRequest::generateNumber();
-        $validated['status']         = 'Pending';
+        $business = Business::create([
+            'permit_number'    => Business::generatePermitNumber(),
+            'source'           => 'portal',
+            'owner_name'       => $validated['owner_name'],
+            'owner_contact'    => $validated['contact_number'],
+            'email'            => $validated['email'] ?? null,
+            'business_name'    => $validated['business_name'],
+            'business_type'    => $validated['business_type'],
+            'business_address' => $validated['business_address'],
+            'status'           => 'Pending',
+        ]);
 
-        $business = BusinessPermitRequest::create($validated);
-
-        $redirectUrl = route('portal.submitted', ['type' => 'business', 'number' => $business->request_number]);
+        $redirectUrl = route('portal.submitted', ['type' => 'business', 'number' => $business->permit_number]);
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['redirect' => $redirectUrl]);
