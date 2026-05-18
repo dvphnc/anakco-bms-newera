@@ -297,6 +297,30 @@ class CommitteeController extends Controller
         $validated['committee_slug'] = $slug;
         CommitteeInventory::create($validated);
 
+        if ($request->expectsJson()) {
+            $count = \App\Models\CommitteeInventory::where('committee_slug', $slug)->count();
+            $item  = \App\Models\CommitteeInventory::where('committee_slug', $slug)->latest()->first();
+            $badgeCls = match($item->condition) {
+                'Good' => 'badge-green', 'Fair' => 'badge-yellow',
+                'Poor' => 'badge-red',   default => 'badge-gray',
+            };
+            $rowHtml = '<tr>'
+                . '<td style="font-weight:600">' . e($item->item_name) . '</td>'
+                . '<td class="td-muted">' . e($item->category ?? '—') . '</td>'
+                . '<td style="text-align:right;font-weight:700;color:var(--navy)">' . number_format($item->quantity) . '</td>'
+                . '<td class="td-muted">' . e($item->unit ?? '—') . '</td>'
+                . '<td><span class="badge ' . $badgeCls . '">' . e($item->condition) . '</span></td>'
+                . '<td class="td-muted">' . e($item->remarks ?? '—') . '</td>'
+                . '</tr>';
+            return response()->json([
+                'success'   => true,
+                'message'   => 'Item added to inventory.',
+                'tab_id'    => 'inventory',
+                'new_count' => $count,
+                'row_html'  => $rowHtml,
+            ]);
+        }
+
         return back()->with('success', 'Item added.')->withFragment('inventory');
     }
 
@@ -431,6 +455,30 @@ class CommitteeController extends Controller
         $validated['committee_slug'] = $slug;
 
         CommitteePartnership::create($validated);
+
+        if ($request->expectsJson()) {
+            $count = \App\Models\CommitteePartnership::where('committee_slug', $slug)->count();
+            $p     = \App\Models\CommitteePartnership::where('committee_slug', $slug)->latest()->first();
+            $rowHtml = '<tr data-pid="' . $p->id . '">'
+                . '<td><div style="font-weight:600;color:var(--navy)">' . e($p->partner_name) . '</div>'
+                . ($p->description ? '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">' . \Illuminate\Support\Str::limit($p->description, 60) . '</div>' : '')
+                . '</td>'
+                . '<td><span class="badge badge-navy">' . e($p->partner_type) . '</span></td>'
+                . '<td class="td-muted">' . ($p->mou_date?->format('M d, Y') ?? '—') . '</td>'
+                . '<td class="td-muted">' . ($p->validity_date?->format('M d, Y') ?? '—') . '</td>'
+                . '<td class="td-muted">' . e($p->contact_person ?? '—') . '</td>'
+                . '<td class="td-muted">' . e($p->contact_number ?? '—') . '</td>'
+                . '<td><span class="td-muted">—</span></td>'
+                . '<td><button type="button" onclick="deletePartnership(' . $p->id . ', \'' . addslashes($p->partner_name) . '\', \'' . $slug . '\')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button></td>'
+                . '</tr>';
+            return response()->json([
+                'success'   => true,
+                'message'   => 'Partnership record added.',
+                'tab_id'    => 'partnerships',
+                'new_count' => $count,
+                'row_html'  => $rowHtml,
+            ]);
+        }
 
         return back()->with('success', 'Partnership record added.')->withFragment('partnerships');
     }
@@ -702,6 +750,10 @@ class CommitteeController extends Controller
                     EmergencyLog::create($v);
                 }
                 break;
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Record saved successfully.', 'row_html' => null]);
         }
 
         return back()->with('success', 'Record saved successfully.');
