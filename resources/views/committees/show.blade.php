@@ -548,10 +548,10 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         @if($docRecords->count())
         <div class="data-section-label" style="border-top:1px solid var(--border)"><i class="fas fa-file-alt" style="color:var(--gold);margin-right:6px"></i> Documents ({{ $docRecords->count() }})</div>
         <table>
-            <thead><tr><th>Title</th><th>Type</th><th>Description</th><th>Uploaded</th><th>File</th></tr></thead>
+            <thead><tr><th>Title</th><th>Type</th><th>Description</th><th>Uploaded</th><th>File</th><th></th></tr></thead>
             <tbody>
                 @foreach($docRecords as $rec)
-                <tr>
+                <tr data-rid="{{ $rec->id }}">
                     <td style="font-weight:600">{{ $rec->title }}</td>
                     <td><span class="badge badge-navy">{{ $rec->record_type }}</span></td>
                     <td class="td-muted">{{ $rec->description ?? '—' }}</td>
@@ -561,6 +561,9 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         <a href="{{ asset('storage/'.$rec->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>
                         @else <span class="td-muted">—</span>
                         @endif
+                    </td>
+                    <td>
+                        <button type="button" onclick="deleteGeneric('records','{{ $rec->id }}','{{ addslashes($rec->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
                 @endforeach
@@ -612,10 +615,19 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 
         @if($activities->count())
         <table>
-            <thead><tr><th>Title</th><th>Date</th><th>Location</th><th>Participants</th><th>Status</th></tr></thead>
+            <thead><tr><th>Title</th><th>Date</th><th>Location</th><th>Participants</th><th>Status</th><th></th></tr></thead>
             <tbody>
                 @foreach($activities as $act)
-                <tr>
+                <tr
+                    data-id="{{ $act->id }}"
+                    data-title="{{ addslashes($act->title) }}"
+                    data-date="{{ $act->activity_date->format('Y-m-d') }}"
+                    data-location="{{ addslashes($act->location ?? '') }}"
+                    data-participants="{{ $act->participants_count ?? 0 }}"
+                    data-status="{{ $act->status }}"
+                    data-description="{{ addslashes($act->description ?? '') }}"
+                    data-type="{{ $act->activity_type }}"
+                >
                     <td>
                         <div style="font-weight:600">{{ $act->title }}</div>
                         @if($act->description)<div class="td-muted">{{ $act->description }}</div>@endif
@@ -624,6 +636,12 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td class="td-muted">{{ $act->location ?? '—' }}</td>
                     <td style="font-weight:600;color:var(--navy)">{{ number_format($act->participants_count) }}</td>
                     <td><span class="badge {{ match($act->status) { 'Completed'=>'badge-green','Ongoing'=>'badge-yellow','Cancelled'=>'badge-red',default=>'badge-gray' } }}">{{ $act->status }}</span></td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditActivity(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteGeneric('activities','{{ $act->id }}','{{ addslashes($act->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
