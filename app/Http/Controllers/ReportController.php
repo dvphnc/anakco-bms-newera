@@ -77,6 +77,37 @@ class ReportController extends Controller
         ));
     }
 
+    public function preview(Request $request)
+    {
+        $type    = in_array($request->input('report_type'), ['monthly','quarterly','annual']) ? $request->input('report_type') : 'monthly';
+        $module  = in_array($request->input('report_module'), ['summary','residents','documents','blotter','businesses']) ? $request->input('report_module') : 'summary';
+        $year    = (int) $request->input('year', date('Y'));
+        $month   = (int) ($request->input('month') ?: date('n'));
+        $quarter = (int) ($request->input('quarter') ?: 1);
+
+        if ($year < 2020 || $year > 2030) $year = (int) date('Y');
+
+        [$start, $end, $periodLabel] = $this->getDateRange($type, $year, $month, $quarter);
+
+        $count = match ($module) {
+            'residents'  => Resident::whereBetween('created_at', [$start, $end])->count(),
+            'documents'  => Document::whereBetween('created_at', [$start, $end])->count(),
+            'blotter'    => BlotterCase::whereBetween('created_at', [$start, $end])->count(),
+            'businesses' => Business::whereBetween('created_at', [$start, $end])->count(),
+            default      => Document::whereBetween('created_at', [$start, $end])->count()
+                          + BlotterCase::whereBetween('created_at', [$start, $end])->count()
+                          + Resident::whereBetween('created_at', [$start, $end])->count(),
+        };
+
+        $labels = ['summary'=>'records','residents'=>'residents','documents'=>'documents','blotter'=>'blotter cases','businesses'=>'businesses'];
+
+        return response()->json([
+            'count'  => $count,
+            'module' => $labels[$module] ?? $module,
+            'period' => $periodLabel,
+        ]);
+    }
+
     public function generate(Request $request)
     {
         $request->validate([
