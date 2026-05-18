@@ -40,7 +40,9 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://anakco_bms.test/portal)",
       "Bash(php -l resources/views/exports/pdf/committee.blade.php)",
       "Bash(php -l resources/views/portal/track.blade.php)",
-      "Bash(php -l resources/views/portal/confirmation.blade.php)"
+      "Bash(php -l resources/views/portal/confirmation.blade.php)",
+      "Bash(php -l /d/laragon/www/anakco_bms/app/Http/Controllers/CommitteeController.php)",
+      "Bash(php -l /d/laragon/www/anakco_bms/routes/web.php)"
     ]
   }
 }
