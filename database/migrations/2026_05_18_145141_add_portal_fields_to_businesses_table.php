@@ -12,17 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('businesses', function (Blueprint $table) {
-            //
+            $table->string('source')->default('walk-in')->after('permit_number');
+            $table->string('email')->nullable()->after('owner_contact');
+            $table->date('permit_date')->nullable()->change();
+            $table->date('expiry_date')->nullable()->change();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('businesses', function (Blueprint $table) {
-            //
+            $table->dropColumn(['source', 'email']);
+            $table->date('permit_date')->nullable(false)->change();
+            $table->date('expiry_date')->nullable(false)->change();
         });
     }
 };

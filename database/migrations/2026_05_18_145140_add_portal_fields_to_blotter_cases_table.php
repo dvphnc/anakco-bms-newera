@@ -12,17 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('blotter_cases', function (Blueprint $table) {
-            //
+            $table->string('source')->default('walk-in')->after('case_number');
+            $table->string('email')->nullable()->after('complainant_contact');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('blotter_cases', function (Blueprint $table) {
-            //
+            $table->dropColumn(['source', 'email']);
         });
     }
 };
