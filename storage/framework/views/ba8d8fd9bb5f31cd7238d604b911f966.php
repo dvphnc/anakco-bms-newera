@@ -86,6 +86,34 @@
             <span>Appointments</span>
         </a>
 
+        <div class="nav-section-label" style="display:flex;align-items:center;justify-content:space-between">
+            <span>Portal Requests</span>
+            <span id="portalPendingBadge"
+                  style="display:none;background:var(--crimson);color:#fff;font-size:9px;
+                         font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
+                         text-align:center;line-height:16px"></span>
+        </div>
+
+        <a href="<?php echo e(route('portal-blotter.index')); ?>"
+           class="nav-item <?php echo e(request()->routeIs('portal-blotter.*') ? 'active' : ''); ?>">
+            <i class="fas fa-gavel"></i>
+            <span>Portal Blotter</span>
+            <span id="pblBadge"
+                  style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
+                         font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
+                         text-align:center;line-height:16px;margin-left:auto"></span>
+        </a>
+
+        <a href="<?php echo e(route('portal-business.index')); ?>"
+           class="nav-item <?php echo e(request()->routeIs('portal-business.*') ? 'active' : ''); ?>">
+            <i class="fas fa-file-contract"></i>
+            <span>Portal Business</span>
+            <span id="pbizBadge"
+                  style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
+                         font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
+                         text-align:center;line-height:16px;margin-left:auto"></span>
+        </a>
+
         <a href="<?php echo e(route('portal.index')); ?>" target="_blank"
            class="nav-item">
             <i class="fas fa-globe"></i>
@@ -220,4 +248,41 @@
 </aside>
 
 
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div><?php /**PATH D:\laragon\www\anakco_bms\resources\views/partials/_sidebar.blade.php ENDPATH**/ ?>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<?php if(in_array(auth()->user()?->role, ['Admin', 'Secretary'])): ?>
+<script>
+/* ── Portal pending badge polling ──────────────────────── */
+(function () {
+    function updatePortalBadges(data) {
+        var pblBadge  = document.getElementById('pblBadge');
+        var pbizBadge = document.getElementById('pbizBadge');
+        var mainBadge = document.getElementById('portalPendingBadge');
+        if (!pblBadge) return;
+
+        var blotter  = data.blotter  || 0;
+        var business = data.business || 0;
+        var total    = blotter + business;
+
+        pblBadge.textContent  = blotter  > 99 ? '99+' : blotter;
+        pbizBadge.textContent = business > 99 ? '99+' : business;
+        mainBadge.textContent = total    > 99 ? '99+' : total;
+
+        pblBadge.style.display  = blotter  > 0 ? 'inline-block' : 'none';
+        pbizBadge.style.display = business > 0 ? 'inline-block' : 'none';
+        mainBadge.style.display = total    > 0 ? 'inline-block' : 'none';
+    }
+
+    function fetchPendingCount() {
+        axios.get('<?php echo e(route('portal.pending-count')); ?>')
+            .then(function (res) { updatePortalBadges(res.data); })
+            .catch(function () { /* silent */ });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchPendingCount();
+        setInterval(fetchPendingCount, 60000);
+    });
+})();
+</script>
+<?php endif; ?><?php /**PATH D:\laragon\www\anakco_bms\resources\views/partials/_sidebar.blade.php ENDPATH**/ ?>
