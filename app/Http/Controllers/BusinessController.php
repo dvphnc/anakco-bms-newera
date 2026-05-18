@@ -95,13 +95,14 @@ class BusinessController extends Controller
                 })
                 ->addColumn('status_col', function ($b) {
                     $cls = match ($b->status) {
-                        'Active' => 'badge-green',
-                        'Expired' => 'badge-red',
-                        'Suspended' => 'badge-yellow',
-                        'Cancelled' => 'badge-gray',
-                        default => 'badge-gray'
+                        'Active'     => 'badge-green',
+                        'Expired'    => 'badge-red',
+                        'Suspended'  => 'badge-yellow',
+                        'Cancelled'  => 'badge-gray',
+                        'Pending'    => 'badge-yellow',
+                        'For Review' => 'badge-blue',
+                        default      => 'badge-gray',
                     };
-
                     return '<span class="badge '.$cls.'">'.$b->status.'</span>';
                 })
                 ->addColumn('actions', function ($b) {
@@ -109,9 +110,24 @@ class BusinessController extends Controller
                     $edit   = route('businesses.edit', $b);
                     $delete = route('businesses.destroy', $b);
 
+                    $statusBtn = '';
+                    if (in_array($b->status, ['Pending', 'For Review']) || $b->source === 'portal') {
+                        $statusBtn = '<button class="btn btn-primary btn-sm btn-icon biz-status-btn"
+                                    title="Update Status"
+                                    data-id="'.$b->id.'"
+                                    data-num="'.e($b->permit_number).'"
+                                    data-status="'.e($b->status).'"
+                                    data-notes=""
+                                    data-email="'.e($b->email ?? '').'"
+                                    data-name="'.e($b->owner_name).'">
+                                <i class="fas fa-rotate"></i>
+                            </button>';
+                    }
+
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
                             <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon biz-qv-btn" title="Quick View" data-url="'.$show.'"><i class="fas fa-eye"></i></a>
+                            '.$statusBtn.'
                             <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
                             <form method="POST" action="'.$delete.'"
                                   data-confirm="Delete permit '.e($b->permit_number).'? This cannot be undone."
@@ -140,6 +156,7 @@ class BusinessController extends Controller
         $businessTypes = ['Sari-Sari Store', 'Restaurant / Carinderia', 'Salon / Barbershop', 'Repair Shop', 'Pharmacy / Drugstore', 'Laundry', 'Printing / Photocopy', 'Retail Store', 'Other'];
         $summaryCounts = [
             'Active' => Business::where('status', 'Active')->count(),
+            'Pending' => Business::whereIn('status', ['Pending', 'For Review'])->count(),
             'Expired' => Business::where('status', 'Expired')->count(),
             'Suspended' => Business::where('status', 'Suspended')->count(),
             'Cancelled' => Business::where('status', 'Cancelled')->count(),
