@@ -688,7 +688,13 @@
                 <i class="fas fa-sign-in-alt"></i> Staff Login
             </a>
         @endauth
-        <a href="{{ route('portal.request') }}" class="nav-cta">
+        <a href="{{ route('portal.blotter') }}" class="{{ request()->routeIs('portal.blotter*') ? 'nav-active' : '' }}">
+            <i class="fas fa-gavel"></i> Blotter
+        </a>
+        <a href="{{ route('portal.business') }}" class="{{ request()->routeIs('portal.business*') ? 'nav-active' : '' }}">
+            <i class="fas fa-store"></i> Business Permit
+        </a>
+        <a href="{{ route('portal.request') }}" class="nav-cta {{ request()->routeIs('portal.request') || request()->routeIs('portal.store') ? 'nav-active' : '' }}">
             <i class="fas fa-file-plus"></i> Request Document
         </a>
     </nav>
