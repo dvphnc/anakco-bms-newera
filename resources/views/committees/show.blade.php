@@ -3024,20 +3024,21 @@ function deletePartnership(id, name, slug) {
 
 // ── Relief supply delete ─────────────────────────────────────
 function deleteReliefSupply(id, name, slug) {
+    var rowEl = document.querySelector('tr[data-rid="' + id + '"]');
     bmsConfirm({
         title:   'Delete Relief Supply',
-        message: 'Delete <strong>' + name + '</strong> from the relief inventory? This cannot be undone.',
+        message: 'Delete ' + name + ' from the relief inventory? This cannot be undone.',
         ok:      'Delete',
         type:    'danger',
     }, function() {
         axios.delete('/committees/' + slug + '/relief/' + id)
             .then(function(res) {
-                const row = document.querySelector('tr[data-rid="' + id + '"]');
-                if (row) row.remove();
+                if (rowEl) rowEl.remove();
                 bmsToast(res.data.message || 'Relief supply deleted.', 'success');
             })
-            .catch(function() {
-                bmsToast('Failed to delete relief supply.', 'error');
+            .catch(function(err) {
+                var msg = err.response && err.response.data && err.response.data.message;
+                bmsToast(msg || 'Failed to delete relief supply.', 'error');
             });
     });
 }
@@ -3238,7 +3239,7 @@ function openEditPartnership(tr) {
 document.getElementById('editPartnershipForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/{{ $committee['slug'] }}/partnerships/' + _editPartId, 'editPartnershipModal', function(rec) {
-        var row = document.querySelector('tr[data-pid="' + _editPartId + '"]');
+        var row = document.querySelector('[data-pid="' + _editPartId + '"]');
         if (row) {
             row.cells[0].innerHTML = '<div style="font-weight:600;color:var(--navy)">' + rec.partner_name + '</div>';
             row.cells[4].textContent = rec.contact_person || '—';
