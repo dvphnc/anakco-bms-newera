@@ -58,14 +58,14 @@
 {{-- STAT STRIP --}}
 <div class="grid-4 mb-6">
     @php $strips = [
-        ['label'=>'Total Residents',  'value'=>number_format($totalResidents),  'icon'=>'fa-users',        'color'=>'#22c55e','bg'=>'#f0fdf4'],
-        ['label'=>'Households',       'value'=>number_format($totalHouseholds), 'icon'=>'fa-house',        'color'=>'#3b82f6','bg'=>'#eff6ff'],
-        ['label'=>'Documents '.$currentYear, 'value'=>number_format($totalDocs),'icon'=>'fa-file-alt',    'color'=>'#f59e0b','bg'=>'#fffbeb'],
-        ['label'=>'Blotter '.$currentYear,   'value'=>number_format($totalBlotter),'icon'=>'fa-gavel',    'color'=>'#ef4444','bg'=>'#fef2f2'],
-        ['label'=>'Active Businesses','value'=>number_format($totalBusinesses), 'icon'=>'fa-store',        'color'=>'#f59e0b','bg'=>'#fffbeb'],
-        ['label'=>'Male Residents',   'value'=>number_format($totalMale),       'icon'=>'fa-person',       'color'=>'#3b82f6','bg'=>'#eff6ff'],
-        ['label'=>'Female Residents', 'value'=>number_format($totalFemale),     'icon'=>'fa-person-dress', 'color'=>'#f97316','bg'=>'#fff7ed'],
-        ['label'=>'Active Residents', 'value'=>number_format($activeResidents), 'icon'=>'fa-circle-check', 'color'=>'#22c55e','bg'=>'#f0fdf4'],
+        ['label'=>'Total Residents',       'value'=>number_format($totalResidents),  'icon'=>'fa-users',        'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
+        ['label'=>'Households',            'value'=>number_format($totalHouseholds), 'icon'=>'fa-house',        'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.1)'],
+        ['label'=>'Documents '.$currentYear,'value'=>number_format($totalDocs),     'icon'=>'fa-file-alt',     'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
+        ['label'=>'Blotter '.$currentYear, 'value'=>number_format($totalBlotter),   'icon'=>'fa-gavel',        'color'=>'#9b1c1c','bg'=>'rgba(155,28,28,0.08)'],
+        ['label'=>'Active Businesses',     'value'=>number_format($totalBusinesses), 'icon'=>'fa-store',       'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.1)'],
+        ['label'=>'Male Residents',        'value'=>number_format($totalMale),       'icon'=>'fa-person',      'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
+        ['label'=>'Female Residents',      'value'=>number_format($totalFemale),     'icon'=>'fa-person-dress','color'=>'#C8861A','bg'=>'rgba(200,134,26,0.1)'],
+        ['label'=>'Active Residents',      'value'=>number_format($activeResidents), 'icon'=>'fa-circle-check','color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
     ]; @endphp
     @foreach($strips as $s)
     <div class="stat-card">
@@ -94,7 +94,7 @@
                 </span>
             </div>
             <div class="card-body" style="padding:20px 20px 24px">
-                <form method="POST" action="{{ route('reports.generate') }}">
+                <form method="POST" action="{{ route('reports.generate') }}" id="reportForm">
                     @csrf
 
                     {{-- Type selector --}}
@@ -115,7 +115,7 @@
 
                     <div class="form-group" style="margin-bottom:16px">
                         <label class="form-label">Module</label>
-                        <select name="report_module" class="form-control" required>
+                        <select name="report_module" id="reportModule" class="form-control" required>
                             <option value="summary">📊 Full Summary</option>
                             <option value="residents">👥 Residents</option>
                             <option value="documents">📄 Documents</option>
@@ -126,7 +126,7 @@
 
                     <div class="form-group" style="margin-bottom:16px">
                         <label class="form-label">Year</label>
-                        <select name="year" class="form-control" required>
+                        <select name="year" id="reportYear" class="form-control" required>
                             @for($y=date('Y');$y>=2020;$y--)
                                 <option value="{{ $y }}" {{ $y==date('Y')?'selected':'' }}>{{ $y }}</option>
                             @endfor
@@ -135,7 +135,7 @@
 
                     <div id="month-field" class="form-group" style="margin-bottom:16px">
                         <label class="form-label">Month</label>
-                        <select name="month" class="form-control">
+                        <select name="month" id="reportMonth" class="form-control">
                             @foreach(['January','February','March','April','May','June','July','August','September','October','November','December'] as $i=>$m)
                                 <option value="{{ $i+1 }}" {{ ($i+1)==date('n')?'selected':'' }}>{{ $m }}</option>
                             @endforeach
@@ -144,7 +144,7 @@
 
                     <div id="quarter-field" class="form-group" style="display:none;margin-bottom:16px">
                         <label class="form-label">Quarter</label>
-                        <select name="quarter" class="form-control">
+                        <select name="quarter" id="reportQuarter" class="form-control">
                             <option value="1">Q1 — Jan to Mar</option>
                             <option value="2">Q2 — Apr to Jun</option>
                             <option value="3">Q3 — Jul to Sep</option>
