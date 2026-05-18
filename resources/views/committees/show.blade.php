@@ -100,7 +100,7 @@
     align-items: center;
     gap: 8px;
 }
-.panel-hd-title i { color: var(--gold); }
+.panel-hd-title i { color: var(--navy); opacity: 0.7; }
 
 /* ── Collapsible Form Panel ──────────────────────────────── */
 .form-panel {
@@ -112,9 +112,10 @@
 .form-panel.open { display: block; }
 .form-panel-inner { max-width: 860px; }
 .form-section-label {
-    font-size: 11px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .08em;
     color: var(--text-subtle); margin-bottom: 14px;
+    line-height: 1.6;
 }
 
 /* ── Photo Grid ──────────────────────────────────────────── */
@@ -286,6 +287,57 @@
 .log-in      { color: #14532d; font-weight: 700; }
 .log-out     { color: var(--navy); font-weight: 700; }
 .log-disposed{ color: var(--crimson); font-weight: 700; }
+
+/* ── Enhanced Empty States ─────────────────────────────────── */
+.empty-enhanced {
+    text-align: center;
+    padding: 52px 24px 48px;
+    background: var(--surface);
+}
+.empty-enhanced-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: #EEF2F7;
+    border: 2px solid #D6DCE8;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+    font-size: 26px;
+    color: var(--navy);
+    opacity: 0.75;
+}
+.empty-enhanced h4 {
+    font-size: 14px; font-weight: 700;
+    color: var(--navy); margin-bottom: 6px;
+}
+.empty-enhanced p {
+    font-size: 13px; color: var(--text-muted);
+    max-width: 340px; margin: 0 auto 18px;
+    line-height: 1.6;
+}
+.empty-enhanced .btn { font-size: 13px; }
+
+/* ── Compact table rows ────────────────────────────────────── */
+table thead th { font-size: 12px; }
+table tbody td { font-size: 13.5px; line-height: 1.55; }
+
+/* ── Attendance summary strip ──────────────────────────────── */
+.att-summary-strip {
+    display: flex; gap: 0;
+    background: #F8FAFE;
+    border-bottom: 1px solid var(--border);
+}
+.att-summary-item {
+    flex: 1; padding: 10px 16px;
+    border-right: 1px solid var(--border);
+    text-align: center;
+}
+.att-summary-item:last-child { border-right: none; }
+.att-summary-num { font-size: 16px; font-weight: 700; color: var(--navy); line-height: 1; }
+.att-summary-lbl { font-size: 11px; color: var(--text-muted); margin-top: 3px; text-transform: uppercase; letter-spacing: .04em; }
+
+/* ── Gold spinner on buttons ───────────────────────────────── */
+.btn-loading { pointer-events: none; opacity: 0.8; }
+.fa-spin-gold { color: #C8861A !important; }
 </style>
 @endpush
 
@@ -294,7 +346,7 @@
 {{-- PAGE HEADER --}}
 <div class="page-header">
     <div style="display:flex;align-items:center;gap:14px">
-        <div style="width:48px;height:48px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:{{ $committee['color'] }}18;color:{{ $committee['color'] }}">
+        <div style="width:48px;height:48px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:#EEF2F7;color:var(--navy)">
             <i class="fas {{ $committee['icon'] }}"></i>
         </div>
         <div>
