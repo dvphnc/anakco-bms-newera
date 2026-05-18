@@ -333,6 +333,9 @@
 #businessesTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
 #businessesTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
 
+/* ── Spinner keyframe (used in status modal) ──────────────────────── */
+@keyframes req-spin { to { transform: rotate(360deg); } }
+
 /* ── Filter Select2 height override — filter panels use 38px, not 48px ── */
 #filterPanel .select2-container--default .select2-selection--single {
     height: 38px !important;
@@ -607,7 +610,60 @@ function closeBizPanel() {
     setTimeout(() => { panel.style.display = 'none'; }, 200);
 }
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeBizPanel();
+    if (e.key === 'Escape') { closeBizPanel(); closeBizModal(); }
+});
+
+/* ── Business Status Modal ────────────────────────────────────────── */
+let _bizModalId = null;
+let _bizModalEmail = null;
+
+$(document).on('click', '.biz-status-btn', function () {
+    _bizModalId    = $(this).data('id');
+    _bizModalEmail = $(this).data('email') || '';
+    const num      = $(this).data('num');
+    const status   = $(this).data('status');
+
+    document.getElementById('bizModalNum').textContent = num;
+    document.getElementById('bizModalStatus').value    = status;
+    document.getElementById('bizModalNotes').value     = '';
+    document.getElementById('bizModalEmailNote').style.display = _bizModalEmail ? '' : 'none';
+
+    const modal = document.getElementById('bizStatusModal');
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => { modal.style.opacity = '1'; });
+});
+
+function closeBizModal() {
+    const modal = document.getElementById('bizStatusModal');
+    modal.style.display = 'none';
+    _bizModalId = null;
+}
+
+document.getElementById('bizModalSave').addEventListener('click', function () {
+    if (!_bizModalId) return;
+
+    const btn      = this;
+    const spinner  = document.getElementById('bizModalSpinner');
+    const newStatus = document.getElementById('bizModalStatus').value;
+    const notes     = document.getElementById('bizModalNotes').value;
+
+    btn.disabled       = true;
+    spinner.style.display = '';
+
+    axios.patch(`/businesses/${_bizModalId}/status`, { status: newStatus, notes: notes })
+        .then(function (res) {
+            bmsToast(res.data.message || 'Status updated.', 'success');
+            closeBizModal();
+            table.ajax.reload(null, false);
+        })
+        .catch(function (err) {
+            const msg = err.response?.data?.message || 'Could not update status.';
+            bmsToast(msg, 'error');
+        })
+        .finally(function () {
+            btn.disabled          = false;
+            spinner.style.display = 'none';
+        });
 });
 
 </script>
