@@ -72,46 +72,33 @@
            class="nav-item <?php echo e(request()->routeIs('blotter.*') ? 'active' : ''); ?>">
             <i class="fas fa-gavel"></i>
             <span>Blotter Records</span>
+            <span id="pblBadge"
+                  style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
+                         font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
+                         text-align:center;line-height:16px;margin-left:auto"
+                  title="Portal submissions pending"></span>
         </a>
 
         <a href="<?php echo e(route('businesses.index')); ?>"
            class="nav-item <?php echo e(request()->routeIs('businesses.*') ? 'active' : ''); ?>">
             <i class="fas fa-store"></i>
             <span>Business Permits</span>
+            <span id="pbizBadge"
+                  style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
+                         font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
+                         text-align:center;line-height:16px;margin-left:auto"
+                  title="Portal submissions pending"></span>
         </a>
 
         <a href="<?php echo e(route('appointments.index')); ?>"
            class="nav-item <?php echo e(request()->routeIs('appointments.*') ? 'active' : ''); ?>">
             <i class="fas fa-calendar-check"></i>
             <span>Appointments</span>
-        </a>
-
-        <div class="nav-section-label" style="display:flex;align-items:center;justify-content:space-between">
-            <span>Portal Requests</span>
             <span id="portalPendingBadge"
                   style="display:none;background:var(--crimson);color:#fff;font-size:9px;
                          font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
-                         text-align:center;line-height:16px"></span>
-        </div>
-
-        <a href="<?php echo e(route('portal-blotter.index')); ?>"
-           class="nav-item <?php echo e(request()->routeIs('portal-blotter.*') ? 'active' : ''); ?>">
-            <i class="fas fa-gavel"></i>
-            <span>Portal Blotter</span>
-            <span id="pblBadge"
-                  style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
-                         font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
-                         text-align:center;line-height:16px;margin-left:auto"></span>
-        </a>
-
-        <a href="<?php echo e(route('portal-business.index')); ?>"
-           class="nav-item <?php echo e(request()->routeIs('portal-business.*') ? 'active' : ''); ?>">
-            <i class="fas fa-file-contract"></i>
-            <span>Portal Business</span>
-            <span id="pbizBadge"
-                  style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
-                         font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
-                         text-align:center;line-height:16px;margin-left:auto"></span>
+                         text-align:center;line-height:16px;margin-left:auto"
+                  title="Portal document requests pending"></span>
         </a>
 
         <a href="<?php echo e(route('portal.index')); ?>" target="_blank"
@@ -254,23 +241,17 @@
 <script>
 /* ── Portal pending badge polling ──────────────────────── */
 (function () {
+    function setBadge(id, n) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.textContent    = n > 99 ? '99+' : n;
+        el.style.display  = n > 0  ? 'inline-block' : 'none';
+    }
+
     function updatePortalBadges(data) {
-        var pblBadge  = document.getElementById('pblBadge');
-        var pbizBadge = document.getElementById('pbizBadge');
-        var mainBadge = document.getElementById('portalPendingBadge');
-        if (!pblBadge) return;
-
-        var blotter  = data.blotter  || 0;
-        var business = data.business || 0;
-        var total    = blotter + business;
-
-        pblBadge.textContent  = blotter  > 99 ? '99+' : blotter;
-        pbizBadge.textContent = business > 99 ? '99+' : business;
-        mainBadge.textContent = total    > 99 ? '99+' : total;
-
-        pblBadge.style.display  = blotter  > 0 ? 'inline-block' : 'none';
-        pbizBadge.style.display = business > 0 ? 'inline-block' : 'none';
-        mainBadge.style.display = total    > 0 ? 'inline-block' : 'none';
+        setBadge('pblBadge',           data.blotter   || 0);
+        setBadge('pbizBadge',          data.business  || 0);
+        setBadge('portalPendingBadge', data.documents || 0);
     }
 
     function fetchPendingCount() {
