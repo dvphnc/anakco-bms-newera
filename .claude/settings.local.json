@@ -33,7 +33,8 @@
       "Bash(curl -v http://anakco_bms.test/login)",
       "Bash(mkdir -p /d/laragon/www/anakco_bms/storage/framework/views)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://anakco_bms.test/login)",
-      "Bash(curl -s -c /tmp/bms2.jar http://anakco_bms.test/login)"
+      "Bash(curl -s -c /tmp/bms2.jar http://anakco_bms.test/login)",
+      "Bash(curl -s -c /tmp/bms5.jar http://anakco_bms.test/login)"
     ]
   }
 }
