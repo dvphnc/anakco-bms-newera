@@ -203,38 +203,6 @@
             <strong>Tip:</strong> Screenshot or note down your appointment number. Staff will confirm your schedule within 1–2 business days. Bring a valid ID when claiming your document.
         </div>
     </div>
-<<<<<<< Updated upstream
 </div>{{-- /.p-card --}}
 </div>{{-- /.portal-wrap-sm --}}
-=======
-</div>
-</div>
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 @endsection
-
-@push('scripts')
-<script>
-function copyAptNum() {
-    var num = document.getElementById('aptNumDisplay').textContent.trim();
-    var btn = document.getElementById('copyBtn');
-    if (!navigator.clipboard) {
-        var el = document.createElement('textarea');
-        el.value = num; el.style.position = 'fixed'; el.style.opacity = '0';
-        document.body.appendChild(el); el.select();
-        try { document.execCommand('copy'); } catch(e) {}
-        document.body.removeChild(el);
-    } else {
-        navigator.clipboard.writeText(num);
-    }
-    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-    btn.classList.add('copied');
-    setTimeout(function() {
-        btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
-        btn.classList.remove('copied');
-    }, 2000);
-}
-</script>
-@endpush
