@@ -1705,7 +1705,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-medicine" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-capsules" style="color:var(--gold);margin-right:6px"></i> New Medicine Entry</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="medicine">
                     <div class="form-grid-3" style="gap:12px">
                         {{-- Row 1: Names --}}
@@ -2070,7 +2070,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-sweepers" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Street Sweeper</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="sweeper">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control @error('full_name') is-invalid @enderror" value="{{ old('full_name') }}" required>@error('full_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
@@ -2128,7 +2128,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-contracts" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Permit / Contract</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" enctype="multipart/form-data" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="contract">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group"><label class="form-label">Contract Number</label><input type="text" name="contract_number" class="form-control" placeholder="e.g. BNE-2026-001"></div>
@@ -2192,7 +2192,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-financials" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Financial Record</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" enctype="multipart/form-data" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="financial">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Title / Description <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control @error('title') is-invalid @enderror" placeholder="e.g. Road Repair Fund Utilization Q1" value="{{ old('title') }}" required>@error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
