@@ -18,10 +18,10 @@
             <i class="fas fa-file-pdf"></i> Generate Reports
         </a>
         <a href="{{ route('export.analytics', 'pdf') }}" class="btn btn-secondary" title="Export Population Summary PDF">
-            <i class="fas fa-file-pdf" style="color:#dc2626"></i> Population PDF
+            <i class="fas fa-file-pdf" style="color:#9b3535"></i> Population PDF
         </a>
         <a href="{{ route('export.analytics', 'excel') }}" class="btn btn-secondary" title="Export Population Summary Excel">
-            <i class="fas fa-file-excel" style="color:#16a34a"></i> Population Excel
+            <i class="fas fa-file-excel" style="color:#3d7a55"></i> Population Excel
         </a>
     </div>
 </div>

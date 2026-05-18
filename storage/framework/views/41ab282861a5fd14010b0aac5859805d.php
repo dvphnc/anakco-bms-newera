@@ -173,7 +173,7 @@ $moduleMap = [
 </div>
 
 
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="module-pills">
+<div style="display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin-bottom:20px;padding-bottom:4px" id="module-pills">
     <a href="<?php echo e(route('activity-log.index')); ?>"
        style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:var(--radius-sm);border:1.5px solid <?php echo e(!request('module') ? 'var(--navy)' : 'var(--border)'); ?>;background:<?php echo e(!request('module') ? 'var(--navy)' : 'var(--surface)'); ?>;color:<?php echo e(!request('module') ? '#fff' : 'var(--text-muted)'); ?>;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s">
         <i class="fas fa-clock-rotate-left" style="font-size:12px"></i> All
