@@ -288,7 +288,7 @@
                     </span>
                 </div>
                 <div class="card-body" style="display:flex;justify-content:center;padding:12px">
-                    <canvas id="docTypeChart" style="max-height:180px"></canvas>
+                    <canvas id="docTypeChart" style="max-height:260px"></canvas>
                 </div>
             </div>
             <div class="card">
@@ -298,7 +298,7 @@
                     </span>
                 </div>
                 <div class="card-body" style="display:flex;justify-content:center;padding:12px">
-                    <canvas id="blotterTypeChart" style="max-height:180px"></canvas>
+                    <canvas id="blotterTypeChart" style="max-height:260px"></canvas>
                 </div>
             </div>
         </div>
