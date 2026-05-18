@@ -764,16 +764,29 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </div>
         </div>
         <table>
-            <thead><tr><th>Event</th><th>Date</th><th>Venue</th><th style="text-align:right">Attendees</th><th>Notes</th><th>Sheet</th></tr></thead>
+            <thead><tr><th>Event</th><th>Date</th><th>Venue</th><th style="text-align:right">Attendees</th><th>Notes</th><th>Sheet</th><th></th></tr></thead>
             <tbody>
                 @foreach($attendances as $att)
-                <tr>
+                <tr
+                    data-id="{{ $att->id }}"
+                    data-event="{{ addslashes($att->event_name) }}"
+                    data-date="{{ \Carbon\Carbon::parse($att->event_date)->format('Y-m-d') }}"
+                    data-venue="{{ addslashes($att->venue ?? '') }}"
+                    data-attendees="{{ $att->total_attendees }}"
+                    data-notes="{{ addslashes($att->notes ?? '') }}"
+                >
                     <td style="font-weight:600">{{ $att->event_name }}</td>
                     <td class="td-muted">{{ \Carbon\Carbon::parse($att->event_date)->format('M d, Y') }}</td>
                     <td class="td-muted">{{ $att->venue ?? '—' }}</td>
                     <td style="text-align:right;font-weight:700;color:var(--navy)">{{ number_format($att->total_attendees) }}</td>
                     <td class="td-muted">{{ $att->notes ?? '—' }}</td>
                     <td>@if($att->file_path)<a href="{{ asset('storage/'.$att->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-eye"></i></a>@else<span class="td-muted">—</span>@endif</td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditAttendance(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteGeneric('attendance','{{ $att->id }}','{{ addslashes($att->event_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -821,16 +834,30 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 
         @if($inventory->count())
         <table>
-            <thead><tr><th>Item Name</th><th>Category</th><th style="text-align:right">Qty</th><th>Unit</th><th>Condition</th><th>Remarks</th></tr></thead>
+            <thead><tr><th>Item Name</th><th>Category</th><th style="text-align:right">Qty</th><th>Unit</th><th>Condition</th><th>Remarks</th><th></th></tr></thead>
             <tbody>
                 @foreach($inventory as $item)
-                <tr>
+                <tr
+                    data-id="{{ $item->id }}"
+                    data-name="{{ addslashes($item->item_name) }}"
+                    data-category="{{ addslashes($item->category ?? '') }}"
+                    data-qty="{{ $item->quantity }}"
+                    data-unit="{{ addslashes($item->unit ?? '') }}"
+                    data-condition="{{ $item->condition }}"
+                    data-remarks="{{ addslashes($item->remarks ?? '') }}"
+                >
                     <td style="font-weight:600">{{ $item->item_name }}</td>
                     <td class="td-muted">{{ $item->category ?? '—' }}</td>
                     <td style="text-align:right;font-weight:700;color:var(--navy)">{{ number_format($item->quantity) }}</td>
                     <td class="td-muted">{{ $item->unit ?? '—' }}</td>
                     <td><span class="badge {{ match($item->condition) { 'Good'=>'badge-green','Fair'=>'badge-yellow','Poor'=>'badge-red',default=>'badge-gray' } }}">{{ $item->condition }}</span></td>
                     <td class="td-muted">{{ $item->remarks ?? '—' }}</td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditInventory(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteGeneric('inventory','{{ $item->id }}','{{ addslashes($item->item_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
