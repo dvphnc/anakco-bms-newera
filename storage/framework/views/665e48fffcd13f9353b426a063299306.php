@@ -17,10 +17,10 @@
             <i class="fas fa-file-pdf"></i> Generate Reports
         </a>
         <a href="<?php echo e(route('export.analytics', 'pdf')); ?>" class="btn btn-secondary" title="Export Population Summary PDF">
-            <i class="fas fa-file-pdf" style="color:#dc2626"></i> Population PDF
+            <i class="fas fa-file-pdf" style="color:#9b3535"></i> Population PDF
         </a>
         <a href="<?php echo e(route('export.analytics', 'excel')); ?>" class="btn btn-secondary" title="Export Population Summary Excel">
-            <i class="fas fa-file-excel" style="color:#16a34a"></i> Population Excel
+            <i class="fas fa-file-excel" style="color:#3d7a55"></i> Population Excel
         </a>
     </div>
 </div>
@@ -58,14 +58,14 @@
                 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
                     <a href="<?php echo e(route('export.pdf', $m['key'])); ?>"
-                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#dc2626;background:#fff;border-right:1px solid var(--border);text-decoration:none;transition:background 0.15s"
-                       onmouseover="this.style.background='#fee2e2'"
+                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#9b3535;background:#fff;border-right:1px solid var(--border);text-decoration:none;transition:background 0.15s"
+                       onmouseover="this.style.background='var(--surface2)'"
                        onmouseout="this.style.background='#fff'">
                         <i class="fas fa-file-pdf"></i> PDF
                     </a>
                     <a href="<?php echo e(route('export.excel', $m['key'])); ?>"
-                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#16a34a;background:#fff;text-decoration:none;transition:background 0.15s"
-                       onmouseover="this.style.background='#dcfce7'"
+                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#3d7a55;background:#fff;text-decoration:none;transition:background 0.15s"
+                       onmouseover="this.style.background='var(--surface2)'"
                        onmouseout="this.style.background='#fff'">
                         <i class="fas fa-file-excel"></i> Excel
                     </a>
@@ -97,7 +97,7 @@
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D">
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy-mid)">
             <i class="fas fa-file-alt"></i>
         </div>
         <div class="stat-info">
@@ -137,9 +137,9 @@
                 Busiest month: <strong><?php echo e($months[$peakNum] ?? ''); ?></strong> (<?php echo e(number_format($peakVal)); ?> docs).
                 This month: <strong><?php echo e($thisMonthR); ?></strong>
                 <?php if($thisMonthR > $prevMonthR): ?>
-                    — <span style="color:#16a34a"><i class="fas fa-arrow-up"></i> up <?php echo e($thisMonthR - $prevMonthR); ?> from last month.</span>
+                    — <span style="color:#2e6b47"><i class="fas fa-arrow-up"></i> up <?php echo e($thisMonthR - $prevMonthR); ?> from last month.</span>
                 <?php elseif($thisMonthR < $prevMonthR): ?>
-                    — <span style="color:var(--crimson)"><i class="fas fa-arrow-down"></i> down <?php echo e($prevMonthR - $thisMonthR); ?> from last month.</span>
+                    — <span style="color:#8b2e2e"><i class="fas fa-arrow-down"></i> down <?php echo e($prevMonthR - $thisMonthR); ?> from last month.</span>
                 <?php else: ?>
                     — same as last month.
                 <?php endif; ?>
@@ -180,9 +180,9 @@
                 $demos = [
                     ['label' => 'Registered Voters', 'value' => $totalVoters,     'color' => 'var(--navy)'],
                     ['label' => 'Senior Citizens',   'value' => $totalSeniors,    'color' => 'var(--gold)'],
-                    ['label' => 'PWD',               'value' => $totalPwd,        'color' => '#2563eb'],
-                    ['label' => 'Solo Parents',      'value' => $totalSoloParent, 'color' => '#7c3aed'],
-                    ['label' => '4Ps Beneficiaries', 'value' => $total4ps,        'color' => '#dc2626'],
+                    ['label' => 'PWD',               'value' => $totalPwd,        'color' => '#3a5fa0'],
+                    ['label' => 'Solo Parents',      'value' => $totalSoloParent, 'color' => '#5e4b8b'],
+                    ['label' => '4Ps Beneficiaries', 'value' => $total4ps,        'color' => '#8b2e2e'],
                 ];
             ?>
             <?php $__currentLoopData = $demos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -205,7 +205,7 @@
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
                     <?php
                         $statuses = [
-                            ['label'=>'Active',      'value'=>$totalActive,      'color'=>'#16a34a'],
+                            ['label'=>'Active',      'value'=>$totalActive,      'color'=>'#2e6b47'],
                             ['label'=>'Deceased',    'value'=>$totalDeceased,    'color'=>'var(--text-muted)'],
                             ['label'=>'Transferred', 'value'=>$totalTransferred, 'color'=>'var(--gold)'],
                         ];
@@ -315,7 +315,7 @@
                 <div style="font-size:13px;color:var(--text-subtle)">Pending</div>
             </div>
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
-                <div style="font-size:15px;font-weight:700;color:#16a34a"><?php echo e(number_format($releasedDocuments)); ?></div>
+                <div style="font-size:15px;font-weight:700;color:#2e6b47"><?php echo e(number_format($releasedDocuments)); ?></div>
                 <div style="font-size:13px;color:var(--text-subtle)">Released</div>
             </div>
         </div>
@@ -347,11 +347,11 @@
         </div>
         <div style="padding:12px 16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
-                <div style="font-size:15px;font-weight:700;color:var(--crimson)"><?php echo e(number_format($activeBlotter)); ?></div>
+                <div style="font-size:15px;font-weight:700;color:#8b2e2e"><?php echo e(number_format($activeBlotter)); ?></div>
                 <div style="font-size:13px;color:var(--text-subtle)">Active</div>
             </div>
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
-                <div style="font-size:15px;font-weight:700;color:#16a34a"><?php echo e(number_format($settledBlotter)); ?></div>
+                <div style="font-size:15px;font-weight:700;color:#2e6b47"><?php echo e(number_format($settledBlotter)); ?></div>
                 <div style="font-size:13px;color:var(--text-subtle)">Settled/Closed</div>
             </div>
         </div>
@@ -364,8 +364,8 @@
         <div class="card-body">
             <?php
                 $bizStats = [
-                    ['label' => 'Active',  'value' => $activeBusinesses,  'color' => '#16a34a'],
-                    ['label' => 'Expired', 'value' => $expiredBusinesses, 'color' => 'var(--crimson)'],
+                    ['label' => 'Active',  'value' => $activeBusinesses,  'color' => '#2e6b47'],
+                    ['label' => 'Expired', 'value' => $expiredBusinesses, 'color' => '#8b2e2e'],
                     ['label' => 'Other',   'value' => $totalBusinesses - $activeBusinesses - $expiredBusinesses, 'color' => 'var(--text-subtle)'],
                 ];
             ?>
@@ -400,10 +400,10 @@
                 $links = [
                     ['href' => route('residents.index'),  'icon' => 'fas fa-users',    'label' => 'Residents',  'color' => 'var(--navy)'],
                     ['href' => route('households.index'), 'icon' => 'fas fa-house',    'label' => 'Households', 'color' => 'var(--gold)'],
-                    ['href' => route('documents.index'),  'icon' => 'fas fa-file-alt', 'label' => 'Documents',  'color' => '#16a34a'],
-                    ['href' => route('blotter.index'),    'icon' => 'fas fa-gavel',    'label' => 'Blotter',    'color' => 'var(--crimson)'],
-                    ['href' => route('businesses.index'), 'icon' => 'fas fa-store',    'label' => 'Businesses', 'color' => '#2563eb'],
-                    ['href' => route('officials.index'),  'icon' => 'fas fa-user-tie', 'label' => 'Officials',  'color' => '#7c3aed'],
+                    ['href' => route('documents.index'),  'icon' => 'fas fa-file-alt', 'label' => 'Documents',  'color' => '#2e6b47'],
+                    ['href' => route('blotter.index'),    'icon' => 'fas fa-gavel',    'label' => 'Blotter',    'color' => '#8b2e2e'],
+                    ['href' => route('businesses.index'), 'icon' => 'fas fa-store',    'label' => 'Businesses', 'color' => '#3a5fa0'],
+                    ['href' => route('officials.index'),  'icon' => 'fas fa-user-tie', 'label' => 'Officials',  'color' => '#5e4b8b'],
                 ];
             ?>
             <?php $__currentLoopData = $links; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $l): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -461,7 +461,7 @@
             labels: <?php echo json_encode(array_keys($ageGroups)); ?>,
             datasets: [{
                 data: <?php echo json_encode(array_values($ageGroups)); ?>,
-                backgroundColor: ['#C8861A', '#0D2144', '#16a34a', '#9CA3AF'],
+                backgroundColor: ['#C8861A', '#0D2144', '#3d7a55', '#9CA3AF'],
                 borderWidth: 2,
                 borderColor: '#fff',
             }]
