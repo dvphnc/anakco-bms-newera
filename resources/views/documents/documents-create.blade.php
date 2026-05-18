@@ -69,7 +69,7 @@
         </div>
 
         {{-- Self-pickup info pill --}}
-        <div id="selfPickupInfo" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(13,33,68,0.05);border:1px solid rgba(13,33,68,0.14);border-radius:var(--radius);margin-bottom:20px">
+        <div id="selfPickupInfo" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(200,134,26,0.08);border:1px solid rgba(200,134,26,0.25);border-radius:var(--radius);margin-bottom:20px">
             <i class="fas fa-circle-check" style="color:var(--navy);font-size:14px"></i>
             <span style="font-size:13px;color:var(--navy)">Will be picked up by: <strong id="selfPickupName">the resident</strong></span>
         </div>
