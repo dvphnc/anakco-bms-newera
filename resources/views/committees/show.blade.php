@@ -370,28 +370,28 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 {{-- QUICK STATS --}}
 <div class="grid-4 mb-6">
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-folder-open"></i></div>
+        <div class="stat-icon" style="background:#EEF2F7;color:#0D2144;border:1px solid #D6DCE8"><i class="fas fa-folder-open"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ $photos->count() + $reports->count() + $resolutions->count() + $otherRecords->count() }}</div>
             <div class="stat-label">Total Records</div>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-calendar-check"></i></div>
+        <div class="stat-icon" style="background:#EEF2F7;color:#0D2144;border:1px solid #D6DCE8"><i class="fas fa-calendar-check"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ $activities->count() + $accomplishments->count() }}</div>
             <div class="stat-label">Activities</div>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-users"></i></div>
+        <div class="stat-icon" style="background:#EEF2F7;color:#0D2144;border:1px solid #D6DCE8"><i class="fas fa-users"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format($attendances->sum('total_attendees')) }}</div>
             <div class="stat-label">Total Attendees</div>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-boxes-stacked"></i></div>
+        <div class="stat-icon" style="background:#EEF2F7;color:#0D2144;border:1px solid #D6DCE8"><i class="fas fa-boxes-stacked"></i></div>
         <div class="stat-info">
             <div class="stat-number">{{ $inventory->count() }}</div>
             <div class="stat-label">Inventory Items</div>
@@ -545,7 +545,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         @endif
 
         @if($photos->count() === 0 && $docRecords->count() === 0)
-        <div class="empty-state"><i class="fas fa-folder-open"></i><p>No records uploaded yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-folder-open"></i></div>
+            <h4>No Records Uploaded Yet</h4>
+            <p>Upload photos, reports, or resolutions to keep your committee records organized.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-records', document.querySelector('[data-icon=fa-cloud-arrow-up]'))">
+                <i class="fas fa-cloud-arrow-up"></i> Upload First Record
+            </button>
+        </div>
         @endif
     </div>
 
@@ -686,6 +693,20 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
 
         @if($attendances->count())
+        <div class="att-summary-strip">
+            <div class="att-summary-item">
+                <div class="att-summary-num">{{ $attendances->count() }}</div>
+                <div class="att-summary-lbl">Total Sessions</div>
+            </div>
+            <div class="att-summary-item">
+                <div class="att-summary-num">{{ number_format($attendances->sum('total_attendees')) }}</div>
+                <div class="att-summary-lbl">Total Attendees</div>
+            </div>
+            <div class="att-summary-item">
+                <div class="att-summary-num">{{ $attendances->count() ? number_format($attendances->avg('total_attendees'), 0) : '—' }}</div>
+                <div class="att-summary-lbl">Avg per Session</div>
+            </div>
+        </div>
         <table>
             <thead><tr><th>Event</th><th>Date</th><th>Venue</th><th style="text-align:right">Attendees</th><th>Notes</th><th>Sheet</th></tr></thead>
             <tbody>
