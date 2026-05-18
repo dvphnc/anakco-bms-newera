@@ -229,8 +229,7 @@
         placeholder: 'Select relationship',
         allowClear: true,
         minimumResultsForSearch: Infinity,
-        width: '100%',
-        dropdownParent: $('#repPanel')
+        width: '100%'
     });
 
     /* ── Gold spinner on submit ── */
