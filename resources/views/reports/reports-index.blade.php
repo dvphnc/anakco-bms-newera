@@ -59,14 +59,14 @@
                 {{-- Export buttons --}}
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
                     <a href="{{ route('export.pdf', $m['key']) }}"
-                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#dc2626;background:#fff;border-right:1px solid var(--border);text-decoration:none;transition:background 0.15s"
-                       onmouseover="this.style.background='#fee2e2'"
+                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#9b3535;background:#fff;border-right:1px solid var(--border);text-decoration:none;transition:background 0.15s"
+                       onmouseover="this.style.background='var(--surface2)'"
                        onmouseout="this.style.background='#fff'">
                         <i class="fas fa-file-pdf"></i> PDF
                     </a>
                     <a href="{{ route('export.excel', $m['key']) }}"
-                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#16a34a;background:#fff;text-decoration:none;transition:background 0.15s"
-                       onmouseover="this.style.background='#dcfce7'"
+                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#3d7a55;background:#fff;text-decoration:none;transition:background 0.15s"
+                       onmouseover="this.style.background='var(--surface2)'"
                        onmouseout="this.style.background='#fff'">
                         <i class="fas fa-file-excel"></i> Excel
                     </a>
@@ -98,7 +98,7 @@
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D">
+        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy-mid)">
             <i class="fas fa-file-alt"></i>
         </div>
         <div class="stat-info">
@@ -138,9 +138,9 @@
                 Busiest month: <strong>{{ $months[$peakNum] ?? '' }}</strong> ({{ number_format($peakVal) }} docs).
                 This month: <strong>{{ $thisMonthR }}</strong>
                 @if($thisMonthR > $prevMonthR)
-                    — <span style="color:#16a34a"><i class="fas fa-arrow-up"></i> up {{ $thisMonthR - $prevMonthR }} from last month.</span>
+                    — <span style="color:#2e6b47"><i class="fas fa-arrow-up"></i> up {{ $thisMonthR - $prevMonthR }} from last month.</span>
                 @elseif($thisMonthR < $prevMonthR)
-                    — <span style="color:var(--crimson)"><i class="fas fa-arrow-down"></i> down {{ $prevMonthR - $thisMonthR }} from last month.</span>
+                    — <span style="color:#8b2e2e"><i class="fas fa-arrow-down"></i> down {{ $prevMonthR - $thisMonthR }} from last month.</span>
                 @else
                     — same as last month.
                 @endif
