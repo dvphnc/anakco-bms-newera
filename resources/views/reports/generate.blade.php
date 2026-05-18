@@ -90,7 +90,7 @@
         <div class="card" style="width:100%">
             <div class="card-header">
                 <span class="card-title">
-                    <i class="fas fa-file-pdf" style="color:#ef4444"></i> Report Generator
+                    <i class="fas fa-file-pdf" style="color:#9b3535"></i> Report Generator
                 </span>
             </div>
             <div class="card-body" style="padding:20px 20px 24px">
@@ -181,7 +181,7 @@
                     @if(isset($q['month']))   <input type="hidden" name="month"   value="{{ $q['month'] }}"> @endif
                     @if(isset($q['quarter'])) <input type="hidden" name="quarter" value="{{ $q['quarter'] }}"> @endif
                     <button type="submit" class="btn btn-secondary" style="width:100%;justify-content:flex-start;padding:8px 12px;font-size:13px;gap:8px">
-                        <i class="fas fa-file-pdf" style="color:#ef4444;font-size:13px;flex-shrink:0"></i>
+                        <i class="fas fa-file-pdf" style="color:#9b3535;font-size:13px;flex-shrink:0"></i>
                         <span style="flex:1;text-align:left;font-size:13px">{{ $q['label'] }}</span>
                     </button>
                 </form>
@@ -290,12 +290,12 @@
                     $demos = [
                         ['label'=>'Active Residents',  'value'=>$activeResidents, 'color'=>'#0D2144'],
                         ['label'=>'Registered Voters', 'value'=>$totalVoters,     'color'=>'#C8861A'],
-                        ['label'=>'Senior Citizens',   'value'=>$totalSeniors,    'color'=>'#f59e0b'],
-                        ['label'=>'PWD',               'value'=>$totalPwd,        'color'=>'#7c3aed'],
-                        ['label'=>'Solo Parents',      'value'=>$totalSoloParent, 'color'=>'#f97316'],
-                        ['label'=>'4Ps Beneficiaries', 'value'=>$total4ps,        'color'=>'#ef4444'],
-                        ['label'=>'Male',              'value'=>$totalMale,       'color'=>'#3b82f6'],
-                        ['label'=>'Female',            'value'=>$totalFemale,     'color'=>'#ec4899'],
+                        ['label'=>'Senior Citizens',   'value'=>$totalSeniors,    'color'=>'var(--gold)'],
+                        ['label'=>'PWD',               'value'=>$totalPwd,        'color'=>'#3a5fa0'],
+                        ['label'=>'Solo Parents',      'value'=>$totalSoloParent, 'color'=>'#a05828'],
+                        ['label'=>'4Ps Beneficiaries', 'value'=>$total4ps,        'color'=>'#8b2e2e'],
+                        ['label'=>'Male',              'value'=>$totalMale,       'color'=>'var(--navy)'],
+                        ['label'=>'Female',            'value'=>$totalFemale,     'color'=>'#8b4a68'],
                     ];
                 @endphp
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px 32px;flex:1;align-content:space-between">

@@ -461,7 +461,7 @@
             labels: {!! json_encode(array_keys($ageGroups)) !!},
             datasets: [{
                 data: {!! json_encode(array_values($ageGroups)) !!},
-                backgroundColor: ['#C8861A', '#0D2144', '#16a34a', '#9CA3AF'],
+                backgroundColor: ['#C8861A', '#0D2144', '#3d7a55', '#9CA3AF'],
                 borderWidth: 2,
                 borderColor: '#fff',
             }]
