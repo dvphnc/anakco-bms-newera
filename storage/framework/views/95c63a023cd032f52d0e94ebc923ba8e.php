@@ -698,8 +698,30 @@
                 </div>
                 <h3>Business Clearance</h3>
                 <p>Required for new business registration and annual renewal of business permits within the barangay.</p>
-                <a href="<?php echo e(route('portal.request')); ?>" class="svc-card-link">
+                <a href="<?php echo e(route('portal.request')); ?>?type=Business+Clearance" class="svc-card-link">
                     Request Now <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon" style="background:rgba(155,28,28,0.07);color:var(--crimson)">
+                    <i class="fas fa-gavel"></i>
+                </div>
+                <h3>File a Blotter Report</h3>
+                <p>Report an incident to the barangay online. Our Peace & Order committee will follow up and facilitate mediation.</p>
+                <a href="<?php echo e(route('portal.blotter')); ?>" class="svc-card-link">
+                    File Report <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon" style="background:rgba(46,107,71,0.08);color:#2e6b47">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <h3>Business Permit Application</h3>
+                <p>Apply for a new business permit or renewal directly online. A barangay inspector will review and process your application.</p>
+                <a href="<?php echo e(route('portal.business')); ?>" class="svc-card-link">
+                    Apply Now <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
         </div>
