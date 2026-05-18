@@ -110,9 +110,9 @@ $moduleMap = [
     <div class="card-header">
         <span class="card-title"><i class="fas fa-chart-bar"></i> Activity This Week</span>
         <div style="display:flex;gap:14px;font-size:13px;color:var(--text-muted)">
-            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#16a34a;display:inline-block"></span>Created</span>
-            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#f59e0b;display:inline-block"></span>Updated</span>
-            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#ef4444;display:inline-block"></span>Deleted</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#4a8c5c;display:inline-block"></span>Created</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#C8861A;display:inline-block"></span>Updated</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#b04444;display:inline-block"></span>Deleted</span>
         </div>
     </div>
     <div class="card-body">
@@ -126,9 +126,9 @@ $moduleMap = [
         @endphp
         <div class="chart-insight" style="margin-top:14px">
             <strong>{{ number_format($totalWeek) }}</strong> total actions this week —
-            <span style="color:#166534"><strong>{{ $createdWk }}</strong> created</span>,
-            <span style="color:#92400e"><strong>{{ $updatedWk }}</strong> updated</span>,
-            <span style="color:#991b1b"><strong>{{ $deletedWk }}</strong> deleted</span>.
+            <span style="color:#2e6b47"><strong>{{ $createdWk }}</strong> created</span>,
+            <span style="color:#7a5200"><strong>{{ $updatedWk }}</strong> updated</span>,
+            <span style="color:#8b2e2e"><strong>{{ $deletedWk }}</strong> deleted</span>.
         </div>
     </div>
 </div>
