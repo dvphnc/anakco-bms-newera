@@ -49,6 +49,12 @@
     </div>
 </div>
 
+{{-- PDF Generation Overlay --}}
+<div id="pdf-overlay" style="display:none;position:fixed;inset:0;background:rgba(13,33,68,0.62);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px">
+    <div style="width:56px;height:56px;border:4px solid rgba(200,134,26,0.3);border-top-color:#C8861A;border-radius:50%;animation:bms-pdf-spin 0.75s linear infinite"></div>
+    <div style="color:#fff;font-size:14px;font-weight:600;letter-spacing:0.04em">Generating PDF…</div>
+</div>
+
 {{-- STAT STRIP --}}
 <div class="grid-4 mb-6">
     @php $strips = [
