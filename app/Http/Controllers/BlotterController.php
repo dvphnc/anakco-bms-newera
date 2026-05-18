@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PortalStatusUpdated;
 use App\Models\BlotterCase;
 use App\Models\Resident;
 use App\Traits\LogsActivity;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
 
 class BlotterController extends Controller
@@ -23,7 +25,12 @@ class BlotterController extends Controller
                 ->when($request->date_to, fn ($q) => $q->whereDate('incident_date', '<=', $request->date_to));
 
             return DataTables::of($query)
-                ->addColumn('number_col', fn ($c) => '<span class="td-mono">'.e($c->case_number).'</span>')
+                ->addColumn('number_col', function ($c) {
+                    $badge = $c->source === 'portal'
+                        ? ' <span class="badge badge-blue" style="font-size:10px;margin-left:4px;vertical-align:middle">Portal</span>'
+                        : '';
+                    return '<span class="td-mono">'.e($c->case_number).'</span>'.$badge;
+                })
                 ->addColumn('type_col', fn ($c) => '<span class="badge badge-navy">'.e($c->incident_type).'</span>')
                 ->addColumn('complainant_col', fn ($c) => '<div style="font-weight:600;font-size:13px">'.e($c->complainant_name ?? '—').'</div>')
                 ->addColumn('respondent_col', fn ($c) => '<span class="td-muted">'.e($c->respondent_name ?? '—').'</span>')
@@ -65,7 +72,9 @@ class BlotterController extends Controller
                                     data-id="'.$c->id.'"
                                     data-num="'.e($c->case_number).'"
                                     data-status="'.e($c->status).'"
-                                    data-notes="'.e($c->resolution_notes ?? '').'">
+                                    data-notes="'.e($c->resolution_notes ?? '').'"
+                                    data-email="'.e($c->email ?? '').'"
+                                    data-name="'.e($c->complainant_name ?? '').'">
                                 <i class="fas fa-rotate"></i>
                             </button>
                             <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>

@@ -62,7 +62,7 @@ class Business extends Model
 
     public function isExpired(): bool
     {
-        return $this->expiry_date->isPast() || $this->status === 'Expired';
+        return ($this->expiry_date && $this->expiry_date->isPast()) || $this->status === 'Expired';
     }
 
     public function isActive(): bool
@@ -70,15 +70,22 @@ class Business extends Model
         return $this->status === 'Active' && ! $this->isExpired();
     }
 
+    public function isPendingPortal(): bool
+    {
+        return in_array($this->status, ['Pending', 'For Review']) && $this->source === 'portal';
+    }
+
     // Badge color per status for the blade views
     public function getStatusBadgeAttribute(): string
     {
         return match ($this->status) {
-            'Active' => 'badge-green',
-            'Expired' => 'badge-red',
-            'Suspended' => 'badge-yellow',
-            'Cancelled' => 'badge-gray',
-            default => 'badge-gray',
+            'Active'     => 'badge-green',
+            'Expired'    => 'badge-red',
+            'Suspended'  => 'badge-yellow',
+            'Cancelled'  => 'badge-gray',
+            'Pending'    => 'badge-yellow',
+            'For Review' => 'badge-blue',
+            default      => 'badge-gray',
         };
     }
 }
