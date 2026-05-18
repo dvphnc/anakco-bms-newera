@@ -19,7 +19,8 @@
       "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\resources\\\\views\\\\appointments\\\\index.blade.php\")",
       "Bash(grep -c *)",
       "Bash(curl -s http://anakco_bms.test/portal)",
-      "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\storage\\\\logs\\\\laravel.log\" -Tail 30)"
+      "Bash(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\storage\\\\logs\\\\laravel.log\" -Tail 30)",
+      "Bash(xargs grep -l \"committee\\\\|Committee\")"
     ]
   }
 }
