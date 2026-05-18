@@ -115,16 +115,27 @@
         <div class="card-body">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
                 @php
+                    // Requestor display
+                    $resFullName  = $document->resident?->full_name ?? $document->resident_name_portal ?? '';
+                    $reqName      = $document->requestor_name ?? '';
+                    $isRepDoc     = $reqName !== '' && $reqName !== $resFullName;
+                    $reqDisplay   = $reqName ?: '—';
+                    $relDisplay   = $document->requestor_relationship ?? '—';
+                    $contDisplay  = $document->requestor_contact ?? '—';
+
                     $details = [
-                        ['label'=>'Document No.',  'value'=>$document->doc_number],
-                        ['label'=>'Document Type', 'value'=>$document->document_type],
-                        ['label'=>'Status',        'value'=>$document->status],
-                        ['label'=>'Purpose',       'value'=>$document->purpose ?? '—'],
-                        ['label'=>'Fee',           'value'=>($document->fee_paid ?? 0) > 0 ? '₱'.number_format($document->fee_paid,2) : 'Free'],
-                        ['label'=>'OR Number',      'value'=>$document->or_number ?? '—'],
-                        ['label'=>'Issued By',     'value'=>$document->issuedBy->name ?? '—'],
-                        ['label'=>'Date Requested','value'=>$document->created_at->format('F d, Y')],
-                        ['label'=>'Date Released', 'value'=>$document->released_at?->format('F d, Y') ?? '—'],
+                        ['label'=>'Document No.',     'value'=>$document->doc_number],
+                        ['label'=>'Document Type',    'value'=>$document->document_type],
+                        ['label'=>'Status',           'value'=>$document->status],
+                        ['label'=>'Purpose',          'value'=>$document->purpose ?? '—'],
+                        ['label'=>'Fee',              'value'=>($document->fee_paid ?? 0) > 0 ? '₱'.number_format($document->fee_paid,2) : 'Free'],
+                        ['label'=>'OR Number',        'value'=>$document->or_number ?? '—'],
+                        ['label'=>'Issued By',        'value'=>$document->issuedBy->name ?? '—'],
+                        ['label'=>'Date Requested',   'value'=>$document->created_at->format('F d, Y')],
+                        ['label'=>'Date Released',    'value'=>$document->released_at?->format('F d, Y') ?? '—'],
+                        ['label'=>'Received By',      'value'=>$reqDisplay.($isRepDoc ? '' : ' (resident)')],
+                        ['label'=>'Relationship',     'value'=>$isRepDoc ? $relDisplay : '—'],
+                        ['label'=>'Rep. Contact',     'value'=>$isRepDoc ? $contDisplay : '—'],
                     ];
                 @endphp
                 @foreach($details as $d)
@@ -337,7 +348,7 @@
     $resident     = $document->resident;
     $purok        = $resident?->purok?->name ?? 'Barangay New Era';
     $address      = $resident?->address ?? 'Barangay New Era, Quezon City';
-    $fullName     = $resident?->full_name ?? '—';
+    $fullName     = $resident?->full_name ?? $document->resident_name_portal ?? '—';
     $age          = $resident?->age ? $resident->age . ' years old' : 'of legal age';
     $civilStatus  = $resident?->civil_status ? strtolower($resident->civil_status) . ', ' : '';
     $gender       = $resident?->gender ?? 'Male';
@@ -508,6 +519,25 @@
                         &#9679; Officials and applicants who will submit false certification or documents shall be held liable for administrative/criminal liabilities.
                     </div>
                 </div>
+
+                @php
+                    $certResName  = $resident?->full_name ?? $document->resident_name_portal ?? '';
+                    $certReqName  = $document->requestor_name ?? '';
+                    $certIsRep    = $certReqName !== '' && $certReqName !== $certResName;
+                    $certRelLabel = $document->requestor_relationship ? ' ('.$document->requestor_relationship.')' : '';
+                @endphp
+
+                {{-- Received-by line for representatives --}}
+                @if($certIsRep)
+                <div style="margin-top:14px;padding:8px 12px;border:1px solid #c8861a;border-radius:4px;background:#fffbf3;font-size:8.5pt">
+                    <strong>Document Received By:</strong>
+                    {{ $certReqName }}{{ $certRelLabel }}
+                    @if($document->requestor_contact)
+                        &nbsp;|&nbsp; {{ $document->requestor_contact }}
+                    @endif
+                    <span style="float:right">Signature: _____________________</span>
+                </div>
+                @endif
 
                 <div class="cert-or">
                     <span>O.R. No.: {{ $document->or_number ?? "_______________" }}</span>
