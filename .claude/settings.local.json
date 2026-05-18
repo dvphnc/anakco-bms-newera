@@ -42,7 +42,8 @@
       "Bash(php -l resources/views/portal/track.blade.php)",
       "Bash(php -l resources/views/portal/confirmation.blade.php)",
       "Bash(php -l /d/laragon/www/anakco_bms/app/Http/Controllers/CommitteeController.php)",
-      "Bash(php -l /d/laragon/www/anakco_bms/routes/web.php)"
+      "Bash(php -l /d/laragon/www/anakco_bms/routes/web.php)",
+      "Bash(php -l routes/web.php)"
     ]
   }
 }
