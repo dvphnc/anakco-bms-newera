@@ -2266,6 +2266,119 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 
 @push('scripts')
 <script>
+// ── Axios Form Utility ──────────────────────────────────────
+function axiosForm(form) {
+    const btn         = form.querySelector('[type="submit"]');
+    const origHtml    = btn ? btn.innerHTML : '';
+    const origClass   = btn ? btn.className : '';
+    if (btn) {
+        btn.classList.add('btn-loading');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin fa-spin-gold"></i> Saving…';
+    }
+    const fd = new FormData(form);
+    axios.post(form.action, fd, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+    })
+    .then(function(res) {
+        const d = res.data;
+        bmsToast(d.message || 'Saved successfully.', 'success');
+
+        // close the form panel
+        const panel = form.closest('.form-panel');
+        if (panel) {
+            panel.classList.remove('open');
+            const panelId  = panel.id;
+            const trigBtn  = document.querySelector('[onclick*="' + panelId + '"][data-label]');
+            if (trigBtn) {
+                const lbl  = trigBtn.dataset.label  || 'Add';
+                const ico  = trigBtn.dataset.icon   || 'fa-plus';
+                trigBtn.innerHTML = '<i class="fas ' + ico + '"></i> ' + lbl;
+                trigBtn.className = 'btn btn-primary btn-sm';
+            }
+        }
+        form.reset();
+
+        // inject new row or remove empty state then create table
+        if (d.row_html) {
+            const tabEl = form.closest('.tab-content');
+            if (tabEl) {
+                // remove empty enhanced state if present
+                const empty = tabEl.querySelector('.empty-enhanced');
+                if (empty) empty.remove();
+
+                let tbody = tabEl.querySelector('table tbody');
+                if (!tbody) {
+                    // no table yet — reload tab content via soft reload
+                    window.location.reload();
+                    return;
+                }
+                tbody.insertAdjacentHTML('afterbegin', d.row_html);
+            }
+        }
+
+        // update tab count badge
+        if (d.tab_id !== undefined && d.new_count !== undefined) {
+            const countEl = document.querySelector('#tab-btn-' + d.tab_id + ' .tab-count');
+            if (countEl) countEl.textContent = d.new_count;
+        }
+
+        // update stat card numbers
+        if (d.stat_records !== undefined) {
+            const statEls = document.querySelectorAll('.stat-number');
+            // first stat card = total records
+            // update will happen on next page load; soft reload if needed
+        }
+    })
+    .catch(function(err) {
+        const data = err.response?.data;
+        if (data && data.errors) {
+            const first = Object.values(data.errors).flat()[0];
+            bmsToast(first, 'error');
+            // show inline error on relevant field
+            Object.entries(data.errors).forEach(function([field, msgs]) {
+                const input = form.querySelector('[name="' + field + '"]');
+                if (input) {
+                    input.classList.add('is-invalid');
+                    let fb = input.parentElement.querySelector('.invalid-feedback');
+                    if (!fb) {
+                        fb = document.createElement('div');
+                        fb.className = 'invalid-feedback';
+                        input.parentElement.appendChild(fb);
+                    }
+                    fb.textContent = msgs[0];
+                }
+            });
+        } else {
+            bmsToast((data && data.message) || 'An error occurred. Please try again.', 'error');
+        }
+    })
+    .finally(function() {
+        if (btn) {
+            btn.classList.remove('btn-loading');
+            btn.innerHTML = origHtml;
+            btn.className = origClass;
+        }
+    });
+}
+
+// wire all data-axios forms
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('form[data-axios]').forEach(function(form) {
+        // clear any stale is-invalid on input focus
+        form.querySelectorAll('input, select, textarea').forEach(function(el) {
+            el.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                const fb = this.parentElement.querySelector('.invalid-feedback');
+                if (fb) fb.textContent = '';
+            });
+        });
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            axiosForm(this);
+        });
+    });
+});
+
 function switchTab(id) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
