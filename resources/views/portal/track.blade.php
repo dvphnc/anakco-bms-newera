@@ -406,16 +406,16 @@
                             <div class="ic-value">{{ $appointment->released_at->format('F j, Y · g:i A') }}</div>
                         </div>
                         @endif
+                        <div class="info-cell">
+                            <div class="ic-label">Last Updated</div>
+                            <div class="ic-value">{{ $appointment->updated_at->format('M d, Y · g:i A') }}</div>
+                        </div>
                         @if($appointment->notes)
                         <div class="info-cell full-width">
                             <div class="ic-label">Staff Notes</div>
                             <div class="ic-value">{{ $appointment->notes }}</div>
                         </div>
                         @endif
-                        <div class="info-cell">
-                            <div class="ic-label">Last Updated</div>
-                            <div class="ic-value">{{ $appointment->updated_at->format('M d, Y · g:i A') }}</div>
-                        </div>
                     </div>
 
                     {{-- Status history timeline --}}
