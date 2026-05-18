@@ -26,57 +26,6 @@
 </div>
 
 
-<div class="card mb-6">
-    <div class="card-header">
-        <span class="card-title"><i class="fas fa-download"></i> Export Data</span>
-        <span style="font-size:13px;color:var(--text-muted)">Download records as PDF or Excel</span>
-    </div>
-    <div class="card-body">
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
-            <?php
-                $modules = [
-                    ['key' => 'residents',  'label' => 'Residents',  'icon' => 'fa-users',    'color' => '#1d76db'],
-                    ['key' => 'households', 'label' => 'Households', 'icon' => 'fa-house',    'color' => '#5319e7'],
-                    ['key' => 'documents',  'label' => 'Documents',  'icon' => 'fa-file-alt', 'color' => '#006b75'],
-                    ['key' => 'blotter',    'label' => 'Blotter',    'icon' => 'fa-gavel',    'color' => '#e11d48'],
-                    ['key' => 'businesses', 'label' => 'Businesses', 'icon' => 'fa-store',    'color' => '#f97316'],
-                ];
-            ?>
-
-            <?php $__currentLoopData = $modules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $m): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
-                
-                <div style="background:<?php echo e($m['color']); ?>12;padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
-                    <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:<?php echo e($m['color']); ?>20;color:<?php echo e($m['color']); ?>;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">
-                        <i class="fas <?php echo e($m['icon']); ?>"></i>
-                    </div>
-                    <div>
-                        <div style="font-size:14px;font-weight:700;color:var(--text)"><?php echo e($m['label']); ?></div>
-                        <div style="font-size:13px;color:var(--text-muted)">All records</div>
-                    </div>
-                </div>
-                
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
-                    <a href="<?php echo e(route('export.pdf', $m['key'])); ?>"
-                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#9b3535;background:#fff;border-right:1px solid var(--border);text-decoration:none;transition:background 0.15s"
-                       onmouseover="this.style.background='var(--surface2)'"
-                       onmouseout="this.style.background='#fff'">
-                        <i class="fas fa-file-pdf"></i> PDF
-                    </a>
-                    <a href="<?php echo e(route('export.excel', $m['key'])); ?>"
-                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#3d7a55;background:#fff;text-decoration:none;transition:background 0.15s"
-                       onmouseover="this.style.background='var(--surface2)'"
-                       onmouseout="this.style.background='#fff'">
-                        <i class="fas fa-file-excel"></i> Excel
-                    </a>
-                </div>
-            </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </div>
-    </div>
-</div>
-
-
 <div class="grid-4 mb-6">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)">
@@ -106,12 +55,60 @@
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(155,28,28,0.08);color:var(--crimson)">
+        <div class="stat-icon" style="background:rgba(155,28,28,0.08);color:#8b2e2e">
             <i class="fas fa-gavel"></i>
         </div>
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format($totalBlotter)); ?></div>
             <div class="stat-label">Blotter Cases</div>
+        </div>
+    </div>
+</div>
+
+
+<div class="card mb-6">
+    <div class="card-header">
+        <span class="card-title"><i class="fas fa-download"></i> Export Data</span>
+        <span style="font-size:13px;color:var(--text-muted)">Download records as PDF or Excel</span>
+    </div>
+    <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+            <?php
+                $modules = [
+                    ['key' => 'residents',  'label' => 'Residents',  'icon' => 'fa-users',    'color' => 'var(--navy)'],
+                    ['key' => 'households', 'label' => 'Households', 'icon' => 'fa-house',    'color' => '#5e4b8b'],
+                    ['key' => 'documents',  'label' => 'Documents',  'icon' => 'fa-file-alt', 'color' => '#2e6b47'],
+                    ['key' => 'blotter',    'label' => 'Blotter',    'icon' => 'fa-gavel',    'color' => '#8b2e2e'],
+                    ['key' => 'businesses', 'label' => 'Businesses', 'icon' => 'fa-store',    'color' => '#a05828'],
+                ];
+            ?>
+            <?php $__currentLoopData = $modules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $m): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+                <div style="background:var(--surface2);padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+                    <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:rgba(13,33,68,0.06);color:<?php echo e($m['color']); ?>;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">
+                        <i class="fas <?php echo e($m['icon']); ?>"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:14px;font-weight:700;color:var(--text)"><?php echo e($m['label']); ?></div>
+                        <div style="font-size:13px;color:var(--text-muted)">All records</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+                    <a href="<?php echo e(route('export.pdf', $m['key'])); ?>"
+                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#9b3535;background:#fff;border-right:1px solid var(--border);text-decoration:none;transition:background 0.15s"
+                       onmouseover="this.style.background='var(--surface2)'"
+                       onmouseout="this.style.background='#fff'">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </a>
+                    <a href="<?php echo e(route('export.excel', $m['key'])); ?>"
+                       style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;font-size:13px;font-weight:600;color:#3d7a55;background:#fff;text-decoration:none;transition:background 0.15s"
+                       onmouseover="this.style.background='var(--surface2)'"
+                       onmouseout="this.style.background='#fff'">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </a>
+                </div>
+            </div>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
     </div>
 </div>
@@ -205,9 +202,9 @@
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
                     <?php
                         $statuses = [
-                            ['label'=>'Active',      'value'=>$totalActive,      'color'=>'#2e6b47'],
-                            ['label'=>'Deceased',    'value'=>$totalDeceased,    'color'=>'var(--text-muted)'],
-                            ['label'=>'Transferred', 'value'=>$totalTransferred, 'color'=>'var(--gold)'],
+                            ['label' => 'Active',      'value' => $totalActive,      'color' => '#2e6b47'],
+                            ['label' => 'Deceased',    'value' => $totalDeceased,    'color' => 'var(--text-muted)'],
+                            ['label' => 'Transferred', 'value' => $totalTransferred, 'color' => 'var(--gold)'],
                         ];
                     ?>
                     <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -337,7 +334,7 @@
                     <?php $__empty_1 = true; $__currentLoopData = $blotterByType; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type => $count): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <tr>
                         <td><?php echo e($type); ?></td>
-                        <td style="text-align:right;font-weight:600;color:var(--crimson)"><?php echo e(number_format($count)); ?></td>
+                        <td style="text-align:right;font-weight:600;color:#8b2e2e"><?php echo e(number_format($count)); ?></td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr><td colspan="2" style="text-align:center;padding:20px;color:var(--text-muted)">No data</td></tr>
@@ -411,7 +408,7 @@
                style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);text-align:center;transition:all 0.15s;text-decoration:none"
                onmouseover="this.style.borderColor='<?php echo e($l['color']); ?>';this.style.background='var(--navy-pale)'"
                onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface2)'">
-                <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:<?php echo e($l['color']); ?>18;display:flex;align-items:center;justify-content:center;color:<?php echo e($l['color']); ?>;font-size:17px">
+                <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:rgba(13,33,68,0.06);display:flex;align-items:center;justify-content:center;color:<?php echo e($l['color']); ?>;font-size:17px">
                     <i class="<?php echo e($l['icon']); ?>"></i>
                 </div>
                 <span style="font-size:13px;font-weight:600;color:var(--text)"><?php echo e($l['label']); ?></span>
@@ -479,4 +476,5 @@
     });
 </script>
 <?php $__env->stopPush(); ?>
+
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\anakco_bms\resources\views/reports/reports-index.blade.php ENDPATH**/ ?>
