@@ -909,7 +909,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             <thead><tr><th>Organization</th><th>Type</th><th>MOU Date</th><th>Valid Until</th><th>Contact Person</th><th>Contact</th><th>MOU File</th><th></th></tr></thead>
             <tbody>
                 @foreach($partnerships as $p)
-                <tr data-pid="{{ $p->id }}">
+                <tr
+                    data-pid="{{ $p->id }}"
+                    data-partner="{{ addslashes($p->partner_name) }}"
+                    data-ptype="{{ $p->partner_type }}"
+                    data-mou="{{ $p->mou_date?->format('Y-m-d') ?? '' }}"
+                    data-validity="{{ $p->validity_date?->format('Y-m-d') ?? '' }}"
+                    data-contact="{{ addslashes($p->contact_person ?? '') }}"
+                    data-phone="{{ addslashes($p->contact_number ?? '') }}"
+                    data-desc="{{ addslashes($p->description ?? '') }}"
+                >
                     <td>
                         <div style="font-weight:600;color:var(--navy)">{{ $p->partner_name }}</div>
                         @if($p->description)<div style="font-size:11px;color:var(--text-muted);margin-top:2px">{{ Str::limit($p->description, 60) }}</div>@endif
@@ -924,11 +933,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td class="td-muted">{{ $p->contact_number ?? '—' }}</td>
                     <td>@if($p->file_path)<a href="{{ asset('storage/'.$p->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
                     <td>
-                        <button type="button"
-                                onclick="deletePartnership({{ $p->id }}, '{{ addslashes($p->partner_name) }}', '{{ $committee['slug'] }}')"
-                                class="btn btn-danger btn-sm btn-icon" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditPartnership(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button"
+                                    onclick="deletePartnership({{ $p->id }}, '{{ addslashes($p->partner_name) }}', '{{ $committee['slug'] }}')"
+                                    class="btn btn-danger btn-sm btn-icon" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 @endforeach
