@@ -2603,7 +2603,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <button class="crud-modal-close" onclick="closeCrudModal('editAttendanceModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="crud-modal-body">
-        <form id="editAttendanceForm" data-axios="true">
+        <form id="editAttendanceForm">
             @csrf @method('PATCH')
             <input type="hidden" name="_method" value="PATCH">
             <div class="form-grid-3" style="gap:12px">
@@ -2630,7 +2630,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <button class="crud-modal-close" onclick="closeCrudModal('editInventoryModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="crud-modal-body">
-        <form id="editInventoryForm" data-axios="true">
+        <form id="editInventoryForm">
             @csrf @method('PATCH')
             <input type="hidden" name="_method" value="PATCH">
             <div class="form-grid-3" style="gap:12px">
@@ -2658,7 +2658,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <button class="crud-modal-close" onclick="closeCrudModal('editPartnershipModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="crud-modal-body">
-        <form id="editPartnershipForm" data-axios="true">
+        <form id="editPartnershipForm">
             @csrf @method('PATCH')
             <input type="hidden" name="_method" value="PATCH">
             <div class="form-grid-3" style="gap:12px">
@@ -3135,19 +3135,21 @@ document.getElementById('editActivityForm').addEventListener('submit', function(
     e.preventDefault();
     var url = '/committees/' + _editActSlug + '/activities/' + _editActId;
     axiosPatch(this, url, 'editActivityModal', function(rec) {
-        var row = document.querySelector('tr[data-id="' + _editActId + '"]');
+        var row = document.querySelector('[data-id="' + _editActId + '"]');
         if (row) {
             row.cells[0].innerHTML = '<div style="font-weight:600">' + rec.title + '</div>' + (rec.description ? '<div class="td-muted">' + rec.description + '</div>' : '');
-            row.cells[1].textContent = new Date(rec.activity_date).toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
+            var d = rec.activity_date ? rec.activity_date.substring(0,10) : '';
+            if (d) row.cells[1].textContent = new Date(d + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
             row.cells[2].textContent = rec.location || '—';
-            row.cells[3].textContent = rec.participants_count || '0';
-            // update data attrs
-            row.dataset.title       = rec.title;
-            row.dataset.date        = rec.activity_date ? rec.activity_date.substring(0,10) : '';
-            row.dataset.location    = rec.location || '';
-            row.dataset.participants= rec.participants_count || '0';
-            row.dataset.status      = rec.status;
-            row.dataset.description = rec.description || '';
+            row.cells[3].textContent = rec.participants_count != null ? Number(rec.participants_count).toLocaleString() : '—';
+            var statusMap = {Completed:'badge-green',Ongoing:'badge-yellow',Cancelled:'badge-red'};
+            row.cells[4].innerHTML = '<span class="badge ' + (statusMap[rec.status] || 'badge-gray') + '">' + rec.status + '</span>';
+            row.dataset.title        = rec.title;
+            row.dataset.date         = d;
+            row.dataset.location     = rec.location || '';
+            row.dataset.participants = rec.participants_count || '0';
+            row.dataset.status       = rec.status;
+            row.dataset.description  = rec.description || '';
         }
     });
 });
@@ -3367,4 +3369,3 @@ function filterMeds() {
 }
 </script>
 @endpush
-                  
