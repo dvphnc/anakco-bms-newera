@@ -1681,7 +1681,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </tbody>
         </table>
         @else
-        <div class="empty-state"><i class="fas fa-user-doctor"></i><p>No clinic doctors or staff listed yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-user-doctor"></i></div>
+            <h4>No Clinic Staff Yet</h4>
+            <p>Register doctors, nurses, midwives, and BHWs serving this health committee.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-clinic-staff', document.querySelector('[data-icon=fa-user-nurse]'))">
+                <i class="fas fa-user-nurse"></i> Add First Staff
+            </button>
+        </div>
         @endif
     </div>
 
@@ -2039,7 +2046,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </script>
 
         @else
-        <div class="empty-state"><i class="fas fa-pills"></i><p>No medicines in inventory yet. Add one above.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-pills"></i></div>
+            <h4>No Medicines in Inventory Yet</h4>
+            <p>Add medicines, vitamins, and medical supplies to start tracking clinic stock.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-medicine', document.querySelector('[data-label=\'Add Medicine\']'))">
+                <i class="fas fa-pills"></i> Add First Medicine
+            </button>
+        </div>
         @endif
     </div>
     @endif
@@ -2090,7 +2104,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </tbody>
         </table>
         @else
-        <div class="empty-state"><i class="fas fa-broom"></i><p>No street sweepers registered yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-broom"></i></div>
+            <h4>No Street Sweepers Registered Yet</h4>
+            <p>Register barangay street sweepers with their assigned zones and schedules.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-sweepers', document.querySelector('[data-icon=fa-broom]'))">
+                <i class="fas fa-broom"></i> Add First Sweeper
+            </button>
+        </div>
         @endif
     </div>
     @endif
@@ -2149,7 +2170,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </tbody>
         </table>
         @else
-        <div class="empty-state"><i class="fas fa-file-signature"></i><p>No contracts or permits recorded yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-file-signature"></i></div>
+            <h4>No Contracts or Permits Yet</h4>
+            <p>Record contractor agreements, permits, and project contracts for infrastructure work.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-contracts', document.querySelector('[data-icon=fa-file-signature]'))">
+                <i class="fas fa-file-signature"></i> Add First Contract
+            </button>
+        </div>
         @endif
     </div>
 
