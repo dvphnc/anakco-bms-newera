@@ -1129,7 +1129,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-projects" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Project</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="project">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Project Name <span style="color:var(--crimson)">*</span></label><input type="text" name="project_name" class="form-control @error('project_name') is-invalid @enderror" value="{{ old('project_name') }}" required>@error('project_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
@@ -1198,7 +1198,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-env" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Program</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="environment">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Program Name <span style="color:var(--crimson)">*</span></label><input type="text" name="program_name" class="form-control @error('program_name') is-invalid @enderror" value="{{ old('program_name') }}" required>@error('program_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
@@ -1261,7 +1261,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-beneficiaries" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Beneficiary</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="livelihood">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control @error('full_name') is-invalid @enderror" value="{{ old('full_name') }}" required>@error('full_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
@@ -1322,7 +1322,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-toda" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Register Vehicle</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="toda">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Operator Name <span style="color:var(--crimson)">*</span></label><input type="text" name="operator_name" class="form-control @error('operator_name') is-invalid @enderror" value="{{ old('operator_name') }}" required>@error('operator_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
@@ -1385,7 +1385,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-emergency" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Log Emergency</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="emergency">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group"><label class="form-label">Incident Type <span style="color:var(--crimson)">*</span></label><select name="incident_type" class="form-control" required>@foreach(['Flood','Fire','Earthquake','Typhoon','Landslide','Accident','Medical Emergency','Other'] as $t)<option>{{ $t }}</option>@endforeach</select></div>
