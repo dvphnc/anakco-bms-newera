@@ -2575,7 +2575,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <button class="crud-modal-close" onclick="closeCrudModal('editActivityModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="crud-modal-body">
-        <form id="editActivityForm" data-axios="true">
+        <form id="editActivityForm">
             @csrf @method('PATCH')
             <input type="hidden" name="_method" value="PATCH">
             <div class="form-grid-3" style="gap:12px">
@@ -3043,38 +3043,45 @@ function deleteReliefSupply(id, name, slug) {
 
 // ── CRUD: Generic delete (records, activities, attendance, inventory) ──
 function deleteGeneric(type, id, name) {
+    // Capture the row element synchronously at click time — not inside the async callback
+    var rowEl = document.querySelector('[data-id="' + id + '"], [data-rid="' + id + '"]');
     var labels = {
         records: 'Record', activities: 'Activity', attendance: 'Attendance Record', inventory: 'Inventory Item'
     };
     bmsConfirm({
         title:   'Delete ' + (labels[type] || 'Record'),
-        message: 'Delete <strong>' + name + '</strong>? This cannot be undone.',
+        message: 'Delete ' + name + '? This cannot be undone.',
         ok: 'Delete', type: 'danger',
     }, function() {
         axios.delete('/committees/{{ $committee['slug'] }}/' + type + '/' + id)
             .then(function(res) {
-                var row = document.querySelector('tr[data-id="' + id + '"], tr[data-rid="' + id + '"]');
-                if (row) row.remove();
+                if (rowEl) rowEl.remove();
                 bmsToast(res.data.message || 'Deleted.', 'success');
             })
-            .catch(function() { bmsToast('Delete failed.', 'error'); });
+            .catch(function(err) {
+                var msg = err.response && err.response.data && err.response.data.message;
+                bmsToast(msg || 'Delete failed.', 'error');
+            });
     });
 }
 
 // ── CRUD: Specific delete ──
 function deleteSpecific(type, id, name) {
+    var rowEl = document.querySelector('[data-id="' + id + '"]');
     bmsConfirm({
         title: 'Delete Record',
-        message: 'Delete <strong>' + name + '</strong>? This cannot be undone.',
+        message: 'Delete ' + name + '? This cannot be undone.',
         ok: 'Delete', type: 'danger',
     }, function() {
         axios.delete('/committees/{{ $committee['slug'] }}/specific/' + type + '/' + id)
             .then(function(res) {
-                var row = document.querySelector('tr[data-id="' + id + '"], [data-id="' + id + '"]');
-                if (row) row.remove();
+                if (rowEl) rowEl.remove();
                 bmsToast(res.data.message || 'Deleted.', 'success');
             })
-            .catch(function() { bmsToast('Delete failed.', 'error'); });
+            .catch(function(err) {
+                var msg = err.response && err.response.data && err.response.data.message;
+                bmsToast(msg || 'Delete failed.', 'error');
+            });
     });
 }
 
@@ -3360,3 +3367,4 @@ function filterMeds() {
 }
 </script>
 @endpush
+                  
