@@ -1443,7 +1443,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-evacuation" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Evacuation Center</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="evacuation">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Center Name <span style="color:var(--crimson)">*</span></label><input type="text" name="center_name" class="form-control @error('center_name') is-invalid @enderror" value="{{ old('center_name') }}" required>@error('center_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
@@ -1512,7 +1512,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-relief" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Relief Supply Item</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="relief">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Item Name <span style="color:var(--crimson)">*</span></label><input type="text" name="item_name" class="form-control @error('item_name') is-invalid @enderror" value="{{ old('item_name') }}" required>@error('item_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
@@ -1582,7 +1582,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-training" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Log Training / Seminar</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" enctype="multipart/form-data" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="training">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" class="form-control @error('title') is-invalid @enderror" placeholder="e.g. Anti-Drug Campaign Seminar" value="{{ old('title') }}" required>@error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
@@ -1645,7 +1645,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div id="form-clinic-staff" class="form-panel">
             <div class="form-panel-inner">
                 <div class="form-section-label"><i class="fas fa-plus" style="color:var(--gold);margin-right:6px"></i> Add Clinic Doctor / Staff</div>
-                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}">
+                <form method="POST" action="{{ route('committees.storeSpecific', $committee['slug']) }}" data-axios="true">
                     @csrf <input type="hidden" name="specific_type" value="clinic-staff">
                     <div class="form-grid-3" style="gap:12px">
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label><input type="text" name="full_name" class="form-control @error('full_name') is-invalid @enderror" value="{{ old('full_name') }}" required>@error('full_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
