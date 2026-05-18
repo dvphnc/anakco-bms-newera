@@ -24,7 +24,12 @@ class AppointmentController extends Controller
                 ->when($request->document_type, fn ($q) => $q->whereIn('document_type', (array) $request->document_type));
 
             return DataTables::of($query)
-                ->addColumn('number_col', fn ($a) => '<span class="td-mono">'.e($a->appointment_number).'</span>')
+                ->addColumn('number_col', function ($a) {
+                    $badge = $a->source === 'portal'
+                        ? '<span class="badge badge-blue" style="font-size:10px;margin-left:5px">Portal</span>'
+                        : '<span class="badge badge-gray" style="font-size:10px;margin-left:5px">Walk-in</span>';
+                    return '<span class="td-mono">'.e($a->appointment_number).'</span>'.$badge;
+                })
                 ->addColumn('resident_col', function ($a) {
                     return '<div style="font-weight:600;font-size:13px;color:var(--navy)">'.e($a->resident_name).'</div>'
                           .'<div class="td-muted">'.e($a->contact_number).'</div>';
@@ -115,6 +120,23 @@ class AppointmentController extends Controller
 
         $this->logActivity('updated', $appointment, $old, $appointment->fresh()->toArray());
 
+        // Send email notification if the appointment has an email address
+        if ($appointment->email) {
+            try {
+                Mail::to($appointment->email)->send(new PortalStatusUpdated(
+                    type:          'document',
+                    requestNumber: $appointment->appointment_number,
+                    residentName:  $appointment->resident_name,
+                    newStatus:     $validated['status'],
+                    notes:         $validated['notes'] ?? null,
+                    preferredDate: $appointment->preferred_date?->format('Y-m-d'),
+                ));
+            } catch (\Exception $e) {
+                // Mail failure is non-fatal; log silently
+                logger()->warning('Portal email failed: ' . $e->getMessage());
+            }
+        }
+
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
@@ -124,6 +146,15 @@ class AppointmentController extends Controller
         }
 
         return back()->with('success', "Appointment status updated to {$validated['status']}.");
+    }
+
+    public function portalPendingCount()
+    {
+        return response()->json([
+            'documents' => DocumentAppointment::where('status', 'Pending')->where('source', 'portal')->count(),
+            'blotter'   => BlotterRequest::where('status', 'Pending')->count(),
+            'business'  => BusinessPermitRequest::where('status', 'Pending')->count(),
+        ]);
     }
 
     public function destroy(Request $request, DocumentAppointment $appointment)
