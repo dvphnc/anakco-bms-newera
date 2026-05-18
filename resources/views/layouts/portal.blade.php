@@ -587,138 +587,6 @@
         #portalToast.toast-error   { background: var(--crimson); }
         #portalToast.toast-warning { background: var(--gold); }
 
-        /* ═══════════════════════════════════════════════════════
-           FOOTER
-        ═══════════════════════════════════════════════════════ */
-        .portal-footer { background: var(--navy-dark); color: rgba(255,255,255,.55); }
-
-        .footer-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3.5rem clamp(1rem, 4vw, 2.5rem) 0;
-            display: grid;
-            grid-template-columns: 1.7fr 1fr 1fr 1.2fr auto;
-            gap: 2rem 2.5rem;
-            align-items: start;
-        }
-
-        /* Seal + brand column */
-        .footer-brand { display: flex; flex-direction: column; gap: .85rem; }
-        .footer-brand-top {
-            display: flex; align-items: center; gap: .85rem;
-        }
-        .footer-seal-sm {
-            width: 48px; height: 48px; flex-shrink: 0;
-        }
-        .footer-brand-name { font-weight: 700; font-size: .95rem; color: #fff; line-height: 1.25; }
-        .footer-brand-sub  { font-size: .72rem; opacity: .6; }
-        .footer-about      { font-size: .8rem; line-height: 1.75; max-width: 260px; }
-        .footer-legal-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
-            background: rgba(200,134,26,.15);
-            border: 1px solid rgba(200,134,26,.3);
-            color: var(--gold-light);
-            padding: .3rem .75rem;
-            border-radius: 999px;
-            font-size: .7rem;
-            font-weight: 600;
-            margin-top: .25rem;
-            width: fit-content;
-        }
-
-        /* Footer link columns */
-        .footer-col h4 {
-            font-size: .72rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .1em;
-            color: rgba(255,255,255,.35);
-            margin-bottom: 1rem; padding-bottom: .5rem;
-            border-bottom: 1px solid rgba(255,255,255,.08);
-        }
-        .footer-col a {
-            display: flex; align-items: center; gap: .5rem;
-            color: rgba(255,255,255,.55);
-            text-decoration: none; font-size: .82rem;
-            padding: .3rem 0;
-            transition: color .2s;
-        }
-        .footer-col a:hover { color: var(--gold-light); }
-        .footer-col a i { font-size: .72rem; width: 14px; opacity: .6; }
-
-        /* Republic seal column — standalone visual anchor */
-        .footer-republic {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding-left: 1.5rem;
-            border-left: 1px solid rgba(255,255,255,.08);
-        }
-        .footer-republic-img {
-            width: 148px;
-            height: 148px;
-            object-fit: contain;
-            filter: brightness(0) invert(1);
-            opacity: .45;
-            transition: opacity .3s;
-        }
-        .footer-republic:hover .footer-republic-img { opacity: .7; }
-
-        /* System Health widget */
-        .footer-health {
-            display: flex;
-            flex-direction: column;
-            gap: .55rem;
-        }
-        .footer-health h4 {
-            font-size: .72rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .1em;
-            color: rgba(255,255,255,.35);
-            margin-bottom: .45rem; padding-bottom: .5rem;
-            border-bottom: 1px solid rgba(255,255,255,.08);
-        }
-        .health-row {
-            display: flex;
-            align-items: center;
-            gap: .55rem;
-            font-size: .78rem;
-            color: rgba(255,255,255,.55);
-            line-height: 1.4;
-        }
-        .health-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .health-dot.ok      { background: #22c55e; box-shadow: 0 0 5px rgba(34,197,94,.5); }
-        .health-dot.warn    { background: #f59e0b; box-shadow: 0 0 5px rgba(245,158,11,.5); }
-        .health-dot.offline { background: #ef4444; box-shadow: 0 0 5px rgba(239,68,68,.5);  }
-        .health-label { color: rgba(255,255,255,.75); font-weight: 500; }
-
-        .footer-bottom {
-            max-width: 1100px;
-            margin: 2rem auto 0;
-            padding: 1.1rem clamp(1rem, 4vw, 2.5rem);
-            border-top: 1px solid rgba(255,255,255,.08);
-            display: flex;
-            align-items: center; justify-content: space-between;
-            gap: 1rem; flex-wrap: wrap;
-            font-size: .74rem;
-        }
-        .footer-pb {
-            display: flex; align-items: center; gap: .45rem;
-            color: rgba(255,255,255,.5);
-        }
-        .footer-pb strong { color: rgba(255,255,255,.75); }
-
-        @media (max-width: 900px) {
-            .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
-        }
-        @media (max-width: 560px) {
-            .footer-inner { grid-template-columns: 1fr; }
-            .footer-bottom { justify-content: center; text-align: center; }
-        }
     </style>
     @stack('styles')
 </head>
@@ -977,6 +845,24 @@ function closeMobileNav() {
     document.addEventListener('input', function (e) {
         if (e.target === input) renderItems(input.value);
     });
+})();
+
+/* ════════════════════════════════════════════════
+   LIVE CLOCK
+════════════════════════════════════════════════ */
+(function () {
+    var el = document.getElementById('portalClockTime');
+    if (!el) return;
+    function tick() {
+        var now = new Date();
+        var h = now.getHours();
+        var m = String(now.getMinutes()).padStart(2, '0');
+        var ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        el.textContent = h + ':' + m + ' ' + ampm;
+    }
+    tick();
+    setInterval(tick, 1000);
 })();
 
 /* ════════════════════════════════════════════════
