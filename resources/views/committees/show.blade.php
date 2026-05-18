@@ -605,7 +605,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </tbody>
         </table>
         @else
-        <div class="empty-state"><i class="fas fa-calendar-check"></i><p>No activities logged yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-calendar-check"></i></div>
+            <h4>No Activities Logged Yet</h4>
+            <p>Track committee meetings, programs, and barangay events here.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-activities', document.querySelector('[data-icon=fa-calendar-plus]'))">
+                <i class="fas fa-calendar-plus"></i> Log First Activity
+            </button>
+        </div>
         @endif
     </div>
 
@@ -659,7 +666,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             @endforeach
         </div>
         @else
-        <div class="empty-state"><i class="fas fa-trophy"></i><p>No accomplishments logged yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-trophy"></i></div>
+            <h4>No Accomplishments Logged Yet</h4>
+            <p>Document completed programs, milestones, and committee achievements.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-accomplishments', document.querySelector('[data-icon=fa-trophy]'))">
+                <i class="fas fa-trophy"></i> Log First Accomplishment
+            </button>
+        </div>
         @endif
     </div>
 
@@ -723,7 +737,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </tbody>
         </table>
         @else
-        <div class="empty-state"><i class="fas fa-users"></i><p>No attendance records yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-users"></i></div>
+            <h4>No Attendance Records Yet</h4>
+            <p>Start tracking attendance by recording your first committee event session.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-attendance', document.querySelector('[data-icon=fa-clipboard-list]'))">
+                <i class="fas fa-clipboard-list"></i> Record First Attendance
+            </button>
+        </div>
         @endif
     </div>
 
@@ -773,7 +794,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </tbody>
         </table>
         @else
-        <div class="empty-state"><i class="fas fa-boxes-stacked"></i><p>No inventory items yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-boxes-stacked"></i></div>
+            <h4>No Inventory Items Yet</h4>
+            <p>Add equipment, supplies, and assets assigned to this committee.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-inventory', document.querySelector('[data-icon=fa-circle-plus]'))">
+                <i class="fas fa-circle-plus"></i> Add First Item
+            </button>
+        </div>
         @endif
     </div>
 
@@ -838,7 +866,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </tbody>
         </table>
         @else
-        <div class="empty-state"><i class="fas fa-handshake"></i><p>No partnership records yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-handshake"></i></div>
+            <h4>No Partnership Records Yet</h4>
+            <p>Document MOUs, MOAs, and organizational partnerships for this committee.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-partnership', document.querySelector('[data-icon=fa-handshake]'))">
+                <i class="fas fa-handshake"></i> Add First Partnership
+            </button>
+        </div>
         @endif
     </div>
 
@@ -2343,17 +2378,4 @@ function filterMeds() {
         const matchQ   = !q   || generic.includes(q) || brand.includes(q);
         const matchCat = !cat || rowCat === cat;
         const matchSt  = !status
-            || (status === 'low'      && isLow)
-            || (status === 'expired'  && isExpired)
-            || (status === 'expiring' && isExpiring);
-
-        const show = matchQ && matchCat && matchSt;
-        row.style.display = show ? '' : 'none';
-        if (show) visible++;
-    });
-
-    const countEl = document.getElementById('medCount');
-    if (countEl) countEl.textContent = 'Showing ' + visible + ' of ' + rows.length;
-}
-</script>
-@endpush
+            || (status === 'low' 
