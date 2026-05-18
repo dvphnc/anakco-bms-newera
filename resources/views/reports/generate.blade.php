@@ -115,7 +115,7 @@
                         style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;white-space:nowrap;font-family:'Poppins',sans-serif;transition:all 0.15s"
                         onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
                         onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
-                    <i class="fas fa-file-pdf" style="color:#9b3535;font-size:11px"></i>{{ $q['short'] }}
+                    <i class="fas fa-file-pdf" style="color:#9b3535;font-size:16px"></i>{{ $q['short'] }}
                 </button>
             </div>
             @endforeach
