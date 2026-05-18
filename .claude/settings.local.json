@@ -26,7 +26,8 @@
       "Bash(php -l app/Http/Controllers/CommitteeController.php)",
       "Bash(curl -s -L -c /tmp/bms_cookies.txt -b /tmp/bms_cookies.txt http://anakco_bms.test/login -o /dev/null -w \"%{http_code}\")",
       "Bash(curl -s http://anakco_bms.test/login)",
-      "Bash(curl -s -L -c /tmp/bms_cookies.txt -b /tmp/bms_cookies.txt -X POST http://anakco_bms.test/login -d \"email=admin@bms.gov.ph&password=Admin@12345&_token=$\\(curl -s http://anakco_bms.test/login)"
+      "Bash(curl -s -L -c /tmp/bms_cookies.txt -b /tmp/bms_cookies.txt -X POST http://anakco_bms.test/login -d \"email=admin@bms.gov.ph&password=Admin@12345&_token=$\\(curl -s http://anakco_bms.test/login)",
+      "Bash(php -r *)"
     ]
   }
 }
