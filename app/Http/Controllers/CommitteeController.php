@@ -932,7 +932,32 @@ class CommitteeController extends Controller
         }
 
         if ($request->expectsJson()) {
-            return response()->json(['success' => true, 'message' => 'Record saved successfully.', 'row_html' => null]);
+            $tabMap = [
+                'bpso'        => 'bpso',
+                'patrol'      => 'patrol',
+                'training'    => 'training',
+                'health'      => 'health-records',
+                'clinic-staff'=> 'clinic-staff',
+                'medicine'    => 'medicine-inventory',
+                'scholar'     => 'scholars',
+                'project'     => 'projects',
+                'contract'    => 'contracts',
+                'financial'   => 'financials',
+                'environment' => 'env-programs',
+                'sweeper'     => 'sweepers',
+                'beneficiary' => 'beneficiaries',
+                'toda'        => 'toda',
+                'emergency'   => 'emergency',
+                'evacuation'  => 'evacuation',
+                'relief'      => 'relief-supplies',
+            ];
+            return response()->json([
+                'success'  => true,
+                'message'  => 'Record saved successfully.',
+                'row_html' => null,
+                'tab_id'   => $tabMap[$type] ?? null,
+                'reload'   => true,
+            ]);
         }
 
         return back()->with('success', 'Record saved successfully.');
