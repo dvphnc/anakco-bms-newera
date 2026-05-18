@@ -181,9 +181,9 @@
                 $demos = [
                     ['label' => 'Registered Voters', 'value' => $totalVoters,     'color' => 'var(--navy)'],
                     ['label' => 'Senior Citizens',   'value' => $totalSeniors,    'color' => 'var(--gold)'],
-                    ['label' => 'PWD',               'value' => $totalPwd,        'color' => '#2563eb'],
-                    ['label' => 'Solo Parents',      'value' => $totalSoloParent, 'color' => '#7c3aed'],
-                    ['label' => '4Ps Beneficiaries', 'value' => $total4ps,        'color' => '#dc2626'],
+                    ['label' => 'PWD',               'value' => $totalPwd,        'color' => '#3a5fa0'],
+                    ['label' => 'Solo Parents',      'value' => $totalSoloParent, 'color' => '#5e4b8b'],
+                    ['label' => '4Ps Beneficiaries', 'value' => $total4ps,        'color' => '#8b2e2e'],
                 ];
             @endphp
             @foreach($demos as $d)
@@ -206,7 +206,7 @@
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
                     @php
                         $statuses = [
-                            ['label'=>'Active',      'value'=>$totalActive,      'color'=>'#16a34a'],
+                            ['label'=>'Active',      'value'=>$totalActive,      'color'=>'#2e6b47'],
                             ['label'=>'Deceased',    'value'=>$totalDeceased,    'color'=>'var(--text-muted)'],
                             ['label'=>'Transferred', 'value'=>$totalTransferred, 'color'=>'var(--gold)'],
                         ];
