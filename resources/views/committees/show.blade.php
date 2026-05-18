@@ -1173,7 +1173,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 @endforeach
             </tbody>
         </table>
-        @else<div class="empty-state"><i class="fas fa-hard-hat"></i><p>No projects yet.</p></div>@endif
+        @else
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-hard-hat"></i></div>
+            <h4>No Projects Yet</h4>
+            <p>Track infrastructure projects, budgets, and completion timelines.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-projects', document.querySelector('[data-icon=fa-hard-hat]'))">
+                <i class="fas fa-hard-hat"></i> Add First Project
+            </button>
+        </div>
+        @endif
     </div>
     @endif
 
@@ -1227,7 +1236,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 @endforeach
             </tbody>
         </table>
-        @else<div class="empty-state"><i class="fas fa-leaf"></i><p>No programs yet.</p></div>@endif
+        @else
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-leaf"></i></div>
+            <h4>No Environmental Programs Yet</h4>
+            <p>Log clean-up drives, tree planting, and waste management programs.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-env', document.querySelector('[data-icon=fa-leaf]'))">
+                <i class="fas fa-leaf"></i> Add First Program
+            </button>
+        </div>
+        @endif
     </div>
     @endif
 
@@ -1279,7 +1297,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 @endforeach
             </tbody>
         </table>
-        @else<div class="empty-state"><i class="fas fa-hand-holding-heart"></i><p>No beneficiaries yet.</p></div>@endif
+        @else
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-hand-holding-heart"></i></div>
+            <h4>No Beneficiaries Yet</h4>
+            <p>Register livelihood program beneficiaries and track their assistance.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-beneficiaries', document.querySelector('[data-icon=fa-hand-holding-heart]'))">
+                <i class="fas fa-hand-holding-heart"></i> Add First Beneficiary
+            </button>
+        </div>
+        @endif
     </div>
     @endif
 
@@ -1333,7 +1360,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 @endforeach
             </tbody>
         </table>
-        @else<div class="empty-state"><i class="fas fa-bus"></i><p>No vehicles registered yet.</p></div>@endif
+        @else
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-bus"></i></div>
+            <h4>No Vehicles Registered Yet</h4>
+            <p>Register tricycles, jeepneys, and other transport vehicles under TODA.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-toda', document.querySelector('[data-icon=fa-bus]'))">
+                <i class="fas fa-bus"></i> Register First Vehicle
+            </button>
+        </div>
+        @endif
     </div>
     @endif
 
