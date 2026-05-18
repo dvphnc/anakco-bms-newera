@@ -2,23 +2,17 @@
 
 namespace App\Providers;
 
+use App\Models\DocumentAppointment;
+use App\Observers\DocumentAppointmentObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        //
-    }
+    public function register(): void {}
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //
+        // Sync appointment status → linked Document record (1-to-1, no echo loop)
+        DocumentAppointment::observe(DocumentAppointmentObserver::class);
     }
 }
