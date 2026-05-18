@@ -11,11 +11,8 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #111; }
     padding-bottom: 10px;
     border-bottom: 3px solid #0D2144;
     margin-bottom: 12px;
-    position: relative;
 }
-.header .logo-left  { position: absolute; left: 0; top: 0; width: 55px; height: 55px; }
-.header .logo-right { position: absolute; right: 0; top: 0; width: 55px; height: 55px; }
-.header .titles { padding: 0 70px; }
+.header .titles { padding: 0; }
 .header .republic { font-size: 8pt; font-style: italic; color: #444; }
 .header .brgy { font-size: 14pt; font-weight: bold; text-transform: uppercase; color: #0D2144; letter-spacing: 0.05em; }
 .header .office { font-size: 8pt; color: #555; font-style: italic; }
@@ -32,15 +29,14 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #111; }
     text-decoration: underline;
 }
 .report-sub {
-    text-align: center;
-    font-size: 7.5pt;
-    color: #666;
+    text-align: center; font-size: 7.5pt;
+    color: #C8861A; font-weight: 600;
     margin-bottom: 10px;
 }
 
 .meta-bar {
-    background: #f0f4f8;
-    border: 1px solid #dde2ea;
+    background: #EEF2F7;
+    border: 1px solid #D6DCE8;
     border-radius: 4px;
     padding: 5px 10px;
     margin-bottom: 12px;
@@ -83,7 +79,7 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #111; }
 
 table { width: 100%; border-collapse: collapse; font-size: 7pt; margin-bottom: 6px; }
 thead tr th {
-    background: #1a3a6e;
+    background: #0D2144;
     color: #fff;
     padding: 5px 7px;
     text-align: left;
