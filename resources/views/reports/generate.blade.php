@@ -275,7 +275,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <canvas id="trendChart" height="90"></canvas>
+                <canvas id="trendChart" height="160"></canvas>
             </div>
         </div>
 
