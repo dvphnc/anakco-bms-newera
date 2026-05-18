@@ -11,6 +11,7 @@ class BlotterCase extends Model
 
     protected $fillable = [
         'case_number',
+        'source',
         'incident_type',
         'incident_date',
         'incident_location',
@@ -19,6 +20,7 @@ class BlotterCase extends Model
         'complainant_address',
         'complainant_contact',
         'complainant_resident_id',
+        'email',
         'respondent_name',
         'respondent_address',
         'respondent_contact',

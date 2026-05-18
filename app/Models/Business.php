@@ -11,12 +11,14 @@ class Business extends Model
 
     protected $fillable = [
         'permit_number',
+        'source',
         'business_name',
         'business_type',
         'business_address',
         'owner_name',
         'owner_contact',
         'owner_resident_id',
+        'email',
         'permit_date',
         'expiry_date',
         'status',
