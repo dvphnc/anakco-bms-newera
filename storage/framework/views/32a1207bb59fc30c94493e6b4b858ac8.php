@@ -41,7 +41,11 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Pending')">
+<<<<<<< Updated upstream
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-hourglass-half"></i></div>
+=======
+        <div class="stat-icon" style="background:rgba(200,134,26,0.1);color:var(--gold)"><i class="fas fa-hourglass-half"></i></div>
+>>>>>>> Stashed changes
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format(\App\Models\Document::where('status','Pending')->count())); ?></div>
             <div class="stat-label">Pending</div>
@@ -55,7 +59,11 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', 'Released')">
+<<<<<<< Updated upstream
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
+=======
+        <div class="stat-icon" style="background:rgba(22,101,52,0.1);color:#14532D"><i class="fas fa-circle-check"></i></div>
+>>>>>>> Stashed changes
         <div class="stat-info">
             <div class="stat-number"><?php echo e(number_format(\App\Models\Document::where('status','Released')->count())); ?></div>
             <div class="stat-label">Released</div>
@@ -78,6 +86,11 @@
     <div id="filterPanel" style="display:none">
         <div class="card-body" style="padding:20px 22px">
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+<<<<<<< Updated upstream
+=======
+
+                
+>>>>>>> Stashed changes
                 <div class="form-group" style="grid-column:1/-1">
                     <label class="form-label">Search</label>
                     <div style="position:relative">
@@ -85,6 +98,7 @@
                         <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
                                placeholder="Document no., resident name…">
                     </div>
+<<<<<<< Updated upstream
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Document Type</label>
@@ -103,7 +117,30 @@
                             <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
+=======
+>>>>>>> Stashed changes
                 </div>
+
+                
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Document Type</label>
+                    <select id="typeFilter" multiple>
+                        <?php $__currentLoopData = $documentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($t); ?>"><?php echo e($t); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                </div>
+
+                
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Status</label>
+                    <select id="statusFilter">
+                        <?php $__currentLoopData = ['Pending','Processing','Released','Cancelled']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                </div>
+
             </div>
             <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
                 <button type="button" id="resetBtn" class="btn btn-secondary btn-sm">
@@ -224,6 +261,7 @@
 $(document).ready(function () {
 
     /* ── Select2 init ─────────────────────────────────────────────────── */
+<<<<<<< Updated upstream
     /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
        The browser won't paint until after this synchronous block, so no visual flash. */
     var $fp = $('#filterPanel');
@@ -239,6 +277,31 @@ $(document).ready(function () {
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 
+=======
+    const s2Multi = {
+        dropdownParent: $('body'),
+        allowClear: false,
+        width: '100%',
+        closeOnSelect: false,
+        language: {
+            noResults: function () { return 'No matches — try a different term'; },
+            searching: function () { return 'Searching…'; }
+        }
+    };
+    const s2Single = {
+        dropdownParent: $('body'),
+        allowClear: true,
+        width: '100%',
+        minimumResultsForSearch: -1,
+        language: {
+            noResults: function () { return 'No matches — try a different term'; }
+        }
+    };
+
+    $('#typeFilter').select2($.extend({}, s2Multi, { placeholder: 'All document types…' }));
+    $('#statusFilter').select2($.extend({}, s2Single, { placeholder: 'All statuses…' }));
+
+>>>>>>> Stashed changes
     /* ── DataTable ────────────────────────────────────────────────────── */
     var table = $('#documentsTable').DataTable({
         processing: true,
@@ -270,6 +333,7 @@ $(document).ready(function () {
         }
     });
 
+<<<<<<< Updated upstream
     /* ── Axios DELETE ─────────────────────────────────────────────────── */
     $('#documentsTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
         e.preventDefault();
@@ -366,6 +430,82 @@ $(document).ready(function () {
     let debounce;
     $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380); });
     $('#typeFilter, #statusFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
+=======
+    /* ── URL persistence ──────────────────────────────────────────────── */
+    function saveToUrl() {
+        const url = new URL(window.location);
+        ['s', 'status'].forEach(k => url.searchParams.delete(k));
+        url.searchParams.delete('document_type');
+
+        if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
+        if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
+        ($('#typeFilter').val() || []).forEach(v => url.searchParams.append('document_type', v));
+
+        history.replaceState({}, '', url);
+        updateBadge();
+    }
+
+    function loadFromUrl() {
+        const p = new URLSearchParams(window.location.search);
+        let any = false;
+        if (p.get('s'))      { $('#searchInput').val(p.get('s')); any = true; }
+        if (p.get('status')) { $('#statusFilter').val(p.get('status')).trigger('change.select2'); any = true; }
+        const types = p.getAll('document_type');
+        if (types.length) { $('#typeFilter').val(types).trigger('change.select2'); any = true; }
+        return any;
+    }
+
+    function updateBadge() {
+        let n = 0;
+        if ($('#searchInput').val())                  n++;
+        if (($('#typeFilter').val() || []).length)    n++;
+        if ($('#statusFilter').val())                 n++;
+        const badge = document.getElementById('filterBadge');
+        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
+        else       { badge.style.display = 'none'; }
+    }
+
+    /* ── Panel toggle ─────────────────────────────────────────────────── */
+    window.toggleFilters = function (key) {
+        const panel = document.getElementById('filterPanel');
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+        sessionStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+    };
+
+    // Quick-filter from stat cards — sets select and opens panel
+    window.quickFilter = function (filterId, value) {
+        $('#' + filterId).val(value).trigger('change');
+        if (document.getElementById('filterPanel').style.display === 'none') {
+            document.getElementById('filterPanel').style.display = 'block';
+            document.getElementById('filterToggleText').textContent = 'Hide Filters';
+            sessionStorage.setItem('fp_documents', '1');
+        }
+        saveToUrl();
+        table.ajax.reload();
+    };
+
+    const hasUrlFilters = loadFromUrl();
+    if (hasUrlFilters || sessionStorage.getItem('fp_documents') === '1') {
+        document.getElementById('filterPanel').style.display = 'block';
+        document.getElementById('filterToggleText').textContent = 'Hide Filters';
+    }
+    updateBadge();
+
+    /* ── Event listeners ──────────────────────────────────────────────── */
+    let debounce;
+
+    $('#searchInput').on('input', function () {
+        clearTimeout(debounce);
+        debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380);
+    });
+
+    $('#typeFilter, #statusFilter').on('change', function () {
+        saveToUrl(); table.ajax.reload();
+    });
+
+>>>>>>> Stashed changes
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
         $('#typeFilter').val(null).trigger('change');

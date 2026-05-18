@@ -11,7 +11,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css">
     <link rel="stylesheet" href="https://unpkg.com/shepherd.js@11/dist/css/shepherd.css">
+<<<<<<< Updated upstream
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+=======
+>>>>>>> Stashed changes
 
     <style>
         :root {
@@ -56,7 +59,7 @@
             font-family:'Poppins', sans-serif;
             background:var(--bg);
             color:var(--text);
-            font-size:14px;
+            font-size:16px;
             line-height:1.6;
             display:flex;
             overflow:hidden;
@@ -150,8 +153,13 @@
         }
         .topbar-left { display:flex; align-items:center; gap:14px; }
         .menu-toggle { background:none; border:none; color:var(--text-muted); font-size:18px; padding:6px; cursor:pointer; display:none; }
+<<<<<<< Updated upstream
         .topbar-title { font-size:15px; font-weight:700; color:var(--navy); line-height:1.2; letter-spacing:-0.01em; }
         .topbar-subtitle { font-size:11px; color:var(--text-subtle); font-weight:300; }
+=======
+        .topbar-title { font-size:18px; font-weight:700; color:var(--navy); line-height:1.2; letter-spacing:-0.01em; }
+        .topbar-subtitle { font-size:13px; color:var(--text-subtle); font-weight:300; }
+>>>>>>> Stashed changes
         .topbar-right { display:flex; align-items:center; gap:10px; }
         .topbar-date {
             display:flex; align-items:center; gap:7px; font-size:13px; color:var(--text-muted);
@@ -211,15 +219,24 @@
         .alert-link:hover { opacity:1; }
 
         .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; gap:16px; flex-wrap:wrap; }
+<<<<<<< Updated upstream
         .page-title { font-size:18px; font-weight:700; color:var(--navy); line-height:1.2; letter-spacing:-0.01em; }
         .page-subtitle { font-size:12px; color:var(--text-muted); margin-top:2px; font-weight:300; }
+=======
+        .page-title { font-size:22px; font-weight:700; color:var(--navy); line-height:1.2; letter-spacing:-0.01em; }
+        .page-subtitle { font-size:13px; color:var(--text-muted); margin-top:2px; font-weight:300; }
+>>>>>>> Stashed changes
         .page-actions  { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
         .page-breadcrumb { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-muted); margin-top:5px; }
         .page-breadcrumb a { color:var(--text-muted); transition:color .15s; }
         .page-breadcrumb a:hover { color:var(--navy); text-decoration:underline; }
         .page-breadcrumb .bc-sep { font-size:9px; opacity:0.5; }
 
+<<<<<<< Updated upstream
         .btn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; min-height:44px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; border:1px solid transparent; cursor:pointer; transition:all 0.15s; font-family:'Poppins',sans-serif; white-space:nowrap; }
+=======
+        .btn { display:inline-flex; align-items:center; gap:7px; padding:10px 20px; min-height:48px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; border:1px solid transparent; cursor:pointer; transition:all 0.15s; font-family:'Poppins',sans-serif; white-space:nowrap; }
+>>>>>>> Stashed changes
         .btn:focus-visible { outline:2px solid var(--gold); outline-offset:2px; box-shadow:0 0 0 4px rgba(200,134,26,0.18); }
         .btn-primary:focus-visible,
         .btn-gold:focus-visible { outline-color:var(--navy); box-shadow:0 0 0 4px var(--navy-pale); }
@@ -233,7 +250,11 @@
         .btn-secondary:hover { border-color:var(--navy); color:var(--navy); background:var(--navy-pale); }
         .btn-danger    { background:var(--crimson-pale); color:var(--crimson); border-color:var(--crimson-border); }
         .btn-danger:hover { background:rgba(155,28,28,0.12); }
+<<<<<<< Updated upstream
         .btn-sm   { padding:6px 13px; font-size:12px; min-height:34px; }
+=======
+        .btn-sm   { padding:7px 14px; font-size:13px; min-height:38px; }
+>>>>>>> Stashed changes
         .btn-icon { padding:9px; aspect-ratio:1; justify-content:center; position:relative; min-height:unset; }
         .btn-icon[title]::after {
             content: attr(title);
@@ -262,6 +283,7 @@
         .card-body { padding:22px; }
 
         .table-responsive { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+<<<<<<< Updated upstream
         table { width:100%; border-collapse:collapse; font-size:13px; min-width:600px; }
         thead th { padding:9px 14px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--navy); background:var(--surface2); border-bottom:2px solid var(--border2); white-space:nowrap; }
         tbody tr { border-bottom:1px solid var(--border); transition:background 0.1s; }
@@ -270,6 +292,16 @@
         tbody td { padding:11px 14px; color:var(--text); vertical-align:middle; font-size:13px; line-height:1.55; }
         .td-muted { color:var(--text-muted); font-size:12px; line-height:1.5; }
         .td-mono  { font-family:'Courier New',monospace; color:var(--text-muted); font-size:12px; }
+=======
+        table { width:100%; border-collapse:collapse; font-size:14px; min-width:600px; }
+        thead th { padding:11px 16px; text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--navy); background:var(--surface2); border-bottom:2px solid var(--border2); white-space:nowrap; }
+        tbody tr { border-bottom:1px solid var(--border); transition:background 0.1s; }
+        tbody tr:last-child { border-bottom:none; }
+        tbody tr:hover { background:var(--navy-pale); }
+        tbody td { padding:13px 16px; color:var(--text); vertical-align:middle; font-size:14px; line-height:1.55; }
+        .td-muted { color:var(--text-muted); font-size:13px; line-height:1.5; }
+        .td-mono  { font-family:'Courier New',monospace; color:var(--text-muted); font-size:13px; }
+>>>>>>> Stashed changes
 
         .badge { display:inline-flex; align-items:center; padding:4px 11px; border-radius:99px; font-size:12px; font-weight:600; white-space:nowrap; letter-spacing:0.02em; }
         .badge-green  { background:rgba(22,101,52,0.1);  color:#14532D; }
@@ -296,12 +328,21 @@
         .form-section-title { font-size:13px; font-weight:700; color:var(--navy); letter-spacing:0.04em; text-transform:uppercase; padding-bottom:10px; border-bottom:1px solid var(--gold-border); margin-bottom:18px; }
         .form-actions { display:flex; align-items:center; gap:10px; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; }
 
+<<<<<<< Updated upstream
         .stat-card { background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-lg); padding:22px; display:flex; align-items:center; gap:18px; box-shadow:0 1px 4px rgba(13,33,68,0.07),0 4px 16px rgba(13,33,68,0.04); transition:border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
         .stat-card:hover { border-color:var(--gold-border); box-shadow:0 4px 20px rgba(200,134,26,0.14),0 1px 4px rgba(13,33,68,0.08); transform:translateY(-2px); }
         .stat-icon { width:52px; height:52px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
         .stat-info { flex:1; min-width:0; }
         .stat-number { font-size:28px; font-weight:700; color:var(--navy); line-height:1.1; }
         .stat-label  { font-size:12px; color:var(--text-subtle); margin-top:5px; font-weight:500; letter-spacing:0.02em; }
+=======
+        .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:22px; display:flex; align-items:center; gap:18px; box-shadow:var(--shadow-sm); transition:border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
+        .stat-card:hover { border-color:var(--gold-border); box-shadow:var(--shadow-gold); transform:translateY(-2px); }
+        .stat-icon { width:52px; height:52px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+        .stat-info { flex:1; min-width:0; }
+        .stat-number { font-size:30px; font-weight:700; color:var(--navy); line-height:1; }
+        .stat-label  { font-size:13px; color:var(--text-muted); margin-top:4px; font-weight:400; }
+>>>>>>> Stashed changes
 
         .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
         .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
@@ -695,7 +736,10 @@
     <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
     <script src="https://unpkg.com/tippy.js@6/dist/tippy.umd.min.js"></script>
     <script src="https://unpkg.com/shepherd.js@11/dist/js/shepherd.min.js"></script>
+<<<<<<< Updated upstream
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+=======
+>>>>>>> Stashed changes
     <script>
     $(document).ready(function() {
         $('body').on('init.select2', function() {});
@@ -888,6 +932,7 @@
         });
     })();
 
+<<<<<<< Updated upstream
     // ── Shared alert auto-dismiss (progress bar + fade-collapse) ────────
     function bmsAlertAutoDismiss(el) {
         var bar = document.createElement('div');
@@ -964,6 +1009,37 @@
         }
     });
 
+=======
+    // ── Toast notification ───────────────────────────────────────────────
+    function bmsToast(message, type) {
+        type = type || 'success';
+        var palettes = {
+            success: { bg:'#f0fdf4', border:'#86efac', text:'#14532d', icon:'fa-check-circle' },
+            error:   { bg:'#fef2f2', border:'#fca5a5', text:'#7f1d1d', icon:'fa-exclamation-circle' },
+            warning: { bg:'#fffbeb', border:'#fcd34d', text:'#78350f', icon:'fa-triangle-exclamation' },
+        };
+        var c = palettes[type] || palettes.success;
+        var el = document.createElement('div');
+        el.style.cssText = 'position:fixed;top:76px;right:20px;z-index:9998;min-width:300px;max-width:420px;' +
+            'padding:13px 16px;border-radius:var(--radius);border:1px solid ' + c.border + ';' +
+            'background:' + c.bg + ';color:' + c.text + ';font-size:14px;font-weight:500;' +
+            'box-shadow:0 6px 24px rgba(0,0,0,0.13);display:flex;align-items:center;gap:10px;' +
+            "font-family:'Poppins',sans-serif;animation:toastSlideIn .22s ease;";
+        el.innerHTML = '<i class="fas ' + c.icon + '" style="flex-shrink:0;font-size:16px"></i>' +
+                       '<span style="flex:1;line-height:1.45">' + message + '</span>' +
+                       '<button onclick="this.parentNode.remove()" style="background:none;border:none;cursor:pointer;' +
+                       'color:inherit;opacity:.5;font-size:14px;padding:0 0 0 8px;line-height:1">' +
+                       '<i class="fas fa-times"></i></button>';
+        document.body.appendChild(el);
+        setTimeout(function () {
+            el.style.transition = 'opacity .3s,transform .3s';
+            el.style.opacity = '0';
+            el.style.transform = 'translateX(16px)';
+            setTimeout(function () { el.remove(); }, 350);
+        }, 4500);
+    }
+
+>>>>>>> Stashed changes
     // ── Global Confirmation Modal ────────────────────────────────────────
     let _bmsCallback = null;
 
@@ -973,9 +1049,14 @@
     }
 
     document.getElementById('bmsConfirmOk').addEventListener('click', function () {
+<<<<<<< Updated upstream
         const cb = _bmsCallback;
         bmsConfirmCancel();
         if (cb) cb();
+=======
+        bmsConfirmCancel();
+        if (_bmsCallback) _bmsCallback();
+>>>>>>> Stashed changes
     });
 
     document.getElementById('bmsConfirmModal').addEventListener('click', function (e) {
@@ -1040,6 +1121,7 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
     }, true);
     // Re-enable on back-button restore (bfcache)
+<<<<<<< Updated upstream
     // Also force a full reload so Select2, DataTables, and all JS re-initialise
     // cleanly instead of running against a frozen DOM snapshot.
     window.addEventListener('pageshow', function(e) {
@@ -1056,6 +1138,40 @@
     <style>
     @keyframes alertShrink   { from { width:100%; } to { width:0%; } }
     @keyframes alertSlideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+=======
+    window.addEventListener('pageshow', function(e) {
+        if (e.persisted) {
+            document.querySelectorAll('button[type="submit"]').forEach(function(btn) {
+                btn.disabled = false;
+                if (btn.dataset.originalHtml) btn.innerHTML = btn.dataset.originalHtml;
+            });
+        }
+    });
+
+    // ── Alert auto-dismiss (success/warning only — errors stay) ─────────
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.alert-success, .alert-warning').forEach(function (el) {
+            const bar = document.createElement('div');
+            bar.style.cssText = 'position:absolute;bottom:0;left:0;height:2px;background:currentColor;opacity:0.3;border-radius:0 0 var(--radius) var(--radius);width:100%;transform-origin:left;animation:alertShrink 5s linear forwards';
+            el.style.position = 'relative';
+            el.style.overflow = 'hidden';
+            el.appendChild(bar);
+            setTimeout(function () {
+                el.style.transition = 'opacity 0.4s, max-height 0.4s, margin 0.4s, padding 0.4s';
+                el.style.opacity = '0';
+                el.style.maxHeight = '0';
+                el.style.marginBottom = '0';
+                el.style.paddingTop = '0';
+                el.style.paddingBottom = '0';
+                setTimeout(() => el.remove(), 450);
+            }, 5000);
+        });
+    });
+    </script>
+    <style>
+    @keyframes alertShrink  { from { width:100%; } to { width:0%; } }
+    @keyframes toastSlideIn { from { opacity:0; transform:translateX(16px); } to { opacity:1; transform:translateX(0); } }
+>>>>>>> Stashed changes
     .alert-warning { background:var(--gold-pale); border:1px solid var(--gold-border); color:#78450a; }
     </style>
 

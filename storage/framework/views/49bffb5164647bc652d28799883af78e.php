@@ -40,7 +40,11 @@
                            white-space:nowrap;transition:all .15s"
                     onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
                     onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-subtle)'">
+<<<<<<< Updated upstream
                 Ctrl+K
+=======
+                <span style="font-size:9px;opacity:.7">⌃</span>K
+>>>>>>> Stashed changes
             </button>
         </div>
 
@@ -115,6 +119,7 @@
 }
 .search-empty { padding:24px;text-align:center;font-size:13px;color:var(--text-muted); }
 .search-loading { padding:16px;text-align:center;font-size:13px;color:var(--text-muted); }
+<<<<<<< Updated upstream
 
 /* ── System Health Pill ────────────────────── */
 .sys-pill-wrap {
@@ -167,6 +172,8 @@
     transition:background .1s;
 }
 .sys-pop-action:hover { background:var(--navy-pale); }
+=======
+>>>>>>> Stashed changes
 </style>
 
 <script>

@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0D2144">
+    <meta name="description" content="Barangay New Era Resident Portal — Request official barangay documents online.">
     <title>@yield('title', 'Resident Portal') — Barangay New Era</title>
+<<<<<<< Updated upstream
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -700,11 +703,526 @@
             .footer-inner { grid-template-columns: 1fr; }
             .footer-bottom { justify-content: center; text-align: center; }
         }
+=======
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+    /* ══════════════════════════════════════════════════════════
+       DESIGN TOKENS
+    ══════════════════════════════════════════════════════════ */
+    :root {
+        --navy:          #0D2144;
+        --navy-mid:      #163160;
+        --navy-dark:     #091830;
+        --navy-pale:     rgba(13,33,68,0.06);
+        --navy-border:   rgba(13,33,68,0.15);
+        --gold:          #C8861A;
+        --gold-light:    #E5A020;
+        --gold-pale:     #FEF3DC;
+        --gold-border:   rgba(200,134,26,0.3);
+        --crimson:       #9B1C1C;
+        --crimson-pale:  rgba(155,28,28,0.07);
+        --crimson-border:rgba(155,28,28,0.2);
+        --bg:            #F0F4F8;
+        --surface:       #FFFFFF;
+        --surface2:      #F7F9FB;
+        --border:        #DDE2EA;
+        --border2:       #C8CDD8;
+        --text:          #0F1924;
+        --text-muted:    #4B5563;
+        --text-subtle:   #9CA3AF;
+        --radius:        12px;
+        --radius-sm:     8px;
+        --radius-lg:     16px;
+        --shadow-sm:     0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        --shadow-md:     0 4px 16px rgba(0,0,0,0.10);
+        --shadow-lg:     0 12px 40px rgba(0,0,0,0.14);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 16px;
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+    /* ══════════════════════════════════════════════════════════
+       HEADER / NAV
+    ══════════════════════════════════════════════════════════ */
+    .portal-header {
+        background: var(--navy);
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 clamp(1rem, 5vw, 2.5rem);
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.28);
+    }
+    .portal-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--gold) 0%, rgba(200,134,26,0.25) 55%, transparent 90%);
+    }
+
+    .portal-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #fff;
+        flex-shrink: 0;
+        min-width: 0;
+    }
+    .brand-logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--gold), var(--gold-light));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: var(--navy);
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 2px solid rgba(200,134,26,0.4);
+    }
+    .brand-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .brand-text strong {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #fff;
+        white-space: nowrap;
+    }
+    .brand-text span { font-size: 11px; color: rgba(255,255,255,0.55); }
+
+    /* Desktop Nav */
+    .portal-nav {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+    }
+    .portal-nav a {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: rgba(255,255,255,0.75);
+        font-size: 13px;
+        font-weight: 500;
+        padding: 9px 14px;
+        border-radius: var(--radius-sm);
+        min-height: 40px;
+        white-space: nowrap;
+        transition: all 0.15s;
+    }
+    .portal-nav a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+    .portal-nav a.nav-gold {
+        background: var(--gold);
+        color: #fff;
+        font-weight: 600;
+        margin-left: 4px;
+    }
+    .portal-nav a.nav-gold:hover { background: var(--gold-light); }
+    .portal-nav a.nav-ghost {
+        border: 1px solid rgba(255,255,255,0.2);
+        margin-left: 4px;
+    }
+    .portal-nav a.nav-ghost:hover { border-color: rgba(255,255,255,0.5); }
+
+    /* Hamburger (mobile only) */
+    .nav-hamburger {
+        display: none;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        padding: 8px 10px;
+        color: #fff;
+        font-size: 18px;
+        line-height: 1;
+        min-height: 40px;
+        min-width: 40px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       MOBILE DRAWER
+    ══════════════════════════════════════════════════════════ */
+    .mobile-drawer {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+    }
+    .drawer-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(3px);
+    }
+    .drawer-panel {
+        position: absolute;
+        top: 0; right: 0; bottom: 0;
+        width: min(300px, 88vw);
+        background: var(--navy);
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: transform 0.25s ease;
+        box-shadow: -6px 0 32px rgba(0,0,0,0.35);
+    }
+    .mobile-drawer.open { display: flex; }
+    .mobile-drawer.open .drawer-panel { transform: translateX(0); }
+
+    .drawer-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px 16px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        flex-shrink: 0;
+    }
+    .drawer-close {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: var(--radius-sm);
+        color: rgba(255,255,255,0.8);
+        width: 38px; height: 38px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; font-size: 16px;
+        transition: background 0.15s;
+    }
+    .drawer-close:hover { background: rgba(255,255,255,0.14); }
+
+    .drawer-nav {
+        flex: 1;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        overflow-y: auto;
+    }
+    .drawer-nav a {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        color: rgba(255,255,255,0.75);
+        font-size: 15px;
+        font-weight: 500;
+        padding: 14px 16px;
+        border-radius: var(--radius);
+        min-height: 52px;
+        transition: all 0.15s;
+    }
+    .drawer-nav a:hover { color: #fff; background: rgba(255,255,255,0.07); }
+    .drawer-nav a.drawer-cta {
+        background: var(--gold);
+        color: #fff;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+    .drawer-nav a.drawer-cta:hover { background: var(--gold-light); }
+    .drawer-nav a i { width: 20px; text-align: center; flex-shrink: 0; opacity: 0.75; }
+    .drawer-nav a:hover i, .drawer-nav a.drawer-cta i { opacity: 1; }
+    .drawer-sep { height: 1px; background: rgba(255,255,255,0.08); margin: 8px 0; }
+
+    .drawer-foot {
+        padding: 14px 20px;
+        border-top: 1px solid rgba(255,255,255,0.07);
+        font-size: 12px;
+        color: rgba(255,255,255,0.3);
+        flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════════════════════════════════ */
+    .portal-main { flex: 1; }
+
+    /* Centered constrained wrapper — used by form pages */
+    .portal-wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 4vw, 1.5rem);
+    }
+    .portal-wrap-sm {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 4vw, 1.5rem);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════════════════════ */
+    .portal-footer {
+        background: var(--navy-dark);
+        padding: clamp(2rem, 5vw, 3.5rem) clamp(1rem, 5vw, 2.5rem) 0;
+    }
+    .footer-grid {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 2.5rem;
+    }
+    .footer-brand-text strong {
+        display: block;
+        font-size: 15px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 6px;
+    }
+    .footer-brand-text p {
+        font-size: 13px;
+        color: rgba(255,255,255,0.45);
+        line-height: 1.7;
+        max-width: 280px;
+    }
+    .footer-col h4 {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.45);
+        margin-bottom: 14px;
+    }
+    .footer-col a {
+        display: block;
+        font-size: 13px;
+        color: rgba(255,255,255,0.5);
+        margin-bottom: 9px;
+        transition: color 0.15s;
+    }
+    .footer-col a:hover { color: var(--gold); }
+    .footer-bottom {
+        max-width: 1100px;
+        margin: 2rem auto 0;
+        padding: 1.25rem 0;
+        border-top: 1px solid rgba(255,255,255,0.07);
+        font-size: 12px;
+        color: rgba(255,255,255,0.3);
+        text-align: center;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       SHARED CARD
+    ══════════════════════════════════════════════════════════ */
+    .p-card {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        padding: clamp(1.25rem, 5vw, 2rem);
+        border: 1px solid var(--border);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       ALERTS
+    ══════════════════════════════════════════════════════════ */
+    .p-alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px 16px;
+        border-radius: var(--radius);
+        font-size: 15px;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        border-left: 4px solid;
+    }
+    .p-alert-success { background: #ecfdf5; border-color: #16a34a; color: #14532d; }
+    .p-alert-error   { background: var(--crimson-pale); border-color: var(--crimson); color: var(--crimson); }
+
+    /* ══════════════════════════════════════════════════════════
+       FORM ELEMENTS — Mobile-first, 48px touch targets
+    ══════════════════════════════════════════════════════════ */
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+    }
+    .form-group label .req { color: var(--crimson); }
+    .form-control {
+        width: 100%;
+        padding: 12px 14px;
+        min-height: 48px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-family: 'Poppins', sans-serif;
+        font-size: 16px;
+        color: var(--text);
+        background: var(--surface);
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+    .form-control:focus {
+        border-color: var(--navy);
+        box-shadow: 0 0 0 3px rgba(13,33,68,0.08);
+    }
+    .form-control::placeholder { color: var(--text-subtle); font-weight: 300; }
+    select.form-control {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239CA3AF' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 40px;
+        cursor: pointer;
+    }
+    textarea.form-control { min-height: 96px; resize: vertical; }
+    .form-error {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--crimson);
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       BUTTONS — 48px min-height
+    ══════════════════════════════════════════════════════════ */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 24px;
+        min-height: 48px;
+        border-radius: var(--radius-sm);
+        font-family: 'Poppins', sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1.5px solid transparent;
+        text-decoration: none;
+        transition: all 0.15s;
+        white-space: nowrap;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .btn-primary   { background: var(--navy);   color: #fff; border-color: var(--navy); }
+    .btn-primary:hover { background: var(--navy-mid); box-shadow: 0 4px 16px rgba(13,33,68,0.25); }
+    .btn-gold      { background: var(--gold);   color: #fff; border-color: var(--gold); }
+    .btn-gold:hover { background: var(--gold-light); box-shadow: 0 4px 16px rgba(200,134,26,0.3); }
+    .btn-outline   { background: transparent; border-color: var(--navy); color: var(--navy); }
+    .btn-outline:hover { background: var(--navy-pale); }
+    .btn-white-outline { background: transparent; border-color: rgba(255,255,255,0.35); color: #fff; }
+    .btn-white-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.65); }
+    .btn-lg { padding: 14px 36px; font-size: 16px; min-height: 54px; }
+    .btn-sm { padding: 9px 18px; min-height: 40px; font-size: 14px; }
+    .btn-block { width: 100%; }
+
+    /* ══════════════════════════════════════════════════════════
+       TOAST — Top-center on all devices
+    ══════════════════════════════════════════════════════════ */
+    #portalToast {
+        position: fixed;
+        top: 72px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-12px);
+        z-index: 9000;
+        min-width: min(380px, calc(100vw - 2rem));
+        max-width: 500px;
+        padding: 14px 18px;
+        border-radius: var(--radius);
+        font-family: 'Poppins', sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 1.4;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.22s, transform 0.22s;
+        border: 1px solid;
+    }
+    #portalToast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+        pointer-events: auto;
+    }
+    #portalToast .toast-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        opacity: 0.5;
+        font-size: 14px;
+        padding: 0;
+        color: inherit;
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+    #portalToast .toast-close:hover { opacity: 1; }
+
+    /* ══════════════════════════════════════════════════════════
+       SKELETON LOADER
+    ══════════════════════════════════════════════════════════ */
+    .skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeletonPulse 1.4s ease infinite;
+        border-radius: var(--radius-sm);
+    }
+    @keyframes skeletonPulse {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+        .portal-nav  { display: none; }
+        .nav-hamburger { display: inline-flex; }
+        .footer-grid { grid-template-columns: 1fr; gap: 1.75rem; }
+        .footer-brand-text p { max-width: 100%; }
+    }
+
+    @media (max-width: 480px) {
+        .brand-text span { display: none; }
+    }
+>>>>>>> Stashed changes
     </style>
+
     @stack('styles')
 </head>
 <body>
 
+<<<<<<< Updated upstream
 {{-- ═══ TOAST ═══ --}}
 <div id="portalToast" role="status" aria-live="polite"></div>
 
@@ -761,18 +1279,30 @@
 </div>
 
 {{-- ═══ STICKY HEADER ═══ --}}
+=======
+{{-- ── Portal Header ──────────────────────────────────────────── --}}
+>>>>>>> Stashed changes
 <header class="portal-header">
 
     <a href="{{ route('portal.index') }}" class="portal-brand">
+<<<<<<< Updated upstream
         <div class="brand-seal">
             @include('partials._portal_seal')
         </div>
         <div class="portal-brand-text">
+=======
+        <div class="brand-logo">
+            <img src="{{ asset('images/bne-logo.png') }}" alt="BNE"
+                 onerror="this.style.display='none';this.parentNode.innerHTML='<i class=\'fas fa-landmark\' style=\'color:var(--navy);font-size:16px\'></i>'">
+        </div>
+        <div class="brand-text">
+>>>>>>> Stashed changes
             <strong>Barangay New Era</strong>
-            <span>District VI, Quezon City</span>
+            <span>Resident Portal</span>
         </div>
     </a>
 
+<<<<<<< Updated upstream
     {{-- System health pill --}}
     <div class="sys-health" title="All portal systems operational">
         <div class="sys-health-dot"></div>
@@ -792,6 +1322,20 @@
             </a>
         @else
             <a href="{{ route('login') }}">
+=======
+    <nav class="portal-nav" aria-label="Main navigation">
+        <a href="{{ route('portal.index') }}"><i class="fas fa-home"></i> Home</a>
+        <a href="{{ route('portal.track') }}"><i class="fas fa-search"></i> Track Status</a>
+        <a href="{{ route('portal.request') }}" class="nav-gold">
+            <i class="fas fa-file-plus"></i> Request Document
+        </a>
+        @auth
+            <a href="{{ route('dashboard') }}" class="nav-ghost">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+        @else
+            <a href="{{ route('login') }}" class="nav-ghost">
+>>>>>>> Stashed changes
                 <i class="fas fa-sign-in-alt"></i> Staff Login
             </a>
         @endauth
@@ -800,6 +1344,7 @@
         </a>
     </nav>
 
+<<<<<<< Updated upstream
     {{-- Ctrl+K trigger --}}
     <button class="cmd-trigger" onclick="openCmdPalette()" title="Quick search (Ctrl+K)" aria-label="Open quick search">
         <i class="fas fa-search"></i>
@@ -1047,5 +1592,165 @@ document.addEventListener('DOMContentLoaded', function () {
     @if(session('warning')) portalToast('{{ addslashes(session('warning')) }}', 'warning'); @endif
 });
 </script>
+=======
+    <button class="nav-hamburger" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false" id="hamburgerBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+</header>
+
+{{-- ── Mobile Drawer ──────────────────────────────────────────── --}}
+<div id="mobileDrawer" class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <div class="drawer-backdrop" onclick="closeMobileNav()"></div>
+    <div class="drawer-panel">
+        <div class="drawer-head">
+            <div class="portal-brand">
+                <div class="brand-logo" style="width:32px;height:32px;font-size:13px">
+                    <img src="{{ asset('images/bne-logo.png') }}" alt="BNE"
+                         onerror="this.style.display='none';this.parentNode.innerHTML='<i class=\'fas fa-landmark\'></i>'">
+                </div>
+                <div class="brand-text">
+                    <strong>Barangay New Era</strong>
+                    <span>Resident Portal</span>
+                </div>
+            </div>
+            <button class="drawer-close" onclick="closeMobileNav()" aria-label="Close menu">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+
+        <nav class="drawer-nav">
+            <a href="{{ route('portal.index') }}">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="{{ route('portal.track') }}">
+                <i class="fas fa-search"></i> Track My Status
+            </a>
+            <a href="{{ route('portal.request') }}" class="drawer-cta">
+                <i class="fas fa-file-plus"></i> Request a Document
+            </a>
+            <div class="drawer-sep"></div>
+            @auth
+                <a href="{{ route('dashboard') }}">
+                    <i class="fas fa-tachometer-alt"></i> Staff Dashboard
+                </a>
+            @else
+                <a href="{{ route('login') }}">
+                    <i class="fas fa-sign-in-alt"></i> Staff Login
+                </a>
+            @endauth
+        </nav>
+
+        <div class="drawer-foot">
+            Barangay New Era &nbsp;·&nbsp; District VI, Quezon City
+        </div>
+    </div>
+</div>
+
+{{-- ── Toast ──────────────────────────────────────────────────── --}}
+<div id="portalToast" role="alert" aria-live="polite">
+    <i id="portalToastIcon" class="fas fa-check-circle" style="flex-shrink:0;font-size:17px;margin-top:1px"></i>
+    <span id="portalToastMsg" style="flex:1"></span>
+    <button class="toast-close" onclick="document.getElementById('portalToast').classList.remove('show')">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+{{-- ── Main ───────────────────────────────────────────────────── --}}
+<main class="portal-main">
+    @yield('content')
+</main>
+
+{{-- ── Footer ─────────────────────────────────────────────────── --}}
+<footer class="portal-footer">
+    <div class="footer-grid">
+        <div class="footer-brand-text">
+            <strong>Barangay New Era</strong>
+            <p>Digital services for residents of Barangay New Era, District VI, Quezon City. Powered by the Barangay Management System (BMS).</p>
+        </div>
+        <div class="footer-col">
+            <h4>Services</h4>
+            <a href="{{ route('portal.request') }}">Request Document</a>
+            <a href="{{ route('portal.track') }}">Track Appointment</a>
+            <a href="{{ route('portal.index') }}">How It Works</a>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            @auth
+                <a href="{{ route('dashboard') }}">Staff Dashboard</a>
+            @else
+                <a href="{{ route('login') }}">Staff Login</a>
+            @endauth
+            <a href="#faq">FAQ</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        &copy; {{ date('Y') }} Barangay New Era, District VI, Quezon City &nbsp;&middot;&nbsp; All rights reserved.
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+// ── Mobile Drawer ──────────────────────────────────────────────────────
+function openMobileNav() {
+    const drawer = document.getElementById('mobileDrawer');
+    const btn    = document.getElementById('hamburgerBtn');
+    drawer.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    btn.setAttribute('aria-expanded', 'true');
+    // Focus first link for accessibility
+    setTimeout(function () {
+        const first = drawer.querySelector('.drawer-nav a');
+        if (first) first.focus();
+    }, 60);
+}
+function closeMobileNav() {
+    const drawer = document.getElementById('mobileDrawer');
+    const btn    = document.getElementById('hamburgerBtn');
+    drawer.classList.remove('open');
+    document.body.style.overflow = '';
+    btn.setAttribute('aria-expanded', 'false');
+}
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeMobileNav();
+});
+
+// ── Portal Toast ───────────────────────────────────────────────────────
+function portalToast(message, type) {
+    type = type || 'success';
+    var palettes = {
+        success: { bg:'#ecfdf5', border:'#86efac', text:'#14532d', icon:'fa-check-circle' },
+        error:   { bg:'#fef2f2', border:'#fca5a5', text:'#7f1d1d', icon:'fa-exclamation-circle' },
+        warning: { bg:'#fffbeb', border:'#fcd34d', text:'#78350f', icon:'fa-triangle-exclamation' },
+        info:    { bg:'#eff6ff', border:'#93c5fd', text:'#1e3a8a', icon:'fa-circle-info' },
+    };
+    var c   = palettes[type] || palettes.success;
+    var el  = document.getElementById('portalToast');
+    var msg = document.getElementById('portalToastMsg');
+    var ico = document.getElementById('portalToastIcon');
+    el.style.background  = c.bg;
+    el.style.borderColor = c.border;
+    el.style.color       = c.text;
+    ico.className = 'fas ' + c.icon;
+    ico.style.color = c.text;
+    msg.textContent = message;
+    el.classList.add('show');
+    clearTimeout(el._timer);
+    el._timer = setTimeout(function () { el.classList.remove('show'); }, 5000);
+}
+
+// Show flash messages as toasts
+@if(session('success'))
+document.addEventListener('DOMContentLoaded', function () {
+    portalToast(@json(session('success')), 'success');
+});
+@endif
+@if(session('error'))
+document.addEventListener('DOMContentLoaded', function () {
+    portalToast(@json(session('error')), 'error');
+});
+@endif
+</script>
+
+>>>>>>> Stashed changes
 @stack('scripts')
 </bo
