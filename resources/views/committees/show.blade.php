@@ -1380,10 +1380,21 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
         @if(isset($specificData['programs']) && $specificData['programs']->count())
         <table>
-            <thead><tr><th>Program</th><th>Type</th><th>Date</th><th>Location</th><th>Volunteers</th><th>Trees</th><th>Waste (kg)</th><th>Status</th></tr></thead>
+            <thead><tr><th>Program</th><th>Type</th><th>Date</th><th>Location</th><th>Volunteers</th><th>Trees</th><th>Waste (kg)</th><th>Status</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['programs'] as $p)
-                <tr>
+                <tr
+                    data-id="{{ $p->id }}"
+                    data-name="{{ addslashes($p->program_name) }}"
+                    data-date="{{ $p->program_date->format('Y-m-d') }}"
+                    data-ptype="{{ $p->program_type ?? '' }}"
+                    data-location="{{ addslashes($p->location ?? '') }}"
+                    data-status="{{ $p->status }}"
+                    data-vol="{{ $p->volunteers ?? 0 }}"
+                    data-trees="{{ $p->trees_planted ?? '' }}"
+                    data-waste="{{ $p->waste_collected_kg ?? '' }}"
+                    data-notes="{{ addslashes($p->notes ?? '') }}"
+                >
                     <td style="font-weight:600">{{ $p->program_name }}</td>
                     <td class="td-muted">{{ $p->program_type ?? '—' }}</td>
                     <td class="td-muted">{{ $p->program_date->format('M d, Y') }}</td>
@@ -1392,6 +1403,12 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td style="font-weight:600;color:#16a34a">{{ $p->trees_planted ?? '—' }}</td>
                     <td style="font-weight:600">{{ $p->waste_collected_kg ?? '—' }}</td>
                     <td><span class="badge {{ match($p->status) { 'Completed'=>'badge-green','Planned'=>'badge-yellow',default=>'badge-red' } }}">{{ $p->status }}</span></td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('environment', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('environment','{{ $p->id }}','{{ addslashes($p->program_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -1443,16 +1460,31 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
         @if(isset($specificData['beneficiaries']) && $specificData['beneficiaries']->count())
         <table>
-            <thead><tr><th>Name</th><th>Program</th><th>Type</th><th>Amount</th><th>Enrolled</th><th>Status</th></tr></thead>
+            <thead><tr><th>Name</th><th>Program</th><th>Type</th><th>Amount</th><th>Enrolled</th><th>Status</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['beneficiaries'] as $b)
-                <tr>
+                <tr
+                    data-id="{{ $b->id }}"
+                    data-name="{{ addslashes($b->full_name) }}"
+                    data-program="{{ addslashes($b->program_name ?? '') }}"
+                    data-atype="{{ addslashes($b->program_type ?? '') }}"
+                    data-amount="{{ $b->amount_received ?? '' }}"
+                    data-date="{{ $b->date_enrolled?->format('Y-m-d') ?? '' }}"
+                    data-status="{{ $b->status }}"
+                    data-remarks="{{ addslashes($b->remarks ?? '') }}"
+                >
                     <td style="font-weight:600">{{ $b->full_name }}</td>
                     <td class="td-muted">{{ $b->program_name }}</td>
                     <td class="td-muted">{{ $b->program_type ?? '—' }}</td>
                     <td style="font-weight:600;color:var(--navy)">{{ $b->amount_received ? '₱'.number_format($b->amount_received,2) : '—' }}</td>
                     <td class="td-muted">{{ $b->date_enrolled?->format('M d, Y') ?? '—' }}</td>
                     <td><span class="badge {{ match($b->status) { 'Active'=>'badge-green','Completed'=>'badge-blue',default=>'badge-red' } }}">{{ $b->status }}</span></td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('beneficiary', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('beneficiary','{{ $b->id }}','{{ addslashes($b->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
