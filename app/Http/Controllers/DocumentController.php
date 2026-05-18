@@ -114,10 +114,11 @@ class DocumentController extends Controller
 
     public function create()
     {
-        $residents = Resident::active()->orderBy('last_name')->orderBy('first_name')->get();
+        $residents     = Resident::active()->orderBy('last_name')->orderBy('first_name')->get();
         $documentTypes = ['Barangay Clearance', 'Certificate of Residency', 'Certificate of Indigency', 'Good Moral Character', 'Business Clearance', 'Certificate of Live Birth', 'Other'];
+        $relationships = ['Son', 'Daughter', 'Parent / Guardian', 'Spouse', 'Sibling', 'Cousin', 'Nephew / Niece', 'Legal Guardian', 'Attorney-in-Fact (SPA)', 'Other'];
 
-        return view('documents.documents-create', compact('residents', 'documentTypes'));
+        return view('documents.documents-create', compact('residents', 'documentTypes', 'relationships'));
     }
 
     public function store(Request $request)
