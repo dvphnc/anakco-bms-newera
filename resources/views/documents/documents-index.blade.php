@@ -283,6 +283,7 @@ $(document).ready(function () {
 
     $('#typeFilter').select2($.extend({}, s2Single, { placeholder: 'All document types…' }));
     $('#statusFilter').select2($.extend({}, s2Single, { placeholder: 'All statuses…' }));
+    $('#sourceFilter').select2($.extend({}, s2Single, { placeholder: 'All sources…' }));
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 
@@ -295,6 +296,7 @@ $(document).ready(function () {
             data: function (d) {
                 d.document_type = $('#typeFilter').val();
                 d.status        = $('#statusFilter').val();
+                d.source        = $('#sourceFilter').val();
                 d.search        = { value: $('#searchInput').val() };
             }
         },
@@ -352,28 +354,29 @@ $(document).ready(function () {
     /* ── URL persistence ──────────────────────────────────────────────── */
     function saveToUrl() {
         const url = new URL(window.location);
-        ['s', 'status'].forEach(k => url.searchParams.delete(k));
-        url.searchParams.delete('document_type');
-        if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
+        ['s', 'status', 'document_type', 'source'].forEach(k => url.searchParams.delete(k));
+        if ($('#searchInput').val())  url.searchParams.set('s', $('#searchInput').val());
         if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
-        if ($('#typeFilter').val()) url.searchParams.set('document_type', $('#typeFilter').val());
+        if ($('#typeFilter').val())   url.searchParams.set('document_type', $('#typeFilter').val());
+        if ($('#sourceFilter').val()) url.searchParams.set('source', $('#sourceFilter').val());
         history.replaceState({}, '', url);
         updateBadge();
     }
     function loadFromUrl() {
         const p = new URLSearchParams(window.location.search);
         let any = false;
-        if (p.get('s'))      { $('#searchInput').val(p.get('s')); any = true; }
-        if (p.get('status')) { $('#statusFilter').val(p.get('status')).trigger('change.select2'); any = true; }
-        const type = p.get('document_type');
-        if (type) { $('#typeFilter').val(type).trigger('change.select2'); any = true; }
+        if (p.get('s'))             { $('#searchInput').val(p.get('s')); any = true; }
+        if (p.get('status'))        { $('#statusFilter').val(p.get('status')).trigger('change.select2'); any = true; }
+        if (p.get('document_type')) { $('#typeFilter').val(p.get('document_type')).trigger('change.select2'); any = true; }
+        if (p.get('source'))        { $('#sourceFilter').val(p.get('source')).trigger('change.select2'); any = true; }
         return any;
     }
     function updateBadge() {
         let n = 0;
-        if ($('#searchInput').val())               n++;
-        if ($('#typeFilter').val()) n++;
-        if ($('#statusFilter').val())              n++;
+        if ($('#searchInput').val())  n++;
+        if ($('#typeFilter').val())   n++;
+        if ($('#statusFilter').val()) n++;
+        if ($('#sourceFilter').val()) n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');
         const chipN = document.getElementById('headerFilterCount');
@@ -415,8 +418,7 @@ $(document).ready(function () {
     $('#typeFilter, #statusFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
-        $('#typeFilter').val(null).trigger('change');
-        $('#statusFilter').val(null).trigger('change');
+        $('#typeFilter, #statusFilter, #sourceFilter').val(null).trigger('change');
         saveToUrl(); table.ajax.reload();
     });
 });
