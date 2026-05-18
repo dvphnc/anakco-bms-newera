@@ -1837,10 +1837,20 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
         @if(isset($specificData['trainings']) && $specificData['trainings']->count())
         <table>
-            <thead><tr><th>Title</th><th>Type</th><th>Date</th><th>Duration</th><th>Venue</th><th>Facilitator</th><th style="text-align:right">Participants</th><th>File</th></tr></thead>
+            <thead><tr><th>Title</th><th>Type</th><th>Date</th><th>Duration</th><th>Venue</th><th>Facilitator</th><th style="text-align:right">Participants</th><th>File</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['trainings'] as $tr)
-                <tr>
+                <tr
+                    data-id="{{ $tr->id }}"
+                    data-title="{{ addslashes($tr->title) }}"
+                    data-ttype="{{ $tr->training_type }}"
+                    data-date="{{ $tr->training_date->format('Y-m-d') }}"
+                    data-duration="{{ addslashes($tr->duration ?? '') }}"
+                    data-venue="{{ addslashes($tr->venue ?? '') }}"
+                    data-facilitator="{{ addslashes($tr->facilitator ?? '') }}"
+                    data-participants="{{ $tr->participants_count ?? 0 }}"
+                    data-notes="{{ addslashes($tr->notes ?? '') }}"
+                >
                     <td style="font-weight:600">{{ $tr->title }}</td>
                     <td><span class="badge badge-navy">{{ $tr->training_type }}</span></td>
                     <td class="td-muted">{{ $tr->training_date->format('M d, Y') }}</td>
@@ -1849,6 +1859,12 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td class="td-muted">{{ $tr->facilitator ?? '—' }}</td>
                     <td style="text-align:right;font-weight:600;color:var(--navy)">{{ number_format($tr->participants_count) }}</td>
                     <td>@if($tr->file_path)<a href="{{ asset('storage/'.$tr->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('training', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('training','{{ $tr->id }}','{{ addslashes($tr->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -1898,10 +1914,18 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
         @if(isset($specificData['clinic_staff']) && $specificData['clinic_staff']->count())
         <table>
-            <thead><tr><th>Name</th><th>Position</th><th>Specialization</th><th>Affiliation</th><th>Contact</th><th>Schedule</th><th>Status</th></tr></thead>
+            <thead><tr><th>Name</th><th>Position</th><th>Specialization</th><th>Affiliation</th><th>Contact</th><th>Schedule</th><th>Status</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['clinic_staff'] as $cs)
-                <tr>
+                <tr
+                    data-id="{{ $cs->id }}"
+                    data-name="{{ addslashes($cs->full_name) }}"
+                    data-position="{{ addslashes($cs->position ?? '') }}"
+                    data-spec="{{ addslashes($cs->specialization ?? '') }}"
+                    data-contact="{{ addslashes($cs->contact_number ?? '') }}"
+                    data-schedule="{{ addslashes($cs->schedule ?? '') }}"
+                    data-status="{{ $cs->status }}"
+                >
                     <td style="font-weight:600">{{ $cs->full_name }}</td>
                     <td><span class="badge badge-blue">{{ $cs->position }}</span></td>
                     <td class="td-muted">{{ $cs->specialization ?? '—' }}</td>
@@ -1909,6 +1933,12 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td class="td-muted">{{ $cs->contact_number ?? '—' }}</td>
                     <td class="td-muted">{{ $cs->schedule ?? '—' }}</td>
                     <td><span class="badge {{ $cs->status === 'Active' ? 'badge-green' : ($cs->status === 'On Leave' ? 'badge-yellow' : 'badge-gray') }}">{{ $cs->status }}</span></td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('clinic', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('clinic','{{ $cs->id }}','{{ addslashes($cs->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
