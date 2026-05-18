@@ -135,7 +135,7 @@
             <div class="filter-bar">
                 <div class="form-group">
                     <label class="form-label">Action</label>
-                    <select name="action" class="form-control" onchange="this.form.submit()">
+                    <select name="action" id="filterAction" class="form-control">
                         <option value="">All Actions</option>
                         <option value="created" {{ request('action') === 'created' ? 'selected' : '' }}>Created</option>
                         <option value="updated" {{ request('action') === 'updated' ? 'selected' : '' }}>Updated</option>
@@ -144,7 +144,7 @@
                 </div>
                 <div class="form-group flex-1">
                     <label class="form-label">User</label>
-                    <select name="user_id" class="form-control" onchange="this.form.submit()">
+                    <select name="user_id" id="filterUser" class="form-control">
                         <option value="">All Users</option>
                         @foreach($users as $u)
                         <option value="{{ $u->id }}" {{ request('user_id') == $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
@@ -153,7 +153,7 @@
                 </div>
                 <div class="form-group" style="justify-content:flex-end">
                     <label class="form-label">&nbsp;</label>
-                    <a href="{{ route('activity-log.index') }}" class="btn btn-secondary"><i class="fas fa-xmark"></i> Reset All</a>
+                    <a href="{{ route('activity-log.index') }}" class="btn btn-secondary" onclick="resetFilters(); return false;"><i class="fas fa-xmark"></i> Reset All</a>
                 </div>
             </div>
         </form>
@@ -184,84 +184,11 @@
 <div class="card" id="activity-feed">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-clock-rotate-left"></i> Activity Feed</span>
-        <span style="font-size:13px;color:var(--text-muted)">{{ number_format($query->total()) }} entries · refreshes every 60s</span>
+        <span id="feed-total" style="font-size:13px;color:var(--text-muted)">{{ number_format($query->total()) }} entries · refreshes every 60s</span>
     </div>
-
-    @forelse($query as $log)
-    @php
-        $module = $moduleMap[$log->loggable_type] ?? ['label' => 'Record', 'icon' => 'fa-circle', 'color' => '#9ca3af', 'slug' => ''];
-        $actionColor = match($log->action) { 'created' => '#166534', 'deleted' => '#991b1b', default => '#92400e' };
-        $actionBg    = match($log->action) { 'created' => '#dcfce7', 'deleted' => '#fee2e2', default => '#fef3c7' };
-        $dateStr = $log->created_at->isToday() ? 'Today' : ($log->created_at->isYesterday() ? 'Yesterday' : $log->created_at->format('M d, Y'));
-        $changes = collect($log->changes ?? [])->filter(fn($v, $k) => !in_array($k, $skipFields))->take(4);
-        $routeName = $routeMap[$log->loggable_type] ?? null;
-    @endphp
-    <div style="display:flex;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border);align-items:flex-start">
-        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px;flex-shrink:0;margin-top:1px">
-            {{ strtoupper(substr($log->user->name ?? '?', 0, 1)) }}
-        </div>
-        <div style="flex:1;min-width:0">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:7px">
-                <span style="font-size:14px;font-weight:600;color:var(--text)">{{ $log->user->name ?? 'Unknown' }}</span>
-                <span class="badge badge-navy">{{ $log->user->role ?? 'Staff' }}</span>
-                <span style="display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:13px;font-weight:700;background:{{ $actionBg }};color:{{ $actionColor }}">
-                    {{ strtoupper($log->action) }}
-                </span>
-                <span style="font-size:13px;font-weight:600;color:{{ $module['color'] }}">
-                    <i class="fas {{ $module['icon'] }}" style="font-size:11px"></i> {{ $module['label'] }}
-                </span>
-                <span style="font-size:13px;color:var(--text-subtle)">#{{ $log->loggable_id }}</span>
-            </div>
-            @if($changes->count() > 0 && $log->action === 'updated')
-            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">
-                @foreach($changes as $field => $change)
-                @php
-                    $oldVal = $change['old'] ?? null;
-                    $newVal = $change['new'] ?? null;
-                    $formatVal = function($v) {
-                        if (is_null($v) || $v === '') return '—';
-                        if (is_array($v)) return '[file]';
-                        if (is_string($v) && preg_match('/^\d{4}-\d{2}-\d{2}/', $v)) {
-                            try { return \Carbon\Carbon::parse($v)->format('M d, Y'); } catch (\Exception $e) {}
-                        }
-                        return \Illuminate\Support\Str::limit((string)$v, 24);
-                    };
-                    $fieldLabel = ucwords(str_replace('_', ' ', $field));
-                @endphp
-                <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px">
-                    <span style="font-weight:600;color:var(--text-muted)">{{ $fieldLabel }}:</span>
-                    <span style="color:var(--text-subtle);text-decoration:line-through">{{ $formatVal($oldVal) }}</span>
-                    <i class="fas fa-arrow-right" style="font-size:9px;color:var(--text-subtle)"></i>
-                    <span style="color:var(--navy);font-weight:500">{{ $formatVal($newVal) }}</span>
-                </div>
-                @endforeach
-                @if(count($log->changes ?? []) > 4)
-                <span style="font-size:13px;color:var(--text-subtle);padding:3px 0">+{{ count($log->changes) - 4 }} more</span>
-                @endif
-            </div>
-            @endif
-            <div style="font-size:13px;color:var(--text-subtle)">
-                <i class="fas fa-clock" style="font-size:10px;margin-right:3px"></i>
-                {{ $dateStr }} at {{ $log->created_at->format('h:i A') }}
-                <span style="margin:0 5px">·</span>{{ $log->created_at->diffForHumans() }}
-            </div>
-        </div>
-        @if($routeName && $log->action !== 'deleted')
-        <a href="{{ route($routeName, $log->loggable_id) }}" class="btn btn-secondary btn-sm btn-icon" title="View record" style="flex-shrink:0">
-            <i class="fas fa-eye"></i>
-        </a>
-        @endif
+    <div id="feed-body">
+        @include('activity-log._feed')
     </div>
-    @empty
-    <div class="empty-state"><i class="fas fa-clock-rotate-left"></i><p>No activity logs found.</p></div>
-    @endforelse
-
-    @if($query->hasPages())
-    <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-        <span style="font-size:13px;color:var(--text-muted)">Showing {{ $query->firstItem() }}–{{ $query->lastItem() }} of {{ number_format($query->total()) }}</span>
-        {{ $query->withQueryString()->links() }}
-    </div>
-    @endif
 </div>
 
 @endsection
