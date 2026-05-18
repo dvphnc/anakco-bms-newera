@@ -72,46 +72,33 @@
            class="nav-item {{ request()->routeIs('blotter.*') ? 'active' : '' }}">
             <i class="fas fa-gavel"></i>
             <span>Blotter Records</span>
+            <span id="pblBadge"
+                  style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
+                         font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
+                         text-align:center;line-height:16px;margin-left:auto"
+                  title="Portal submissions pending"></span>
         </a>
 
         <a href="{{ route('businesses.index') }}"
            class="nav-item {{ request()->routeIs('businesses.*') ? 'active' : '' }}">
             <i class="fas fa-store"></i>
             <span>Business Permits</span>
+            <span id="pbizBadge"
+                  style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
+                         font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
+                         text-align:center;line-height:16px;margin-left:auto"
+                  title="Portal submissions pending"></span>
         </a>
 
         <a href="{{ route('appointments.index') }}"
            class="nav-item {{ request()->routeIs('appointments.*') ? 'active' : '' }}">
             <i class="fas fa-calendar-check"></i>
             <span>Appointments</span>
-        </a>
-
-        <div class="nav-section-label" style="display:flex;align-items:center;justify-content:space-between">
-            <span>Portal Requests</span>
             <span id="portalPendingBadge"
                   style="display:none;background:var(--crimson);color:#fff;font-size:9px;
                          font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
-                         text-align:center;line-height:16px"></span>
-        </div>
-
-        <a href="{{ route('portal-blotter.index') }}"
-           class="nav-item {{ request()->routeIs('portal-blotter.*') ? 'active' : '' }}">
-            <i class="fas fa-gavel"></i>
-            <span>Portal Blotter</span>
-            <span id="pblBadge"
-                  style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
-                         font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
-                         text-align:center;line-height:16px;margin-left:auto"></span>
-        </a>
-
-        <a href="{{ route('portal-business.index') }}"
-           class="nav-item {{ request()->routeIs('portal-business.*') ? 'active' : '' }}">
-            <i class="fas fa-file-contract"></i>
-            <span>Portal Business</span>
-            <span id="pbizBadge"
-                  style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
-                         font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
-                         text-align:center;line-height:16px;margin-left:auto"></span>
+                         text-align:center;line-height:16px;margin-left:auto"
+                  title="Portal document requests pending"></span>
         </a>
 
         <a href="{{ route('portal.index') }}" target="_blank"

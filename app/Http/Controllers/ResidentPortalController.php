@@ -179,8 +179,8 @@ class ResidentPortalController extends Controller
     public function submitted(string $type, string $number)
     {
         $record = match($type) {
-            'blotter'  => BlotterRequest::where('request_number', $number)->firstOrFail(),
-            'business' => BusinessPermitRequest::where('request_number', $number)->firstOrFail(),
+            'blotter'  => BlotterCase::where('case_number', $number)->firstOrFail(),
+            'business' => Business::where('permit_number', $number)->firstOrFail(),
             default    => abort(404),
         };
 
