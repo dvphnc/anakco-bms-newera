@@ -103,21 +103,21 @@
         
         <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex-wrap:nowrap">
             <?php $__currentLoopData = $quick; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $q): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <form method="POST" action="<?php echo e(route('reports.generate')); ?>" onsubmit="doGeneratePdf(this); return false;" style="flex-shrink:0">
-                <?php echo csrf_field(); ?>
-                <input type="hidden" name="report_type"   value="<?php echo e($q['type']); ?>">
-                <input type="hidden" name="report_module" value="<?php echo e($q['module']); ?>">
-                <input type="hidden" name="year"          value="<?php echo e($q['year']); ?>">
-                <?php if(isset($q['month'])): ?>   <input type="hidden" name="month"   value="<?php echo e($q['month']); ?>"> <?php endif; ?>
-                <?php if(isset($q['quarter'])): ?> <input type="hidden" name="quarter" value="<?php echo e($q['quarter']); ?>"> <?php endif; ?>
-                <button type="submit" title="<?php echo e($q['label']); ?>"
+            <div style="flex-shrink:0;position:relative">
+                <input type="hidden" class="qg-type"    value="<?php echo e($q['type']); ?>">
+                <input type="hidden" class="qg-module"  value="<?php echo e($q['module']); ?>">
+                <input type="hidden" class="qg-year"    value="<?php echo e($q['year']); ?>">
+                <input type="hidden" class="qg-month"   value="<?php echo e($q['month']   ?? ''); ?>">
+                <input type="hidden" class="qg-quarter" value="<?php echo e($q['quarter'] ?? ''); ?>">
+                <button type="button" title="<?php echo e($q['label']); ?>"
+                        onclick="quickGenerate(this)"
                         style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;white-space:nowrap;font-family:'Poppins',sans-serif;transition:all 0.15s"
                         onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
                         onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
                     <i class="fas fa-file-pdf" style="color:#9b3535;font-size:11px"></i><?php echo e($q['short']); ?>
 
                 </button>
-            </form>
+            </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
 
@@ -465,6 +465,31 @@ function fetchPreview() {
             document.getElementById('preview-spinner').style.display = 'none';
             document.getElementById('preview-icon').style.display    = '';
         });
+}
+
+function quickGenerate(btn) {
+    var wrap = btn.parentElement;
+    var fd = new FormData();
+    fd.append('_token', '<?php echo e(csrf_token()); ?>');
+    fd.append('report_type',   wrap.querySelector('.qg-type').value);
+    fd.append('report_module', wrap.querySelector('.qg-module').value);
+    fd.append('year',          wrap.querySelector('.qg-year').value);
+    var month   = wrap.querySelector('.qg-month').value;
+    var quarter = wrap.querySelector('.qg-quarter').value;
+    if (month)   fd.append('month',   month);
+    if (quarter) fd.append('quarter', quarter);
+
+    var overlay = document.getElementById('pdf-overlay');
+    overlay.style.display = 'flex';
+    axios.post('<?php echo e(route("reports.generate")); ?>', fd, { responseType: 'blob' })
+        .then(function (res) {
+            var blob = new Blob([res.data], { type: 'application/pdf' });
+            var url  = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+        })
+        .catch(function () { bmsToast('Failed to generate PDF report. Please try again.', 'error'); })
+        .finally(function () { overlay.style.display = 'none'; });
 }
 
 function doGeneratePdf(formEl) {

@@ -467,6 +467,31 @@ function fetchPreview() {
         });
 }
 
+function quickGenerate(btn) {
+    var wrap = btn.parentElement;
+    var fd = new FormData();
+    fd.append('_token', '{{ csrf_token() }}');
+    fd.append('report_type',   wrap.querySelector('.qg-type').value);
+    fd.append('report_module', wrap.querySelector('.qg-module').value);
+    fd.append('year',          wrap.querySelector('.qg-year').value);
+    var month   = wrap.querySelector('.qg-month').value;
+    var quarter = wrap.querySelector('.qg-quarter').value;
+    if (month)   fd.append('month',   month);
+    if (quarter) fd.append('quarter', quarter);
+
+    var overlay = document.getElementById('pdf-overlay');
+    overlay.style.display = 'flex';
+    axios.post('{{ route("reports.generate") }}', fd, { responseType: 'blob' })
+        .then(function (res) {
+            var blob = new Blob([res.data], { type: 'application/pdf' });
+            var url  = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+        })
+        .catch(function () { bmsToast('Failed to generate PDF report. Please try again.', 'error'); })
+        .finally(function () { overlay.style.display = 'none'; });
+}
+
 function doGeneratePdf(formEl) {
     var overlay = document.getElementById('pdf-overlay');
     overlay.style.display = 'flex';
