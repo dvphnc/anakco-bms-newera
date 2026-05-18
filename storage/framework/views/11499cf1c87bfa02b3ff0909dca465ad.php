@@ -13,7 +13,7 @@
 
     $docsByType    = \App\Models\Document::whereYear('created_at', $currentYear)->selectRaw('document_type, count(*) as total')->groupBy('document_type')->pluck('total','document_type');
     $blotterByType = \App\Models\BlotterCase::whereYear('created_at', $currentYear)->selectRaw('incident_type, count(*) as total')->groupBy('incident_type')->pluck('total','incident_type');
-    $puroks        = \App\Models\Purok::withCount(['residents' => fn($q) => $q->where('residency_status','Active')])->orderBy('name')->get();
+    $puroks        = \App\Models\Purok::withCount(['residents' => fn($q) => $q->where('residency_status','Active')])->orderByDesc('residents_count')->get();
 
     $totalResidents  = \App\Models\Resident::count();
     $activeResidents = \App\Models\Resident::where('residency_status','Active')->count();
@@ -32,6 +32,21 @@
     $genderTotal = $totalMale + $totalFemale ?: 1;
     $malePct     = round(($totalMale / $genderTotal) * 100);
     $femalePct   = 100 - $malePct;
+
+    $todayDocs      = \App\Models\Document::whereDate('created_at', today())->count();
+    $todayResidents = \App\Models\Resident::whereDate('created_at', today())->count();
+    $todayBlotter   = \App\Models\BlotterCase::whereDate('created_at', today())->count();
+    $thisMonthDocs  = \App\Models\Document::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
+    $thisMonthBlt   = \App\Models\BlotterCase::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
+    $thisMonthRes   = \App\Models\Resident::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
+
+    $quick = [
+        ['label' => 'This Month · Summary',   'short' => 'Summary',   'type' => 'monthly',   'module' => 'summary',   'month' => date('n'), 'year' => date('Y')],
+        ['label' => 'This Month · Documents',  'short' => 'Documents', 'type' => 'monthly',   'module' => 'documents', 'month' => date('n'), 'year' => date('Y')],
+        ['label' => 'This Month · Blotter',    'short' => 'Blotter',   'type' => 'monthly',   'module' => 'blotter',   'month' => date('n'), 'year' => date('Y')],
+        ['label' => 'This Quarter · Summary',  'short' => 'Q Summary', 'type' => 'quarterly', 'module' => 'summary',   'quarter' => (int)ceil(date('n')/3), 'year' => date('Y')],
+        ['label' => date('Y').' Annual',       'short' => 'Annual',    'type' => 'annual',    'module' => 'summary',   'year' => date('Y')],
+    ];
 ?>
 
 <?php $__env->startSection('content'); ?>
@@ -39,7 +54,7 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Generate Reports</h1>
-        <p class="page-subtitle">Monthly, quarterly, and annual reports — Barangay New Era <?php echo e($currentYear); ?></p>
+        <p class="page-subtitle">Monthly, quarterly, and annual — Barangay New Era <?php echo e($currentYear); ?></p>
     </div>
     <div class="page-actions">
         <a href="<?php echo e(route('reports.index')); ?>" class="btn btn-secondary">
@@ -57,14 +72,14 @@
 
 <div class="grid-4 mb-6">
     <?php $strips = [
-        ['label'=>'Total Residents',       'value'=>number_format($totalResidents),  'icon'=>'fa-users',        'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
-        ['label'=>'Households',            'value'=>number_format($totalHouseholds), 'icon'=>'fa-house',        'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.1)'],
-        ['label'=>'Documents '.$currentYear,'value'=>number_format($totalDocs),     'icon'=>'fa-file-alt',     'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
-        ['label'=>'Blotter '.$currentYear, 'value'=>number_format($totalBlotter),   'icon'=>'fa-gavel',        'color'=>'#9b1c1c','bg'=>'rgba(155,28,28,0.08)'],
-        ['label'=>'Active Businesses',     'value'=>number_format($totalBusinesses), 'icon'=>'fa-store',       'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.1)'],
-        ['label'=>'Male Residents',        'value'=>number_format($totalMale),       'icon'=>'fa-person',      'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
-        ['label'=>'Female Residents',      'value'=>number_format($totalFemale),     'icon'=>'fa-person-dress','color'=>'#C8861A','bg'=>'rgba(200,134,26,0.1)'],
-        ['label'=>'Active Residents',      'value'=>number_format($activeResidents), 'icon'=>'fa-circle-check','color'=>'#0D2144','bg'=>'rgba(13,33,68,0.08)'],
+        ['label' => 'Total Residents',         'value' => number_format($totalResidents),  'icon' => 'fa-users',        'color' => '#0D2144', 'bg' => 'rgba(13,33,68,0.08)'],
+        ['label' => 'Households',              'value' => number_format($totalHouseholds), 'icon' => 'fa-house',        'color' => '#C8861A', 'bg' => 'rgba(200,134,26,0.1)'],
+        ['label' => 'Documents '.$currentYear, 'value' => number_format($totalDocs),       'icon' => 'fa-file-alt',     'color' => '#0D2144', 'bg' => 'rgba(13,33,68,0.08)'],
+        ['label' => 'Blotter '.$currentYear,   'value' => number_format($totalBlotter),    'icon' => 'fa-gavel',        'color' => '#9b1c1c', 'bg' => 'rgba(155,28,28,0.08)'],
+        ['label' => 'Active Businesses',       'value' => number_format($totalBusinesses), 'icon' => 'fa-store',        'color' => '#C8861A', 'bg' => 'rgba(200,134,26,0.1)'],
+        ['label' => 'Male Residents',          'value' => number_format($totalMale),       'icon' => 'fa-person',       'color' => '#0D2144', 'bg' => 'rgba(13,33,68,0.08)'],
+        ['label' => 'Female Residents',        'value' => number_format($totalFemale),     'icon' => 'fa-person-dress', 'color' => '#8b4a68', 'bg' => 'rgba(139,74,104,0.08)'],
+        ['label' => 'Active Residents',        'value' => number_format($activeResidents), 'icon' => 'fa-circle-check', 'color' => '#2e6b47', 'bg' => 'rgba(46,107,71,0.08)'],
     ]; ?>
     <?php $__currentLoopData = $strips; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
     <div class="stat-card">
@@ -80,69 +95,98 @@
 </div>
 
 
-<div style="display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:start">
+<div style="display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start">
 
     
-    <div id="left-col" style="display:flex;flex-direction:column;gap:16px;min-width:0;width:100%">
+    <div id="left-col" style="display:flex;flex-direction:column;gap:14px">
 
         
-        <div class="card" style="width:100%">
-            <div class="card-header">
-                <span class="card-title">
-                    <i class="fas fa-file-pdf" style="color:#9b3535"></i> Report Generator
+        <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex-wrap:nowrap">
+            <?php $__currentLoopData = $quick; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $q): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <form method="POST" action="<?php echo e(route('reports.generate')); ?>" onsubmit="doGeneratePdf(this); return false;" style="flex-shrink:0">
+                <?php echo csrf_field(); ?>
+                <input type="hidden" name="report_type"   value="<?php echo e($q['type']); ?>">
+                <input type="hidden" name="report_module" value="<?php echo e($q['module']); ?>">
+                <input type="hidden" name="year"          value="<?php echo e($q['year']); ?>">
+                <?php if(isset($q['month'])): ?>   <input type="hidden" name="month"   value="<?php echo e($q['month']); ?>"> <?php endif; ?>
+                <?php if(isset($q['quarter'])): ?> <input type="hidden" name="quarter" value="<?php echo e($q['quarter']); ?>"> <?php endif; ?>
+                <button type="submit" title="<?php echo e($q['label']); ?>"
+                        style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;white-space:nowrap;font-family:'Poppins',sans-serif;transition:all 0.15s"
+                        onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
+                        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
+                    <i class="fas fa-file-pdf" style="color:#9b3535;font-size:11px"></i><?php echo e($q['short']); ?>
+
+                </button>
+            </form>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </div>
+
+        
+        <div class="card">
+            <div class="card-header" style="padding:14px 20px">
+                <span class="card-title" style="font-size:13px">
+                    <i class="fas fa-sliders" style="color:var(--gold)"></i> Report Generator
                 </span>
             </div>
-            <div class="card-body" style="padding:20px 20px 24px">
+            <div class="card-body" style="padding:18px 20px 22px">
                 <form method="POST" action="<?php echo e(route('reports.generate')); ?>" id="reportForm">
                     <?php echo csrf_field(); ?>
+                    <input type="hidden" name="report_type" id="reportType" value="monthly">
 
                     
-                    <div class="form-group" style="margin-bottom:20px">
-                        <label class="form-label">Report Type</label>
-                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-                            <?php $__currentLoopData = ['monthly'=>['Monthly','fa-calendar-day','Jan–Dec'],'quarterly'=>['Quarterly','fa-calendar-week','Q1–Q4'],'annual'=>['Annual','fa-calendar','Full Year']]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $val=>[$lbl,$icon,$sub]): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <label style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.15s;text-align:center;background:var(--surface);min-width:0;flex:1"
-                                   id="type-card-<?php echo e($val); ?>" onclick="selectType('<?php echo e($val); ?>')">
-                                <input type="radio" name="report_type" value="<?php echo e($val); ?>" style="display:none" <?php echo e($val==='monthly'?'checked':''); ?>>
-                                <i class="fas <?php echo e($icon); ?>" style="font-size:16px;color:var(--navy)"></i>
-                                <span style="font-size:13px;font-weight:700;color:var(--text)"><?php echo e($lbl); ?></span>
-                                <span style="font-size:11px;color:var(--text-muted)"><?php echo e($sub); ?></span>
-                            </label>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <div class="form-group" style="margin-bottom:18px">
+                        <label class="form-label" style="font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle)">Report Type</label>
+                        <div style="display:flex;border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:var(--surface2)">
+                            <button type="button" id="seg-monthly" onclick="selectType('monthly')"
+                                    style="flex:1;padding:9px 4px;font-size:12px;font-weight:600;border:none;background:var(--navy);color:#fff;cursor:pointer;font-family:'Poppins',sans-serif;transition:all 0.15s">
+                                <i class="fas fa-calendar-day" style="font-size:10px;margin-right:3px"></i>Monthly
+                            </button>
+                            <button type="button" id="seg-quarterly" onclick="selectType('quarterly')"
+                                    style="flex:1;padding:9px 4px;font-size:12px;font-weight:600;border:none;border-left:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-family:'Poppins',sans-serif;transition:all 0.15s">
+                                <i class="fas fa-calendar-week" style="font-size:10px;margin-right:3px"></i>Quarterly
+                            </button>
+                            <button type="button" id="seg-annual" onclick="selectType('annual')"
+                                    style="flex:1;padding:9px 4px;font-size:12px;font-weight:600;border:none;border-left:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-family:'Poppins',sans-serif;transition:all 0.15s">
+                                <i class="fas fa-calendar" style="font-size:10px;margin-right:3px"></i>Annual
+                            </button>
                         </div>
                     </div>
 
-                    <div class="form-group" style="margin-bottom:16px">
-                        <label class="form-label">Module</label>
+                    
+                    <div class="form-group" style="margin-bottom:14px">
+                        <label class="form-label" style="font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle)">Module</label>
                         <select name="report_module" id="reportModule" class="form-control" required>
-                            <option value="summary">📊 Full Summary</option>
-                            <option value="residents">👥 Residents</option>
-                            <option value="documents">📄 Documents</option>
-                            <option value="blotter">⚖️ Blotter Cases</option>
-                            <option value="businesses">🏪 Businesses</option>
+                            <option value="summary">Full Summary</option>
+                            <option value="residents">Residents</option>
+                            <option value="documents">Documents</option>
+                            <option value="blotter">Blotter Cases</option>
+                            <option value="businesses">Businesses</option>
                         </select>
                     </div>
 
-                    <div class="form-group" style="margin-bottom:16px">
-                        <label class="form-label">Year</label>
+                    
+                    <div class="form-group" style="margin-bottom:14px">
+                        <label class="form-label" style="font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle)">Year</label>
                         <select name="year" id="reportYear" class="form-control" required>
-                            <?php for($y=date('Y');$y>=2020;$y--): ?>
-                                <option value="<?php echo e($y); ?>" <?php echo e($y==date('Y')?'selected':''); ?>><?php echo e($y); ?></option>
+                            <?php for($y = date('Y'); $y >= 2020; $y--): ?>
+                                <option value="<?php echo e($y); ?>" <?php echo e($y == date('Y') ? 'selected' : ''); ?>><?php echo e($y); ?></option>
                             <?php endfor; ?>
                         </select>
                     </div>
 
-                    <div id="month-field" class="form-group" style="margin-bottom:16px">
-                        <label class="form-label">Month</label>
+                    
+                    <div id="month-field" class="form-group" style="margin-bottom:14px">
+                        <label class="form-label" style="font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle)">Month</label>
                         <select name="month" id="reportMonth" class="form-control">
-                            <?php $__currentLoopData = ['January','February','March','April','May','June','July','August','September','October','November','December']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i=>$m): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <option value="<?php echo e($i+1); ?>" <?php echo e(($i+1)==date('n')?'selected':''); ?>><?php echo e($m); ?></option>
+                            <?php $__currentLoopData = ['January','February','March','April','May','June','July','August','September','October','November','December']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $mon): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($i + 1); ?>" <?php echo e(($i + 1) == date('n') ? 'selected' : ''); ?>><?php echo e($mon); ?></option>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
                     </div>
 
-                    <div id="quarter-field" class="form-group" style="display:none;margin-bottom:16px">
-                        <label class="form-label">Quarter</label>
+                    
+                    <div id="quarter-field" class="form-group" style="display:none;margin-bottom:14px">
+                        <label class="form-label" style="font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle)">Quarter</label>
                         <select name="quarter" id="reportQuarter" class="form-control">
                             <option value="1">Q1 — Jan to Mar</option>
                             <option value="2">Q2 — Apr to Jun</option>
@@ -151,7 +195,19 @@
                         </select>
                     </div>
 
-                    <button type="button" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="doGeneratePdf(document.getElementById('reportForm'))">
+                    
+                    <div id="preview-chip" style="margin-bottom:16px;padding:10px 13px;background:rgba(13,33,68,0.04);border:1px solid rgba(13,33,68,0.1);border-radius:var(--radius-sm);display:flex;align-items:center;gap:8px;min-height:38px">
+                        <div id="preview-spinner" style="display:none;width:13px;height:13px;border:2px solid rgba(200,134,26,0.3);border-top-color:#C8861A;border-radius:50%;animation:bms-pdf-spin 0.75s linear infinite;flex-shrink:0"></div>
+                        <i class="fas fa-crosshairs" id="preview-icon" style="font-size:11px;color:var(--navy-mid);flex-shrink:0"></i>
+                        <span style="font-size:13px;color:var(--text)">
+                            Targeting <strong id="preview-count" style="color:var(--navy)">—</strong>
+                            <span id="preview-module" style="color:var(--text-muted)">records</span>
+                            · <span id="preview-period" style="color:var(--text-muted)">—</span>
+                        </span>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" style="width:100%;justify-content:center"
+                            onclick="doGeneratePdf(document.getElementById('reportForm'))">
                         <i class="fas fa-file-pdf"></i> Generate PDF Report
                     </button>
                 </form>
@@ -159,74 +215,38 @@
         </div>
 
         
-        <div class="card" style="width:100%">
-            <div class="card-header">
-                <span class="card-title"><i class="fas fa-bolt" style="color:var(--gold)"></i> Quick Generate</span>
-            </div>
-            <div class="card-body" style="padding:10px 12px;display:flex;flex-direction:column;gap:5px">
-                <?php $quick = [
-                    ['label'=>'This Month — Summary',   'type'=>'monthly',   'module'=>'summary',   'month'=>date('n'),'year'=>date('Y')],
-                    ['label'=>'This Month — Documents', 'type'=>'monthly',   'module'=>'documents', 'month'=>date('n'),'year'=>date('Y')],
-                    ['label'=>'This Month — Blotter',   'type'=>'monthly',   'module'=>'blotter',   'month'=>date('n'),'year'=>date('Y')],
-                    ['label'=>'This Quarter — Summary', 'type'=>'quarterly', 'module'=>'summary',   'quarter'=>ceil(date('n')/3),'year'=>date('Y')],
-                    ['label'=>date('Y').' Annual Summary','type'=>'annual',  'module'=>'summary',   'year'=>date('Y')],
-                ]; ?>
-                <?php $__currentLoopData = $quick; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $q): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <form method="POST" action="<?php echo e(route('reports.generate')); ?>" onsubmit="doGeneratePdf(this); return false;">
-                    <?php echo csrf_field(); ?>
-                    <input type="hidden" name="report_type"   value="<?php echo e($q['type']); ?>">
-                    <input type="hidden" name="report_module" value="<?php echo e($q['module']); ?>">
-                    <input type="hidden" name="year"          value="<?php echo e($q['year']); ?>">
-                    <?php if(isset($q['month'])): ?>   <input type="hidden" name="month"   value="<?php echo e($q['month']); ?>"> <?php endif; ?>
-                    <?php if(isset($q['quarter'])): ?> <input type="hidden" name="quarter" value="<?php echo e($q['quarter']); ?>"> <?php endif; ?>
-                    <button type="submit" class="btn btn-secondary" style="width:100%;justify-content:flex-start;padding:8px 12px;font-size:13px;gap:8px">
-                        <i class="fas fa-file-pdf" style="color:#9b3535;font-size:13px;flex-shrink:0"></i>
-                        <span style="flex:1;text-align:left;font-size:13px"><?php echo e($q['label']); ?></span>
-                    </button>
-                </form>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </div>
-        </div>
-
-        
-        <?php
-            $todayDocs     = \App\Models\Document::whereDate('created_at', today())->count();
-            $todayResidents= \App\Models\Resident::whereDate('created_at', today())->count();
-            $todayBlotter  = \App\Models\BlotterCase::whereDate('created_at', today())->count();
-            $thisMonthDocs = \App\Models\Document::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
-            $thisMonthBlt  = \App\Models\BlotterCase::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
-            $thisMonthRes  = \App\Models\Resident::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
-        ?>
-        <div class="card" id="snapshot-card" style="width:100%">
-            <div class="card-header">
-                <span class="card-title"><i class="fas fa-calendar-day" style="color:var(--gold)"></i> Snapshot</span>
+        <div class="card" id="snapshot-card">
+            <div class="card-header" style="padding:12px 20px">
+                <span class="card-title" style="font-size:13px">
+                    <i class="fas fa-calendar-day" style="color:var(--gold)"></i> Snapshot
+                </span>
                 <span style="font-size:12px;color:var(--text-muted)"><?php echo e(now()->format('M d, Y')); ?></span>
             </div>
-            <div class="card-body" style="padding:10px 16px">
+            <div class="card-body" style="padding:12px 16px">
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Today</div>
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px">
                     <?php $todayItems = [
-                        ['label'=>'Documents', 'value'=>$todayDocs,      'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.07)'],
-                        ['label'=>'Residents', 'value'=>$todayResidents, 'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.09)'],
-                        ['label'=>'Blotter',   'value'=>$todayBlotter,   'color'=>'#9b1c1c','bg'=>'rgba(155,28,28,0.07)'],
+                        ['label' => 'Documents', 'value' => $todayDocs,      'color' => '#0D2144', 'bg' => 'rgba(13,33,68,0.05)'],
+                        ['label' => 'Residents', 'value' => $todayResidents, 'color' => '#C8861A', 'bg' => 'rgba(200,134,26,0.07)'],
+                        ['label' => 'Blotter',   'value' => $todayBlotter,   'color' => '#9b1c1c', 'bg' => 'rgba(155,28,28,0.05)'],
                     ]; ?>
                     <?php $__currentLoopData = $todayItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div style="text-align:center;padding:8px 6px;background:<?php echo e($t['bg']); ?>;border-radius:var(--radius-sm)">
-                        <div style="font-size:20px;font-weight:800;color:<?php echo e($t['color']); ?>"><?php echo e($t['value']); ?></div>
+                    <div style="text-align:center;padding:8px 4px;background:<?php echo e($t['bg']); ?>;border-radius:var(--radius-sm)">
+                        <div style="font-size:18px;font-weight:800;color:<?php echo e($t['color']); ?>"><?php echo e($t['value']); ?></div>
                         <div style="font-size:11px;color:var(--text-muted)"><?php echo e($t['label']); ?></div>
                     </div>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">This Month — <?php echo e(now()->format('F')); ?></div>
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px"><?php echo e(now()->format('F')); ?></div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
                     <?php $monthItems = [
-                        ['label'=>'Documents', 'value'=>$thisMonthDocs, 'color'=>'#0D2144','bg'=>'rgba(13,33,68,0.07)'],
-                        ['label'=>'Residents', 'value'=>$thisMonthRes,  'color'=>'#C8861A','bg'=>'rgba(200,134,26,0.09)'],
-                        ['label'=>'Blotter',   'value'=>$thisMonthBlt,  'color'=>'#9b1c1c','bg'=>'rgba(155,28,28,0.07)'],
+                        ['label' => 'Documents', 'value' => $thisMonthDocs, 'color' => '#0D2144', 'bg' => 'rgba(13,33,68,0.05)'],
+                        ['label' => 'Residents', 'value' => $thisMonthRes,  'color' => '#C8861A', 'bg' => 'rgba(200,134,26,0.07)'],
+                        ['label' => 'Blotter',   'value' => $thisMonthBlt,  'color' => '#9b1c1c', 'bg' => 'rgba(155,28,28,0.05)'],
                     ]; ?>
                     <?php $__currentLoopData = $monthItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div style="text-align:center;padding:8px 6px;background:<?php echo e($t['bg']); ?>;border-radius:var(--radius-sm)">
-                        <div style="font-size:20px;font-weight:800;color:<?php echo e($t['color']); ?>"><?php echo e($t['value']); ?></div>
+                    <div style="text-align:center;padding:8px 4px;background:<?php echo e($t['bg']); ?>;border-radius:var(--radius-sm)">
+                        <div style="font-size:18px;font-weight:800;color:<?php echo e($t['color']); ?>"><?php echo e($t['value']); ?></div>
                         <div style="font-size:11px;color:var(--text-muted)"><?php echo e($t['label']); ?></div>
                     </div>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -237,13 +257,15 @@
     </div>
 
     
-    <div id="left-col" style="display:flex;flex-direction:column;gap:16px;min-width:0;width:100%">
+    <div id="right-col" style="display:flex;flex-direction:column;gap:16px">
 
         
         <div class="card">
             <div class="card-header">
-                <span class="card-title"><i class="fas fa-chart-bar" style="color:var(--gold)"></i> <?php echo e($currentYear); ?> Monthly Trend</span>
-                <div style="display:flex;gap:14px;font-size:13px;color:var(--text-muted)">
+                <span class="card-title">
+                    <i class="fas fa-chart-bar" style="color:var(--gold)"></i> <?php echo e($currentYear); ?> Monthly Trend
+                </span>
+                <div style="display:flex;gap:16px;font-size:13px;color:var(--text-muted)">
                     <span style="display:flex;align-items:center;gap:5px">
                         <span style="width:12px;height:3px;background:#0D2144;display:inline-block;border-radius:2px"></span> Documents
                     </span>
@@ -253,7 +275,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <canvas id="trendChart" height="95"></canvas>
+                <canvas id="trendChart" height="90"></canvas>
             </div>
         </div>
 
@@ -261,112 +283,120 @@
         <div class="grid-2">
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title"><i class="fas fa-chart-pie" style="color:var(--gold)"></i> Documents by Type</span>
+                    <span class="card-title" style="font-size:13px">
+                        <i class="fas fa-chart-pie" style="color:var(--gold)"></i> Documents by Type
+                    </span>
                 </div>
                 <div class="card-body" style="display:flex;justify-content:center;padding:12px">
-                    <canvas id="docTypeChart" style="max-height:200px"></canvas>
+                    <canvas id="docTypeChart" style="max-height:180px"></canvas>
                 </div>
             </div>
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title"><i class="fas fa-chart-pie" style="color:var(--gold)"></i> Blotter by Type</span>
+                    <span class="card-title" style="font-size:13px">
+                        <i class="fas fa-chart-pie" style="color:var(--gold)"></i> Blotter by Type
+                    </span>
                 </div>
                 <div class="card-body" style="display:flex;justify-content:center;padding:12px">
-                    <canvas id="blotterTypeChart" style="max-height:200px"></canvas>
+                    <canvas id="blotterTypeChart" style="max-height:180px"></canvas>
                 </div>
             </div>
         </div>
 
         
-        <div id="demo-purok-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch">
-        <div class="card" id="demo-card" style="display:flex;flex-direction:column">
-            <div class="card-header">
-                <span class="card-title"><i class="fas fa-chart-bar" style="color:var(--gold)"></i> Population Demographics</span>
-            </div>
-            <div class="card-body" style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
-                <?php
-                    $maxDemo = max($activeResidents, $totalVoters, $totalSeniors, $totalPwd, $totalSoloParent, $total4ps, $totalMale, $totalFemale) ?: 1;
-                    $demos = [
-                        ['label'=>'Active Residents',  'value'=>$activeResidents, 'color'=>'#0D2144'],
-                        ['label'=>'Registered Voters', 'value'=>$totalVoters,     'color'=>'#C8861A'],
-                        ['label'=>'Senior Citizens',   'value'=>$totalSeniors,    'color'=>'var(--gold)'],
-                        ['label'=>'PWD',               'value'=>$totalPwd,        'color'=>'#3a5fa0'],
-                        ['label'=>'Solo Parents',      'value'=>$totalSoloParent, 'color'=>'#a05828'],
-                        ['label'=>'4Ps Beneficiaries', 'value'=>$total4ps,        'color'=>'#8b2e2e'],
-                        ['label'=>'Male',              'value'=>$totalMale,       'color'=>'var(--navy)'],
-                        ['label'=>'Female',            'value'=>$totalFemale,     'color'=>'#8b4a68'],
-                    ];
-                ?>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px 32px;flex:1;align-content:space-between">
-                    <?php $__currentLoopData = $demos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <?php $pct = round(($d['value'] / $maxDemo) * 100); ?>
-                    <div>
-                        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-                            <span style="font-size:14px;color:var(--text)"><?php echo e($d['label']); ?></span>
-                            <span style="font-size:14px;font-weight:700;color:var(--text)"><?php echo e(number_format($d['value'])); ?></span>
-                        </div>
-                        <div class="progress-bar-wrap">
-                            <div class="progress-bar" style="width:<?php echo e($pct); ?>%;background:<?php echo e($d['color']); ?>"></div>
-                        </div>
-                    </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 
-                
-                <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
-                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Gender Split</div>
-                    <div style="display:flex;border-radius:99px;overflow:hidden;height:10px;margin-bottom:8px">
-                        <div style="width:<?php echo e($malePct); ?>%;background:var(--navy)"></div>
-                        <div style="width:<?php echo e($femalePct); ?>%;background:#8b4a68"></div>
-                    </div>
-                    <div style="display:flex;gap:20px">
-                        <span style="font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
-                            <span style="width:10px;height:10px;border-radius:50%;background:var(--navy);display:inline-block"></span>
-                            Male — <?php echo e(number_format($totalMale)); ?> (<?php echo e($malePct); ?>%)
-                        </span>
-                        <span style="font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
-                            <span style="width:10px;height:10px;border-radius:50%;background:#8b4a68;display:inline-block"></span>
-                            Female — <?php echo e(number_format($totalFemale)); ?> (<?php echo e($femalePct); ?>%)
-                        </span>
-                    </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title" style="font-size:13px">
+                        <i class="fas fa-chart-bar" style="color:var(--gold)"></i> Population Demographics
+                    </span>
                 </div>
-            </div>
-        </div>
-
-        <div class="card" id="purok-card" style="display:flex;flex-direction:column">
-            <div class="card-header">
-                <span class="card-title"><i class="fas fa-location-dot" style="color:var(--gold)"></i> Residents by Purok</span>
-            </div>
-            <div class="card-body" style="padding:12px 16px;flex:1;display:flex;flex-direction:column">
-                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;flex:1">
+                <div class="card-body">
                     <?php
-                        $purokColors = [
-                            ['bg'=>'rgba(13,33,68,0.05)',   'border'=>'rgba(13,33,68,0.14)',  'num'=>'#0D2144', 'badge'=>'rgba(13,33,68,0.08)',   'text'=>'#3a4f6a'],
-                            ['bg'=>'rgba(200,134,26,0.06)', 'border'=>'rgba(200,134,26,0.2)', 'num'=>'#8a5e10', 'badge'=>'rgba(200,134,26,0.1)',  'text'=>'#7a5200'],
-                            ['bg'=>'rgba(61,122,85,0.05)',  'border'=>'rgba(61,122,85,0.18)', 'num'=>'#2e6b47', 'badge'=>'rgba(61,122,85,0.1)',   'text'=>'#2e6b47'],
-                            ['bg'=>'rgba(94,75,139,0.05)',  'border'=>'rgba(94,75,139,0.18)', 'num'=>'#5e4b8b', 'badge'=>'rgba(94,75,139,0.1)',   'text'=>'#4a3a70'],
-                            ['bg'=>'rgba(139,46,46,0.05)',  'border'=>'rgba(139,46,46,0.18)', 'num'=>'#8b2e2e', 'badge'=>'rgba(139,46,46,0.1)',   'text'=>'#6e2424'],
-                            ['bg'=>'rgba(14,107,107,0.05)', 'border'=>'rgba(14,107,107,0.18)','num'=>'#0e6b6b', 'badge'=>'rgba(14,107,107,0.1)',  'text'=>'#0a5252'],
+                        $maxDemo = max($activeResidents, $totalVoters, $totalSeniors, $totalPwd, $totalSoloParent, $total4ps, $totalMale, $totalFemale) ?: 1;
+                        $demos = [
+                            ['label' => 'Active Residents',  'value' => $activeResidents, 'color' => '#0D2144'],
+                            ['label' => 'Voters',            'value' => $totalVoters,     'color' => '#C8861A'],
+                            ['label' => 'Senior Citizens',   'value' => $totalSeniors,    'color' => 'var(--gold)'],
+                            ['label' => 'PWD',               'value' => $totalPwd,        'color' => '#3a5fa0'],
+                            ['label' => 'Solo Parents',      'value' => $totalSoloParent, 'color' => '#a05828'],
+                            ['label' => '4Ps Beneficiaries', 'value' => $total4ps,        'color' => '#8b2e2e'],
+                            ['label' => 'Male',              'value' => $totalMale,       'color' => '#0D2144'],
+                            ['label' => 'Female',            'value' => $totalFemale,     'color' => '#8b4a68'],
                         ];
                     ?>
-                    <?php $__currentLoopData = $puroks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $purok): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <?php
-                        $total = $puroks->sum('residents_count') ?: 1;
-                        $pct   = round(($purok->residents_count / $total) * 100);
-                        $c     = $purokColors[$i % count($purokColors)];
-                    ?>
-                    <div style="background:<?php echo e($c['bg']); ?>;border:1px solid <?php echo e($c['border']); ?>;border-radius:var(--radius-sm);padding:12px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
-                        <div style="font-size:22px;font-weight:800;color:<?php echo e($c['num']); ?>"><?php echo e($purok->residents_count); ?></div>
-                        <div style="display:inline-block;background:<?php echo e($c['badge']); ?>;color:<?php echo e($c['text']); ?>;font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px;margin:3px 0"><?php echo e($pct); ?>%</div>
-                        <div style="font-size:12px;font-weight:600;color:<?php echo e($c['text']); ?>;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%"><?php echo e($purok->name); ?></div>
+                    <div style="display:flex;flex-direction:column;gap:11px">
+                        <?php $__currentLoopData = $demos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $pct = round(($d['value'] / $maxDemo) * 100); ?>
+                        <div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                                <span style="font-size:13px;color:var(--text)"><?php echo e($d['label']); ?></span>
+                                <span style="font-size:13px;font-weight:700;color:var(--text)"><?php echo e(number_format($d['value'])); ?></span>
+                            </div>
+                            <div style="height:5px;background:var(--surface3);border-radius:3px;overflow:hidden">
+                                <div style="height:100%;width:<?php echo e($pct); ?>%;background:<?php echo e($d['color']); ?>;border-radius:3px"></div>
+                            </div>
+                        </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Gender Split</div>
+                        <div style="display:flex;border-radius:99px;overflow:hidden;height:8px;margin-bottom:8px">
+                            <div style="width:<?php echo e($malePct); ?>%;background:var(--navy)"></div>
+                            <div style="width:<?php echo e($femalePct); ?>%;background:#8b4a68"></div>
+                        </div>
+                        <div style="display:flex;gap:16px">
+                            <span style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:5px">
+                                <span style="width:8px;height:8px;border-radius:50%;background:var(--navy);display:inline-block"></span>
+                                Male — <?php echo e(number_format($totalMale)); ?> (<?php echo e($malePct); ?>%)
+                            </span>
+                            <span style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:5px">
+                                <span style="width:8px;height:8px;border-radius:50%;background:#8b4a68;display:inline-block"></span>
+                                Female — <?php echo e(number_format($totalFemale)); ?> (<?php echo e($femalePct); ?>%)
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title" style="font-size:13px">
+                        <i class="fas fa-location-dot" style="color:var(--gold)"></i> Residents by Purok
+                    </span>
+                </div>
+                <div class="card-body">
+                    <?php $purokTotal = $puroks->sum('residents_count') ?: 1; ?>
+                    <div style="display:flex;flex-direction:column;gap:12px">
+                        <?php $__currentLoopData = $puroks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $purok): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $pct = round(($purok->residents_count / $purokTotal) * 100); ?>
+                        <div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                                <div style="display:flex;align-items:center;gap:8px">
+                                    <span style="font-size:11px;font-weight:700;color:var(--text-subtle);width:14px;text-align:right;flex-shrink:0"><?php echo e($i + 1); ?></span>
+                                    <span style="font-size:13px;color:var(--text)"><?php echo e($purok->name); ?></span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+                                    <span style="font-size:12px;color:var(--text-subtle)"><?php echo e($pct); ?>%</span>
+                                    <span style="font-size:13px;font-weight:700;color:var(--navy);min-width:28px;text-align:right"><?php echo e($purok->residents_count); ?></span>
+                                </div>
+                            </div>
+                            <div style="height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-left:22px">
+                                <div style="height:100%;width:<?php echo e($pct); ?>%;background:var(--navy);border-radius:2px;opacity:0.75"></div>
+                            </div>
+                        </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
+
 </div>
 
 <?php $__env->stopSection(); ?>
@@ -381,83 +411,84 @@
 #reportQuarter + .select2-container { width: 100% !important; }
 </style>
 <script>
-$(function(){
-    $('#reportModule, #reportYear, #reportMonth, #reportQuarter').select2({
-        minimumResultsForSearch: -1,
-        width: '100%'
-    });
+$(function () {
+    $('#reportModule, #reportYear, #reportMonth, #reportQuarter')
+        .select2({ minimumResultsForSearch: -1, width: '100%' })
+        .on('change', schedulePreview);
+    selectType('monthly');
+    fetchPreview();
 });
+
+function selectType(val) {
+    ['monthly', 'quarterly', 'annual'].forEach(function (v) {
+        var btn = document.getElementById('seg-' + v);
+        if (v === val) {
+            btn.style.background = 'var(--navy)';
+            btn.style.color = '#fff';
+        } else {
+            btn.style.background = 'transparent';
+            btn.style.color = 'var(--text-muted)';
+        }
+    });
+    document.getElementById('reportType').value = val;
+    document.getElementById('month-field').style.display   = val === 'monthly'   ? 'block' : 'none';
+    document.getElementById('quarter-field').style.display = val === 'quarterly' ? 'block' : 'none';
+    schedulePreview();
+}
+
+var _previewTimer = null;
+function schedulePreview() {
+    clearTimeout(_previewTimer);
+    _previewTimer = setTimeout(fetchPreview, 350);
+}
+
+function fetchPreview() {
+    var params = new URLSearchParams({
+        report_type:   document.getElementById('reportType').value,
+        report_module: $('#reportModule').val() || 'summary',
+        year:          $('#reportYear').val()    || <?php echo e($currentYear); ?>,
+        month:         $('#reportMonth').val()   || <?php echo e($currentMonth); ?>,
+        quarter:       $('#reportQuarter').val() || 1,
+    });
+    document.getElementById('preview-icon').style.display    = 'none';
+    document.getElementById('preview-spinner').style.display = 'block';
+    axios.get('<?php echo e(route("reports.preview")); ?>?' + params.toString())
+        .then(function (res) {
+            document.getElementById('preview-count').textContent  = Number(res.data.count).toLocaleString();
+            document.getElementById('preview-module').textContent = res.data.module;
+            document.getElementById('preview-period').textContent = res.data.period;
+        })
+        .catch(function () {
+            document.getElementById('preview-count').textContent = '—';
+        })
+        .finally(function () {
+            document.getElementById('preview-spinner').style.display = 'none';
+            document.getElementById('preview-icon').style.display    = '';
+        });
+}
 
 function doGeneratePdf(formEl) {
     var overlay = document.getElementById('pdf-overlay');
     overlay.style.display = 'flex';
     var fd = new FormData(formEl);
     axios.post(formEl.action, fd, { responseType: 'blob' })
-        .then(function(res) {
+        .then(function (res) {
             var blob = new Blob([res.data], { type: 'application/pdf' });
             var url  = URL.createObjectURL(blob);
             window.open(url, '_blank');
-            setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
+            setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
         })
-        .catch(function() {
+        .catch(function () {
             bmsToast('Failed to generate PDF report. Please try again.', 'error');
         })
-        .finally(function() {
+        .finally(function () {
             overlay.style.display = 'none';
         });
     return false;
 }
 
-function selectType(val) {
-    document.querySelectorAll('[id^="type-card-"]').forEach(el => {
-        el.style.borderColor = 'var(--border)';
-        el.style.background  = 'var(--surface)';
-    });
-    const card = document.getElementById('type-card-' + val);
-    card.style.borderColor = 'var(--gold)';
-    card.style.background  = 'rgba(200,134,26,0.05)';
-    card.querySelector('input[type=radio]').checked = true;
-
-    const mf = document.getElementById('month-field');
-    const qf = document.getElementById('quarter-field');
-    mf.style.display      = val === 'monthly'   ? 'block' : 'none';
-    mf.style.marginBottom = val === 'monthly'   ? '16px'  : '0';
-    qf.style.display      = val === 'quarterly' ? 'block' : 'none';
-    qf.style.marginBottom = val === 'quarterly' ? '16px'  : '0';
-
-    // Stretch demographics + purok to match snapshot height on monthly/quarterly
-    setTimeout(() => matchDemoHeight(val), 50);
-}
-
-function matchDemoHeight(val) {
-    const snapshotCard = document.getElementById('snapshot-card');
-    const demoCard     = document.getElementById('demo-card');
-    const purokCard    = document.getElementById('purok-card');
-    if (!snapshotCard || !demoCard || !purokCard) return;
-
-    demoCard.style.minHeight  = '';
-    purokCard.style.minHeight = '';
-
-    if (val === 'annual') return;
-
-    // Use scrollHeight of left column vs position of demo card
-    requestAnimationFrame(() => {
-        const leftCol  = document.getElementById('left-col');
-        const leftBottom = leftCol.getBoundingClientRect().bottom;
-        const demoTop    = demoCard.getBoundingClientRect().top;
-        const needed     = Math.floor(leftBottom - demoTop) - 1;
-        if (needed > 0) {
-            demoCard.style.minHeight  = needed + 'px';
-            purokCard.style.minHeight = needed + 'px';
-        }
-    });
-}
-
-selectType('monthly');
-
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-// Combined trend chart
 new Chart(document.getElementById('trendChart'), {
     type: 'bar',
     data: {
@@ -487,64 +518,33 @@ new Chart(document.getElementById('trendChart'), {
         responsive: true,
         plugins: { legend: { display: false } },
         scales: {
-            x: { ticks:{ color:'#9CA3AF', font:{size:10} }, grid:{ color:'#F3F4F6' } },
-            y: { ticks:{ color:'#9CA3AF', font:{size:10}, stepSize:1 }, grid:{ color:'#F3F4F6' }, beginAtZero:true }
+            x: { ticks: { color: '#9CA3AF', font: { size: 10 } }, grid: { color: '#F3F4F6' } },
+            y: { ticks: { color: '#9CA3AF', font: { size: 10 }, stepSize: 1 }, grid: { color: '#F3F4F6' }, beginAtZero: true }
         }
     }
 });
 
-// Docs by type
-const palette = ['#0D2144','#C8861A','#3d7a55','#3a5fa0','#5e4b8b','#9b3535','#a05828','#2a7a8a'];
+const palette  = ['#0D2144','#C8861A','#3d7a55','#3a5fa0','#5e4b8b','#9b3535','#a05828','#2a7a8a'];
+const bPalette = ['#9b3535','#C8861A','#0D2144','#3a5fa0','#5e4b8b','#3d7a55','#a05828','#2a7a8a'];
+
 new Chart(document.getElementById('docTypeChart'), {
     type: 'doughnut',
     data: {
         labels: <?php echo json_encode($docsByType->keys()->toArray()); ?>,
         datasets: [{ data: <?php echo json_encode($docsByType->values()->toArray()); ?>, backgroundColor: palette, borderWidth: 2, borderColor: '#fff' }]
     },
-    options: { responsive: true, cutout:'62%', plugins:{ legend:{ position:'bottom', labels:{ font:{size:10}, padding:8, color:'#6B7280', boxWidth:10 } } } }
+    options: { responsive: true, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 8, color: '#6B7280', boxWidth: 10 } } } }
 });
 
-// Blotter by type
-const bPalette = ['#9b3535','#C8861A','#0D2144','#3a5fa0','#5e4b8b','#3d7a55','#a05828','#2a7a8a'];
 new Chart(document.getElementById('blotterTypeChart'), {
     type: 'doughnut',
     data: {
         labels: <?php echo json_encode($blotterByType->keys()->toArray()); ?>,
         datasets: [{ data: <?php echo json_encode($blotterByType->values()->toArray()); ?>, backgroundColor: bPalette, borderWidth: 2, borderColor: '#fff' }]
     },
-    options: { responsive: true, cutout:'62%', plugins:{ legend:{ position:'bottom', labels:{ font:{size:10}, padding:8, color:'#6B7280', boxWidth:10 } } } }
-});
-
-
-// Match left column height to right column
-function matchColumnHeights() {
-    const left  = document.getElementById('left-col');
-    const right = document.getElementById('right-col');
-    const snapshot = document.getElementById('snapshot-card');
-    if (!left || !right || !snapshot) return;
-
-    // Reset first
-    snapshot.style.minHeight = '0';
-
-    const rightH = right.offsetHeight;
-    const leftH  = left.offsetHeight;
-
-    if (rightH > leftH) {
-        const diff = rightH - leftH;
-        const currentMin = snapshot.offsetHeight;
-        snapshot.style.minHeight = (currentMin + diff) + 'px';
-    }
-}
-window.addEventListener('load', () => {
-    matchColumnHeights();
-    const selected = document.querySelector('input[name="report_type"]:checked');
-    if (selected) matchDemoHeight(selected.value);
-});
-window.addEventListener('resize', () => {
-    matchColumnHeights();
-    const selected = document.querySelector('input[name="report_type"]:checked');
-    if (selected) matchDemoHeight(selected.value);
+    options: { responsive: true, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 8, color: '#6B7280', boxWidth: 10 } } } }
 });
 </script>
 <?php $__env->stopPush(); ?>
+
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\anakco_bms\resources\views/reports/generate.blade.php ENDPATH**/ ?>
