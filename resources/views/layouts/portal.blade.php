@@ -798,6 +798,12 @@
         Online &amp; Secure
     </div>
 
+    {{-- Live clock --}}
+    <div class="portal-clock" id="portalClock" title="Current date &amp; time">
+        <i class="fas fa-clock"></i>
+        <span id="portalClockTime">--:-- --</span>
+    </div>
+
     <nav class="portal-nav" aria-label="Main navigation">
         <a href="{{ route('portal.index') }}" class="{{ request()->routeIs('portal.index') ? 'nav-active' : '' }}">
             <i class="fas fa-home"></i> Home
@@ -835,80 +841,6 @@
 <main class="portal-main" id="main-content">
     @yield('content')
 </main>
-
-{{-- ═══ FOOTER ═══ --}}
-<footer class="portal-footer" aria-label="Site footer">
-    <div class="footer-inner">
-
-        {{-- Brand column --}}
-        <div class="footer-brand">
-            <div class="footer-brand-top">
-                <div class="footer-seal-sm">
-                    @include('partials._portal_seal')
-                </div>
-                <div>
-                    <div class="footer-brand-name">Barangay New Era</div>
-                    <div class="footer-brand-sub">District VI, Quezon City</div>
-                </div>
-            </div>
-            <p class="footer-about">
-                Serving our residents with transparency, efficiency, and integrity.
-                Your trusted barangay government — now digital.
-            </p>
-            <div class="footer-legal-badge">
-                <i class="fas fa-shield-halved"></i>
-                RA 10173 Compliant · Data Privacy Act
-            </div>
-        </div>
-
-        {{-- Services --}}
-        <div class="footer-col">
-            <h4>Services</h4>
-            <a href="{{ route('portal.request') }}?type=Barangay+Clearance">
-                <i class="fas fa-file-shield"></i> Barangay Clearance
-            </a>
-            <a href="{{ route('portal.request') }}?type=Certificate+of+Indigency">
-                <i class="fas fa-hand-holding-heart"></i> Certificate of Indigency
-            </a>
-            <a href="{{ route('portal.request') }}?type=Certificate+of+Residency">
-                <i class="fas fa-house-circle-check"></i> Certificate of Residency
-            </a>
-            <a href="{{ route('portal.request') }}?type=Business+Clearance">
-                <i class="fas fa-store"></i> Business Clearance
-            </a>
-        </div>
-
-        {{-- Links --}}
-        <div class="footer-col">
-            <h4>Portal</h4>
-            <a href="{{ route('portal.index') }}"><i class="fas fa-home"></i> Home</a>
-            <a href="{{ route('portal.request') }}"><i class="fas fa-file-plus"></i> Request a Document</a>
-            <a href="{{ route('portal.track') }}"><i class="fas fa-search"></i> Track My Status</a>
-            @auth
-                <a href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt"></i> Staff Dashboard</a>
-            @else
-                <a href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i> Staff Login</a>
-            @endauth
-        </div>
-
-        {{-- Republic seal --}}
-        <div class="footer-republic">
-            <img src="{{ asset('images/republika-seal.png') }}"
-                 alt="Seal of the Republic of the Philippines"
-                 width="80" height="80"
-                 style="object-fit:contain;filter:brightness(0) invert(1);opacity:.55;">
-            <p>Republic of the Philippines</p>
-        </div>
-    </div>
-
-    <div class="footer-bottom">
-        <span>&copy; {{ date('Y') }} Barangay New Era, District VI, Quezon City. All rights reserved.</span>
-        <div class="footer-pb">
-            <i class="fas fa-user-tie" style="color:var(--gold);font-size:.8rem"></i>
-            Punong Barangay: <strong>Robert S. Romano</strong>
-        </div>
-    </div>
-</footer>
 
 <script>
 /* ════════════════════════════════════════════════
