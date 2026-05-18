@@ -133,16 +133,16 @@ tbody td:last-child { border-right: none; }
 <body>
 
 {{-- Header --}}
-<div class="header">
-    <img class="logo-left"  src="{{ public_path('images/qc-seal.png') }}" alt="">
-    <img class="logo-right" src="{{ public_path('images/bne-logo.png') }}" alt="">
-    <div class="titles">
+<div class="header" style="display:flex;align-items:center;gap:12px;text-align:left;padding-bottom:10px;border-bottom:3px solid #0D2144;margin-bottom:12px;">
+    <img src="{{ public_path('images/qc-seal.png') }}" alt="" style="width:55px;height:55px;flex-shrink:0;">
+    <div class="titles" style="flex:1;text-align:center;padding:0;">
         <div class="republic"><em>Republic of the Philippines</em></div>
         <div style="font-size:8pt;color:#555">City of Quezon, National Capital Region</div>
         <div class="brgy">Barangay New Era</div>
         <div class="office">Office of the Punong Barangay</div>
         <div class="address">New Era, Quezon City, Metro Manila</div>
     </div>
+    <img src="{{ public_path('images/bne-logo.png') }}" alt="" style="width:55px;height:55px;flex-shrink:0;">
 </div>
 
 <div class="report-title">{{ strtoupper($committeeName) }} Committee Report</div>
