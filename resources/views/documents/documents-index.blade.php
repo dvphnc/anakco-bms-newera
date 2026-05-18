@@ -237,6 +237,9 @@
 @push('scripts')
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
+/* ── Spinner keyframe (status modal save button) ─────────────────── */
+@keyframes doc-spin { to { transform: rotate(360deg); } }
+
 /* ── SaaS surface & stat card polish ──────────────────────────────── */
 .main-content { background: #F8F9FA; }
 .stat-card { background: #FFFFFF !important; box-shadow: 0 1px 4px rgba(13,33,68,0.07), 0 4px 16px rgba(13,33,68,0.04); }

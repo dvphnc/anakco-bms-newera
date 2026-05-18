@@ -18,7 +18,8 @@ class DocumentController extends Controller
         if ($request->ajax()) {
             $query = Document::with(['resident.purok'])
                 ->when($request->document_type, fn ($q) => $q->whereIn('document_type', (array) $request->document_type))
-                ->when($request->status, fn ($q) => $q->where('status', $request->status))
+                ->when($request->status,        fn ($q) => $q->where('status', $request->status))
+                ->when($request->source,        fn ($q) => $q->where('source', $request->source))
                 ->select('documents.*');
 
             return DataTables::of($query)
