@@ -400,8 +400,7 @@ unset($__errorArgs, $__bag); ?>
         placeholder: 'Select relationship',
         allowClear: true,
         minimumResultsForSearch: Infinity,
-        width: '100%',
-        dropdownParent: $('#repPanel')
+        width: '100%'
     });
 
     document.getElementById('docEditForm').addEventListener('submit', function (e) {
