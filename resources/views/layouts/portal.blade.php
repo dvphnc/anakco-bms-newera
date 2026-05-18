@@ -641,6 +641,9 @@
         @else
             <a href="{{ route('login') }}"><i class="fas fa-sign-in-alt fa-fw"></i> Staff Login</a>
         @endauth
+        <a href="{{ route('portal.blotter') }}"><i class="fas fa-gavel fa-fw"></i> File a Blotter Report</a>
+        <a href="{{ route('portal.business') }}"><i class="fas fa-store fa-fw"></i> Business Permit</a>
+        <div class="drawer-divider"></div>
         <a href="{{ route('portal.request') }}" class="drawer-cta">
             <i class="fas fa-file-plus fa-fw"></i> Request a Document
         </a>
@@ -743,6 +746,8 @@ function closeMobileNav() {
         { icon: 'fas fa-hand-holding-heart', label: 'Certificate of Indigency',    sub: 'For government assistance programs',            href: '{{ route("portal.request") }}?type=Certificate+of+Indigency' },
         { icon: 'fas fa-house-circle-check', label: 'Certificate of Residency',    sub: 'Proof of residence document',                   href: '{{ route("portal.request") }}?type=Certificate+of+Residency' },
         { icon: 'fas fa-store',              label: 'Business Clearance',          sub: 'For business registration and renewal',         href: '{{ route("portal.request") }}?type=Business+Clearance' },
+        { icon: 'fas fa-gavel',              label: 'File a Blotter Report',       sub: 'Report an incident to the barangay',            href: '{{ route("portal.blotter") }}' },
+        { icon: 'fas fa-file-contract',      label: 'Business Permit Application', sub: 'Apply for new permit or renewal',               href: '{{ route("portal.business") }}' },
         { icon: 'fas fa-search',             label: 'Track Appointment Status',    sub: 'Look up an existing appointment number',        href: '{{ route("portal.track") }}' },
         { icon: 'fas fa-home',               label: 'Portal Home',                 sub: 'Back to the main portal page',                  href: '{{ route("portal.index") }}' },
         { icon: 'fas fa-circle-question',    label: 'Frequently Asked Questions',  sub: 'Common questions about barangay documents',     href: '{{ route("portal.index") }}#faq' },
