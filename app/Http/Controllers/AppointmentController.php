@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Mail\PortalStatusUpdated;
 use App\Models\AppointmentStatusLog;
-use App\Models\BlotterRequest;
-use App\Models\BusinessPermitRequest;
+use App\Models\BlotterCase;
+use App\Models\Business;
 use App\Models\DocumentAppointment;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
@@ -152,8 +152,8 @@ class AppointmentController extends Controller
     {
         return response()->json([
             'documents' => DocumentAppointment::where('status', 'Pending')->where('source', 'portal')->count(),
-            'blotter'   => BlotterRequest::where('status', 'Pending')->count(),
-            'business'  => BusinessPermitRequest::where('status', 'Pending')->count(),
+            'blotter'   => BlotterCase::where('source', 'portal')->whereNotIn('status', ['Settled', 'Closed'])->count(),
+            'business'  => Business::where('source', 'portal')->whereIn('status', ['Pending', 'For Review'])->count(),
         ]);
     }
 

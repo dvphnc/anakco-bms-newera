@@ -11,8 +11,6 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\HouseholdController;
 use App\Http\Controllers\OfficialController;
-use App\Http\Controllers\PortalBlotterController;
-use App\Http\Controllers\PortalBusinessController;
 use App\Http\Controllers\PurokController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResidentController;
@@ -120,6 +118,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     Route::resource('businesses', BusinessController::class)
         ->middleware('role:Admin,Secretary');
+    Route::patch('businesses/{business}/status', [BusinessController::class, 'quickStatus'])
+        ->name('businesses.quickStatus')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Officials — Admin + Secretary only
@@ -190,26 +190,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('appointments.updateStatus')->middleware('role:Admin,Secretary');
     Route::delete('appointments/{appointment}', [AppointmentController::class, 'destroy'])
         ->name('appointments.destroy')->middleware('role:Admin,Secretary');
-
-    // ---------------------------------------------------
-    // Portal Blotter Requests — Admin + Secretary
-    // ---------------------------------------------------
-    Route::get('portal-blotter', [PortalBlotterController::class, 'index'])
-        ->name('portal-blotter.index')->middleware('role:Admin,Secretary');
-    Route::patch('portal-blotter/{blotterRequest}/status', [PortalBlotterController::class, 'updateStatus'])
-        ->name('portal-blotter.updateStatus')->middleware('role:Admin,Secretary');
-    Route::delete('portal-blotter/{blotterRequest}', [PortalBlotterController::class, 'destroy'])
-        ->name('portal-blotter.destroy')->middleware('role:Admin,Secretary');
-
-    // ---------------------------------------------------
-    // Portal Business Permit Requests — Admin + Secretary
-    // ---------------------------------------------------
-    Route::get('portal-business', [PortalBusinessController::class, 'index'])
-        ->name('portal-business.index')->middleware('role:Admin,Secretary');
-    Route::patch('portal-business/{businessPermitRequest}/status', [PortalBusinessController::class, 'updateStatus'])
-        ->name('portal-business.updateStatus')->middleware('role:Admin,Secretary');
-    Route::delete('portal-business/{businessPermitRequest}', [PortalBusinessController::class, 'destroy'])
-        ->name('portal-business.destroy')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Portal Pending Count — for sidebar badge (Admin + Secretary)
