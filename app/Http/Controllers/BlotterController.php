@@ -227,6 +227,21 @@ class BlotterController extends Controller
         $blotter->update($validated);
         $this->logActivity('updated', $blotter, $old, $blotter->fresh()->toArray());
 
+        // Email notification for portal-sourced blotter cases
+        if ($blotter->source === 'portal' && $blotter->email) {
+            try {
+                Mail::to($blotter->email)->send(new PortalStatusUpdated(
+                    type:          'blotter',
+                    requestNumber: $blotter->case_number,
+                    residentName:  $blotter->complainant_name,
+                    newStatus:     $blotter->status,
+                    notes:         $validated['resolution_notes'] ?? null,
+                ));
+            } catch (\Exception $e) {
+                logger()->warning('Portal blotter email failed: ' . $e->getMessage());
+            }
+        }
+
         return response()->json([
             'success' => true,
             'message' => "Case status updated to {$blotter->status}.",

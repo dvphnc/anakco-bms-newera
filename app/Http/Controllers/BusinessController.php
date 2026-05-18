@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PortalStatusUpdated;
 use App\Models\Business;
 use App\Models\Resident;
 use App\Traits\LogsActivity;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
 
 class BusinessController extends Controller
@@ -30,7 +32,12 @@ class BusinessController extends Controller
                 });
 
             return DataTables::of($query)
-                ->addColumn('number_col', fn ($b) => '<span class="td-mono">'.e($b->permit_number).'</span>')
+                ->addColumn('number_col', function ($b) {
+                    $badge = $b->source === 'portal'
+                        ? ' <span class="badge badge-blue" style="font-size:10px;margin-left:4px;vertical-align:middle">Portal</span>'
+                        : '';
+                    return '<span class="td-mono">'.e($b->permit_number).'</span>'.$badge;
+                })
                 ->addColumn('name_col', function ($b) {
                     $expiry = $b->expiry_date ? Carbon::parse($b->expiry_date) : null;
                     $tag = '';
