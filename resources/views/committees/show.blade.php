@@ -3041,6 +3041,292 @@ function deleteReliefSupply(id, name, slug) {
     });
 }
 
+// ── CRUD: Generic delete (records, activities, attendance, inventory) ──
+function deleteGeneric(type, id, name) {
+    var labels = {
+        records: 'Record', activities: 'Activity', attendance: 'Attendance Record', inventory: 'Inventory Item'
+    };
+    bmsConfirm({
+        title:   'Delete ' + (labels[type] || 'Record'),
+        message: 'Delete <strong>' + name + '</strong>? This cannot be undone.',
+        ok: 'Delete', type: 'danger',
+    }, function() {
+        axios.delete('/committees/{{ $committee['slug'] }}/' + type + '/' + id)
+            .then(function(res) {
+                var row = document.querySelector('tr[data-id="' + id + '"], tr[data-rid="' + id + '"]');
+                if (row) row.remove();
+                bmsToast(res.data.message || 'Deleted.', 'success');
+            })
+            .catch(function() { bmsToast('Delete failed.', 'error'); });
+    });
+}
+
+// ── CRUD: Specific delete ──
+function deleteSpecific(type, id, name) {
+    bmsConfirm({
+        title: 'Delete Record',
+        message: 'Delete <strong>' + name + '</strong>? This cannot be undone.',
+        ok: 'Delete', type: 'danger',
+    }, function() {
+        axios.delete('/committees/{{ $committee['slug'] }}/specific/' + type + '/' + id)
+            .then(function(res) {
+                var row = document.querySelector('tr[data-id="' + id + '"], [data-id="' + id + '"]');
+                if (row) row.remove();
+                bmsToast(res.data.message || 'Deleted.', 'success');
+            })
+            .catch(function() { bmsToast('Delete failed.', 'error'); });
+    });
+}
+
+// ── CRUD: Close modal helper ──
+function closeCrudModal(id) {
+    document.getElementById(id).classList.remove('open');
+}
+
+// ── CRUD: Axios PATCH helper for edit modals ──
+function axiosPatch(form, url, modalId, rowUpdater) {
+    var btn = form.querySelector('[type="submit"]');
+    var orig = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:#C8861A"></i> Saving…'; }
+    var fd = new FormData(form);
+    // FormData with _method=PATCH won't work as PATCH; send as POST with _method override
+    axios.post(url, fd, { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+        .then(function(res) {
+            bmsToast(res.data.message || 'Updated.', 'success');
+            closeCrudModal(modalId);
+            if (rowUpdater && res.data.record) rowUpdater(res.data.record);
+        })
+        .catch(function(err) {
+            var data = err.response && err.response.data;
+            if (data && data.errors) {
+                bmsToast(Object.values(data.errors).flat()[0], 'error');
+            } else {
+                bmsToast((data && data.message) || 'Update failed.', 'error');
+            }
+        })
+        .finally(function() {
+            if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+        });
+}
+
+// ── EDIT: Activity ──
+var _editActId = null, _editActSlug = '{{ $committee['slug'] }}';
+function openEditActivity(tr) {
+    _editActId = tr.dataset.id;
+    var isAcc = tr.dataset.type === 'Accomplishment';
+    document.getElementById('editActivityModalTitle').textContent = isAcc ? 'Edit Accomplishment' : 'Edit Activity';
+    document.getElementById('eAct_title').value        = tr.dataset.title        || '';
+    document.getElementById('eAct_date').value         = tr.dataset.date         || '';
+    document.getElementById('eAct_location').value     = tr.dataset.location     || '';
+    document.getElementById('eAct_participants').value = tr.dataset.participants  || '0';
+    document.getElementById('eAct_description').value  = tr.dataset.description  || '';
+    var sel = document.getElementById('eAct_status');
+    for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === tr.dataset.status) { sel.selectedIndex = i; break; }
+    document.getElementById('editActivityModal').classList.add('open');
+}
+document.getElementById('editActivityForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var url = '/committees/' + _editActSlug + '/activities/' + _editActId;
+    axiosPatch(this, url, 'editActivityModal', function(rec) {
+        var row = document.querySelector('tr[data-id="' + _editActId + '"]');
+        if (row) {
+            row.cells[0].innerHTML = '<div style="font-weight:600">' + rec.title + '</div>' + (rec.description ? '<div class="td-muted">' + rec.description + '</div>' : '');
+            row.cells[1].textContent = new Date(rec.activity_date).toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
+            row.cells[2].textContent = rec.location || '—';
+            row.cells[3].textContent = rec.participants_count || '0';
+            // update data attrs
+            row.dataset.title       = rec.title;
+            row.dataset.date        = rec.activity_date ? rec.activity_date.substring(0,10) : '';
+            row.dataset.location    = rec.location || '';
+            row.dataset.participants= rec.participants_count || '0';
+            row.dataset.status      = rec.status;
+            row.dataset.description = rec.description || '';
+        }
+    });
+});
+
+// ── EDIT: Attendance ──
+var _editAttId = null;
+function openEditAttendance(tr) {
+    _editAttId = tr.dataset.id;
+    document.getElementById('eAtt_event').value     = tr.dataset.event     || '';
+    document.getElementById('eAtt_date').value      = tr.dataset.date      || '';
+    document.getElementById('eAtt_venue').value     = tr.dataset.venue     || '';
+    document.getElementById('eAtt_attendees').value = tr.dataset.attendees || '0';
+    document.getElementById('eAtt_notes').value     = tr.dataset.notes     || '';
+    document.getElementById('editAttendanceModal').classList.add('open');
+}
+document.getElementById('editAttendanceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    axiosPatch(this, '/committees/{{ $committee['slug'] }}/attendance/' + _editAttId, 'editAttendanceModal', function(rec) {
+        var row = document.querySelector('tr[data-id="' + _editAttId + '"]');
+        if (row) {
+            row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.event_name + '</span>';
+            row.cells[2].textContent = rec.venue || '—';
+            row.cells[3].innerHTML = '<span style="text-align:right;font-weight:700;color:var(--navy)">' + Number(rec.total_attendees).toLocaleString() + '</span>';
+            row.cells[4].textContent = rec.notes || '—';
+            row.dataset.event     = rec.event_name;
+            row.dataset.date      = rec.event_date ? rec.event_date.substring(0,10) : '';
+            row.dataset.venue     = rec.venue || '';
+            row.dataset.attendees = rec.total_attendees;
+            row.dataset.notes     = rec.notes || '';
+        }
+    });
+});
+
+// ── EDIT: Inventory ──
+var _editInvId = null;
+function openEditInventory(tr) {
+    _editInvId = tr.dataset.id;
+    document.getElementById('eInv_name').value      = tr.dataset.name      || '';
+    document.getElementById('eInv_category').value  = tr.dataset.category  || '';
+    document.getElementById('eInv_qty').value        = tr.dataset.qty       || '0';
+    document.getElementById('eInv_unit').value       = tr.dataset.unit      || '';
+    document.getElementById('eInv_remarks').value    = tr.dataset.remarks   || '';
+    var sel = document.getElementById('eInv_condition');
+    for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === tr.dataset.condition) { sel.selectedIndex = i; break; }
+    document.getElementById('editInventoryModal').classList.add('open');
+}
+document.getElementById('editInventoryForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    axiosPatch(this, '/committees/{{ $committee['slug'] }}/inventory/' + _editInvId, 'editInventoryModal', function(rec) {
+        var row = document.querySelector('tr[data-id="' + _editInvId + '"]');
+        if (row) {
+            row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.item_name + '</span>';
+            row.cells[1].textContent = rec.category || '—';
+            row.cells[2].innerHTML = '<span style="text-align:right;font-weight:700;color:var(--navy)">' + Number(rec.quantity).toLocaleString() + '</span>';
+            row.cells[3].textContent = rec.unit || '—';
+            row.cells[5].textContent = rec.remarks || '—';
+            row.dataset.name      = rec.item_name;
+            row.dataset.category  = rec.category || '';
+            row.dataset.qty       = rec.quantity;
+            row.dataset.unit      = rec.unit || '';
+            row.dataset.condition = rec.condition;
+            row.dataset.remarks   = rec.remarks || '';
+        }
+    });
+});
+
+// ── EDIT: Partnership ──
+var _editPartId = null;
+function openEditPartnership(tr) {
+    _editPartId = tr.dataset.pid;
+    document.getElementById('ePart_name').value     = tr.dataset.partner   || '';
+    document.getElementById('ePart_mou').value       = tr.dataset.mou       || '';
+    document.getElementById('ePart_validity').value  = tr.dataset.validity  || '';
+    document.getElementById('ePart_contact').value   = tr.dataset.contact   || '';
+    document.getElementById('ePart_phone').value     = tr.dataset.phone     || '';
+    document.getElementById('ePart_desc').value      = tr.dataset.desc      || '';
+    var sel = document.getElementById('ePart_type');
+    for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === tr.dataset.ptype) { sel.selectedIndex = i; break; }
+    document.getElementById('editPartnershipModal').classList.add('open');
+}
+document.getElementById('editPartnershipForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    axiosPatch(this, '/committees/{{ $committee['slug'] }}/partnerships/' + _editPartId, 'editPartnershipModal', function(rec) {
+        var row = document.querySelector('tr[data-pid="' + _editPartId + '"]');
+        if (row) {
+            row.cells[0].innerHTML = '<div style="font-weight:600;color:var(--navy)">' + rec.partner_name + '</div>';
+            row.cells[4].textContent = rec.contact_person || '—';
+            row.cells[5].textContent = rec.contact_number || '—';
+            row.dataset.partner  = rec.partner_name;
+            row.dataset.ptype    = rec.partner_type;
+            row.dataset.contact  = rec.contact_person || '';
+            row.dataset.phone    = rec.contact_number || '';
+            row.dataset.desc     = rec.description || '';
+        }
+    });
+});
+
+// ── EDIT: Specific (dynamic modal builder) ──
+var _editSpecType = null, _editSpecId = null;
+var _specConfig = {
+    bpso:        { icon:'fa-shield-halved',    title:'Edit BPSO Member',         fields:[['full_name','Full Name','text',true],['rank','Rank','text',false],['badge_number','Badge No.','text',false],['contact_number','Contact','text',false],['assignment','Assignment','text',false],['status','Status','select',true,['Active','Inactive','On Leave']]] },
+    patrol:      { icon:'fa-binoculars',       title:'Edit Patrol Log',          fields:[['patrol_date','Date','date',true],['shift','Shift','select',false,['Morning','Afternoon','Night']],['area_covered','Area Covered','text',true],['personnel_count','Personnel','number',false],['reported_by','Reported By','text',false],['findings','Findings','text',false]] },
+    training:    { icon:'fa-chalkboard-user',  title:'Edit Training',            fields:[['title','Title','text',true],['training_type','Type','select',true,['Training','Seminar','Workshop','Drill','Other']],['training_date','Date','date',true],['duration','Duration','text',false],['venue','Venue','text',false],['facilitator','Facilitator','text',false],['participants_count','Participants','number',false],['notes','Notes','text',false]] },
+    health:      { icon:'fa-notes-medical',    title:'Edit Health Record',       fields:[['patient_name','Patient Name','text',true],['visit_date','Visit Date','date',true],['age','Age','number',false],['gender','Gender','select',false,['','Male','Female']],['program','Program','select',false,['','Vaccination','Prenatal','Family Planning','Dental','Medical Mission','Nutrition','Other']],['attended_by','Attended By','text',false],['diagnosis','Diagnosis','text',false],['notes','Remarks','text',false]] },
+    clinic:      { icon:'fa-user-doctor',      title:'Edit Clinic Staff',        fields:[['full_name','Full Name','text',true],['position','Position','text',false],['specialization','Specialization','text',false],['contact_number','Contact','text',false],['schedule','Schedule','text',false],['status','Status','select',false,['Active','Inactive']]] },
+    scholar:     { icon:'fa-graduation-cap',   title:'Edit Scholar',             fields:[['full_name','Full Name','text',true],['school','School','text',true],['course_grade_level','Course/Level','text',false],['year_level','Year Level','text',false],['scholarship_type','Scholarship Type','text',false],['grant_amount','Grant Amount','number',false],['status','Status','select',true,['Active','Graduated','Dropped','Suspended']],['start_date','Start Date','date',false]] },
+    project:     { icon:'fa-hard-hat',         title:'Edit Project',             fields:[['project_name','Project Name','text',true],['project_type','Type','select',false,['','Road','Drainage','Building','Electrical','Water','Other']],['location','Location','text',false],['status','Status','select',true,['Planned','Ongoing','Completed','On Hold','Cancelled']],['budget','Budget (₱)','number',false],['actual_cost','Actual Cost (₱)','number',false],['completion_percentage','Completion %','number',false],['start_date','Start Date','date',false],['end_date','End Date','date',false],['remarks','Remarks','text',false]] },
+    contract:    { icon:'fa-file-signature',   title:'Edit Contract',            fields:[['title','Title','text',true],['contractor','Contractor','text',false],['contract_amount','Amount (₱)','number',false],['start_date','Start Date','date',false],['end_date','End Date','date',false],['status','Status','select',false,['Active','Completed','Cancelled','On Hold']],['remarks','Remarks','text',false]] },
+    financial:   { icon:'fa-money-bill-wave',  title:'Edit Financial Record',    fields:[['title','Title','text',true],['type','Type','select',true,['Budget','Utilization','Liquidation']],['fund_source','Fund Source','text',false],['amount','Amount (₱)','number',false],['date','Date','date',false],['reference_number','Reference No.','text',false]] },
+    environment: { icon:'fa-leaf',             title:'Edit Environmental Program',fields:[['program_name','Program Name','text',true],['program_date','Date','date',true],['program_type','Type','select',false,['','Clean-up Drive','Tree Planting','Waste Management','Coastal Clean-up','Anti-littering','Other']],['location','Location','text',false],['status','Status','select',true,['Planned','Completed','Cancelled']],['volunteers','Volunteers','number',false],['trees_planted','Trees Planted','number',false],['waste_collected_kg','Waste (kg)','number',false],['notes','Notes','text',false]] },
+    sweeper:     { icon:'fa-broom',            title:'Edit Street Sweeper',      fields:[['full_name','Full Name','text',true],['area_assigned','Area Assigned','text',false],['contact_number','Contact','text',false],['shift','Shift','select',false,['Morning','Afternoon','Night']],['status','Status','select',false,['Active','Inactive']]] },
+    beneficiary: { icon:'fa-hand-holding-heart',title:'Edit Beneficiary',        fields:[['full_name','Full Name','text',true],['program','Program','text',false],['assistance_type','Assistance Type','text',false],['amount','Amount (₱)','number',false],['date_granted','Date Granted','date',false],['status','Status','select',false,['Active','Completed','Cancelled']],['remarks','Remarks','text',false]] },
+    toda:        { icon:'fa-bus',              title:'Edit TODA Vehicle',        fields:[['operator_name','Operator Name','text',true],['plate_number','Plate No.','text',false],['vehicle_type','Vehicle Type','text',false],['toda_association','TODA Association','text',false],['contact_number','Contact','text',false],['status','Status','select',false,['Active','Inactive','Suspended']]] },
+    emergency:   { icon:'fa-exclamation-triangle',title:'Edit Emergency Log',    fields:[['incident_type','Incident Type','text',true],['incident_date','Date','date',true],['location','Location','text',false],['description','Description','text',false],['casualties','Casualties','number',false],['response_action','Response Action','text',false],['logged_by','Logged By','text',false]] },
+    evacuation:  { icon:'fa-house-chimney-medical',title:'Edit Evacuation Center',fields:[['center_name','Center Name','text',true],['location','Location','text',false],['capacity','Capacity','number',false],['contact_person','Contact Person','text',false],['contact_number','Contact Number','text',false],['status','Status','select',false,['Active','Inactive','Under Renovation']]] },
+};
+
+// data-attr key map per type (maps field_name to dataset key)
+var _specDataMap = {
+    bpso:        {full_name:'name',rank:'rank',badge_number:'badge',contact_number:'contact',assignment:'assignment',status:'status'},
+    patrol:      {patrol_date:'date',shift:'shift',area_covered:'area',personnel_count:'personnel',reported_by:'by',findings:'findings'},
+    training:    {title:'title',training_type:'ttype',training_date:'date',duration:'duration',venue:'venue',facilitator:'facilitator',participants_count:'participants',notes:'notes'},
+    health:      {patient_name:'patient',visit_date:'date',age:'age',gender:'gender',program:'program',attended_by:'by',diagnosis:'diagnosis',notes:'notes'},
+    clinic:      {full_name:'name',position:'position',specialization:'spec',contact_number:'contact',schedule:'schedule',status:'status'},
+    scholar:     {full_name:'name',school:'school',course_grade_level:'course',year_level:'year',scholarship_type:'stype',grant_amount:'amount',status:'status',start_date:'start'},
+    project:     {project_name:'name',project_type:'ptype',location:'location',status:'status',budget:'budget',actual_cost:'cost',completion_percentage:'pct',start_date:'start',end_date:'end',remarks:'remarks'},
+    contract:    {title:'title',contractor:'contractor',contract_amount:'amount',start_date:'start',end_date:'end',status:'status',remarks:'remarks'},
+    financial:   {title:'title',type:'ftype',fund_source:'source',amount:'amount',date:'date',reference_number:'ref'},
+    environment: {program_name:'name',program_date:'date',program_type:'ptype',location:'location',status:'status',volunteers:'vol',trees_planted:'trees',waste_collected_kg:'waste',notes:'notes'},
+    sweeper:     {full_name:'name',area_assigned:'area',contact_number:'contact',shift:'shift',status:'status'},
+    beneficiary: {full_name:'name',program:'program',assistance_type:'atype',amount:'amount',date_granted:'date',status:'status',remarks:'remarks'},
+    toda:        {operator_name:'operator',plate_number:'plate',vehicle_type:'vtype',toda_association:'assoc',contact_number:'contact',status:'status'},
+    emergency:   {incident_type:'itype',incident_date:'date',location:'location',description:'desc',casualties:'casualties',response_action:'response',logged_by:'by'},
+    evacuation:  {center_name:'name',location:'location',capacity:'capacity',contact_person:'contact',contact_number:'phone',status:'status'},
+};
+
+function openEditSpecific(type, tr) {
+    var cfg = _specConfig[type];
+    if (!cfg) return;
+    _editSpecType = type;
+    _editSpecId   = tr.dataset.id;
+    document.getElementById('editSpecificIcon').className  = 'fas ' + cfg.icon;
+    document.getElementById('editSpecificTitle').textContent = cfg.title;
+    var dmap = _specDataMap[type] || {};
+    // build form HTML
+    var html = '<form id="editSpecificForm" data-axios="true"><input type="hidden" name="_method" value="PATCH"><div class="form-grid-3" style="gap:12px">';
+    cfg.fields.forEach(function(f) {
+        var fname = f[0], flabel = f[1], ftype = f[2], freq = f[3], fopts = f[4];
+        var dkey  = dmap[fname] || fname;
+        var val   = tr.dataset[dkey] || '';
+        var span  = (ftype === 'text' && (fname.includes('description') || fname.includes('findings') || fname.includes('notes') || fname.includes('remarks') || fname.includes('action'))) ? ' style="grid-column:span 3"' : '';
+        html += '<div class="form-group"' + span + '>';
+        html += '<label class="form-label">' + flabel + (freq ? ' <span style="color:var(--crimson)">*</span>' : '') + '</label>';
+        if (ftype === 'select') {
+            html += '<select name="' + fname + '" class="form-control"' + (freq ? ' required' : '') + '>';
+            (fopts || []).forEach(function(o) { html += '<option value="' + o + '"' + (o == val ? ' selected' : '') + '>' + (o || '—') + '</option>'; });
+            html += '</select>';
+        } else {
+            html += '<input type="' + ftype + '" name="' + fname + '" class="form-control" value="' + val.replace(/"/g,'&quot;') + '"' + (freq ? ' required' : '') + '>';
+        }
+        html += '</div>';
+    });
+    html += '</div>';
+    html += '<div style="display:none" id="eSpec_csrf">@csrf</div>';
+    html += '</div>';
+    // footer inside modal-body so form wraps it
+    html += '<div class="crud-modal-footer" style="margin:1rem -1.25rem -1.25rem;border-radius:0 0 var(--radius-lg) var(--radius-lg)">';
+    html += '<button type="button" class="btn btn-secondary btn-sm" onclick="closeCrudModal(\'editSpecificModal\')">Cancel</button>';
+    html += '<button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save Changes</button>';
+    html += '</div></form>';
+    document.getElementById('editSpecificBody').innerHTML = html;
+    // inject real CSRF
+    var csrfInput = document.querySelector('meta[name="csrf-token"]');
+    var token = csrfInput ? csrfInput.getAttribute('content') : (document.querySelector('input[name="_token"]') ? document.querySelector('input[name="_token"]').value : '');
+    var tokenInput = document.createElement('input');
+    tokenInput.type = 'hidden'; tokenInput.name = '_token'; tokenInput.value = token;
+    document.getElementById('editSpecificForm').prepend(tokenInput);
+    // wire submit
+    document.getElementById('editSpecificForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var url = '/committees/{{ $committee['slug'] }}/specific/' + _editSpecType + '/' + _editSpecId;
+        axiosPatch(this, url, 'editSpecificModal', null);
+    });
+    document.getElementById('editSpecificModal').classList.add('open');
+}
+
 // Live search + filter for medicine table
 function filterMeds() {
     const q       = (document.getElementById('medSearch')?.value || '').toLowerCase();
