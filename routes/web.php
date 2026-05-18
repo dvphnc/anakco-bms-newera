@@ -191,6 +191,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     Route::post('users/{user}/verify', [UserController::class, 'verify'])->name('users.verify')->middleware('role:Admin');
     Route::post('users/{user}/unverify', [UserController::class, 'unverify'])->name('users.unverify')->middleware('role:Admin');
+    Route::patch('users/{user}/verify-toggle', [UserController::class, 'verifyToggle'])->name('users.verify-toggle')->middleware('role:Admin');
     Route::resource('users', UserController::class)
         ->middleware('role:Admin');
 

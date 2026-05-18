@@ -145,4 +145,33 @@ class UserController extends Controller
 
         return back()->with('success', $user->name.' verification has been removed.');
     }
+
+    public function verifyToggle(User $user)
+    {
+        $willVerify = is_null($user->email_verified_at);
+
+        if (!$willVerify && $user->id === auth()->id()) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'You cannot unverify your own account.'], 422);
+            }
+            return back()->with('error', 'You cannot unverify your own account.');
+        }
+
+        \DB::table('users')->where('id', $user->id)->update([
+            'email_verified_at' => $willVerify ? now() : null,
+        ]);
+
+        $message = $willVerify ? $user->name.' verified successfully.' : $user->name.' verification removed.';
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success'       => true,
+                'message'       => $message,
+                'verified'      => $willVerify,
+                'verifiedCount' => User::whereNotNull('email_verified_at')->count(),
+            ]);
+        }
+
+        return back()->with('success', $message);
+    }
 }
