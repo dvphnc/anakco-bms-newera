@@ -1421,7 +1421,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 @endforeach
             </tbody>
         </table>
-        @else<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>No emergency logs yet.</p></div>@endif
+        @else
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <h4>No Emergency Logs Yet</h4>
+            <p>Record emergency incidents, affected families, and response actions.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-emergency', document.querySelector('[data-icon=fa-triangle-exclamation]'))">
+                <i class="fas fa-triangle-exclamation"></i> Log First Emergency
+            </button>
+        </div>
+        @endif
     </div>
 
     <div id="tab-evacuation" class="tab-content">
@@ -1480,7 +1489,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </div>
             @endforeach
         </div>
-        @else<div class="empty-state"><i class="fas fa-house-chimney-medical"></i><p>No evacuation centers yet.</p></div>@endif
+        @else
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-house-chimney-medical"></i></div>
+            <h4>No Evacuation Centers Yet</h4>
+            <p>Register evacuation centers, capacity, and contact information.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-evacuation', document.querySelector('[data-icon=fa-building-columns]'))">
+                <i class="fas fa-building-columns"></i> Add First Center
+            </button>
+        </div>
+        @endif
     </div>
 
     {{-- ── TAB: RELIEF SUPPLIES (BDRRM) ────────────────────── --}}
@@ -1539,7 +1557,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </tbody>
         </table>
         @else
-        <div class="empty-state"><i class="fas fa-boxes-stacked"></i><p>No relief supplies recorded yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-boxes-stacked"></i></div>
+            <h4>No Relief Supplies Yet</h4>
+            <p>Track food packs, medicines, PPE, and emergency supplies for disaster response.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-relief', document.querySelector('[data-icon=fa-box-archive]'))">
+                <i class="fas fa-box-archive"></i> Add First Item
+            </button>
+        </div>
         @endif
     </div>
     @endif
@@ -1596,7 +1621,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </tbody>
         </table>
         @else
-        <div class="empty-state"><i class="fas fa-chalkboard-user"></i><p>No training or seminar records yet.</p></div>
+        <div class="empty-enhanced">
+            <div class="empty-enhanced-icon"><i class="fas fa-chalkboard-user"></i></div>
+            <h4>No Training Records Yet</h4>
+            <p>Log training sessions, seminars, workshops, and security drills for BPSO personnel.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleForm('form-training', document.querySelector('[data-icon=fa-chalkboard-user]'))">
+                <i class="fas fa-chalkboard-user"></i> Add First Training
+            </button>
+        </div>
         @endif
     </div>
     @endif
