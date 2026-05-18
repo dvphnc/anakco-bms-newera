@@ -182,6 +182,17 @@ class CommitteeController extends Controller
         $validated['committee_slug'] = $slug;
         CommitteeRecord::create($validated);
 
+        if ($request->expectsJson()) {
+            $count = \App\Models\CommitteeRecord::where('committee_slug', $slug)->count();
+            return response()->json([
+                'success'   => true,
+                'message'   => 'Record uploaded successfully.',
+                'tab_id'    => 'records',
+                'new_count' => $count,
+                'row_html'  => null, // page reload handles new row for file uploads
+            ]);
+        }
+
         return back()->with('success', 'Record uploaded successfully.')->withFragment('records');
     }
 
@@ -200,6 +211,34 @@ class CommitteeController extends Controller
         CommitteeActivity::create($validated);
 
         $tab = $validated['activity_type'] === 'Accomplishment' ? 'accomplishments' : 'activities';
+
+        if ($request->expectsJson()) {
+            $isAcc   = $validated['activity_type'] === 'Accomplishment';
+            $tabId   = $isAcc ? 'accomplishments' : 'activities';
+            $count   = \App\Models\CommitteeActivity::where('committee_slug', $slug)
+                            ->where('activity_type', $validated['activity_type'])->count();
+            $act     = \App\Models\CommitteeActivity::where('committee_slug', $slug)->latest()->first();
+            $badgeCls = match($act->status) {
+                'Completed' => 'badge-green', 'Ongoing' => 'badge-yellow',
+                'Cancelled' => 'badge-red',   default   => 'badge-gray',
+            };
+            $rowHtml = '<tr>'
+                . '<td><div style="font-weight:600">' . e($act->title) . '</div>'
+                . ($act->description ? '<div class="td-muted">' . e($act->description) . '</div>' : '')
+                . '</td>'
+                . '<td class="td-muted">' . $act->activity_date->format('M d, Y') . '</td>'
+                . '<td class="td-muted">' . e($act->location ?? '—') . '</td>'
+                . '<td style="font-weight:600;color:var(--navy)">' . number_format($act->participants_count ?? 0) . '</td>'
+                . '<td><span class="badge ' . $badgeCls . '">' . e($act->status) . '</span></td>'
+                . '</tr>';
+            return response()->json([
+                'success'   => true,
+                'message'   => 'Activity logged successfully.',
+                'tab_id'    => $tabId,
+                'new_count' => $count,
+                'row_html'  => $rowHtml,
+            ]);
+        }
 
         return back()->with('success', 'Added successfully.')->withFragment($tab);
     }
@@ -221,6 +260,26 @@ class CommitteeController extends Controller
 
         $validated['committee_slug'] = $slug;
         CommitteeAttendance::create($validated);
+
+        if ($request->expectsJson()) {
+            $count = \App\Models\CommitteeAttendance::where('committee_slug', $slug)->count();
+            $att   = \App\Models\CommitteeAttendance::where('committee_slug', $slug)->latest()->first();
+            $rowHtml = '<tr>'
+                . '<td style="font-weight:600">' . e($att->event_name) . '</td>'
+                . '<td class="td-muted">' . \Carbon\Carbon::parse($att->event_date)->format('M d, Y') . '</td>'
+                . '<td class="td-muted">' . e($att->venue ?? '—') . '</td>'
+                . '<td style="text-align:right;font-weight:700;color:var(--navy)">' . number_format($att->total_attendees) . '</td>'
+                . '<td class="td-muted">' . e($att->notes ?? '—') . '</td>'
+                . '<td><span class="td-muted">—</span></td>'
+                . '</tr>';
+            return response()->json([
+                'success'   => true,
+                'message'   => 'Attendance recorded.',
+                'tab_id'    => 'attendance',
+                'new_count' => $count,
+                'row_html'  => $rowHtml,
+            ]);
+        }
 
         return back()->with('success', 'Attendance recorded.')->withFragment('attendance');
     }
