@@ -40,6 +40,17 @@ class UserController extends Controller
         $record = User::create($validated);
         $this->logActivity('created', $record);
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success'  => true,
+                'message'  => 'User account created successfully.',
+                'row_html' => view('users._row', ['user' => $record])->render(),
+                'total'    => User::count(),
+                'admins'   => User::where('role', 'Admin')->count(),
+                'verified' => User::whereNotNull('email_verified_at')->count(),
+            ]);
+        }
+
         return redirect()->route('users.index')->with('success', 'User account created successfully.');
     }
 
@@ -74,6 +85,21 @@ class UserController extends Controller
         $user->update($validated);
         $this->logActivity('updated', $user, $oldData, $user->fresh()->toArray());
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User account updated successfully.',
+                'user'    => [
+                    'id'    => $user->id,
+                    'name'  => $user->name,
+                    'email' => $user->email,
+                    'role'  => $user->role,
+                ],
+                'admins'   => User::where('role', 'Admin')->count(),
+                'verified' => User::whereNotNull('email_verified_at')->count(),
+            ]);
+        }
+
         return redirect()->route('users.index')->with('success', 'User account updated successfully.');
     }
 
@@ -85,6 +111,16 @@ class UserController extends Controller
 
         $this->logActivity('deleted', $user);
         $user->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success'  => true,
+                'message'  => 'User account deleted successfully.',
+                'total'    => User::count(),
+                'admins'   => User::where('role', 'Admin')->count(),
+                'verified' => User::whereNotNull('email_verified_at')->count(),
+            ]);
+        }
 
         return redirect()->route('users.index')->with('success', 'User account deleted successfully.');
     }

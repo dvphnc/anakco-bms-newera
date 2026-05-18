@@ -19,15 +19,6 @@ $moduleMap = [
     'App\Models\User'        => ['label' => 'Users',      'icon' => 'fa-user-shield',  'color' => '#9333ea', 'slug' => 'users'],
     'App\Models\Purok'       => ['label' => 'Puroks',     'icon' => 'fa-location-dot', 'color' => '#0891b2', 'slug' => 'puroks'],
 ];
-$skipFields = ['created_at', 'updated_at', 'remember_token', 'password', 'deleted_at'];
-$routeMap = [
-    'App\Models\Resident'    => 'residents.show',
-    'App\Models\Household'   => 'households.show',
-    'App\Models\Document'    => 'documents.show',
-    'App\Models\BlotterCase' => 'blotter.show',
-    'App\Models\Business'    => 'businesses.show',
-    'App\Models\Official'    => 'officials.edit',
-];
 ?>
 
 
@@ -146,7 +137,7 @@ $routeMap = [
 
 <div class="card mb-6">
     <div class="card-body" style="padding:14px 20px">
-        <form method="GET" action="<?php echo e(route('activity-log.index')); ?>">
+        <form method="GET" action="<?php echo e(route('activity-log.index')); ?>" onsubmit="return false;">
             <?php if(request('module')): ?>
                 <input type="hidden" name="module" value="<?php echo e(request('module')); ?>">
             <?php endif; ?>
@@ -156,7 +147,7 @@ $routeMap = [
             <div class="filter-bar">
                 <div class="form-group">
                     <label class="form-label">Action</label>
-                    <select name="action" class="form-control" onchange="this.form.submit()">
+                    <select name="action" id="filterAction" class="form-control">
                         <option value="">All Actions</option>
                         <option value="created" <?php echo e(request('action') === 'created' ? 'selected' : ''); ?>>Created</option>
                         <option value="updated" <?php echo e(request('action') === 'updated' ? 'selected' : ''); ?>>Updated</option>
@@ -165,7 +156,7 @@ $routeMap = [
                 </div>
                 <div class="form-group flex-1">
                     <label class="form-label">User</label>
-                    <select name="user_id" class="form-control" onchange="this.form.submit()">
+                    <select name="user_id" id="filterUser" class="form-control">
                         <option value="">All Users</option>
                         <?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $u): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <option value="<?php echo e($u->id); ?>" <?php echo e(request('user_id') == $u->id ? 'selected' : ''); ?>><?php echo e($u->name); ?></option>
@@ -174,7 +165,7 @@ $routeMap = [
                 </div>
                 <div class="form-group" style="justify-content:flex-end">
                     <label class="form-label">&nbsp;</label>
-                    <a href="<?php echo e(route('activity-log.index')); ?>" class="btn btn-secondary"><i class="fas fa-xmark"></i> Reset All</a>
+                    <a href="<?php echo e(route('activity-log.index')); ?>" class="btn btn-secondary" onclick="resetFilters(); return false;"><i class="fas fa-xmark"></i> Reset All</a>
                 </div>
             </div>
         </form>
@@ -206,90 +197,11 @@ $routeMap = [
 <div class="card" id="activity-feed">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-clock-rotate-left"></i> Activity Feed</span>
-        <span style="font-size:13px;color:var(--text-muted)"><?php echo e(number_format($query->total())); ?> entries · refreshes every 60s</span>
+        <span id="feed-total" style="font-size:13px;color:var(--text-muted)"><?php echo e(number_format($query->total())); ?> entries · refreshes every 60s</span>
     </div>
-
-    <?php $__empty_1 = true; $__currentLoopData = $query; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $log): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-    <?php
-        $module = $moduleMap[$log->loggable_type] ?? ['label' => 'Record', 'icon' => 'fa-circle', 'color' => '#9ca3af', 'slug' => ''];
-        $actionColor = match($log->action) { 'created' => '#166534', 'deleted' => '#991b1b', default => '#92400e' };
-        $actionBg    = match($log->action) { 'created' => '#dcfce7', 'deleted' => '#fee2e2', default => '#fef3c7' };
-        $dateStr = $log->created_at->isToday() ? 'Today' : ($log->created_at->isYesterday() ? 'Yesterday' : $log->created_at->format('M d, Y'));
-        $changes = collect($log->changes ?? [])->filter(fn($v, $k) => !in_array($k, $skipFields))->take(4);
-        $routeName = $routeMap[$log->loggable_type] ?? null;
-    ?>
-    <div style="display:flex;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border);align-items:flex-start">
-        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px;flex-shrink:0;margin-top:1px">
-            <?php echo e(strtoupper(substr($log->user->name ?? '?', 0, 1))); ?>
-
-        </div>
-        <div style="flex:1;min-width:0">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:7px">
-                <span style="font-size:14px;font-weight:600;color:var(--text)"><?php echo e($log->user->name ?? 'Unknown'); ?></span>
-                <span class="badge badge-navy"><?php echo e($log->user->role ?? 'Staff'); ?></span>
-                <span style="display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:13px;font-weight:700;background:<?php echo e($actionBg); ?>;color:<?php echo e($actionColor); ?>">
-                    <?php echo e(strtoupper($log->action)); ?>
-
-                </span>
-                <span style="font-size:13px;font-weight:600;color:<?php echo e($module['color']); ?>">
-                    <i class="fas <?php echo e($module['icon']); ?>" style="font-size:11px"></i> <?php echo e($module['label']); ?>
-
-                </span>
-                <span style="font-size:13px;color:var(--text-subtle)">#<?php echo e($log->loggable_id); ?></span>
-            </div>
-            <?php if($changes->count() > 0 && $log->action === 'updated'): ?>
-            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">
-                <?php $__currentLoopData = $changes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $field => $change): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <?php
-                    $oldVal = $change['old'] ?? null;
-                    $newVal = $change['new'] ?? null;
-                    $formatVal = function($v) {
-                        if (is_null($v) || $v === '') return '—';
-                        if (is_array($v)) return '[file]';
-                        if (is_string($v) && preg_match('/^\d{4}-\d{2}-\d{2}/', $v)) {
-                            try { return \Carbon\Carbon::parse($v)->format('M d, Y'); } catch (\Exception $e) {}
-                        }
-                        return \Illuminate\Support\Str::limit((string)$v, 24);
-                    };
-                    $fieldLabel = ucwords(str_replace('_', ' ', $field));
-                ?>
-                <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px">
-                    <span style="font-weight:600;color:var(--text-muted)"><?php echo e($fieldLabel); ?>:</span>
-                    <span style="color:var(--text-subtle);text-decoration:line-through"><?php echo e($formatVal($oldVal)); ?></span>
-                    <i class="fas fa-arrow-right" style="font-size:9px;color:var(--text-subtle)"></i>
-                    <span style="color:var(--navy);font-weight:500"><?php echo e($formatVal($newVal)); ?></span>
-                </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                <?php if(count($log->changes ?? []) > 4): ?>
-                <span style="font-size:13px;color:var(--text-subtle);padding:3px 0">+<?php echo e(count($log->changes) - 4); ?> more</span>
-                <?php endif; ?>
-            </div>
-            <?php endif; ?>
-            <div style="font-size:13px;color:var(--text-subtle)">
-                <i class="fas fa-clock" style="font-size:10px;margin-right:3px"></i>
-                <?php echo e($dateStr); ?> at <?php echo e($log->created_at->format('h:i A')); ?>
-
-                <span style="margin:0 5px">·</span><?php echo e($log->created_at->diffForHumans()); ?>
-
-            </div>
-        </div>
-        <?php if($routeName && $log->action !== 'deleted'): ?>
-        <a href="<?php echo e(route($routeName, $log->loggable_id)); ?>" class="btn btn-secondary btn-sm btn-icon" title="View record" style="flex-shrink:0">
-            <i class="fas fa-eye"></i>
-        </a>
-        <?php endif; ?>
+    <div id="feed-body">
+        <?php echo $__env->make('activity-log._feed', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </div>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-    <div class="empty-state"><i class="fas fa-clock-rotate-left"></i><p>No activity logs found.</p></div>
-    <?php endif; ?>
-
-    <?php if($query->hasPages()): ?>
-    <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-        <span style="font-size:13px;color:var(--text-muted)">Showing <?php echo e($query->firstItem()); ?>–<?php echo e($query->lastItem()); ?> of <?php echo e(number_format($query->total())); ?></span>
-        <?php echo e($query->withQueryString()->links()); ?>
-
-    </div>
-    <?php endif; ?>
 </div>
 
 <?php $__env->stopSection(); ?>
@@ -368,11 +280,72 @@ function toggleCharts() {
     if (isHidden) initCharts();
 }
 
-// Restore state
+// Restore chart state
 if (localStorage.getItem('activityChartsOpen') === '1') toggleCharts();
 
-// Auto-refresh every 60s
-setTimeout(() => location.reload(), 60000);
+// ── Filter state (seeded from current URL) ──────────────────────────────────
+var _filterState = {
+    module:  '<?php echo e(request("module")); ?>',
+    action:  '<?php echo e(request("action")); ?>',
+    user_id: '<?php echo e(request("user_id")); ?>',
+    period:  '<?php echo e(request("period")); ?>',
+    page:    '<?php echo e(request("page")); ?>'
+};
+
+function fetchFeed() {
+    var params = new URLSearchParams();
+    Object.keys(_filterState).forEach(function(k) {
+        if (_filterState[k]) params.set(k, _filterState[k]);
+    });
+    var qs  = params.toString();
+    var url = '<?php echo e(route("activity-log.index")); ?>' + (qs ? '?' + qs : '');
+    history.pushState({}, '', url);
+
+    var card = document.getElementById('activity-feed');
+    card.style.opacity       = '0.55';
+    card.style.pointerEvents = 'none';
+
+    axios.get(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function(res) {
+            document.getElementById('feed-body').innerHTML = res.data.html;
+            var el = document.getElementById('feed-total');
+            if (el) el.textContent = res.data.total.toLocaleString() + ' entries · refreshes every 60s';
+        })
+        .catch(function() { location.href = url; })
+        .finally(function() {
+            card.style.opacity       = '1';
+            card.style.pointerEvents = '';
+        });
+}
+
+function resetFilters() {
+    _filterState.action  = '';
+    _filterState.user_id = '';
+    _filterState.page    = '';
+    $('#filterAction').val('').trigger('change.select2');
+    $('#filterUser').val('').trigger('change.select2');
+    fetchFeed();
+}
+
+// ── Select2 ──────────────────────────────────────────────────────────────────
+$(function(){
+    $('#filterAction').select2({ minimumResultsForSearch: -1, width: '100%' })
+        .on('change', function() {
+            _filterState.action = $(this).val() || '';
+            _filterState.page   = '';
+            fetchFeed();
+        });
+
+    $('#filterUser').select2({ minimumResultsForSearch: -1, width: '100%' })
+        .on('change', function() {
+            _filterState.user_id = $(this).val() || '';
+            _filterState.page    = '';
+            fetchFeed();
+        });
+});
+
+// Auto-refresh every 60s via Axios (no full reload)
+setInterval(fetchFeed, 60000);
 </script>
 <?php $__env->stopPush(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\anakco_bms\resources\views/activity-log/index.blade.php ENDPATH**/ ?>
