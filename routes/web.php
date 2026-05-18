@@ -185,6 +185,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('reports', [ReportController::class, 'analytics'])
         ->name('reports.index')
         ->middleware('role:Admin,Secretary');
+    Route::get('reports/preview', [ReportController::class, 'preview'])
+        ->name('reports.preview')
+        ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // User Management — Admin only
