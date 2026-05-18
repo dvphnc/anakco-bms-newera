@@ -212,6 +212,73 @@
     </div>
 </div>
 
+{{-- Business Status Update Modal --}}
+<div id="bizStatusModal"
+     style="display:none;position:fixed;inset:0;z-index:9600;align-items:center;justify-content:center;
+            background:rgba(9,20,40,0.5);backdrop-filter:blur(3px)"
+     onclick="if(event.target===this)closeBizModal()">
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:420px;max-width:94vw;
+                box-shadow:0 24px 60px rgba(0,0,0,0.28);animation:qvSlideIn .18s ease">
+        <div style="display:flex;align-items:center;justify-content:space-between;
+                    padding:16px 20px;border-bottom:1px solid var(--border);background:var(--navy);
+                    border-radius:var(--radius-lg) var(--radius-lg) 0 0">
+            <div style="display:flex;align-items:center;gap:10px">
+                <i class="fas fa-rotate" style="color:var(--gold);font-size:14px"></i>
+                <span style="font-size:14px;font-weight:700;color:#fff">Update Business Status</span>
+            </div>
+            <button onclick="closeBizModal()"
+                    style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);
+                           border-radius:var(--radius-sm);width:30px;height:30px;
+                           display:flex;align-items:center;justify-content:center;
+                           color:rgba(255,255,255,0.7);cursor:pointer;font-size:13px">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div style="padding:20px">
+            <div style="font-size:12px;color:var(--text-subtle);font-weight:600;text-transform:uppercase;
+                        letter-spacing:.05em;margin-bottom:4px">Permit</div>
+            <div id="bizModalNum" style="font-family:'Courier New',monospace;font-size:13px;
+                                         color:var(--navy);font-weight:700;margin-bottom:14px"></div>
+
+            <div class="form-group" style="margin-bottom:14px">
+                <label class="form-label">New Status</label>
+                <select id="bizModalStatus" class="form-control" style="height:42px">
+                    <option value="Pending">Pending</option>
+                    <option value="For Review">For Review</option>
+                    <option value="Active">Active</option>
+                    <option value="Suspended">Suspended</option>
+                    <option value="Expired">Expired</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px">
+                <label class="form-label">Notes <span style="color:var(--text-subtle);font-weight:400">(optional)</span></label>
+                <textarea id="bizModalNotes" class="form-control" rows="3"
+                          placeholder="Add notes for the applicant…"
+                          style="resize:vertical;min-height:80px"></textarea>
+                <div id="bizModalEmailNote"
+                     style="display:none;font-size:11.5px;color:#2563eb;margin-top:5px">
+                    <i class="fas fa-envelope" style="margin-right:4px"></i>
+                    An email notification will be sent to the applicant.
+                </div>
+            </div>
+
+            <div style="display:flex;gap:10px;justify-content:flex-end">
+                <button type="button" onclick="closeBizModal()" class="btn btn-secondary btn-sm">Cancel</button>
+                <button type="button" id="bizModalSave" class="btn btn-primary btn-sm" style="min-width:110px">
+                    <span id="bizModalSpinner" style="display:none">
+                        <span style="display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);
+                                     border-top-color:#fff;border-radius:50%;animation:req-spin .7s linear infinite;
+                                     vertical-align:middle;margin-right:5px"></span>
+                    </span>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- Business Quick View Panel --}}
 <div id="bizQvPanel"
      style="display:none;opacity:0;position:fixed;inset:0;z-index:9500;

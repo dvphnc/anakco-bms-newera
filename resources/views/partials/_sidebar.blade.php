@@ -239,23 +239,17 @@
 <script>
 /* ── Portal pending badge polling ──────────────────────── */
 (function () {
+    function setBadge(id, n) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.textContent    = n > 99 ? '99+' : n;
+        el.style.display  = n > 0  ? 'inline-block' : 'none';
+    }
+
     function updatePortalBadges(data) {
-        var pblBadge  = document.getElementById('pblBadge');
-        var pbizBadge = document.getElementById('pbizBadge');
-        var mainBadge = document.getElementById('portalPendingBadge');
-        if (!pblBadge) return;
-
-        var blotter  = data.blotter  || 0;
-        var business = data.business || 0;
-        var total    = blotter + business;
-
-        pblBadge.textContent  = blotter  > 99 ? '99+' : blotter;
-        pbizBadge.textContent = business > 99 ? '99+' : business;
-        mainBadge.textContent = total    > 99 ? '99+' : total;
-
-        pblBadge.style.display  = blotter  > 0 ? 'inline-block' : 'none';
-        pbizBadge.style.display = business > 0 ? 'inline-block' : 'none';
-        mainBadge.style.display = total    > 0 ? 'inline-block' : 'none';
+        setBadge('pblBadge',           data.blotter   || 0);
+        setBadge('pbizBadge',          data.business  || 0);
+        setBadge('portalPendingBadge', data.documents || 0);
     }
 
     function fetchPendingCount() {
