@@ -2352,16 +2352,29 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
         @if(isset($specificData['sweepers']) && $specificData['sweepers']->count())
         <table>
-            <thead><tr><th>Name</th><th>Assigned Zone</th><th>Schedule</th><th>Contact</th><th>Date Assigned</th><th>Status</th></tr></thead>
+            <thead><tr><th>Name</th><th>Assigned Zone</th><th>Schedule</th><th>Contact</th><th>Date Assigned</th><th>Status</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['sweepers'] as $sw)
-                <tr>
+                <tr
+                    data-id="{{ $sw->id }}"
+                    data-name="{{ addslashes($sw->full_name) }}"
+                    data-area="{{ addslashes($sw->assigned_zone ?? '') }}"
+                    data-contact="{{ addslashes($sw->contact_number ?? '') }}"
+                    data-shift="{{ addslashes($sw->schedule ?? '') }}"
+                    data-status="{{ $sw->status }}"
+                >
                     <td style="font-weight:600">{{ $sw->full_name }}</td>
                     <td class="td-muted">{{ $sw->assigned_zone ?? '—' }}</td>
                     <td class="td-muted">{{ $sw->schedule ?? '—' }}</td>
                     <td class="td-muted">{{ $sw->contact_number ?? '—' }}</td>
                     <td class="td-muted">{{ $sw->date_assigned?->format('M d, Y') ?? '—' }}</td>
                     <td><span class="badge {{ $sw->status === 'Active' ? 'badge-green' : ($sw->status === 'On Leave' ? 'badge-yellow' : 'badge-gray') }}">{{ $sw->status }}</span></td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('sweeper', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('sweeper','{{ $sw->id }}','{{ addslashes($sw->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -2412,10 +2425,19 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
         @if(isset($specificData['contracts']) && $specificData['contracts']->count())
         <table>
-            <thead><tr><th>Contract No.</th><th>Contractor</th><th>Scope</th><th>Amount</th><th>Duration</th><th>Status</th><th>File</th></tr></thead>
+            <thead><tr><th>Contract No.</th><th>Contractor</th><th>Scope</th><th>Amount</th><th>Duration</th><th>Status</th><th>File</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['contracts'] as $ct)
-                <tr>
+                <tr
+                    data-id="{{ $ct->id }}"
+                    data-title="{{ addslashes($ct->scope_of_work ?? $ct->contract_number ?? '') }}"
+                    data-contractor="{{ addslashes($ct->contractor_name ?? '') }}"
+                    data-amount="{{ $ct->contract_amount ?? '' }}"
+                    data-start="{{ $ct->start_date?->format('Y-m-d') ?? '' }}"
+                    data-end="{{ $ct->end_date?->format('Y-m-d') ?? '' }}"
+                    data-status="{{ $ct->status }}"
+                    data-remarks="{{ addslashes($ct->scope_of_work ?? '') }}"
+                >
                     <td class="td-mono">{{ $ct->contract_number ?? '—' }}</td>
                     <td style="font-weight:600">{{ $ct->contractor_name }}</td>
                     <td class="td-muted" style="max-width:200px;white-space:normal">{{ $ct->scope_of_work ?? '—' }}</td>
@@ -2428,6 +2450,12 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     </td>
                     <td><span class="badge {{ match($ct->status) { 'Active'=>'badge-green','Completed'=>'badge-blue','Terminated'=>'badge-red',default=>'badge-yellow' } }}">{{ $ct->status }}</span></td>
                     <td>@if($ct->file_path)<a href="{{ asset('storage/'.$ct->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('contract', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('contract','{{ $ct->id }}','{{ addslashes($ct->contractor_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
