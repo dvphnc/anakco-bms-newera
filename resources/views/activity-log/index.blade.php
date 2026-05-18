@@ -9,28 +9,6 @@
     </div>
 </div>
 
-@php
-$moduleMap = [
-    'App\Models\Resident'    => ['label' => 'Residents',  'icon' => 'fa-users',        'color' => '#1d76db', 'slug' => 'residents'],
-    'App\Models\Household'   => ['label' => 'Households', 'icon' => 'fa-house',        'color' => '#5319e7', 'slug' => 'households'],
-    'App\Models\Document'    => ['label' => 'Documents',  'icon' => 'fa-file-alt',     'color' => '#006b75', 'slug' => 'documents'],
-    'App\Models\BlotterCase' => ['label' => 'Blotter',    'icon' => 'fa-gavel',        'color' => '#e11d48', 'slug' => 'blotter'],
-    'App\Models\Business'    => ['label' => 'Businesses', 'icon' => 'fa-store',        'color' => '#f97316', 'slug' => 'businesses'],
-    'App\Models\Official'    => ['label' => 'Officials',  'icon' => 'fa-user-tie',     'color' => '#7c3aed', 'slug' => 'officials'],
-    'App\Models\User'        => ['label' => 'Users',      'icon' => 'fa-user-shield',  'color' => '#9333ea', 'slug' => 'users'],
-    'App\Models\Purok'       => ['label' => 'Puroks',     'icon' => 'fa-location-dot', 'color' => '#0891b2', 'slug' => 'puroks'],
-];
-$skipFields = ['created_at', 'updated_at', 'remember_token', 'password', 'deleted_at'];
-$routeMap = [
-    'App\Models\Resident'    => 'residents.show',
-    'App\Models\Household'   => 'households.show',
-    'App\Models\Document'    => 'documents.show',
-    'App\Models\BlotterCase' => 'blotter.show',
-    'App\Models\Business'    => 'businesses.show',
-    'App\Models\Official'    => 'officials.edit',
-];
-@endphp
-
 {{-- Charts Toggle --}}
 <div style="margin-bottom:16px">
     <button onclick="toggleCharts()" id="charts-toggle-btn"
@@ -147,7 +125,7 @@ $routeMap = [
 {{-- Filters — always visible, no module dropdown (pills handle that) --}}
 <div class="card mb-6">
     <div class="card-body" style="padding:14px 20px">
-        <form method="GET" action="{{ route('activity-log.index') }}">
+        <form method="GET" action="{{ route('activity-log.index') }}" onsubmit="return false;">
             @if(request('module'))
                 <input type="hidden" name="module" value="{{ request('module') }}">
             @endif

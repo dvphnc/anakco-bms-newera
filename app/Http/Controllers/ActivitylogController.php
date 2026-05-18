@@ -40,6 +40,13 @@ class ActivityLogController extends Controller
             ->paginate(20)
             ->withQueryString();
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'html'  => view('activity-log._feed', compact('query'))->render(),
+                'total' => $query->total(),
+            ]);
+        }
+
         // Summary counts per module
         $moduleCounts = ActivityLog::selectRaw('loggable_type, count(*) as total')
             ->groupBy('loggable_type')
