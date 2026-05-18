@@ -2789,6 +2789,15 @@ function axiosForm(form) {
     });
 }
 
+// Show any toast that was queued before a page reload (e.g. after first-add)
+document.addEventListener('DOMContentLoaded', function() {
+    var _t = sessionStorage.getItem('_bmsToast');
+    if (_t) {
+        sessionStorage.removeItem('_bmsToast');
+        try { var _o = JSON.parse(_t); bmsToast(_o.msg, _o.type); } catch(e) {}
+    }
+});
+
 // wire all data-axios forms
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('form[data-axios]').forEach(function(form) {
@@ -3096,12 +3105,21 @@ function axiosPatch(form, url, modalId, rowUpdater) {
     var orig = btn ? btn.innerHTML : '';
     if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:#C8861A"></i> Saving…'; }
     var fd = new FormData(form);
-    // FormData with _method=PATCH won't work as PATCH; send as POST with _method override
     axios.post(url, fd, { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
         .then(function(res) {
-            bmsToast(res.data.message || 'Updated.', 'success');
             closeCrudModal(modalId);
-            if (rowUpdater && res.data.record) rowUpdater(res.data.record);
+            if (rowUpdater && res.data.record) {
+                // Seamless: updater handles the DOM cells
+                rowUpdater(res.data.record);
+                bmsToast(res.data.message || 'Updated.', 'success');
+                if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+            } else {
+                // No updater (specific-tab edit) — reload to current tab
+                var at = document.querySelector('.tab-content.active');
+                var tabId = at ? at.id.replace(/^tab-/, '') : '';
+                sessionStorage.setItem('_bmsToast', JSON.stringify({ msg: res.data.message || 'Updated.', type: 'success' }));
+                _bmsReloadTab(tabId);
+            }
         })
         .catch(function(err) {
             var data = err.response && err.response.data;
@@ -3110,8 +3128,6 @@ function axiosPatch(form, url, modalId, rowUpdater) {
             } else {
                 bmsToast((data && data.message) || 'Update failed.', 'error');
             }
-        })
-        .finally(function() {
             if (btn) { btn.disabled = false; btn.innerHTML = orig; }
         });
 }
