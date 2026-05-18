@@ -175,18 +175,18 @@ $moduleMap = [
 
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="module-pills">
     <a href="<?php echo e(route('activity-log.index')); ?>"
-       style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:99px;border:1.5px solid <?php echo e(!request('module') ? 'var(--navy)' : 'var(--border)'); ?>;background:<?php echo e(!request('module') ? 'var(--navy)' : 'var(--surface)'); ?>;color:<?php echo e(!request('module') ? '#fff' : 'var(--text-muted)'); ?>;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s">
+       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:var(--radius-sm);border:1.5px solid <?php echo e(!request('module') ? 'var(--navy)' : 'var(--border)'); ?>;background:<?php echo e(!request('module') ? 'var(--navy)' : 'var(--surface)'); ?>;color:<?php echo e(!request('module') ? '#fff' : 'var(--text-muted)'); ?>;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s">
         <i class="fas fa-clock-rotate-left" style="font-size:12px"></i> All
     </a>
     <?php $__currentLoopData = $moduleMap; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class => $info): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
     <?php $count = $moduleCounts[$class] ?? 0; ?>
     <?php if($count > 0): ?>
     <a href="<?php echo e(route('activity-log.index', ['module' => $info['slug']])); ?>"
-       style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:99px;border:1.5px solid <?php echo e(request('module') === $info['slug'] ? $info['color'] : 'var(--border)'); ?>;background:<?php echo e(request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)'); ?>;color:<?php echo e(request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)'); ?>;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s">
+       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:var(--radius-sm);border:1.5px solid <?php echo e(request('module') === $info['slug'] ? $info['color'] : 'var(--border)'); ?>;background:<?php echo e(request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)'); ?>;color:<?php echo e(request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)'); ?>;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s">
         <i class="fas <?php echo e($info['icon']); ?>" style="font-size:12px"></i>
         <?php echo e($info['label']); ?>
 
-        <span style="background:<?php echo e(request('module') === $info['slug'] ? $info['color'] : 'var(--surface3)'); ?>;color:<?php echo e(request('module') === $info['slug'] ? '#fff' : 'var(--text-muted)'); ?>;border-radius:99px;padding:1px 7px;font-size:13px"><?php echo e($count); ?></span>
+        <span style="background:<?php echo e(request('module') === $info['slug'] ? $info['color'] : 'var(--surface3)'); ?>;color:<?php echo e(request('module') === $info['slug'] ? '#fff' : 'var(--text-muted)'); ?>;border-radius:4px;padding:1px 6px;font-size:12px"><?php echo e($count); ?></span>
     </a>
     <?php endif; ?>
     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

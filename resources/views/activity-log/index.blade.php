@@ -176,17 +176,17 @@ $moduleMap = [
 {{-- Module Filter Pills --}}
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="module-pills">
     <a href="{{ route('activity-log.index') }}"
-       style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:99px;border:1.5px solid {{ !request('module') ? 'var(--navy)' : 'var(--border)' }};background:{{ !request('module') ? 'var(--navy)' : 'var(--surface)' }};color:{{ !request('module') ? '#fff' : 'var(--text-muted)' }};font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s">
+       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:var(--radius-sm);border:1.5px solid {{ !request('module') ? 'var(--navy)' : 'var(--border)' }};background:{{ !request('module') ? 'var(--navy)' : 'var(--surface)' }};color:{{ !request('module') ? '#fff' : 'var(--text-muted)' }};font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s">
         <i class="fas fa-clock-rotate-left" style="font-size:12px"></i> All
     </a>
     @foreach($moduleMap as $class => $info)
     @php $count = $moduleCounts[$class] ?? 0; @endphp
     @if($count > 0)
     <a href="{{ route('activity-log.index', ['module' => $info['slug']]) }}"
-       style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:99px;border:1.5px solid {{ request('module') === $info['slug'] ? $info['color'] : 'var(--border)' }};background:{{ request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)' }};color:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)' }};font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s">
+       style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:var(--radius-sm);border:1.5px solid {{ request('module') === $info['slug'] ? $info['color'] : 'var(--border)' }};background:{{ request('module') === $info['slug'] ? $info['color'].'18' : 'var(--surface)' }};color:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--text-muted)' }};font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s">
         <i class="fas {{ $info['icon'] }}" style="font-size:12px"></i>
         {{ $info['label'] }}
-        <span style="background:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--surface3)' }};color:{{ request('module') === $info['slug'] ? '#fff' : 'var(--text-muted)' }};border-radius:99px;padding:1px 7px;font-size:13px">{{ $count }}</span>
+        <span style="background:{{ request('module') === $info['slug'] ? $info['color'] : 'var(--surface3)' }};color:{{ request('module') === $info['slug'] ? '#fff' : 'var(--text-muted)' }};border-radius:4px;padding:1px 6px;font-size:12px">{{ $count }}</span>
     </a>
     @endif
     @endforeach
