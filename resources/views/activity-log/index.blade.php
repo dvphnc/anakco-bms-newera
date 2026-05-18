@@ -65,7 +65,7 @@ $moduleMap = [
     </a>
     <a href="{{ route('activity-log.index') }}" style="text-decoration:none">
         <div class="stat-card" style="padding:16px;cursor:pointer;{{ !request('period') && !request('module') && !request('action') ? 'border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,101,52,0.08)' : '' }}">
-            <div class="stat-icon" style="width:40px;height:40px;background:rgba(22,101,52,0.08);color:#16a34a;font-size:16px"><i class="fas fa-clock-rotate-left"></i></div>
+            <div class="stat-icon" style="width:40px;height:40px;background:rgba(13,33,68,0.06);color:var(--navy-mid);font-size:16px"><i class="fas fa-clock-rotate-left"></i></div>
             <div class="stat-info">
                 <div class="stat-number" style="font-size:24px">{{ number_format($actionTotals['created'] + $actionTotals['updated'] + $actionTotals['deleted']) }}</div>
                 <div class="stat-label">All Logs</div>
@@ -93,9 +93,9 @@ $moduleMap = [
             @if($latestMonth && $prevMonth)
                 This month so far: <strong>{{ number_format($latestMonth['total']) }}</strong>
                 @if($latestMonth['total'] > $prevMonth['total'])
-                    — <span style="color:#16a34a"><i class="fas fa-arrow-up"></i> up from {{ $prevMonth['total'] }} last month.</span>
+                    — <span style="color:#2e6b47"><i class="fas fa-arrow-up"></i> up from {{ $prevMonth['total'] }} last month.</span>
                 @elseif($latestMonth['total'] < $prevMonth['total'])
-                    — <span style="color:var(--crimson)"><i class="fas fa-arrow-down"></i> down from {{ $prevMonth['total'] }} last month.</span>
+                    — <span style="color:#8b2e2e"><i class="fas fa-arrow-down"></i> down from {{ $prevMonth['total'] }} last month.</span>
                 @else
                     — same as last month.
                 @endif
@@ -222,9 +222,9 @@ function initCharts() {
         data: {
             labels: weeklyData.map(d => d.label),
             datasets: [
-                { label: 'Created', data: weeklyData.map(d => d.created), backgroundColor: '#16a34a', borderRadius: 3 },
-                { label: 'Updated', data: weeklyData.map(d => d.updated), backgroundColor: '#f59e0b', borderRadius: 3 },
-                { label: 'Deleted', data: weeklyData.map(d => d.deleted), backgroundColor: '#ef4444', borderRadius: 3 },
+                { label: 'Created', data: weeklyData.map(d => d.created), backgroundColor: '#4a8c5c', borderRadius: 3 },
+                { label: 'Updated', data: weeklyData.map(d => d.updated), backgroundColor: '#C8861A', borderRadius: 3 },
+                { label: 'Deleted', data: weeklyData.map(d => d.deleted), backgroundColor: '#b04444', borderRadius: 3 },
             ]
         },
         options: {
