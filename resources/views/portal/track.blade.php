@@ -618,8 +618,8 @@
             infoCell('Purpose',        d.purpose) +
             infoCell('Processed By',   d.processed_by) +
             infoCell('Released On',    d.released_at) +
-            infoCell('Staff Notes',    d.notes, true) +
             infoCell('Last Updated',   d.updated_at) +
+            infoCell('Staff Notes',    d.notes, true) +
             '</div>';
 
         var timeline = renderTimeline(d.logs || []);

@@ -414,16 +414,16 @@ unset($__errorArgs, $__bag); ?>
                             <div class="ic-value"><?php echo e($appointment->released_at->format('F j, Y · g:i A')); ?></div>
                         </div>
                         <?php endif; ?>
+                        <div class="info-cell">
+                            <div class="ic-label">Last Updated</div>
+                            <div class="ic-value"><?php echo e($appointment->updated_at->format('M d, Y · g:i A')); ?></div>
+                        </div>
                         <?php if($appointment->notes): ?>
                         <div class="info-cell full-width">
                             <div class="ic-label">Staff Notes</div>
                             <div class="ic-value"><?php echo e($appointment->notes); ?></div>
                         </div>
                         <?php endif; ?>
-                        <div class="info-cell">
-                            <div class="ic-label">Last Updated</div>
-                            <div class="ic-value"><?php echo e($appointment->updated_at->format('M d, Y · g:i A')); ?></div>
-                        </div>
                     </div>
 
                     
@@ -626,8 +626,8 @@ unset($__errorArgs, $__bag); ?>
             infoCell('Purpose',        d.purpose) +
             infoCell('Processed By',   d.processed_by) +
             infoCell('Released On',    d.released_at) +
-            infoCell('Staff Notes',    d.notes, true) +
             infoCell('Last Updated',   d.updated_at) +
+            infoCell('Staff Notes',    d.notes, true) +
             '</div>';
 
         var timeline = renderTimeline(d.logs || []);
