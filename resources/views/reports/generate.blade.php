@@ -121,7 +121,7 @@
                                 style="width:100%;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer;font-family:'Poppins',sans-serif;transition:all 0.15s;padding:8px"
                                 onmouseover="this.style.borderColor='var(--navy)';this.style.background='var(--navy-pale)'"
                                 onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface2)'">
-                            <i class="fas fa-file-pdf" style="color:#9b3535;font-size:20px"></i>
+                            <i class="fas {{ $q['icon'] }}" style="color:var(--navy-mid);font-size:20px"></i>
                             <span style="font-size:11px;font-weight:600;color:var(--text-muted);text-align:center;line-height:1.3">{{ $q['short'] }}</span>
                         </button>
                     </div>

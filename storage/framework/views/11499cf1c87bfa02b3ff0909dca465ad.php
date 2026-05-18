@@ -41,11 +41,11 @@
     $thisMonthRes   = \App\Models\Resident::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
 
     $quick = [
-        ['label' => 'This Month · Summary',   'short' => 'Summary',   'type' => 'monthly',   'module' => 'summary',   'month' => date('n'), 'year' => date('Y')],
-        ['label' => 'This Month · Documents',  'short' => 'Documents', 'type' => 'monthly',   'module' => 'documents', 'month' => date('n'), 'year' => date('Y')],
-        ['label' => 'This Month · Blotter',    'short' => 'Blotter',   'type' => 'monthly',   'module' => 'blotter',   'month' => date('n'), 'year' => date('Y')],
-        ['label' => 'This Quarter · Summary',  'short' => 'Q Summary', 'type' => 'quarterly', 'module' => 'summary',   'quarter' => (int)ceil(date('n')/3), 'year' => date('Y')],
-        ['label' => date('Y').' Annual',       'short' => 'Annual',    'type' => 'annual',    'module' => 'summary',   'year' => date('Y')],
+        ['label' => 'This Month · Summary',   'short' => 'Summary',   'icon' => 'fa-chart-pie',    'type' => 'monthly',   'module' => 'summary',   'month' => date('n'), 'year' => date('Y')],
+        ['label' => 'This Month · Documents',  'short' => 'Documents', 'icon' => 'fa-file-alt',     'type' => 'monthly',   'module' => 'documents', 'month' => date('n'), 'year' => date('Y')],
+        ['label' => 'This Month · Blotter',    'short' => 'Blotter',   'icon' => 'fa-gavel',        'type' => 'monthly',   'module' => 'blotter',   'month' => date('n'), 'year' => date('Y')],
+        ['label' => 'This Quarter · Summary',  'short' => 'Q Summary', 'icon' => 'fa-calendar-week','type' => 'quarterly', 'module' => 'summary',   'quarter' => (int)ceil(date('n')/3), 'year' => date('Y')],
+        ['label' => date('Y').' Annual',       'short' => 'Annual',    'icon' => 'fa-calendar',     'type' => 'annual',    'module' => 'summary',   'year' => date('Y')],
     ];
 ?>
 
@@ -120,7 +120,7 @@
                                 style="width:100%;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer;font-family:'Poppins',sans-serif;transition:all 0.15s;padding:8px"
                                 onmouseover="this.style.borderColor='var(--navy)';this.style.background='var(--navy-pale)'"
                                 onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface2)'">
-                            <i class="fas fa-file-pdf" style="color:#9b3535;font-size:20px"></i>
+                            <i class="fas <?php echo e($q['icon']); ?>" style="color:var(--navy-mid);font-size:20px"></i>
                             <span style="font-size:11px;font-weight:600;color:var(--text-muted);text-align:center;line-height:1.3"><?php echo e($q['short']); ?></span>
                         </button>
                     </div>
