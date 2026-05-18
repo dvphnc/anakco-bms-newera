@@ -14,6 +14,7 @@ class DocumentAppointment extends Model
 
     protected $fillable = [
         'appointment_number',
+        'source',
         'resident_name',
         'contact_number',
         'email',
