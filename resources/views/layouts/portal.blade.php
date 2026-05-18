@@ -132,6 +132,25 @@
         }
         @media (max-width: 900px) { .sys-health { display: none; } }
 
+        /* ─── Live clock ─── */
+        .portal-clock {
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            font-size: .78rem;
+            font-weight: 600;
+            color: rgba(255,255,255,.8);
+            white-space: nowrap;
+            padding: .3rem .75rem;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 999px;
+            background: rgba(255,255,255,.06);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: .01em;
+        }
+        .portal-clock i { font-size: .7rem; opacity: .65; }
+        @media (max-width: 768px) { .portal-clock { display: none; } }
+
         /* ─── Desktop nav ─── */
         .portal-nav {
             display: flex;
