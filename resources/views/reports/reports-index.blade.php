@@ -316,7 +316,7 @@
                 <div style="font-size:13px;color:var(--text-subtle)">Pending</div>
             </div>
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
-                <div style="font-size:15px;font-weight:700;color:#16a34a">{{ number_format($releasedDocuments) }}</div>
+                <div style="font-size:15px;font-weight:700;color:#2e6b47">{{ number_format($releasedDocuments) }}</div>
                 <div style="font-size:13px;color:var(--text-subtle)">Released</div>
             </div>
         </div>
@@ -348,11 +348,11 @@
         </div>
         <div style="padding:12px 16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
-                <div style="font-size:15px;font-weight:700;color:var(--crimson)">{{ number_format($activeBlotter) }}</div>
+                <div style="font-size:15px;font-weight:700;color:#8b2e2e">{{ number_format($activeBlotter) }}</div>
                 <div style="font-size:13px;color:var(--text-subtle)">Active</div>
             </div>
             <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">
-                <div style="font-size:15px;font-weight:700;color:#16a34a">{{ number_format($settledBlotter) }}</div>
+                <div style="font-size:15px;font-weight:700;color:#2e6b47">{{ number_format($settledBlotter) }}</div>
                 <div style="font-size:13px;color:var(--text-subtle)">Settled/Closed</div>
             </div>
         </div>
@@ -365,8 +365,8 @@
         <div class="card-body">
             @php
                 $bizStats = [
-                    ['label' => 'Active',  'value' => $activeBusinesses,  'color' => '#16a34a'],
-                    ['label' => 'Expired', 'value' => $expiredBusinesses, 'color' => 'var(--crimson)'],
+                    ['label' => 'Active',  'value' => $activeBusinesses,  'color' => '#2e6b47'],
+                    ['label' => 'Expired', 'value' => $expiredBusinesses, 'color' => '#8b2e2e'],
                     ['label' => 'Other',   'value' => $totalBusinesses - $activeBusinesses - $expiredBusinesses, 'color' => 'var(--text-subtle)'],
                 ];
             @endphp
@@ -401,10 +401,10 @@
                 $links = [
                     ['href' => route('residents.index'),  'icon' => 'fas fa-users',    'label' => 'Residents',  'color' => 'var(--navy)'],
                     ['href' => route('households.index'), 'icon' => 'fas fa-house',    'label' => 'Households', 'color' => 'var(--gold)'],
-                    ['href' => route('documents.index'),  'icon' => 'fas fa-file-alt', 'label' => 'Documents',  'color' => '#16a34a'],
-                    ['href' => route('blotter.index'),    'icon' => 'fas fa-gavel',    'label' => 'Blotter',    'color' => 'var(--crimson)'],
-                    ['href' => route('businesses.index'), 'icon' => 'fas fa-store',    'label' => 'Businesses', 'color' => '#2563eb'],
-                    ['href' => route('officials.index'),  'icon' => 'fas fa-user-tie', 'label' => 'Officials',  'color' => '#7c3aed'],
+                    ['href' => route('documents.index'),  'icon' => 'fas fa-file-alt', 'label' => 'Documents',  'color' => '#2e6b47'],
+                    ['href' => route('blotter.index'),    'icon' => 'fas fa-gavel',    'label' => 'Blotter',    'color' => '#8b2e2e'],
+                    ['href' => route('businesses.index'), 'icon' => 'fas fa-store',    'label' => 'Businesses', 'color' => '#3a5fa0'],
+                    ['href' => route('officials.index'),  'icon' => 'fas fa-user-tie', 'label' => 'Officials',  'color' => '#5e4b8b'],
                 ];
             @endphp
             @foreach($links as $l)
