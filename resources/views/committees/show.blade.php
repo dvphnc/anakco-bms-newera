@@ -338,6 +338,30 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 /* ── Gold spinner on buttons ───────────────────────────────── */
 .btn-loading { pointer-events: none; opacity: 0.8; }
 .fa-spin-gold { color: #C8861A !important; }
+
+/* ── Edit / CRUD Modals ────────────────────────────────────── */
+.crud-modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.45); z-index: 1100;
+    align-items: center; justify-content: center; padding: 16px;
+}
+.crud-modal-backdrop.open { display: flex; }
+.crud-modal {
+    background: #fff; border-radius: var(--radius-lg);
+    width: 100%; max-width: 640px; max-height: 90vh;
+    overflow-y: auto; box-shadow: 0 16px 48px rgba(0,0,0,.22);
+}
+.crud-modal-header {
+    padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: #fff; z-index: 1;
+}
+.crud-modal-title { font-size: .95rem; font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+.crud-modal-title i { color: var(--gold); }
+.crud-modal-close { background: none; border: none; font-size: 1rem; color: #9ca3af; cursor: pointer; padding: 4px; line-height: 1; }
+.crud-modal-close:hover { color: var(--crimson); }
+.crud-modal-body { padding: 1.25rem; }
+.crud-modal-footer { padding: .75rem 1.25rem; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; background: var(--surface2); border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
 </style>
 @endpush
 
