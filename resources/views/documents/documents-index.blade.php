@@ -33,6 +33,10 @@
 </div>
 
 {{-- Stat cards --}}
+@php
+    $portalPending = \App\Models\Document::where('source','portal')
+        ->whereIn('status',['Pending','Confirmed','Processing','Ready'])->count();
+@endphp
 <div class="grid-4 mb-6">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-file-lines"></i></div>
@@ -63,6 +67,28 @@
         </div>
     </div>
 </div>
+{{-- Portal Queue notice (shown only when there are active portal submissions) --}}
+@if($portalPending > 0)
+<div class="alert-tray open no-print mb-6">
+    <div class="alert-tray-hdr" onclick="this.closest('.alert-tray').classList.toggle('open')">
+        <i class="fas fa-globe tray-icon" style="color:var(--gold)"></i>
+        <span><strong>{{ $portalPending }}</strong> Portal Submission{{ $portalPending > 1 ? 's' : '' }} in Queue</span>
+        <i class="fas fa-chevron-down tray-caret"></i>
+    </div>
+    <div class="alert-tray-body">
+        <div class="alert-item" style="background:var(--navy-pale);border-color:var(--navy-border)">
+            <i class="fas fa-info-circle" style="color:var(--navy)"></i>
+            <span style="color:var(--navy)">
+                These are active portal document requests. Update their status here — the linked Appointment record syncs instantly.
+            </span>
+            <button class="alert-link" style="background:none;cursor:pointer;color:var(--navy);font-weight:600"
+                    onclick="quickFilter('sourceFilter','portal')">
+                <i class="fas fa-filter" style="font-size:11px;margin-right:4px"></i> Show Portal
+            </button>
+        </div>
+    </div>
+</div>
+@endif
 
 {{-- Collapsible Filter Bar --}}
 <div class="card mb-6">
