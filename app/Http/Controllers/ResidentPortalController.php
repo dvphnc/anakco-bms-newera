@@ -34,6 +34,7 @@ class ResidentPortalController extends Controller
         $validated['appointment_number'] = DocumentAppointment::generateNumber();
         $validated['status']             = 'Pending';
 
+        $validated['source'] = 'portal';
         $appointment = DocumentAppointment::create($validated);
 
         AppointmentStatusLog::create([
@@ -44,7 +45,13 @@ class ResidentPortalController extends Controller
             'note'           => 'Request submitted via Resident Portal.',
         ]);
 
-        return redirect()->route('portal.confirmation', $appointment->appointment_number);
+        $redirectUrl = route('portal.confirmation', $appointment->appointment_number);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['redirect' => $redirectUrl]);
+        }
+
+        return redirect($redirectUrl);
     }
 
     public function confirmation(string $number)
