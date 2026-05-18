@@ -29,7 +29,8 @@
       "Bash(curl -s -L -c /tmp/bms_cookies.txt -b /tmp/bms_cookies.txt -X POST http://anakco_bms.test/login -d \"email=admin@bms.gov.ph&password=Admin@12345&_token=$\\(curl -s http://anakco_bms.test/login)",
       "Bash(php -r *)",
       "Bash(curl -s -I http://anakco_bms.test/)",
-      "Bash(grep -o '\"[^\"]*\"$')"
+      "Bash(grep -o '\"[^\"]*\"$')",
+      "Bash(curl -v http://anakco_bms.test/login)"
     ]
   }
 }
