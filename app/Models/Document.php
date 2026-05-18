@@ -9,12 +9,25 @@ class Document extends Model
 {
     use HasFactory;
 
+    /**
+     * Full status set — mirrors DocumentAppointment::$statuses for 1-to-1 sync.
+     * Walk-in documents typically use Pending → Processing → Released / Cancelled.
+     * Portal documents cycle through all six stages.
+     */
+    public static array $statuses = [
+        'Pending', 'Confirmed', 'Processing', 'Ready', 'Released', 'Cancelled',
+    ];
+
     protected $fillable = [
         'doc_number',
+        'appointment_id',
+        'source',
         'resident_id',
+        'resident_name_portal',
         'document_type',
         'purpose',
         'fee_paid',
+        'or_number',
         'status',
         'issued_by',
         'released_at',
@@ -23,7 +36,7 @@ class Document extends Model
     protected function casts(): array
     {
         return [
-            'fee_paid' => 'decimal:2',
+            'fee_paid'    => 'decimal:2',
             'released_at' => 'date',
         ];
     }
@@ -42,17 +55,36 @@ class Document extends Model
         return $this->belongsTo(User::class, 'issued_by');
     }
 
+    /**
+     * The scheduling record this document was created from (portal only).
+     */
+    public function appointment()
+    {
+        return $this->belongsTo(DocumentAppointment::class, 'appointment_id');
+    }
+
     // -------------------------------------------------------
     // Helpers
     // -------------------------------------------------------
 
-    // Generate next document number e.g. DOC-2025-00001
     public static function generateDocNumber(): string
     {
-        $year = date('Y');
+        $year  = date('Y');
         $count = self::whereYear('created_at', $year)->count() + 1;
 
         return 'DOC-'.$year.'-'.str_pad($count, 5, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Display name — resolves portal submissions that have no resident record.
+     */
+    public function getDisplayNameAttribute(): string
+    {
+        if ($this->resident) {
+            return $this->resident->last_name.', '.$this->resident->first_name;
+        }
+
+        return $this->resident_name_portal ?? '—';
     }
 
     public function isReleased(): bool
@@ -63,5 +95,10 @@ class Document extends Model
     public function isPending(): bool
     {
         return $this->status === 'Pending';
+    }
+
+    public function isPortal(): bool
+    {
+        return $this->source === 'portal';
     }
 }

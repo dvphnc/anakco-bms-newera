@@ -75,6 +75,14 @@ class DocumentAppointment extends Model
     }
 
     /**
+     * The Document record mirroring this appointment's lifecycle (portal submissions only).
+     */
+    public function document()
+    {
+        return $this->hasOne(Document::class, 'appointment_id');
+    }
+
+    /**
      * Status badge color helper.
      */
     public function statusColor(): string

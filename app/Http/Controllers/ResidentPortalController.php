@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AppointmentStatusLog;
 use App\Models\BlotterCase;
 use App\Models\Business;
+use App\Models\Document;
 use App\Models\DocumentAppointment;
 use Illuminate\Http\Request;
 
