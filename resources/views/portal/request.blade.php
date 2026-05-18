@@ -2,6 +2,7 @@
 @section('title', 'Request a Document')
 
 @push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css">
 <style>
     .page-hd { margin-bottom: 1.75rem; }
     .page-hd h2 {
@@ -199,10 +200,6 @@
 </div>{{-- /.p-card --}}
 </div>{{-- /.portal-wrap-md --}}
 @endsection
-
-@push('styles')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css">
-@endpush
 
 @push('scripts')
 {{-- jQuery + Select2 (portal layout doesn't include these) --}}
