@@ -9,6 +9,19 @@
     </div>
 </div>
 
+@php
+$moduleMap = [
+    'App\Models\Resident'    => ['label' => 'Residents',  'icon' => 'fa-users',        'color' => '#1d76db', 'slug' => 'residents'],
+    'App\Models\Household'   => ['label' => 'Households', 'icon' => 'fa-house',        'color' => '#5319e7', 'slug' => 'households'],
+    'App\Models\Document'    => ['label' => 'Documents',  'icon' => 'fa-file-alt',     'color' => '#006b75', 'slug' => 'documents'],
+    'App\Models\BlotterCase' => ['label' => 'Blotter',    'icon' => 'fa-gavel',        'color' => '#e11d48', 'slug' => 'blotter'],
+    'App\Models\Business'    => ['label' => 'Businesses', 'icon' => 'fa-store',        'color' => '#f97316', 'slug' => 'businesses'],
+    'App\Models\Official'    => ['label' => 'Officials',  'icon' => 'fa-user-tie',     'color' => '#7c3aed', 'slug' => 'officials'],
+    'App\Models\User'        => ['label' => 'Users',      'icon' => 'fa-user-shield',  'color' => '#9333ea', 'slug' => 'users'],
+    'App\Models\Purok'       => ['label' => 'Puroks',     'icon' => 'fa-location-dot', 'color' => '#0891b2', 'slug' => 'puroks'],
+];
+@endphp
+
 {{-- Charts Toggle --}}
 <div style="margin-bottom:16px">
     <button onclick="toggleCharts()" id="charts-toggle-btn"
@@ -267,10 +280,71 @@ function toggleCharts() {
     if (isHidden) initCharts();
 }
 
-// Restore state
+// Restore chart state
 if (localStorage.getItem('activityChartsOpen') === '1') toggleCharts();
 
-// Auto-refresh every 60s
-setTimeout(() => location.reload(), 60000);
+// ── Filter state (seeded from current URL) ──────────────────────────────────
+var _filterState = {
+    module:  '{{ request("module") }}',
+    action:  '{{ request("action") }}',
+    user_id: '{{ request("user_id") }}',
+    period:  '{{ request("period") }}',
+    page:    '{{ request("page") }}'
+};
+
+function fetchFeed() {
+    var params = new URLSearchParams();
+    Object.keys(_filterState).forEach(function(k) {
+        if (_filterState[k]) params.set(k, _filterState[k]);
+    });
+    var qs  = params.toString();
+    var url = '{{ route("activity-log.index") }}' + (qs ? '?' + qs : '');
+    history.pushState({}, '', url);
+
+    var card = document.getElementById('activity-feed');
+    card.style.opacity       = '0.55';
+    card.style.pointerEvents = 'none';
+
+    axios.get(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function(res) {
+            document.getElementById('feed-body').innerHTML = res.data.html;
+            var el = document.getElementById('feed-total');
+            if (el) el.textContent = res.data.total.toLocaleString() + ' entries · refreshes every 60s';
+        })
+        .catch(function() { location.href = url; })
+        .finally(function() {
+            card.style.opacity       = '1';
+            card.style.pointerEvents = '';
+        });
+}
+
+function resetFilters() {
+    _filterState.action  = '';
+    _filterState.user_id = '';
+    _filterState.page    = '';
+    $('#filterAction').val('').trigger('change.select2');
+    $('#filterUser').val('').trigger('change.select2');
+    fetchFeed();
+}
+
+// ── Select2 ──────────────────────────────────────────────────────────────────
+$(function(){
+    $('#filterAction').select2({ minimumResultsForSearch: -1, width: '100%' })
+        .on('change', function() {
+            _filterState.action = $(this).val() || '';
+            _filterState.page   = '';
+            fetchFeed();
+        });
+
+    $('#filterUser').select2({ minimumResultsForSearch: -1, width: '100%' })
+        .on('change', function() {
+            _filterState.user_id = $(this).val() || '';
+            _filterState.page    = '';
+            fetchFeed();
+        });
+});
+
+// Auto-refresh every 60s via Axios (no full reload)
+setInterval(fetchFeed, 60000);
 </script>
 @endpush
