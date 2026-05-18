@@ -2523,10 +2523,18 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             </div>
         </div>
         <table>
-            <thead><tr><th>Title</th><th>Type</th><th>Fund Source</th><th style="text-align:right">Amount</th><th>Date</th><th>Ref No.</th><th>File</th></tr></thead>
+            <thead><tr><th>Title</th><th>Type</th><th>Fund Source</th><th style="text-align:right">Amount</th><th>Date</th><th>Ref No.</th><th>File</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['financials'] as $fin)
-                <tr>
+                <tr
+                    data-id="{{ $fin->id }}"
+                    data-title="{{ addslashes($fin->title) }}"
+                    data-ftype="{{ $fin->type }}"
+                    data-source="{{ addslashes($fin->fund_source ?? '') }}"
+                    data-amount="{{ $fin->amount ?? '' }}"
+                    data-date="{{ $fin->date->format('Y-m-d') }}"
+                    data-ref="{{ addslashes($fin->reference_number ?? '') }}"
+                >
                     <td style="font-weight:600">{{ $fin->title }}</td>
                     <td><span class="badge {{ match($fin->type) { 'Budget'=>'badge-navy','Utilization'=>'badge-yellow','Liquidation'=>'badge-green' } }}">{{ $fin->type }}</span></td>
                     <td class="td-muted">{{ $fin->fund_source ?? '—' }}</td>
@@ -2534,6 +2542,12 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td class="td-muted">{{ $fin->date->format('M d, Y') }}</td>
                     <td class="td-mono">{{ $fin->reference_number ?? '—' }}</td>
                     <td>@if($fin->file_path)<a href="{{ asset('storage/'.$fin->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('financial', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('financial','{{ $fin->id }}','{{ addslashes($fin->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -2552,6 +2566,131 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
     @endif
 
 </div>{{-- end .card --}}
+
+{{-- ── EDIT MODAL: Activities / Accomplishments ── --}}
+<div id="editActivityModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editActivityModal')">
+<div class="crud-modal">
+    <div class="crud-modal-header">
+        <div class="crud-modal-title"><i class="fas fa-calendar-check"></i> <span id="editActivityModalTitle">Edit Activity</span></div>
+        <button class="crud-modal-close" onclick="closeCrudModal('editActivityModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="crud-modal-body">
+        <form id="editActivityForm" data-axios="true">
+            @csrf @method('PATCH')
+            <input type="hidden" name="_method" value="PATCH">
+            <div class="form-grid-3" style="gap:12px">
+                <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" id="eAct_title" class="form-control" required></div>
+                <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="activity_date" id="eAct_date" class="form-control" required></div>
+                <div class="form-group"><label class="form-label">Location</label><input type="text" name="location" id="eAct_location" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Participants</label><input type="number" name="participants_count" id="eAct_participants" class="form-control" min="0"></div>
+                <div class="form-group"><label class="form-label">Status</label><select name="status" id="eAct_status" class="form-control">@foreach(['Planned','Ongoing','Completed','Cancelled'] as $s)<option>{{ $s }}</option>@endforeach</select></div>
+                <div class="form-group" style="grid-column:span 3"><label class="form-label">Description</label><input type="text" name="description" id="eAct_description" class="form-control"></div>
+            </div>
+    </div>
+    <div class="crud-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeCrudModal('editActivityModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save Changes</button>
+    </div>
+        </form>
+</div>
+</div>
+
+{{-- ── EDIT MODAL: Attendance ── --}}
+<div id="editAttendanceModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editAttendanceModal')">
+<div class="crud-modal">
+    <div class="crud-modal-header">
+        <div class="crud-modal-title"><i class="fas fa-users"></i> Edit Attendance Record</div>
+        <button class="crud-modal-close" onclick="closeCrudModal('editAttendanceModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="crud-modal-body">
+        <form id="editAttendanceForm" data-axios="true">
+            @csrf @method('PATCH')
+            <input type="hidden" name="_method" value="PATCH">
+            <div class="form-grid-3" style="gap:12px">
+                <div class="form-group" style="grid-column:span 2"><label class="form-label">Event Name <span style="color:var(--crimson)">*</span></label><input type="text" name="event_name" id="eAtt_event" class="form-control" required></div>
+                <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="event_date" id="eAtt_date" class="form-control" required></div>
+                <div class="form-group"><label class="form-label">Venue</label><input type="text" name="venue" id="eAtt_venue" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Total Attendees <span style="color:var(--crimson)">*</span></label><input type="number" name="total_attendees" id="eAtt_attendees" class="form-control" min="0" required></div>
+                <div class="form-group"><label class="form-label">Notes</label><input type="text" name="notes" id="eAtt_notes" class="form-control"></div>
+            </div>
+    </div>
+    <div class="crud-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeCrudModal('editAttendanceModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save Changes</button>
+    </div>
+        </form>
+</div>
+</div>
+
+{{-- ── EDIT MODAL: Inventory ── --}}
+<div id="editInventoryModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editInventoryModal')">
+<div class="crud-modal">
+    <div class="crud-modal-header">
+        <div class="crud-modal-title"><i class="fas fa-boxes-stacked"></i> Edit Inventory Item</div>
+        <button class="crud-modal-close" onclick="closeCrudModal('editInventoryModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="crud-modal-body">
+        <form id="editInventoryForm" data-axios="true">
+            @csrf @method('PATCH')
+            <input type="hidden" name="_method" value="PATCH">
+            <div class="form-grid-3" style="gap:12px">
+                <div class="form-group" style="grid-column:span 2"><label class="form-label">Item Name <span style="color:var(--crimson)">*</span></label><input type="text" name="item_name" id="eInv_name" class="form-control" required></div>
+                <div class="form-group"><label class="form-label">Category</label><input type="text" name="category" id="eInv_category" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Quantity <span style="color:var(--crimson)">*</span></label><input type="number" name="quantity" id="eInv_qty" class="form-control" min="0" required></div>
+                <div class="form-group"><label class="form-label">Unit</label><input type="text" name="unit" id="eInv_unit" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Condition <span style="color:var(--crimson)">*</span></label><select name="condition" id="eInv_condition" class="form-control" required>@foreach(['Good','Fair','Poor','For Disposal'] as $c)<option>{{ $c }}</option>@endforeach</select></div>
+                <div class="form-group" style="grid-column:span 3"><label class="form-label">Remarks</label><input type="text" name="remarks" id="eInv_remarks" class="form-control"></div>
+            </div>
+    </div>
+    <div class="crud-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeCrudModal('editInventoryModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save Changes</button>
+    </div>
+        </form>
+</div>
+</div>
+
+{{-- ── EDIT MODAL: Partnership ── --}}
+<div id="editPartnershipModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editPartnershipModal')">
+<div class="crud-modal">
+    <div class="crud-modal-header">
+        <div class="crud-modal-title"><i class="fas fa-handshake"></i> Edit Partnership</div>
+        <button class="crud-modal-close" onclick="closeCrudModal('editPartnershipModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="crud-modal-body">
+        <form id="editPartnershipForm" data-axios="true">
+            @csrf @method('PATCH')
+            <input type="hidden" name="_method" value="PATCH">
+            <div class="form-grid-3" style="gap:12px">
+                <div class="form-group" style="grid-column:span 2"><label class="form-label">Partner Name <span style="color:var(--crimson)">*</span></label><input type="text" name="partner_name" id="ePart_name" class="form-control" required></div>
+                <div class="form-group"><label class="form-label">Type <span style="color:var(--crimson)">*</span></label><select name="partner_type" id="ePart_type" class="form-control" required>@foreach(['Government','NGO','Private','Community','Other'] as $pt)<option>{{ $pt }}</option>@endforeach</select></div>
+                <div class="form-group"><label class="form-label">MOU Date</label><input type="date" name="mou_date" id="ePart_mou" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Validity Date</label><input type="date" name="validity_date" id="ePart_validity" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Contact Person</label><input type="text" name="contact_person" id="ePart_contact" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Contact Number</label><input type="text" name="contact_number" id="ePart_phone" class="form-control"></div>
+                <div class="form-group" style="grid-column:span 3"><label class="form-label">Description</label><textarea name="description" id="ePart_desc" class="form-control" rows="2"></textarea></div>
+            </div>
+    </div>
+    <div class="crud-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeCrudModal('editPartnershipModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save Changes</button>
+    </div>
+        </form>
+</div>
+</div>
+
+{{-- ── EDIT MODAL: Specific (universal) ── --}}
+<div id="editSpecificModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editSpecificModal')">
+<div class="crud-modal">
+    <div class="crud-modal-header">
+        <div class="crud-modal-title"><i id="editSpecificIcon" class="fas fa-pen"></i> <span id="editSpecificTitle">Edit Record</span></div>
+        <button class="crud-modal-close" onclick="closeCrudModal('editSpecificModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="crud-modal-body" id="editSpecificBody">
+        {{-- Populated dynamically by JS --}}
+    </div>
+</div>
+</div>
 
 @endsection
 
