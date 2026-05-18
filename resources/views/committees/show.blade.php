@@ -1536,10 +1536,18 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
         @if(isset($specificData['toda']) && $specificData['toda']->count())
         <table>
-            <thead><tr><th>Operator</th><th>Driver</th><th>Type</th><th>Plate</th><th>TODA</th><th>Route</th><th>Expiry</th><th>Status</th></tr></thead>
+            <thead><tr><th>Operator</th><th>Driver</th><th>Type</th><th>Plate</th><th>TODA</th><th>Route</th><th>Expiry</th><th>Status</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['toda'] as $t)
-                <tr>
+                <tr
+                    data-id="{{ $t->id }}"
+                    data-operator="{{ addslashes($t->operator_name) }}"
+                    data-plate="{{ addslashes($t->plate_number ?? '') }}"
+                    data-vtype="{{ $t->vehicle_type ?? '' }}"
+                    data-assoc="{{ addslashes($t->toda_name ?? '') }}"
+                    data-contact="{{ addslashes($t->contact_number ?? '') }}"
+                    data-status="{{ $t->status }}"
+                >
                     <td style="font-weight:600">{{ $t->operator_name }}</td>
                     <td class="td-muted">{{ $t->driver_name ?? '—' }}</td>
                     <td class="td-muted">{{ $t->vehicle_type ?? '—' }}</td>
@@ -1548,6 +1556,12 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td class="td-muted">{{ $t->route ?? '—' }}</td>
                     <td class="td-muted {{ $t->expiry_date && $t->expiry_date->isPast() ? 'td-danger' : '' }}">{{ $t->expiry_date?->format('M d, Y') ?? '—' }}</td>
                     <td><span class="badge {{ match($t->status) { 'Active'=>'badge-green','Expired'=>'badge-red',default=>'badge-yellow' } }}">{{ $t->status }}</span></td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('toda', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('toda','{{ $t->id }}','{{ addslashes($t->operator_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -1599,16 +1613,31 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
         @if(isset($specificData['emergency_logs']) && $specificData['emergency_logs']->count())
         <table>
-            <thead><tr><th>Type</th><th>Date</th><th>Location</th><th>Families</th><th>Persons</th><th>Status</th></tr></thead>
+            <thead><tr><th>Type</th><th>Date</th><th>Location</th><th>Families</th><th>Persons</th><th>Status</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['emergency_logs'] as $e)
-                <tr>
+                <tr
+                    data-id="{{ $e->id }}"
+                    data-itype="{{ addslashes($e->incident_type) }}"
+                    data-date="{{ $e->incident_date->format('Y-m-d') }}"
+                    data-location="{{ addslashes($e->location) }}"
+                    data-desc="{{ addslashes($e->description ?? '') }}"
+                    data-casualties="{{ $e->affected_persons ?? 0 }}"
+                    data-response="{{ addslashes($e->response_actions ?? '') }}"
+                    data-by="{{ addslashes($e->reported_by ?? '') }}"
+                >
                     <td style="font-weight:600">{{ $e->incident_type }}</td>
                     <td class="td-muted">{{ $e->incident_date->format('M d, Y') }}</td>
                     <td class="td-muted">{{ $e->location }}</td>
                     <td style="font-weight:600;color:var(--crimson)">{{ number_format($e->affected_families) }}</td>
                     <td style="font-weight:600;color:var(--crimson)">{{ number_format($e->affected_persons) }}</td>
                     <td><span class="badge {{ match($e->status) { 'Resolved'=>'badge-green','Monitoring'=>'badge-yellow',default=>'badge-red' } }}">{{ $e->status }}</span></td>
+                    <td>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('emergency', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteSpecific('emergency','{{ $e->id }}','{{ addslashes($e->incident_type) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
