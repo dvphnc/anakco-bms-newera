@@ -12,7 +12,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('documents.store') }}">
+<form method="POST" action="{{ route('documents.store') }}" id="docCreateForm">
 @csrf
 
 <div class="card mb-6">
@@ -21,10 +21,11 @@
     </div>
     <div class="card-body">
 
-        <div class="form-section-title">Resident & Type</div>
+        {{-- ── Beneficiary & Type ── --}}
+        <div class="form-section-title">Beneficiary & Type</div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
-                <label class="form-label">Resident <span style="color:var(--crimson)">*</span></label>
+                <label class="form-label">Beneficiary (Resident) <span style="color:var(--crimson)">*</span></label>
                 <select name="resident_id" id="resident_id" class="select2-resident @error('resident_id') is-invalid @enderror" required style="width:100%" data-placeholder="Type name to search...">
                     @if(old('resident_id') || request('resident_id'))
                         @php $sel = \App\Models\Resident::find(old('resident_id', request('resident_id'))); @endphp
@@ -42,7 +43,7 @@
                 </label>
                 <select name="document_type" class="form-control @error('document_type') is-invalid @enderror" required>
                     <option value="">Select Type</option>
-                    @foreach(['Barangay Clearance','Certificate of Residency','Certificate of Indigency','Business Clearance','Certificate of Good Moral','Barangay ID','First Time Job Seeker'] as $t)
+                    @foreach($documentTypes as $t)
                         <option value="{{ $t }}" {{ old('document_type') === $t ? 'selected' : '' }}>{{ $t }}</option>
                     @endforeach
                 </select>
@@ -50,6 +51,66 @@
             </div>
         </div>
 
+        {{-- ── Requestor / Processed By ── --}}
+        <div class="form-section-title">Requestor / Processed By</div>
+
+        {{-- Representative toggle --}}
+        <div class="form-group mb-3">
+            <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer" onclick="document.getElementById('isRepCheck').click()">
+                <input type="hidden" name="is_representative" value="0">
+                <input type="checkbox" name="is_representative" id="isRepCheck" value="1"
+                       style="width:17px;height:17px;accent-color:var(--navy);cursor:pointer;flex-shrink:0;pointer-events:none"
+                       {{ old('is_representative') ? 'checked' : '' }}>
+                <div style="pointer-events:none">
+                    <div style="font-size:14px;font-weight:500;color:var(--text)">A <strong>representative</strong> is picking up / requesting this document</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:1px">Check this if someone other than the resident will collect the document (e.g. child, spouse, attorney).</div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Self-pickup info pill --}}
+        <div id="selfPickupInfo" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(13,33,68,0.05);border:1px solid rgba(13,33,68,0.14);border-radius:var(--radius);margin-bottom:20px">
+            <i class="fas fa-circle-check" style="color:var(--navy);font-size:14px"></i>
+            <span style="font-size:13px;color:var(--navy)">Will be picked up by: <strong id="selfPickupName">the resident</strong></span>
+        </div>
+
+        {{-- Representative fields --}}
+        <div id="repPanel" style="display:none;margin-bottom:8px">
+            <div class="form-grid-2 mb-2">
+                <div class="form-group">
+                    <label class="form-label">Representative Name <span style="color:var(--crimson)">*</span></label>
+                    <input type="text" name="requestor_name" id="requestorName"
+                           class="form-control @error('requestor_name') is-invalid @enderror"
+                           value="{{ old('requestor_name') }}"
+                           placeholder="Full name of the person picking up">
+                    @error('requestor_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Relationship to Resident <span style="color:var(--crimson)">*</span></label>
+                    <select name="requestor_relationship" id="requestorRelationship"
+                            class="form-control select2-rel @error('requestor_relationship') is-invalid @enderror">
+                        <option value="">Select Relationship</option>
+                        @foreach($relationships as $rel)
+                            <option value="{{ $rel }}" {{ old('requestor_relationship') === $rel ? 'selected' : '' }}>{{ $rel }}</option>
+                        @endforeach
+                    </select>
+                    @error('requestor_relationship')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        Representative Contact
+                        <span class="help-icon" data-tippy-content="Optional — phone or email to notify the representative when the document is ready.">?</span>
+                    </label>
+                    <input type="text" name="requestor_contact"
+                           class="form-control @error('requestor_contact') is-invalid @enderror"
+                           value="{{ old('requestor_contact') }}"
+                           placeholder="Phone or email (optional)">
+                    @error('requestor_contact')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                </div>
+            </div>
+        </div>
+
+        {{-- ── Request Details ── --}}
         <div class="form-section-title">Request Details</div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
@@ -63,7 +124,7 @@
             <div class="form-group">
                 <label class="form-label">
                     Status
-                    <span class="help-icon" data-tippy-content="'Pending' = received, not yet processed. 'Processing' = being prepared. 'Released' = given to the resident. 'Cancelled' = request withdrawn. Set to 'Released' and the release date auto-fills.">?</span>
+                    <span class="help-icon" data-tippy-content="'Pending' = received, not yet processed. 'Processing' = being prepared. 'Released' = given to the resident. 'Cancelled' = request withdrawn.">?</span>
                 </label>
                 <select name="status" class="form-control @error('status') is-invalid @enderror">
                     @foreach(['Pending','Processing','Released','Cancelled'] as $s)
@@ -90,6 +151,7 @@
             </div>
         </div>
 
+        {{-- ── Additional Information ── --}}
         <div class="form-section-title">Additional Information</div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
@@ -102,18 +164,96 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Remarks</label>
-            <textarea name="remarks" class="form-control @error('remarks') is-invalid @enderror" rows="3" placeholder="Optional remarks...">{{ old('remarks') }}</textarea>
-            @error('remarks')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-        </div>
     </div>
 </div>
 
 <div class="form-actions">
-    <button type="submit" class="btn btn-primary"><i class="fas fa-file-circle-plus"></i> Issue Document</button>
+    <button type="submit" class="btn btn-primary" id="docSubmitBtn">
+        <span id="docSubmitLabel"><i class="fas fa-file-circle-plus"></i> Issue Document</span>
+        <span id="docSubmitSpinner" style="display:none"><span class="doc-spin-icon"></span> Saving…</span>
+    </button>
     <a href="{{ route('documents.index') }}" class="btn btn-secondary">Cancel</a>
 </div>
 </form>
+
+@push('scripts')
+<style>
+@keyframes doc-spin { to { transform: rotate(360deg); } }
+.doc-spin-icon {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: doc-spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+</style>
+<script>
+(function () {
+    var repCheck  = document.getElementById('isRepCheck');
+    var repPanel  = document.getElementById('repPanel');
+    var selfInfo  = document.getElementById('selfPickupInfo');
+    var selfName  = document.getElementById('selfPickupName');
+    var resSel    = document.getElementById('resident_id');
+
+    /* ── Toggle rep panel ── */
+    function syncToggle() {
+        var checked = repCheck.checked;
+        repPanel.style.display = checked ? '' : 'none';
+        selfInfo.style.display = checked ? 'none' : '';
+    }
+
+    /* ── Keep "Will be picked up by" label in sync with resident picker ── */
+    function syncResidentLabel() {
+        if (!resSel) return;
+        var opt = resSel.options[resSel.selectedIndex];
+        if (opt && opt.value) {
+            // option text format: "Last, First — address"
+            selfName.textContent = opt.text.split('—')[0].trim();
+        } else {
+            selfName.textContent = 'the resident';
+        }
+    }
+
+    repCheck.addEventListener('change', syncToggle);
+
+    if (resSel) {
+        $(resSel).on('select2:select',   syncResidentLabel);
+        $(resSel).on('select2:unselect', function () { selfName.textContent = 'the resident'; });
+    }
+
+    /* ── Select2 for relationship dropdown ── */
+    $('#requestorRelationship').select2({
+        placeholder: 'Select relationship',
+        allowClear: true,
+        minimumResultsForSearch: Infinity,
+        width: '100%',
+        dropdownParent: $('#repPanel')
+    });
+
+    /* ── Gold spinner on submit ── */
+    document.getElementById('docCreateForm').addEventListener('submit', function (e) {
+        // Client-side guard: rep panel visible but name empty
+        if (repCheck.checked) {
+            var rName = document.querySelector('[name="requestor_name"]').value.trim();
+            var rRel  = document.querySelector('[name="requestor_relationship"]').value;
+            if (!rName || !rRel) {
+                e.preventDefault();
+                return;
+            }
+        }
+        document.getElementById('docSubmitLabel').style.display  = 'none';
+        document.getElementById('docSubmitSpinner').style.display = '';
+        document.getElementById('docSubmitBtn').disabled = true;
+    });
+
+    /* ── Init ── */
+    syncToggle();
+    syncResidentLabel();
+})();
+</script>
+@endpush
 
 @endsection

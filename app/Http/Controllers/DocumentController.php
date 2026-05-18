@@ -190,22 +190,41 @@ class DocumentController extends Controller
 
     public function update(Request $request, Document $document)
     {
-        $validated = $request->validate([
-            'document_type' => 'required|string',
-            'purpose' => 'required|string|max:500',
-            'fee_paid' => 'nullable|numeric|min:0',
-            'or_number' => 'nullable|string|max:100',
-            'released_at' => 'nullable|date',
-            'status' => 'required|in:' . implode(',', Document::$statuses),
-        ], [
-            'document_type.required' => 'Please select a document type.',
-            'purpose.required'       => 'Please describe the purpose of this document (e.g. Employment, Loan).',
-            'purpose.max'            => 'Purpose must not exceed 500 characters.',
-            'fee_paid.numeric'       => 'Fee must be a valid number.',
-            'fee_paid.min'           => 'Fee cannot be a negative amount.',
-            'or_number.max'          => 'OR Number must not exceed 100 characters.',
-            'released_at.date'       => 'Please enter a valid release date.',
+        $rules = [
+            'document_type'     => 'required|string',
+            'purpose'           => 'required|string|max:500',
+            'fee_paid'          => 'nullable|numeric|min:0',
+            'or_number'         => 'nullable|string|max:100',
+            'released_at'       => 'nullable|date',
+            'status'            => 'required|in:' . implode(',', Document::$statuses),
+            'requestor_contact' => 'nullable|string|max:255',
+        ];
+
+        if ($request->boolean('is_representative')) {
+            $rules['requestor_name']         = 'required|string|max:255';
+            $rules['requestor_relationship'] = 'required|string|max:100';
+        }
+
+        $validated = $request->validate($rules, [
+            'document_type.required'          => 'Please select a document type.',
+            'purpose.required'                => 'Please describe the purpose of this document (e.g. Employment, Loan).',
+            'purpose.max'                     => 'Purpose must not exceed 500 characters.',
+            'fee_paid.numeric'                => 'Fee must be a valid number.',
+            'fee_paid.min'                    => 'Fee cannot be a negative amount.',
+            'or_number.max'                   => 'OR Number must not exceed 100 characters.',
+            'released_at.date'                => 'Please enter a valid release date.',
+            'requestor_name.required'         => 'Please enter the representative\'s name.',
+            'requestor_relationship.required' => 'Please select the representative\'s relationship to the resident.',
         ]);
+
+        // Auto-fill requestor from resident when no representative
+        if (! $request->boolean('is_representative')) {
+            $resident = $document->resident ?? Resident::find($request->input('resident_id'));
+            $validated['requestor_name']         = $resident?->full_name ?? '';
+            $validated['requestor_relationship'] = null;
+            $validated['requestor_contact']      = null;
+        }
+
         if ($validated['status'] === 'Released' && $document->status !== 'Released' && empty($validated['released_at'])) {
             $validated['released_at'] = now();
         }
