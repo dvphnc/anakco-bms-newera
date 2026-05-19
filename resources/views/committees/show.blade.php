@@ -3097,7 +3097,7 @@ function deletePartnership(id, name, slug) {
 
 // ── Relief supply delete ─────────────────────────────────────
 function deleteReliefSupply(id, name, slug) {
-    var rowEl = document.querySelector('tr[data-rid="' + id + '"]');
+    var rowEl = document.querySelector('tr[data-id="' + id + '"]');
     bmsConfirm({
         title:   'Delete Relief Supply',
         message: 'Delete ' + name + ' from the relief inventory? This cannot be undone.',
@@ -3319,6 +3319,32 @@ document.getElementById('editInventoryForm').addEventListener('submit', function
             row.dataset.condition = rec.condition;
             row.dataset.remarks   = rec.remarks || '';
         }
+    });
+});
+
+// ── EDIT: Record (title / type / description) ──
+var _editRecId = null;
+function openEditRecord(tr) {
+    _editRecId = tr.dataset.id;
+    document.getElementById('eRec_title').value       = tr.dataset.title       || '';
+    document.getElementById('eRec_description').value = tr.dataset.description || '';
+    var sel = document.getElementById('eRec_type');
+    for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === tr.dataset.rtype) { sel.selectedIndex = i; break; }
+    }
+    document.getElementById('editRecordModal').classList.add('open');
+}
+document.getElementById('editRecordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    axiosPatch(this, '/committees/{{ $committee['slug'] }}/records/' + _editRecId, 'editRecordModal', function(rec) {
+        var row = document.querySelector('[data-id="' + _editRecId + '"]');
+        if (!row || row.tagName !== 'TR') return;
+        row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.title + '</span>';
+        row.cells[1].innerHTML = '<span class="badge badge-navy">' + rec.record_type + '</span>';
+        row.cells[2].textContent = rec.description || '—';
+        row.dataset.title       = rec.title;
+        row.dataset.rtype       = rec.record_type;
+        row.dataset.description = rec.description || '';
     });
 });
 
