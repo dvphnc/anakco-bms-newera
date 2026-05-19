@@ -532,13 +532,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         <div class="data-section-label"><i class="fas fa-images" style="color:var(--gold);margin-right:6px"></i> Photos ({{ $photos->count() }})</div>
         <div class="photo-grid">
             @foreach($photos as $photo)
-            <div class="photo-thumb">
+            <div class="photo-thumb" data-id="{{ $photo->id }}">
                 @if($photo->file_path)
                 <a href="{{ asset('storage/'.$photo->file_path) }}" target="_blank">
                     <img src="{{ asset('storage/'.$photo->file_path) }}" alt="{{ $photo->title }}">
                 </a>
                 @endif
                 <div class="photo-thumb-label">{{ $photo->title }}</div>
+                <div style="padding:4px 6px;border-top:1px solid var(--border);display:flex;justify-content:flex-end">
+                    <button type="button" onclick="deleteGeneric('records','{{ $photo->id }}','{{ addslashes($photo->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete" style="padding:3px 7px;font-size:11px"><i class="fas fa-trash"></i></button>
+                </div>
             </div>
             @endforeach
         </div>
@@ -551,7 +554,10 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             <thead><tr><th>Title</th><th>Type</th><th>Description</th><th>Uploaded</th><th>File</th><th></th></tr></thead>
             <tbody>
                 @foreach($docRecords as $rec)
-                <tr data-rid="{{ $rec->id }}">
+                <tr data-id="{{ $rec->id }}"
+                    data-title="{{ addslashes($rec->title) }}"
+                    data-rtype="{{ $rec->record_type }}"
+                    data-description="{{ addslashes($rec->description ?? '') }}">
                     <td style="font-weight:600">{{ $rec->title }}</td>
                     <td><span class="badge badge-navy">{{ $rec->record_type }}</span></td>
                     <td class="td-muted">{{ $rec->description ?? '—' }}</td>
@@ -563,7 +569,10 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         @endif
                     </td>
                     <td>
-                        <button type="button" onclick="deleteGeneric('records','{{ $rec->id }}','{{ addslashes($rec->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditRecord(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteGeneric('records','{{ $rec->id }}','{{ addslashes($rec->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
                     </td>
                 </tr>
                 @endforeach
@@ -1782,7 +1791,17 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             <thead><tr><th>Item</th><th>Category</th><th style="text-align:right">Qty</th><th>Unit</th><th>Source</th><th>Date Received</th><th>Status</th><th>Remarks</th><th></th></tr></thead>
             <tbody>
                 @foreach($specificData['relief_supplies'] as $rs)
-                <tr data-rid="{{ $rs->id }}">
+                <tr
+                    data-id="{{ $rs->id }}"
+                    data-name="{{ addslashes($rs->item_name) }}"
+                    data-category="{{ $rs->category }}"
+                    data-qty="{{ $rs->quantity }}"
+                    data-unit="{{ addslashes($rs->unit ?? '') }}"
+                    data-source="{{ addslashes($rs->source ?? '') }}"
+                    data-date="{{ $rs->date_received?->format('Y-m-d') ?? '' }}"
+                    data-status="{{ $rs->status }}"
+                    data-remarks="{{ addslashes($rs->remarks ?? '') }}"
+                >
                     <td style="font-weight:600;color:var(--navy)">{{ $rs->item_name }}</td>
                     <td><span class="badge badge-navy">{{ $rs->category }}</span></td>
                     <td style="text-align:right;font-weight:700;color:var(--navy)">{{ number_format($rs->quantity) }}</td>
@@ -1792,11 +1811,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td><span class="badge {{ match($rs->status) { 'Available'=>'badge-green','Distributed'=>'badge-yellow',default=>'badge-gray' } }}">{{ $rs->status }}</span></td>
                     <td class="td-muted">{{ $rs->remarks ?? '—' }}</td>
                     <td>
-                        <button type="button"
-                                onclick="deleteReliefSupply({{ $rs->id }}, '{{ addslashes($rs->item_name) }}', '{{ $committee['slug'] }}')"
-                                class="btn btn-danger btn-sm btn-icon" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('relief', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button"
+                                    onclick="deleteReliefSupply({{ $rs->id }}, '{{ addslashes($rs->item_name) }}', '{{ $committee['slug'] }}')"
+                                    class="btn btn-danger btn-sm btn-icon" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 @endforeach
