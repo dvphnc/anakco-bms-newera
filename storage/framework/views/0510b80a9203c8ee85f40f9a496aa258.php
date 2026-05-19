@@ -543,26 +543,36 @@ unset($__errorArgs, $__bag); ?>
         </div>
 
         <?php if($photos->count()): ?>
+        <div id="recPhotoSection">
         <div class="data-section-label"><i class="fas fa-images" style="color:var(--gold);margin-right:6px"></i> Photos (<?php echo e($photos->count()); ?>)</div>
         <div class="photo-grid">
             <?php $__currentLoopData = $photos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div class="photo-thumb" data-id="<?php echo e($photo->id); ?>">
+            <div class="photo-thumb"
+                 data-id="<?php echo e($photo->id); ?>"
+                 data-title="<?php echo e(addslashes($photo->title)); ?>"
+                 data-rtype="Photo"
+                 data-description="<?php echo e(addslashes($photo->description ?? '')); ?>">
                 <?php if($photo->file_path): ?>
-                <a href="<?php echo e(asset('storage/'.$photo->file_path)); ?>" target="_blank">
+                <div onclick="openPhotoLightbox('<?php echo e(asset('storage/'.$photo->file_path)); ?>','<?php echo e(addslashes($photo->title)); ?>')" style="cursor:zoom-in;line-height:0">
                     <img src="<?php echo e(asset('storage/'.$photo->file_path)); ?>" alt="<?php echo e($photo->title); ?>">
-                </a>
+                </div>
+                <?php else: ?>
+                <div style="height:90px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-muted)"><i class="fas fa-image fa-2x"></i></div>
                 <?php endif; ?>
                 <div class="photo-thumb-label"><?php echo e($photo->title); ?></div>
-                <div style="padding:4px 6px;border-top:1px solid var(--border);display:flex;justify-content:flex-end">
+                <div style="padding:4px 6px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:4px">
+                    <button type="button" onclick="openEditRecord(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit" style="padding:3px 7px;font-size:11px"><i class="fas fa-pen"></i></button>
                     <button type="button" onclick="deleteGeneric('records','<?php echo e($photo->id); ?>','<?php echo e(addslashes($photo->title)); ?>')" class="btn btn-danger btn-sm btn-icon" title="Delete" style="padding:3px 7px;font-size:11px"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
+        </div>
         <?php endif; ?>
 
         <?php $docRecords = $reports->concat($resolutions)->concat($otherRecords)->sortByDesc('created_at'); ?>
         <?php if($docRecords->count()): ?>
+        <div id="recDocSection">
         <div class="data-section-label" style="border-top:1px solid var(--border)"><i class="fas fa-file-alt" style="color:var(--gold);margin-right:6px"></i> Documents (<?php echo e($docRecords->count()); ?>)</div>
         <table>
             <thead><tr><th>Title</th><th>Type</th><th>Description</th><th>Uploaded</th><th>File</th><th></th></tr></thead>
@@ -584,7 +594,7 @@ unset($__errorArgs, $__bag); ?>
                     </td>
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
-                            <button type="button" onclick="openEditRecord(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="openEditRecord(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
                             <button type="button" onclick="deleteGeneric('records','<?php echo e($rec->id); ?>','<?php echo e(addslashes($rec->title)); ?>')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
                         </div>
                     </td>
@@ -592,10 +602,11 @@ unset($__errorArgs, $__bag); ?>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </tbody>
         </table>
+        </div>
         <?php endif; ?>
 
         <?php if($photos->count() === 0 && $docRecords->count() === 0): ?>
-        <div class="empty-enhanced">
+        <div class="empty-enhanced" id="recEmptyState">
             <div class="empty-enhanced-icon"><i class="fas fa-folder-open"></i></div>
             <h4>No Records Uploaded Yet</h4>
             <p>Upload photos, reports, or resolutions to keep your committee records organized.</p>
@@ -3053,6 +3064,15 @@ unset($__errorArgs, $__bag); ?></div>
 </div>
 
 
+<div id="photoLightbox" onclick="closePhotoLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;padding:24px">
+    <div onclick="event.stopPropagation()" style="position:relative;max-width:90vw;max-height:88vh;text-align:center">
+        <img id="lightboxImg" src="" alt="" style="max-width:90vw;max-height:78vh;border-radius:8px;box-shadow:0 4px 40px rgba(0,0,0,.6);object-fit:contain">
+        <div id="lightboxCaption" style="color:#fff;font-size:14px;font-weight:600;margin-top:10px;text-shadow:0 1px 4px rgba(0,0,0,.5)"></div>
+        <button onclick="closePhotoLightbox()" style="position:absolute;top:-14px;right:-14px;width:30px;height:30px;border-radius:50%;background:#fff;border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,.3)"><i class="fas fa-times"></i></button>
+    </div>
+</div>
+
+
 <div id="editRecordModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editRecordModal')">
 <div class="crud-modal">
     <div class="crud-modal-header">
@@ -3457,12 +3477,39 @@ function deleteGeneric(type, id, name) {
             .then(function(res) {
                 if (rowEl) rowEl.remove();
                 bmsToast(res.data.message || 'Deleted.', 'success');
+                if (type === 'records') checkRecordsEmpty();
             })
             .catch(function(err) {
                 var msg = err.response && err.response.data && err.response.data.message;
                 bmsToast(msg || 'Delete failed.', 'error');
             });
     });
+}
+
+// ── Records tab: show empty state when last record is deleted ──
+function checkRecordsEmpty() {
+    var photoSection = document.getElementById('recPhotoSection');
+    var docSection   = document.getElementById('recDocSection');
+    var photoCount   = photoSection ? photoSection.querySelectorAll('.photo-thumb').length : 0;
+    var docCount     = docSection   ? docSection.querySelectorAll('tbody tr').length       : 0;
+
+    if (photoSection && photoCount === 0) photoSection.style.display = 'none';
+    if (docSection   && docCount   === 0) docSection.style.display   = 'none';
+
+    if (photoCount === 0 && docCount === 0) {
+        var tab = document.getElementById('tab-records');
+        if (tab && !tab.querySelector('.empty-enhanced')) {
+            var div = document.createElement('div');
+            div.className = 'empty-enhanced';
+            div.innerHTML =
+                '<div class="empty-enhanced-icon"><i class="fas fa-folder-open"></i></div>' +
+                '<h4>No Records Uploaded Yet</h4>' +
+                '<p>Upload photos, reports, or resolutions to keep your committee records organized.</p>' +
+                '<button type="button" class="btn btn-primary btn-sm" onclick="toggleForm(\'form-records\', document.querySelector(\'[data-icon=fa-cloud-arrow-up]\'))">' +
+                '<i class="fas fa-cloud-arrow-up"></i> Upload First Record</button>';
+            tab.appendChild(div);
+        }
+    }
 }
 
 // ── CRUD: Specific delete ──
@@ -3649,27 +3696,34 @@ document.getElementById('editInventoryForm').addEventListener('submit', function
 
 // ── EDIT: Record (title / type / description) ──
 var _editRecId = null;
-function openEditRecord(tr) {
-    _editRecId = tr.dataset.id;
-    document.getElementById('eRec_title').value       = tr.dataset.title       || '';
-    document.getElementById('eRec_description').value = tr.dataset.description || '';
+function openEditRecord(el) {
+    _editRecId = el.dataset.id;
+    document.getElementById('eRec_title').value       = el.dataset.title       || '';
+    document.getElementById('eRec_description').value = el.dataset.description || '';
     var sel = document.getElementById('eRec_type');
     for (var i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].value === tr.dataset.rtype) { sel.selectedIndex = i; break; }
+        if (sel.options[i].value === el.dataset.rtype) { sel.selectedIndex = i; break; }
     }
     document.getElementById('editRecordModal').classList.add('open');
 }
 document.getElementById('editRecordForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/<?php echo e($committee['slug']); ?>/records/' + _editRecId, 'editRecordModal', function(rec) {
-        var row = document.querySelector('[data-id="' + _editRecId + '"]');
-        if (!row || row.tagName !== 'TR') return;
-        row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.title + '</span>';
-        row.cells[1].innerHTML = '<span class="badge badge-navy">' + rec.record_type + '</span>';
-        row.cells[2].textContent = rec.description || '—';
-        row.dataset.title       = rec.title;
-        row.dataset.rtype       = rec.record_type;
-        row.dataset.description = rec.description || '';
+        var el = document.querySelector('[data-id="' + _editRecId + '"]');
+        if (!el) return;
+        if (el.tagName === 'TR') {
+            // Documents table row — update cells
+            el.cells[0].innerHTML = '<span style="font-weight:600">' + rec.title + '</span>';
+            el.cells[1].innerHTML = '<span class="badge badge-navy">' + rec.record_type + '</span>';
+            el.cells[2].textContent = rec.description || '—';
+        } else {
+            // Photo thumb card — update label
+            var lbl = el.querySelector('.photo-thumb-label');
+            if (lbl) lbl.textContent = rec.title;
+        }
+        el.dataset.title       = rec.title;
+        el.dataset.rtype       = rec.record_type;
+        el.dataset.description = rec.description || '';
     });
 });
 
@@ -3794,6 +3848,22 @@ function openEditSpecific(type, tr) {
     });
     document.getElementById('editSpecificModal').classList.add('open');
 }
+
+// ── Photo lightbox ───────────────────────────────────────────
+function openPhotoLightbox(src, title) {
+    var lb = document.getElementById('photoLightbox');
+    document.getElementById('lightboxImg').src             = src;
+    document.getElementById('lightboxCaption').textContent = title;
+    lb.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closePhotoLightbox() {
+    document.getElementById('photoLightbox').style.display = 'none';
+    document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePhotoLightbox();
+});
 
 // Live search + filter for medicine table
 function filterMeds() {
