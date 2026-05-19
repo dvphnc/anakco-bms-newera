@@ -368,6 +368,24 @@ class CommitteeController extends Controller
     }
 
     // -------------------------------------------------------
+    // UPDATE — generic tabs
+    // -------------------------------------------------------
+    public function updateRecord(Request $request, string $slug, int $id)
+    {
+        $record = CommitteeRecord::where('committee_slug', $slug)->findOrFail($id);
+        $v = $request->validate([
+            'title'       => 'required|string|max:255',
+            'record_type' => 'required|string',
+            'description' => 'nullable|string|max:500',
+        ]);
+        $record->update($v);
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Record updated.', 'record' => $record->fresh()]);
+        }
+        return back()->with('success', 'Record updated.');
+    }
+
+    // -------------------------------------------------------
     // DELETE — generic tabs
     // -------------------------------------------------------
     public function destroyRecord(string $slug, int $id)
