@@ -174,6 +174,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Specific tab delete (single route, type-dispatched)
     Route::delete('committees/{slug}/specific/{type}/{id}', [CommitteeController::class, 'destroySpecificItem'])->name('committees.destroySpecificItem');
     // Generic tab updates
+    Route::patch('committees/{slug}/records/{id}',     [CommitteeController::class, 'updateRecord'])     ->name('committees.updateRecord');
     Route::patch('committees/{slug}/activities/{id}',  [CommitteeController::class, 'updateActivity'])   ->name('committees.updateActivity');
     Route::patch('committees/{slug}/attendance/{id}',  [CommitteeController::class, 'updateAttendance']) ->name('committees.updateAttendance');
     Route::patch('committees/{slug}/inventory/{id}',   [CommitteeController::class, 'updateInventory'])  ->name('committees.updateInventory');

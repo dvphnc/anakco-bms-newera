@@ -552,6 +552,7 @@ class CommitteeController extends Controller
             'toda'        => [TodaVehicle::class,        ['operator_name'=>'required|string|max:255','plate_number'=>'nullable|string|max:20','vehicle_type'=>'nullable|string|max:50','toda_association'=>'nullable|string|max:255','contact_number'=>'nullable|string|max:20','status'=>'nullable|string']],
             'emergency'   => [EmergencyLog::class,       ['incident_type'=>'required|string|max:255','incident_date'=>'required|date','location'=>'nullable|string|max:255','description'=>'nullable|string','casualties'=>'nullable|integer|min:0','response_action'=>'nullable|string','logged_by'=>'nullable|string|max:255']],
             'evacuation'  => [EvacuationCenter::class,   ['center_name'=>'required|string|max:255','location'=>'nullable|string|max:255','capacity'=>'nullable|integer|min:0','contact_person'=>'nullable|string|max:255','contact_number'=>'nullable|string|max:20','status'=>'nullable|string']],
+            'relief'      => [ReliefSupply::class,        ['item_name'=>'required|string|max:255','category'=>'required|in:Food,Non-food,Medicine,PPE,Equipment,Other','quantity'=>'required|integer|min:0','unit'=>'nullable|string|max:50','source'=>'nullable|string|max:255','date_received'=>'nullable|date','status'=>'required|in:Available,Distributed,Depleted','remarks'=>'nullable|string|max:500']],
         ];
         abort_unless(isset($map[$type]), 404);
         [$modelClass, $rules] = $map[$type];
