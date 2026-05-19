@@ -546,13 +546,16 @@ unset($__errorArgs, $__bag); ?>
         <div class="data-section-label"><i class="fas fa-images" style="color:var(--gold);margin-right:6px"></i> Photos (<?php echo e($photos->count()); ?>)</div>
         <div class="photo-grid">
             <?php $__currentLoopData = $photos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div class="photo-thumb">
+            <div class="photo-thumb" data-id="<?php echo e($photo->id); ?>">
                 <?php if($photo->file_path): ?>
                 <a href="<?php echo e(asset('storage/'.$photo->file_path)); ?>" target="_blank">
                     <img src="<?php echo e(asset('storage/'.$photo->file_path)); ?>" alt="<?php echo e($photo->title); ?>">
                 </a>
                 <?php endif; ?>
                 <div class="photo-thumb-label"><?php echo e($photo->title); ?></div>
+                <div style="padding:4px 6px;border-top:1px solid var(--border);display:flex;justify-content:flex-end">
+                    <button type="button" onclick="deleteGeneric('records','<?php echo e($photo->id); ?>','<?php echo e(addslashes($photo->title)); ?>')" class="btn btn-danger btn-sm btn-icon" title="Delete" style="padding:3px 7px;font-size:11px"><i class="fas fa-trash"></i></button>
+                </div>
             </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
@@ -565,7 +568,10 @@ unset($__errorArgs, $__bag); ?>
             <thead><tr><th>Title</th><th>Type</th><th>Description</th><th>Uploaded</th><th>File</th><th></th></tr></thead>
             <tbody>
                 <?php $__currentLoopData = $docRecords; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rec): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <tr data-rid="<?php echo e($rec->id); ?>">
+                <tr data-id="<?php echo e($rec->id); ?>"
+                    data-title="<?php echo e(addslashes($rec->title)); ?>"
+                    data-rtype="<?php echo e($rec->record_type); ?>"
+                    data-description="<?php echo e(addslashes($rec->description ?? '')); ?>">
                     <td style="font-weight:600"><?php echo e($rec->title); ?></td>
                     <td><span class="badge badge-navy"><?php echo e($rec->record_type); ?></span></td>
                     <td class="td-muted"><?php echo e($rec->description ?? '—'); ?></td>
@@ -577,7 +583,10 @@ unset($__errorArgs, $__bag); ?>
                         <?php endif; ?>
                     </td>
                     <td>
-                        <button type="button" onclick="deleteGeneric('records','<?php echo e($rec->id); ?>','<?php echo e(addslashes($rec->title)); ?>')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditRecord(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="deleteGeneric('records','<?php echo e($rec->id); ?>','<?php echo e(addslashes($rec->title)); ?>')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
                     </td>
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -2020,7 +2029,17 @@ unset($__errorArgs, $__bag); ?></div>
             <thead><tr><th>Item</th><th>Category</th><th style="text-align:right">Qty</th><th>Unit</th><th>Source</th><th>Date Received</th><th>Status</th><th>Remarks</th><th></th></tr></thead>
             <tbody>
                 <?php $__currentLoopData = $specificData['relief_supplies']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rs): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <tr data-rid="<?php echo e($rs->id); ?>">
+                <tr
+                    data-id="<?php echo e($rs->id); ?>"
+                    data-name="<?php echo e(addslashes($rs->item_name)); ?>"
+                    data-category="<?php echo e($rs->category); ?>"
+                    data-qty="<?php echo e($rs->quantity); ?>"
+                    data-unit="<?php echo e(addslashes($rs->unit ?? '')); ?>"
+                    data-source="<?php echo e(addslashes($rs->source ?? '')); ?>"
+                    data-date="<?php echo e($rs->date_received?->format('Y-m-d') ?? ''); ?>"
+                    data-status="<?php echo e($rs->status); ?>"
+                    data-remarks="<?php echo e(addslashes($rs->remarks ?? '')); ?>"
+                >
                     <td style="font-weight:600;color:var(--navy)"><?php echo e($rs->item_name); ?></td>
                     <td><span class="badge badge-navy"><?php echo e($rs->category); ?></span></td>
                     <td style="text-align:right;font-weight:700;color:var(--navy)"><?php echo e(number_format($rs->quantity)); ?></td>
@@ -2030,11 +2049,14 @@ unset($__errorArgs, $__bag); ?></div>
                     <td><span class="badge <?php echo e(match($rs->status) { 'Available'=>'badge-green','Distributed'=>'badge-yellow',default=>'badge-gray' }); ?>"><?php echo e($rs->status); ?></span></td>
                     <td class="td-muted"><?php echo e($rs->remarks ?? '—'); ?></td>
                     <td>
-                        <button type="button"
-                                onclick="deleteReliefSupply(<?php echo e($rs->id); ?>, '<?php echo e(addslashes($rs->item_name)); ?>', '<?php echo e($committee['slug']); ?>')"
-                                class="btn btn-danger btn-sm btn-icon" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button type="button" onclick="openEditSpecific('relief', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button"
+                                    onclick="deleteReliefSupply(<?php echo e($rs->id); ?>, '<?php echo e(addslashes($rs->item_name)); ?>', '<?php echo e($committee['slug']); ?>')"
+                                    class="btn btn-danger btn-sm btn-icon" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -3030,6 +3052,37 @@ unset($__errorArgs, $__bag); ?></div>
 </div>
 </div>
 
+
+<div id="editRecordModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editRecordModal')">
+<div class="crud-modal">
+    <div class="crud-modal-header">
+        <div class="crud-modal-title"><i class="fas fa-file-pen"></i> Edit Record</div>
+        <button class="crud-modal-close" onclick="closeCrudModal('editRecordModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="crud-modal-body">
+        <form id="editRecordForm">
+            <?php echo csrf_field(); ?>
+            <input type="hidden" name="_method" value="PATCH">
+            <div class="form-grid-3" style="gap:12px">
+                <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" id="eRec_title" class="form-control" required></div>
+                <div class="form-group"><label class="form-label">Type <span style="color:var(--crimson)">*</span></label>
+                    <select name="record_type" id="eRec_type" class="form-control" required>
+                        <?php $__currentLoopData = ['Photo','Video','Report','Resolution','Certificate','Partnership','Other']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($rt); ?>"><?php echo e($rt); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                </div>
+                <div class="form-group" style="grid-column:span 3"><label class="form-label">Description</label><input type="text" name="description" id="eRec_description" class="form-control" placeholder="Optional description"></div>
+            </div>
+        </div>
+        <div class="crud-modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closeCrudModal('editRecordModal')">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save Changes</button>
+        </div>
+        </form>
+</div>
+</div>
+
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('scripts'); ?>
@@ -3369,7 +3422,7 @@ function deletePartnership(id, name, slug) {
 
 // ── Relief supply delete ─────────────────────────────────────
 function deleteReliefSupply(id, name, slug) {
-    var rowEl = document.querySelector('tr[data-rid="' + id + '"]');
+    var rowEl = document.querySelector('tr[data-id="' + id + '"]');
     bmsConfirm({
         title:   'Delete Relief Supply',
         message: 'Delete ' + name + ' from the relief inventory? This cannot be undone.',
@@ -3594,6 +3647,32 @@ document.getElementById('editInventoryForm').addEventListener('submit', function
     });
 });
 
+// ── EDIT: Record (title / type / description) ──
+var _editRecId = null;
+function openEditRecord(tr) {
+    _editRecId = tr.dataset.id;
+    document.getElementById('eRec_title').value       = tr.dataset.title       || '';
+    document.getElementById('eRec_description').value = tr.dataset.description || '';
+    var sel = document.getElementById('eRec_type');
+    for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === tr.dataset.rtype) { sel.selectedIndex = i; break; }
+    }
+    document.getElementById('editRecordModal').classList.add('open');
+}
+document.getElementById('editRecordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    axiosPatch(this, '/committees/<?php echo e($committee['slug']); ?>/records/' + _editRecId, 'editRecordModal', function(rec) {
+        var row = document.querySelector('[data-id="' + _editRecId + '"]');
+        if (!row || row.tagName !== 'TR') return;
+        row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.title + '</span>';
+        row.cells[1].innerHTML = '<span class="badge badge-navy">' + rec.record_type + '</span>';
+        row.cells[2].textContent = rec.description || '—';
+        row.dataset.title       = rec.title;
+        row.dataset.rtype       = rec.record_type;
+        row.dataset.description = rec.description || '';
+    });
+});
+
 // ── EDIT: Partnership ──
 var _editPartId = null;
 function openEditPartnership(tr) {
@@ -3643,6 +3722,7 @@ var _specConfig = {
     toda:        { icon:'fa-bus',              title:'Edit TODA Vehicle',        fields:[['operator_name','Operator Name','text',true],['plate_number','Plate No.','text',false],['vehicle_type','Vehicle Type','text',false],['toda_association','TODA Association','text',false],['contact_number','Contact','text',false],['status','Status','select',false,['Active','Inactive','Suspended']]] },
     emergency:   { icon:'fa-exclamation-triangle',title:'Edit Emergency Log',    fields:[['incident_type','Incident Type','text',true],['incident_date','Date','date',true],['location','Location','text',false],['description','Description','text',false],['casualties','Casualties','number',false],['response_action','Response Action','text',false],['logged_by','Logged By','text',false]] },
     evacuation:  { icon:'fa-house-chimney-medical',title:'Edit Evacuation Center',fields:[['center_name','Center Name','text',true],['location','Location','text',false],['capacity','Capacity','number',false],['contact_person','Contact Person','text',false],['contact_number','Contact Number','text',false],['status','Status','select',false,['Active','Inactive','Under Renovation']]] },
+    relief:      { icon:'fa-boxes-stacked',        title:'Edit Relief Supply',       fields:[['item_name','Item Name','text',true],['category','Category','select',true,['Food','Non-food','Medicine','PPE','Equipment','Other']],['quantity','Quantity','number',true],['unit','Unit','text',false],['source','Source / Donor','text',false],['date_received','Date Received','date',false],['status','Status','select',true,['Available','Distributed','Depleted']],['remarks','Remarks','text',false]] },
 };
 
 // data-attr key map per type (maps field_name to dataset key)
@@ -3662,6 +3742,7 @@ var _specDataMap = {
     toda:        {operator_name:'operator',plate_number:'plate',vehicle_type:'vtype',toda_association:'assoc',contact_number:'contact',status:'status'},
     emergency:   {incident_type:'itype',incident_date:'date',location:'location',description:'desc',casualties:'casualties',response_action:'response',logged_by:'by'},
     evacuation:  {center_name:'name',location:'location',capacity:'capacity',contact_person:'contact',contact_number:'phone',status:'status'},
+    relief:      {item_name:'name',category:'category',quantity:'qty',unit:'unit',source:'source',date_received:'date',status:'status',remarks:'remarks'},
 };
 
 function openEditSpecific(type, tr) {
