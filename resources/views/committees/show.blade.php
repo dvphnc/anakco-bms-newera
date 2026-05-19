@@ -2738,6 +2738,15 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 </div>
 </div>
 
+{{-- ── PHOTO LIGHTBOX ── --}}
+<div id="photoLightbox" onclick="closePhotoLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;padding:24px">
+    <div onclick="event.stopPropagation()" style="position:relative;max-width:90vw;max-height:88vh;text-align:center">
+        <img id="lightboxImg" src="" alt="" style="max-width:90vw;max-height:78vh;border-radius:8px;box-shadow:0 4px 40px rgba(0,0,0,.6);object-fit:contain">
+        <div id="lightboxCaption" style="color:#fff;font-size:14px;font-weight:600;margin-top:10px;text-shadow:0 1px 4px rgba(0,0,0,.5)"></div>
+        <button onclick="closePhotoLightbox()" style="position:absolute;top:-14px;right:-14px;width:30px;height:30px;border-radius:50%;background:#fff;border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,.3)"><i class="fas fa-times"></i></button>
+    </div>
+</div>
+
 {{-- ── EDIT MODAL: Record (title / type / description) ── --}}
 <div id="editRecordModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editRecordModal')">
 <div class="crud-modal">
@@ -3335,27 +3344,34 @@ document.getElementById('editInventoryForm').addEventListener('submit', function
 
 // ── EDIT: Record (title / type / description) ──
 var _editRecId = null;
-function openEditRecord(tr) {
-    _editRecId = tr.dataset.id;
-    document.getElementById('eRec_title').value       = tr.dataset.title       || '';
-    document.getElementById('eRec_description').value = tr.dataset.description || '';
+function openEditRecord(el) {
+    _editRecId = el.dataset.id;
+    document.getElementById('eRec_title').value       = el.dataset.title       || '';
+    document.getElementById('eRec_description').value = el.dataset.description || '';
     var sel = document.getElementById('eRec_type');
     for (var i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].value === tr.dataset.rtype) { sel.selectedIndex = i; break; }
+        if (sel.options[i].value === el.dataset.rtype) { sel.selectedIndex = i; break; }
     }
     document.getElementById('editRecordModal').classList.add('open');
 }
 document.getElementById('editRecordForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/{{ $committee['slug'] }}/records/' + _editRecId, 'editRecordModal', function(rec) {
-        var row = document.querySelector('[data-id="' + _editRecId + '"]');
-        if (!row || row.tagName !== 'TR') return;
-        row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.title + '</span>';
-        row.cells[1].innerHTML = '<span class="badge badge-navy">' + rec.record_type + '</span>';
-        row.cells[2].textContent = rec.description || '—';
-        row.dataset.title       = rec.title;
-        row.dataset.rtype       = rec.record_type;
-        row.dataset.description = rec.description || '';
+        var el = document.querySelector('[data-id="' + _editRecId + '"]');
+        if (!el) return;
+        if (el.tagName === 'TR') {
+            // Documents table row — update cells
+            el.cells[0].innerHTML = '<span style="font-weight:600">' + rec.title + '</span>';
+            el.cells[1].innerHTML = '<span class="badge badge-navy">' + rec.record_type + '</span>';
+            el.cells[2].textContent = rec.description || '—';
+        } else {
+            // Photo thumb card — update label
+            var lbl = el.querySelector('.photo-thumb-label');
+            if (lbl) lbl.textContent = rec.title;
+        }
+        el.dataset.title       = rec.title;
+        el.dataset.rtype       = rec.record_type;
+        el.dataset.description = rec.description || '';
     });
 });
 
