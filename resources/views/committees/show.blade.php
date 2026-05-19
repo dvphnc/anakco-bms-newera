@@ -529,26 +529,36 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </div>
 
         @if($photos->count())
+        <div id="recPhotoSection">
         <div class="data-section-label"><i class="fas fa-images" style="color:var(--gold);margin-right:6px"></i> Photos ({{ $photos->count() }})</div>
         <div class="photo-grid">
             @foreach($photos as $photo)
-            <div class="photo-thumb" data-id="{{ $photo->id }}">
+            <div class="photo-thumb"
+                 data-id="{{ $photo->id }}"
+                 data-title="{{ addslashes($photo->title) }}"
+                 data-rtype="Photo"
+                 data-description="{{ addslashes($photo->description ?? '') }}">
                 @if($photo->file_path)
-                <a href="{{ asset('storage/'.$photo->file_path) }}" target="_blank">
+                <div onclick="openPhotoLightbox('{{ asset('storage/'.$photo->file_path) }}','{{ addslashes($photo->title) }}')" style="cursor:zoom-in;line-height:0">
                     <img src="{{ asset('storage/'.$photo->file_path) }}" alt="{{ $photo->title }}">
-                </a>
+                </div>
+                @else
+                <div style="height:90px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-muted)"><i class="fas fa-image fa-2x"></i></div>
                 @endif
                 <div class="photo-thumb-label">{{ $photo->title }}</div>
-                <div style="padding:4px 6px;border-top:1px solid var(--border);display:flex;justify-content:flex-end">
+                <div style="padding:4px 6px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:4px">
+                    <button type="button" onclick="openEditRecord(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit" style="padding:3px 7px;font-size:11px"><i class="fas fa-pen"></i></button>
                     <button type="button" onclick="deleteGeneric('records','{{ $photo->id }}','{{ addslashes($photo->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete" style="padding:3px 7px;font-size:11px"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
             @endforeach
         </div>
+        </div>{{-- #recPhotoSection --}}
         @endif
 
         @php $docRecords = $reports->concat($resolutions)->concat($otherRecords)->sortByDesc('created_at'); @endphp
         @if($docRecords->count())
+        <div id="recDocSection">
         <div class="data-section-label" style="border-top:1px solid var(--border)"><i class="fas fa-file-alt" style="color:var(--gold);margin-right:6px"></i> Documents ({{ $docRecords->count() }})</div>
         <table>
             <thead><tr><th>Title</th><th>Type</th><th>Description</th><th>Uploaded</th><th>File</th><th></th></tr></thead>
@@ -570,7 +580,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     </td>
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
-                            <button type="button" onclick="openEditRecord(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button type="button" onclick="openEditRecord(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
                             <button type="button" onclick="deleteGeneric('records','{{ $rec->id }}','{{ addslashes($rec->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
                         </div>
                     </td>
@@ -578,10 +588,11 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 @endforeach
             </tbody>
         </table>
+        </div>{{-- #recDocSection --}}
         @endif
 
         @if($photos->count() === 0 && $docRecords->count() === 0)
-        <div class="empty-enhanced">
+        <div class="empty-enhanced" id="recEmptyState">
             <div class="empty-enhanced-icon"><i class="fas fa-folder-open"></i></div>
             <h4>No Records Uploaded Yet</h4>
             <p>Upload photos, reports, or resolutions to keep your committee records organized.</p>
