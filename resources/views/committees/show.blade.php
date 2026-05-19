@@ -3152,12 +3152,39 @@ function deleteGeneric(type, id, name) {
             .then(function(res) {
                 if (rowEl) rowEl.remove();
                 bmsToast(res.data.message || 'Deleted.', 'success');
+                if (type === 'records') checkRecordsEmpty();
             })
             .catch(function(err) {
                 var msg = err.response && err.response.data && err.response.data.message;
                 bmsToast(msg || 'Delete failed.', 'error');
             });
     });
+}
+
+// ── Records tab: show empty state when last record is deleted ──
+function checkRecordsEmpty() {
+    var photoSection = document.getElementById('recPhotoSection');
+    var docSection   = document.getElementById('recDocSection');
+    var photoCount   = photoSection ? photoSection.querySelectorAll('.photo-thumb').length : 0;
+    var docCount     = docSection   ? docSection.querySelectorAll('tbody tr').length       : 0;
+
+    if (photoSection && photoCount === 0) photoSection.style.display = 'none';
+    if (docSection   && docCount   === 0) docSection.style.display   = 'none';
+
+    if (photoCount === 0 && docCount === 0) {
+        var tab = document.getElementById('tab-records');
+        if (tab && !tab.querySelector('.empty-enhanced')) {
+            var div = document.createElement('div');
+            div.className = 'empty-enhanced';
+            div.innerHTML =
+                '<div class="empty-enhanced-icon"><i class="fas fa-folder-open"></i></div>' +
+                '<h4>No Records Uploaded Yet</h4>' +
+                '<p>Upload photos, reports, or resolutions to keep your committee records organized.</p>' +
+                '<button type="button" class="btn btn-primary btn-sm" onclick="toggleForm(\'form-records\', document.querySelector(\'[data-icon=fa-cloud-arrow-up]\'))">' +
+                '<i class="fas fa-cloud-arrow-up"></i> Upload First Record</button>';
+            tab.appendChild(div);
+        }
+    }
 }
 
 // ── CRUD: Specific delete ──
@@ -3496,6 +3523,22 @@ function openEditSpecific(type, tr) {
     });
     document.getElementById('editSpecificModal').classList.add('open');
 }
+
+// ── Photo lightbox ───────────────────────────────────────────
+function openPhotoLightbox(src, title) {
+    var lb = document.getElementById('photoLightbox');
+    document.getElementById('lightboxImg').src             = src;
+    document.getElementById('lightboxCaption').textContent = title;
+    lb.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closePhotoLightbox() {
+    document.getElementById('photoLightbox').style.display = 'none';
+    document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePhotoLightbox();
+});
 
 // Live search + filter for medicine table
 function filterMeds() {
