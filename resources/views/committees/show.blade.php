@@ -2727,6 +2727,37 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 </div>
 </div>
 
+{{-- ── EDIT MODAL: Record (title / type / description) ── --}}
+<div id="editRecordModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editRecordModal')">
+<div class="crud-modal">
+    <div class="crud-modal-header">
+        <div class="crud-modal-title"><i class="fas fa-file-pen"></i> Edit Record</div>
+        <button class="crud-modal-close" onclick="closeCrudModal('editRecordModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="crud-modal-body">
+        <form id="editRecordForm">
+            @csrf
+            <input type="hidden" name="_method" value="PATCH">
+            <div class="form-grid-3" style="gap:12px">
+                <div class="form-group" style="grid-column:span 2"><label class="form-label">Title <span style="color:var(--crimson)">*</span></label><input type="text" name="title" id="eRec_title" class="form-control" required></div>
+                <div class="form-group"><label class="form-label">Type <span style="color:var(--crimson)">*</span></label>
+                    <select name="record_type" id="eRec_type" class="form-control" required>
+                        @foreach(['Photo','Video','Report','Resolution','Certificate','Partnership','Other'] as $rt)
+                            <option value="{{ $rt }}">{{ $rt }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group" style="grid-column:span 3"><label class="form-label">Description</label><input type="text" name="description" id="eRec_description" class="form-control" placeholder="Optional description"></div>
+            </div>
+        </div>
+        <div class="crud-modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closeCrudModal('editRecordModal')">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save Changes</button>
+        </div>
+        </form>
+</div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -3340,6 +3371,7 @@ var _specConfig = {
     toda:        { icon:'fa-bus',              title:'Edit TODA Vehicle',        fields:[['operator_name','Operator Name','text',true],['plate_number','Plate No.','text',false],['vehicle_type','Vehicle Type','text',false],['toda_association','TODA Association','text',false],['contact_number','Contact','text',false],['status','Status','select',false,['Active','Inactive','Suspended']]] },
     emergency:   { icon:'fa-exclamation-triangle',title:'Edit Emergency Log',    fields:[['incident_type','Incident Type','text',true],['incident_date','Date','date',true],['location','Location','text',false],['description','Description','text',false],['casualties','Casualties','number',false],['response_action','Response Action','text',false],['logged_by','Logged By','text',false]] },
     evacuation:  { icon:'fa-house-chimney-medical',title:'Edit Evacuation Center',fields:[['center_name','Center Name','text',true],['location','Location','text',false],['capacity','Capacity','number',false],['contact_person','Contact Person','text',false],['contact_number','Contact Number','text',false],['status','Status','select',false,['Active','Inactive','Under Renovation']]] },
+    relief:      { icon:'fa-boxes-stacked',        title:'Edit Relief Supply',       fields:[['item_name','Item Name','text',true],['category','Category','select',true,['Food','Non-food','Medicine','PPE','Equipment','Other']],['quantity','Quantity','number',true],['unit','Unit','text',false],['source','Source / Donor','text',false],['date_received','Date Received','date',false],['status','Status','select',true,['Available','Distributed','Depleted']],['remarks','Remarks','text',false]] },
 };
 
 // data-attr key map per type (maps field_name to dataset key)
@@ -3359,6 +3391,7 @@ var _specDataMap = {
     toda:        {operator_name:'operator',plate_number:'plate',vehicle_type:'vtype',toda_association:'assoc',contact_number:'contact',status:'status'},
     emergency:   {incident_type:'itype',incident_date:'date',location:'location',description:'desc',casualties:'casualties',response_action:'response',logged_by:'by'},
     evacuation:  {center_name:'name',location:'location',capacity:'capacity',contact_person:'contact',contact_number:'phone',status:'status'},
+    relief:      {item_name:'name',category:'category',quantity:'qty',unit:'unit',source:'source',date_received:'date',status:'status',remarks:'remarks'},
 };
 
 function openEditSpecific(type, tr) {
