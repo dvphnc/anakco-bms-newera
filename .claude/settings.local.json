@@ -46,7 +46,8 @@
       "Bash(php -l routes/web.php)",
       "PowerShell($response = Invoke-WebRequest -Uri \"http://anakco_bms.test/\" -UseBasicParsing -MaximumRedirection 0 -ErrorAction SilentlyContinue; \"Status: $\\($response.StatusCode\\)\")",
       "Bash(del \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\app\\\\Http\\\\Controllers\\\\PortalBlotterController.php\")",
-      "Bash(del \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\app\\\\Http\\\\Controllers\\\\PortalBusinessController.php\")"
+      "Bash(del \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\app\\\\Http\\\\Controllers\\\\PortalBusinessController.php\")",
+      "Bash(rm \"D:/laragon/www/anakco_bms/app/Http/Controllers/PortalBlotterController.php\" \"D:/laragon/www/anakco_bms/app/Http/Controllers/PortalBusinessController.php\" && echo \"Deleted\")"
     ]
   }
 }
