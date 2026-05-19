@@ -691,7 +691,16 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         @if($accomplishments->count())
         <div class="acc-list" style="--committee-color:{{ $committee['color'] }}">
             @foreach($accomplishments as $acc)
-            <div class="acc-card">
+            <div class="acc-card"
+                data-id="{{ $acc->id }}"
+                data-title="{{ addslashes($acc->title) }}"
+                data-date="{{ $acc->activity_date->format('Y-m-d') }}"
+                data-location="{{ addslashes($acc->location ?? '') }}"
+                data-participants="{{ $acc->participants_count ?? 0 }}"
+                data-status="{{ $acc->status }}"
+                data-description="{{ addslashes($acc->description ?? '') }}"
+                data-type="Accomplishment"
+            >
                 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
                     <div style="flex:1;min-width:0">
                         <div class="acc-card-title">{{ $acc->title }}</div>
@@ -702,7 +711,11 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                             @if($acc->participants_count)<span><i class="fas fa-users" style="margin-right:4px"></i>{{ number_format($acc->participants_count) }} beneficiaries</span>@endif
                         </div>
                     </div>
-                    <span class="badge {{ match($acc->status) { 'Completed'=>'badge-green','Ongoing'=>'badge-yellow','Cancelled'=>'badge-red',default=>'badge-gray' } }}">{{ $acc->status }}</span>
+                    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+                        <span class="badge {{ match($acc->status) { 'Completed'=>'badge-green','Ongoing'=>'badge-yellow','Cancelled'=>'badge-red',default=>'badge-gray' } }}">{{ $acc->status }}</span>
+                        <button type="button" onclick="openEditActivity(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                        <button type="button" onclick="deleteGeneric('activities','{{ $acc->id }}','{{ addslashes($acc->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
                 </div>
             </div>
             @endforeach
@@ -3152,21 +3165,41 @@ document.getElementById('editActivityForm').addEventListener('submit', function(
     var url = '/committees/' + _editActSlug + '/activities/' + _editActId;
     axiosPatch(this, url, 'editActivityModal', function(rec) {
         var row = document.querySelector('[data-id="' + _editActId + '"]');
-        if (row) {
+        if (!row) return;
+        var d = rec.activity_date ? rec.activity_date.substring(0,10) : '';
+        var fmtDate = d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'}) : '—';
+        var statusMap = {Completed:'badge-green',Ongoing:'badge-yellow',Cancelled:'badge-red'};
+        var badgeCls  = statusMap[rec.status] || 'badge-gray';
+
+        if (row.tagName === 'TR') {
+            // Table row (Activities tab)
             row.cells[0].innerHTML = '<div style="font-weight:600">' + rec.title + '</div>' + (rec.description ? '<div class="td-muted">' + rec.description + '</div>' : '');
-            var d = rec.activity_date ? rec.activity_date.substring(0,10) : '';
-            if (d) row.cells[1].textContent = new Date(d + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
+            if (d) row.cells[1].textContent = fmtDate;
             row.cells[2].textContent = rec.location || '—';
             row.cells[3].textContent = rec.participants_count != null ? Number(rec.participants_count).toLocaleString() : '—';
-            var statusMap = {Completed:'badge-green',Ongoing:'badge-yellow',Cancelled:'badge-red'};
-            row.cells[4].innerHTML = '<span class="badge ' + (statusMap[rec.status] || 'badge-gray') + '">' + rec.status + '</span>';
-            row.dataset.title        = rec.title;
-            row.dataset.date         = d;
-            row.dataset.location     = rec.location || '';
-            row.dataset.participants = rec.participants_count || '0';
-            row.dataset.status       = rec.status;
-            row.dataset.description  = rec.description || '';
+            row.cells[4].innerHTML   = '<span class="badge ' + badgeCls + '">' + rec.status + '</span>';
+        } else {
+            // Accomplishment card (div)
+            var titleEl = row.querySelector('.acc-card-title');
+            if (titleEl) titleEl.textContent = rec.title;
+            var descEl  = row.querySelector('.td-muted');
+            if (rec.description) {
+                if (descEl) { descEl.textContent = rec.description; }
+                else { titleEl && titleEl.insertAdjacentHTML('afterend', '<div class="td-muted" style="font-size:14px;margin-bottom:4px">' + rec.description + '</div>'); }
+            } else if (descEl) { descEl.remove(); }
+            var metaSpans = row.querySelectorAll('.acc-card-meta span');
+            if (metaSpans[0]) metaSpans[0].innerHTML = '<i class="fas fa-calendar-alt" style="margin-right:4px"></i>' + fmtDate;
+            var badge = row.querySelector('.badge');
+            if (badge) { badge.className = 'badge ' + badgeCls; badge.textContent = rec.status; }
         }
+
+        // Update data attributes on the element for future edits
+        row.dataset.title        = rec.title;
+        row.dataset.date         = d;
+        row.dataset.location     = rec.location || '';
+        row.dataset.participants = rec.participants_count || '0';
+        row.dataset.status       = rec.status;
+        row.dataset.description  = rec.description || '';
     });
 });
 
