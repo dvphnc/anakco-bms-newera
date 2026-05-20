@@ -202,6 +202,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('appointments.index')->middleware('role:Admin,Secretary');
     Route::patch('appointments/{appointment}/status', [AppointmentController::class, 'updateStatus'])
         ->name('appointments.updateStatus')->middleware('role:Admin,Secretary');
+    Route::post('appointments/{appointment}/convert', [AppointmentController::class, 'convertToDocument'])
+        ->name('appointments.convert')->middleware('role:Admin,Secretary');
     Route::delete('appointments/{appointment}', [AppointmentController::class, 'destroy'])
         ->name('appointments.destroy')->middleware('role:Admin,Secretary');
 
