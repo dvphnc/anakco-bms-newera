@@ -55,9 +55,8 @@ class AppointmentController extends Controller
                     $deleteUrl  = route('appointments.destroy', $a);
                     $convertUrl = route('appointments.convert', $a);
 
-                    // View Document button — shown for Ready/Released appointments
-                    // If already converted: links directly to the document record
-                    // If not yet converted: opens the Issue modal to create it first
+                    // Green "View Document" — Ready/Released but not yet issued (opens Issue modal)
+                    // Grey  "View Document" — already issued (links directly to the document)
                     $viewBtn = '';
                     if ($a->document) {
                         $viewUrl = route('documents.show', $a->document);
@@ -69,7 +68,7 @@ class AppointmentController extends Controller
                                     </a>';
                     } elseif (in_array($a->status, ['Ready', 'Released'])) {
                         $viewBtn = '
-                            <button class="btn btn-secondary btn-sm apt-convert-btn"
+                            <button class="btn btn-success btn-sm apt-convert-btn"
                                     style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
                                     title="View Document"
                                     data-id="'.e($a->id).'"
