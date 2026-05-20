@@ -46,8 +46,11 @@ class FakeDataSeeder extends Seeder
         $this->command->info('🌱 Seeding demo data for Barangay New Era (pop. 14,987)...');
         $this->command->newLine();
 
-        // Step 0 — Make sure puroks exist first
-        $this->call([PurokSeeder::class]);
+        // Step 0 — Make sure puroks & real officials exist first
+        $this->call([
+            PurokSeeder::class,
+            OfficialSeeder::class,
+        ]);
 
         // ── Step 1: Households ───────────────────────────────────────────
         $this->command->info(sprintf('Creating %s households (≈ pop ÷ 4.4 avg household size)…', number_format(self::HOUSEHOLDS)));
