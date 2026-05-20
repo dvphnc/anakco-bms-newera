@@ -306,9 +306,6 @@
 .btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
 .btn-success:disabled { opacity:.65; cursor:not-allowed; }
 
-/* ── View Document hover — same navy highlight as Update Status ── */
-.apt-viewdoc-btn { transition:background .15s, color .15s, border-color .15s, box-shadow .15s; }
-.apt-viewdoc-btn:hover { background:var(--navy) !important; color:#fff !important; border-color:var(--navy) !important; box-shadow:0 4px 12px rgba(13,33,68,0.2); }
 
 /* ── Filter Select2 — match residents blade ───────────────────── */
 #filterPanel .select2-container { width: 100% !important; }
@@ -367,6 +364,13 @@ $(document).ready(function () {
         ],
         order: [[3, 'asc']],
         pageLength: 15,
+        drawCallback: function () {
+            if (typeof tippy !== 'undefined') {
+                tippy('#appointmentsTable [data-tippy-content]', {
+                    theme: 'bms', placement: 'top', arrow: true, animation: 'shift-away', duration: [150, 100]
+                });
+            }
+        },
         language: {
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
             emptyTable:  '<div class="empty-state"><i class="fas fa-calendar-check"></i><p>No appointments found.</p></div>',
