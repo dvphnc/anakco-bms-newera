@@ -3298,9 +3298,10 @@ function axiosPatch(form, url, modalId, rowUpdater) {
 }
 
 // ── EDIT: Activity ──
-var _editActId = null, _editActSlug = '{{ $committee['slug'] }}';
+var _editActId = null, _editActEl = null, _editActSlug = '{{ $committee['slug'] }}';
 function openEditActivity(tr) {
     _editActId = tr.dataset.id;
+    _editActEl = tr;
     var isAcc = tr.dataset.type === 'Accomplishment';
     document.getElementById('editActivityModalTitle').textContent = isAcc ? 'Edit Accomplishment' : 'Edit Activity';
     document.getElementById('eAct_title').value        = tr.dataset.title        || '';
@@ -3315,7 +3316,7 @@ document.getElementById('editActivityForm').addEventListener('submit', function(
     e.preventDefault();
     var url = '/committees/' + _editActSlug + '/activities/' + _editActId;
     axiosPatch(this, url, 'editActivityModal', function(rec) {
-        var row = document.querySelector('[data-id="' + _editActId + '"]');
+        var row = _editActEl;
         if (!row) return;
         var d = rec.activity_date ? rec.activity_date.substring(0,10) : '';
         var fmtDate = d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'}) : '—';
@@ -3636,3 +3637,4 @@ function filterMeds() {
 }
 </script>
 @endpush
+                                              
