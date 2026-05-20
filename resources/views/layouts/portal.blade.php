@@ -872,47 +872,53 @@
 <footer class="portal-footer" role="contentinfo">
     <div class="portal-footer-body">
 
-        {{-- Brand + Republika seal --}}
+        {{-- Column 1: Big Republika seal + brand text (eGov PH style) --}}
         <div class="pf-brand">
-            <div class="pf-brand-top">
-                <div class="pf-seal">@include('partials._portal_seal')</div>
-                <div>
-                    <div class="pf-name">Barangay New Era</div>
-                    <div class="pf-sub">District VI, Quezon City</div>
-                </div>
-            </div>
-            <p class="pf-desc">Official digital services portal of Barangay New Era. Request documents and track your appointment status online — free, secure, and available 24/7.</p>
-            {{-- Republika ng Pilipinas seal — eGov PH style --}}
-            <div class="pf-republika">
-                <img src="{{ asset('images/republika-seal.png') }}"
-                     alt="Republika ng Pilipinas"
-                     class="pf-republika-seal">
-                <span class="pf-republika-text">Republika ng Pilipinas<br>Official Government Portal</span>
+            <img src="{{ asset('images/republika-seal.png') }}"
+                 alt="Republika ng Pilipinas"
+                 class="pf-big-seal">
+            <div class="pf-brand-text">
+                <div class="pf-name">Barangay New Era</div>
+                <p class="pf-tagline">The official digital services portal of Barangay New Era for citizen services.</p>
+                <div class="pf-sub">District VI, Quezon City<br>Metro Manila, Philippines</div>
             </div>
         </div>
 
-        {{-- Services --}}
+        {{-- Column 2: Services --}}
         <div class="pf-col">
             <h5>Services</h5>
             <ul>
-                <li><a href="{{ route('portal.request') }}?type=Barangay+Clearance"><i class="fas fa-chevron-right"></i> Barangay Clearance</a></li>
-                <li><a href="{{ route('portal.request') }}?type=Certificate+of+Indigency"><i class="fas fa-chevron-right"></i> Cert. of Indigency</a></li>
-                <li><a href="{{ route('portal.request') }}?type=Certificate+of+Residency"><i class="fas fa-chevron-right"></i> Cert. of Residency</a></li>
-                <li><a href="{{ route('portal.request') }}?type=Business+Clearance"><i class="fas fa-chevron-right"></i> Business Clearance</a></li>
-                <li><a href="{{ route('portal.blotter') }}"><i class="fas fa-chevron-right"></i> File Blotter Report</a></li>
-                <li><a href="{{ route('portal.business') }}"><i class="fas fa-chevron-right"></i> Business Permit</a></li>
+                <li><a href="{{ route('portal.request') }}?type=Barangay+Clearance">Barangay Clearance</a></li>
+                <li><a href="{{ route('portal.request') }}?type=Certificate+of+Indigency">Cert. of Indigency</a></li>
+                <li><a href="{{ route('portal.request') }}?type=Certificate+of+Residency">Cert. of Residency</a></li>
+                <li><a href="{{ route('portal.request') }}?type=Business+Clearance">Business Clearance</a></li>
+                <li><a href="{{ route('portal.blotter') }}">File Blotter Report</a></li>
+                <li><a href="{{ route('portal.business') }}">Business Permit</a></li>
             </ul>
         </div>
 
-        {{-- Quick Links --}}
+        {{-- Column 3: Quick Links --}}
         <div class="pf-col">
             <h5>Quick Links</h5>
             <ul>
-                <li><a href="{{ route('portal.index') }}"><i class="fas fa-chevron-right"></i> Home</a></li>
-                <li><a href="{{ route('portal.track') }}"><i class="fas fa-chevron-right"></i> Track My Request</a></li>
-                <li><a href="{{ route('portal.about') }}"><i class="fas fa-chevron-right"></i> About Us</a></li>
-                <li><a href="{{ route('portal.index') }}#faq"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                <li><a href="{{ route('portal.index') }}">Home</a></li>
+                <li><a href="{{ route('portal.track') }}">Track My Request</a></li>
+                <li><a href="{{ route('portal.about') }}">About Us</a></li>
+                <li><a href="{{ route('portal.index') }}#faq">FAQs</a></li>
+                <li><a href="#">Privacy Policy</a></li>
             </ul>
+        </div>
+
+        {{-- Column 4: Developed By --}}
+        <div class="pf-col">
+            <h5>Developed By</h5>
+            <a href="#" class="pf-devby-badge">
+                <div class="pf-devby-icon">A</div>
+                <div>
+                    <span class="pf-devby-name">AnakCo</span>
+                    <span class="pf-devby-sub">System Developer</span>
+                </div>
+            </a>
         </div>
 
     </div>
