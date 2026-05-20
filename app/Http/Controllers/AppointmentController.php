@@ -55,31 +55,31 @@ class AppointmentController extends Controller
                     $deleteUrl  = route('appointments.destroy', $a);
                     $convertUrl = route('appointments.convert', $a);
 
-                    // Issue Document button — only when Ready/Released and not yet converted
-                    $issueBtn = '';
-                    if (in_array($a->status, ['Ready', 'Released']) && ! $a->document) {
-                        $issueBtn = '
-                            <button class="btn btn-success btn-sm btn-icon apt-convert-btn"
-                                    title="Issue Document"
+                    // View Document button — shown for Ready/Released appointments
+                    // If already converted: links directly to the document record
+                    // If not yet converted: opens the Issue modal to create it first
+                    $viewBtn = '';
+                    if ($a->document) {
+                        $viewUrl = route('documents.show', $a->document);
+                        $viewBtn = '<a href="'.$viewUrl.'" target="_blank"
+                                      class="btn btn-secondary btn-sm"
+                                      style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
+                                      title="View Document: '.e($a->document->doc_number).'">
+                                        <i class="fas fa-file-lines"></i> View Document
+                                    </a>';
+                    } elseif (in_array($a->status, ['Ready', 'Released'])) {
+                        $viewBtn = '
+                            <button class="btn btn-secondary btn-sm apt-convert-btn"
+                                    style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
+                                    title="View Document"
                                     data-id="'.e($a->id).'"
                                     data-num="'.e($a->appointment_number).'"
                                     data-name="'.e($a->resident_name).'"
                                     data-type="'.e($a->document_type).'"
                                     data-purpose="'.e($a->purpose ?? '').'"
                                     data-url="'.$convertUrl.'">
-                                <i class="fas fa-file-circle-check"></i>
+                                <i class="fas fa-file-lines"></i> View Document
                             </button>';
-                    }
-
-                    // View Document link — once converted
-                    $viewBtn = '';
-                    if ($a->document) {
-                        $viewUrl = route('documents.show', $a->document);
-                        $viewBtn = '<a href="'.$viewUrl.'" target="_blank"
-                                      class="btn btn-secondary btn-sm btn-icon"
-                                      title="View Document: '.e($a->document->doc_number).'">
-                                        <i class="fas fa-file-lines"></i>
-                                    </a>';
                     }
 
                     return '
