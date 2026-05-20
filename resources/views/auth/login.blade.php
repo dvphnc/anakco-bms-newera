@@ -139,8 +139,8 @@
             100% { transform:rotateY(360deg); }    /* brief pause    */
         }
 
-        .coin-front,
-        .coin-back {
+        /* Front face — circular seal frame (BNE logo) */
+        .coin-front {
             position:absolute; inset:0;
             backface-visibility:hidden;
             -webkit-backface-visibility:hidden;
@@ -153,12 +153,26 @@
             overflow:hidden;
         }
 
-        .coin-back { transform:rotateY(180deg); }
-
-        .coin-front img,
-        .coin-back img {
+        .coin-front img {
             width:100%; height:100%;
             object-fit:cover; display:block;
+        }
+
+        /* Back face — no circle clip; QC seal displays in its natural shape */
+        .coin-back {
+            position:absolute; inset:0;
+            backface-visibility:hidden;
+            -webkit-backface-visibility:hidden;
+            transform:rotateY(180deg);
+            background:transparent;
+            border:none; box-shadow:none;
+            display:flex; align-items:center; justify-content:center;
+        }
+
+        .coin-back img {
+            width:100%; height:100%;
+            object-fit:contain; display:block;
+            filter:drop-shadow(0 4px 18px rgba(0,0,0,0.55));
         }
 
         .left-eyebrow {
