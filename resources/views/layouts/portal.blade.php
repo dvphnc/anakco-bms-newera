@@ -809,9 +809,6 @@
         <a href="{{ route('portal.about') }}"><i class="fas fa-landmark fa-fw"></i> About Us</a>
         <a href="{{ route('portal.track') }}"><i class="fas fa-search fa-fw"></i> Track My Status</a>
         <div class="drawer-divider"></div>
-        <a href="{{ route('portal.blotter') }}"><i class="fas fa-gavel fa-fw"></i> File a Blotter Report</a>
-        <a href="{{ route('portal.business') }}"><i class="fas fa-store fa-fw"></i> Business Permit</a>
-        <div class="drawer-divider"></div>
         <a href="{{ route('portal.request') }}" class="drawer-cta">
             <i class="fas fa-file-plus fa-fw"></i> Request a Document
         </a>

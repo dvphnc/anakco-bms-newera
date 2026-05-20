@@ -608,8 +608,8 @@
            GOVERNMENT STRIP
         ═══════════════════════════════════════════════════════ */
         .gov-strip {
-            background: #091830;
-            border-bottom: 1px solid rgba(200,134,26,0.25);
+            background: #fff;
+            border-bottom: 1px solid #e2e6ea;
             padding: 0 clamp(1rem, 4vw, 2.5rem);
         }
         .gov-strip-inner {
@@ -618,57 +618,53 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 34px;
+            height: 38px;
             gap: 1rem;
         }
         .gov-strip-left {
             display: flex;
             align-items: center;
-            gap: .5rem;
+            gap: .55rem;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .gov-strip-seal {
+            width: 26px; height: 26px;
+            object-fit: contain;
+            flex-shrink: 0;
+            display: block;
+        }
+        .gov-strip-name {
             font-size: .7rem;
-            color: rgba(255,255,255,.55);
-            font-weight: 500;
+            font-weight: 600;
+            color: #1a2332;
             letter-spacing: .01em;
+        }
+        .gov-strip-divider {
+            width: 1px; height: 14px;
+            background: #d1d5db;
+            flex-shrink: 0;
+        }
+        .gov-strip-sub {
+            font-size: .68rem;
+            color: #6b7280;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .gov-strip-left .flag-ph {
-            background: linear-gradient(180deg, #0038a8 50%, #ce1126 50%);
-            width: 14px; height: 10px;
-            border-radius: 1px;
-            flex-shrink: 0;
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-        }
-        .gov-strip-left .flag-ph::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0;
-            border-top: 5px solid transparent;
-            border-bottom: 5px solid transparent;
-            border-left: 8px solid #fcd116;
-        }
-        .gov-strip-divider {
-            width: 1px; height: 14px;
-            background: rgba(255,255,255,.18);
-            flex-shrink: 0;
-        }
         .gov-strip-right {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            font-size: .7rem;
-            color: rgba(255,255,255,.45);
+            gap: .5rem;
+            font-size: .68rem;
+            color: #6b7280;
             white-space: nowrap;
             flex-shrink: 0;
         }
-        .gov-strip-right span { display: flex; align-items: center; gap: .3rem; }
-        .gov-strip-right i { font-size: .65rem; color: var(--gold); opacity: .8; }
+        .gov-strip-right i { font-size: .6rem; color: var(--navy); opacity: .6; }
         @media (max-width: 640px) {
             .gov-strip-right { display: none; }
-            .gov-strip-left { font-size: .65rem; }
+            .gov-strip-sub   { display: none; }
         }
 
         /* ═══════════════════════════════════════════════════════
@@ -682,70 +678,64 @@
         .portal-footer-body {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 3rem clamp(1rem, 4vw, 2.5rem) 2.5rem;
+            padding: 2.75rem clamp(1rem, 4vw, 2.5rem) 2rem;
             display: grid;
-            grid-template-columns: 1.4fr 1fr 1fr 1fr;
+            grid-template-columns: 1.6fr 1fr 1fr;
             gap: 2.5rem;
         }
-        .pf-brand { display: flex; flex-direction: column; gap: 1rem; }
+        .pf-brand { display: flex; flex-direction: column; gap: .85rem; }
         .pf-brand-top { display: flex; align-items: center; gap: .75rem; }
         .pf-seal { width: 44px; height: 44px; flex-shrink: 0; }
-        .pf-name { font-size: .92rem; font-weight: 700; color: #fff; line-height: 1.2; }
-        .pf-sub  { font-size: .72rem; color: rgba(255,255,255,.45); margin-top: 2px; }
-        .pf-desc { font-size: .78rem; line-height: 1.7; color: rgba(255,255,255,.45); max-width: 260px; }
-        .pf-contact { display: flex; flex-direction: column; gap: .5rem; margin-top: .25rem; }
-        .pf-contact-row { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: rgba(255,255,255,.5); }
-        .pf-contact-row i { color: var(--gold); opacity: .8; font-size: .72rem; width: 14px; text-align: center; flex-shrink: 0; }
+        .pf-name { font-size: .9rem; font-weight: 700; color: #fff; line-height: 1.2; }
+        .pf-sub  { font-size: .7rem; color: rgba(255,255,255,.4); margin-top: 2px; }
+        .pf-desc { font-size: .78rem; line-height: 1.72; color: rgba(255,255,255,.42); max-width: 280px; }
+
+        /* Republika ng Pilipinas seal — same style as eGov PH */
+        .pf-republika {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            margin-top: .25rem;
+            padding-top: .85rem;
+            border-top: 1px solid rgba(255,255,255,.08);
+        }
+        .pf-republika-seal {
+            width: 36px; height: 36px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+        .pf-republika-text {
+            font-size: .68rem;
+            color: rgba(255,255,255,.45);
+            line-height: 1.4;
+            font-style: italic;
+        }
 
         .pf-col h5 {
-            font-size: .7rem;
+            font-size: .68rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .1em;
             color: var(--gold);
-            margin-bottom: 1rem;
+            margin-bottom: .9rem;
             opacity: .9;
         }
-        .pf-col ul { list-style: none; display: flex; flex-direction: column; gap: .45rem; }
+        .pf-col ul { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
         .pf-col ul li a {
-            font-size: .8rem;
-            color: rgba(255,255,255,.5);
+            font-size: .79rem;
+            color: rgba(255,255,255,.48);
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: .45rem;
+            gap: .4rem;
             transition: color .15s;
         }
-        .pf-col ul li a:hover { color: rgba(255,255,255,.9); }
-        .pf-col ul li a i { font-size: .65rem; opacity: .7; }
-
-        .pf-hours { display: flex; flex-direction: column; gap: .45rem; }
-        .pf-hour-row { display: flex; justify-content: space-between; gap: .5rem; font-size: .78rem; }
-        .pf-hour-day { color: rgba(255,255,255,.45); }
-        .pf-hour-val { color: rgba(255,255,255,.7); font-weight: 500; text-align: right; }
-        .pf-closed { color: rgba(155,28,28,.8) !important; }
-        .pf-badge {
-            display: inline-flex; align-items: center; gap: .4rem;
-            background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.25);
-            border-radius: 99px; padding: 3px 10px;
-            font-size: .68rem; font-weight: 600; color: #4ade80;
-            margin-top: .5rem; align-self: flex-start;
-        }
-        .pf-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; }
-        .pf-republika { margin-top: 1.1rem; }
-        .pf-republika-seal {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-            opacity: .45;
-            filter: brightness(0) invert(1);
-            transition: opacity .2s;
-        }
-        .pf-republika-seal:hover { opacity: .7; }
+        .pf-col ul li a:hover { color: rgba(255,255,255,.88); }
+        .pf-col ul li a i { font-size: .6rem; opacity: .65; }
 
         .portal-footer-bottom {
-            border-top: 1px solid rgba(255,255,255,.08);
-            padding: 1.1rem clamp(1rem, 4vw, 2.5rem);
+            border-top: 1px solid rgba(255,255,255,.07);
+            padding: 1rem clamp(1rem, 4vw, 2.5rem);
         }
         .portal-footer-bottom-inner {
             max-width: 1200px;
@@ -756,16 +746,16 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
-        .pf-copy { font-size: .72rem; color: rgba(255,255,255,.3); }
+        .pf-copy { font-size: .71rem; color: rgba(255,255,255,.28); }
         .pf-legal { display: flex; gap: 1.25rem; flex-wrap: wrap; }
-        .pf-legal a { font-size: .72rem; color: rgba(255,255,255,.3); text-decoration: none; transition: color .15s; }
-        .pf-legal a:hover { color: rgba(255,255,255,.65); }
+        .pf-legal a { font-size: .71rem; color: rgba(255,255,255,.28); text-decoration: none; transition: color .15s; }
+        .pf-legal a:hover { color: rgba(255,255,255,.62); }
 
-        @media (max-width: 900px) {
+        @media (max-width: 820px) {
             .portal-footer-body { grid-template-columns: 1fr 1fr; gap: 2rem; }
         }
-        @media (max-width: 560px) {
-            .portal-footer-body { grid-template-columns: 1fr; gap: 1.75rem; }
+        @media (max-width: 500px) {
+            .portal-footer-body { grid-template-columns: 1fr; gap: 1.5rem; }
             .pf-desc { max-width: 100%; }
         }
 
@@ -819,9 +809,6 @@
         <a href="<?php echo e(route('portal.about')); ?>"><i class="fas fa-landmark fa-fw"></i> About Us</a>
         <a href="<?php echo e(route('portal.track')); ?>"><i class="fas fa-search fa-fw"></i> Track My Status</a>
         <div class="drawer-divider"></div>
-        <a href="<?php echo e(route('portal.blotter')); ?>"><i class="fas fa-gavel fa-fw"></i> File a Blotter Report</a>
-        <a href="<?php echo e(route('portal.business')); ?>"><i class="fas fa-store fa-fw"></i> Business Permit</a>
-        <div class="drawer-divider"></div>
         <a href="<?php echo e(route('portal.request')); ?>" class="drawer-cta">
             <i class="fas fa-file-plus fa-fw"></i> Request a Document
         </a>
@@ -832,16 +819,15 @@
 <div class="gov-strip" role="banner">
     <div class="gov-strip-inner">
         <div class="gov-strip-left">
-            <span class="flag-ph" aria-hidden="true"></span>
+            <img src="<?php echo e(asset('images/republika-seal.png')); ?>"
+                 alt="Republika ng Pilipinas"
+                 class="gov-strip-seal">
+            <span class="gov-strip-name">Republika ng Pilipinas</span>
             <span class="gov-strip-divider" aria-hidden="true"></span>
-            Official Barangay New Era Digital Services Portal
-            <span class="gov-strip-divider" aria-hidden="true"></span>
-            District VI, Quezon City
+            <span class="gov-strip-sub">Barangay New Era — Official Digital Services Portal</span>
         </div>
         <div class="gov-strip-right">
-            <span><i class="fas fa-phone-alt"></i> (02) 8456-7890</span>
-            <span class="gov-strip-divider" aria-hidden="true"></span>
-            <span><i class="fas fa-clock"></i> Mon–Fri &nbsp;8:00 AM – 5:00 PM</span>
+            <i class="fas fa-lock"></i> Secure &amp; Official Government Site
         </div>
     </div>
 </div>
@@ -881,12 +867,6 @@
         <a href="<?php echo e(route('portal.track')); ?>" class="<?php echo e(request()->routeIs('portal.track*') ? 'nav-active' : ''); ?>">
             <i class="fas fa-search"></i> Track Status
         </a>
-        <a href="<?php echo e(route('portal.blotter')); ?>" class="<?php echo e(request()->routeIs('portal.blotter*') ? 'nav-active' : ''); ?>">
-            <i class="fas fa-gavel"></i> Blotter
-        </a>
-        <a href="<?php echo e(route('portal.business')); ?>" class="<?php echo e(request()->routeIs('portal.business*') ? 'nav-active' : ''); ?>">
-            <i class="fas fa-store"></i> Business Permit
-        </a>
         <a href="<?php echo e(route('portal.request')); ?>" class="nav-cta <?php echo e(request()->routeIs('portal.request') || request()->routeIs('portal.store') ? 'nav-active' : ''); ?>">
             <i class="fas fa-file-plus"></i> Request Document
         </a>
@@ -922,18 +902,13 @@
                     <div class="pf-sub">District VI, Quezon City</div>
                 </div>
             </div>
-            <p class="pf-desc">Official digital services portal for residents of Barangay New Era. Request documents, file blotter reports, and track your appointment status online.</p>
-            <div class="pf-contact">
-                <div class="pf-contact-row"><i class="fas fa-map-marker-alt"></i> New Era, Quezon City, Metro Manila</div>
-                <div class="pf-contact-row"><i class="fas fa-phone-alt"></i> (02) 8456-7890</div>
-                <div class="pf-contact-row"><i class="fas fa-envelope"></i> bne.secretariat@quezon.gov.ph</div>
-            </div>
-            <div class="pf-badge"><div class="pf-badge-dot"></div> Portal Online &amp; Operational</div>
+            <p class="pf-desc">Official digital services portal of Barangay New Era. Request documents and track your appointment status online — free, secure, and available 24/7.</p>
             
             <div class="pf-republika">
                 <img src="<?php echo e(asset('images/republika-seal.png')); ?>"
                      alt="Republika ng Pilipinas"
                      class="pf-republika-seal">
+                <span class="pf-republika-text">Republika ng Pilipinas<br>Official Government Portal</span>
             </div>
         </div>
 
@@ -942,8 +917,8 @@
             <h5>Services</h5>
             <ul>
                 <li><a href="<?php echo e(route('portal.request')); ?>?type=Barangay+Clearance"><i class="fas fa-chevron-right"></i> Barangay Clearance</a></li>
-                <li><a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Indigency"><i class="fas fa-chevron-right"></i> Certificate of Indigency</a></li>
-                <li><a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Residency"><i class="fas fa-chevron-right"></i> Certificate of Residency</a></li>
+                <li><a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Indigency"><i class="fas fa-chevron-right"></i> Cert. of Indigency</a></li>
+                <li><a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Residency"><i class="fas fa-chevron-right"></i> Cert. of Residency</a></li>
                 <li><a href="<?php echo e(route('portal.request')); ?>?type=Business+Clearance"><i class="fas fa-chevron-right"></i> Business Clearance</a></li>
                 <li><a href="<?php echo e(route('portal.blotter')); ?>"><i class="fas fa-chevron-right"></i> File Blotter Report</a></li>
                 <li><a href="<?php echo e(route('portal.business')); ?>"><i class="fas fa-chevron-right"></i> Business Permit</a></li>
@@ -954,26 +929,11 @@
         <div class="pf-col">
             <h5>Quick Links</h5>
             <ul>
-                <li><a href="<?php echo e(route('portal.index')); ?>"><i class="fas fa-chevron-right"></i> Portal Home</a></li>
+                <li><a href="<?php echo e(route('portal.index')); ?>"><i class="fas fa-chevron-right"></i> Home</a></li>
                 <li><a href="<?php echo e(route('portal.track')); ?>"><i class="fas fa-chevron-right"></i> Track My Request</a></li>
-                <li><a href="<?php echo e(route('portal.about')); ?>"><i class="fas fa-chevron-right"></i> About the Barangay</a></li>
+                <li><a href="<?php echo e(route('portal.about')); ?>"><i class="fas fa-chevron-right"></i> About Us</a></li>
                 <li><a href="<?php echo e(route('portal.index')); ?>#faq"><i class="fas fa-chevron-right"></i> FAQ</a></li>
-                <li><a href="<?php echo e(route('portal.request')); ?>"><i class="fas fa-chevron-right"></i> Request a Document</a></li>
             </ul>
-        </div>
-
-        
-        <div class="pf-col">
-            <h5>Office Hours</h5>
-            <div class="pf-hours">
-                <div class="pf-hour-row"><span class="pf-hour-day">Monday</span><span class="pf-hour-val">8:00 AM – 5:00 PM</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Tuesday</span><span class="pf-hour-val">8:00 AM – 5:00 PM</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Wednesday</span><span class="pf-hour-val">8:00 AM – 5:00 PM</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Thursday</span><span class="pf-hour-val">8:00 AM – 5:00 PM</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Friday</span><span class="pf-hour-val">8:00 AM – 5:00 PM</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Saturday</span><span class="pf-hour-val pf-closed">Closed</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Sunday</span><span class="pf-hour-val pf-closed">Closed</span></div>
-            </div>
         </div>
 
     </div>
@@ -981,8 +941,7 @@
         <div class="portal-footer-bottom-inner">
             <span class="pf-copy">© <?php echo e(date('Y')); ?> Barangay New Era, District VI, Quezon City. All rights reserved.</span>
             <div class="pf-legal">
-                <a href="#">Data Privacy Policy</a>
-                <a href="#">Terms of Use</a>
+                <a href="#">Privacy Policy</a>
                 <a href="<?php echo e(route('portal.about')); ?>">Contact Us</a>
             </div>
         </div>
