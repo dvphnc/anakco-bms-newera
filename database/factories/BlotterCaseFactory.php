@@ -24,14 +24,18 @@ class BlotterCaseFactory extends Factory
         ];
 
         $locations = [
-            'Sampaguita St., Barangay New Era',
-            'Rosal St., Barangay New Era',
-            'Ilang-Ilang St., Barangay New Era',
-            'Purok 1, Barangay New Era',
-            'Purok 3, Barangay New Era',
-            'Near the Barangay Hall',
-            'Basketball Court, Barangay New Era',
-            'Kalayaan St., Barangay New Era',
+            // Named after real Barangay New Era puroks (matching PurokSeeder)
+            'Purok 1 - Sampaguita, Barangay New Era',
+            'Purok 2 - Rosal, Barangay New Era',
+            'Purok 3 - Ilang-Ilang, Barangay New Era',
+            'Purok 4 - Gumamela, Barangay New Era',
+            'Purok 5 - Dahlia, Barangay New Era',
+            'Purok 6 - Camia, Barangay New Era',
+            // Common landmarks & streets
+            'Near the Barangay Hall, New Era',
+            'Covered Court, Barangay New Era',
+            'Barangay Health Center, New Era',
+            'Main Road, Barangay New Era',
         ];
 
         $year = $this->faker->randomElement([2024, 2025, 2026]);
@@ -48,7 +52,7 @@ class BlotterCaseFactory extends Factory
             'incident_location' => $this->faker->randomElement($locations),
             'incident_details' => $this->faker->paragraph(3),
             'complainant_name' => $this->faker->randomElement($filipinoNames),
-            'complainant_address' => $this->faker->buildingNumber().' Sampaguita St., Barangay New Era',
+            'complainant_address' => $this->faker->buildingNumber().' '.$this->faker->randomElement(['Purok 1 - Sampaguita', 'Purok 2 - Rosal', 'Purok 3 - Ilang-Ilang', 'Purok 4 - Gumamela', 'Purok 5 - Dahlia', 'Purok 6 - Camia']).', Barangay New Era',
             'complainant_contact' => '09'.$this->faker->numerify('#########'),
             'complainant_resident_id' => null,
             'respondent_name' => $this->faker->randomElement($filipinoNames),
