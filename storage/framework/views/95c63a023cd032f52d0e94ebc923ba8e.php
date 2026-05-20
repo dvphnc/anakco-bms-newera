@@ -414,20 +414,20 @@ body { background: #fff; }
    CTA BAND
 ───────────────────────────────────────────── */
 .cta-band {
-    background: linear-gradient(135deg, #07162a 0%, #0D2144 55%, #14305e 100%);
+    background: linear-gradient(135deg, #a86d10 0%, #C8861A 55%, #e0a843 100%);
     padding: clamp(3.5rem, 7vw, 6rem) clamp(1rem, 5vw, 2.5rem);
     text-align: center; position: relative; overflow: hidden;
 }
 .cta-band::before {
     content: ''; position: absolute; top: -100px; right: -80px;
     width: 460px; height: 460px;
-    background: radial-gradient(circle, rgba(200,134,26,.1) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 65%);
     pointer-events: none;
 }
 .cta-band::after {
     content: ''; position: absolute; bottom: -80px; left: 5%;
     width: 340px; height: 340px;
-    background: radial-gradient(circle, rgba(255,255,255,.03) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(0,0,0,.06) 0%, transparent 65%);
     pointer-events: none;
 }
 .cta-band-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
@@ -435,9 +435,10 @@ body { background: #fff; }
     font-size: clamp(1.65rem, 4vw, 2.5rem);
     font-weight: 800; color: #fff;
     letter-spacing: -0.03em; margin-bottom: .8rem; line-height: 1.12;
+    text-shadow: 0 2px 12px rgba(0,0,0,.15);
 }
-.cta-band h2 em { font-style: normal; color: var(--gold); }
-.cta-band p { font-size: .95rem; color: rgba(255,255,255,.5); line-height: 1.85; margin-bottom: 2.25rem; }
+.cta-band h2 em { font-style: normal; color: var(--navy); }
+.cta-band p { font-size: .95rem; color: rgba(255,255,255,.75); line-height: 1.85; margin-bottom: 2.25rem; }
 .cta-btns { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
 
 /* ─────────────────────────────────────────────
@@ -815,7 +816,7 @@ body { background: #fff; }
         <h2>Get Started <em>Today.</em></h2>
         <p>Submit your request in under 3 minutes — no account needed, no queues, completely free.</p>
         <div class="cta-btns">
-            <a href="<?php echo e(route('portal.request')); ?>" class="btn btn-gold btn-lg">
+            <a href="<?php echo e(route('portal.request')); ?>" class="btn btn-lg" style="background:var(--navy);color:#fff;border-color:var(--navy);">
                 <i class="fas fa-file-plus"></i> Request a Document
             </a>
             <a href="<?php echo e(route('portal.track')); ?>" class="btn btn-outline-white btn-lg">
