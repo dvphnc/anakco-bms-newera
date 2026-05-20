@@ -29,6 +29,45 @@
             display:flex;
         }
 
+        /* ── SLIDESHOW BACKGROUND ─────────────────────────────────────── */
+        .slideshow-bg {
+            position:absolute; inset:0; z-index:0; pointer-events:none;
+        }
+
+        .slide {
+            position:absolute; inset:0;
+            background-size:cover; background-position:center;
+            opacity:0;
+            animation: slideFade 25s infinite;
+        }
+
+        /* 5 slides × 5 s each = 25 s cycle
+           Each slide fades in at 0 %, holds until 20 %, fades out by 24 % */
+        @keyframes slideFade {
+            0%   { opacity:0; }
+            4%   { opacity:1; }
+            20%  { opacity:1; }
+            24%  { opacity:0; }
+            100% { opacity:0; }
+        }
+
+        .slide:nth-child(1) { animation-delay:  0s; background-image:url('/images/login-slides/slide1.jpg'); }
+        .slide:nth-child(2) { animation-delay:  5s; background-image:url('/images/login-slides/slide2.jpg'); }
+        .slide:nth-child(3) { animation-delay: 10s; background-image:url('/images/login-slides/slide3.jpg'); }
+        .slide:nth-child(4) { animation-delay: 15s; background-image:url('/images/login-slides/slide4.jpg'); }
+        .slide:nth-child(5) { animation-delay: 20s; background-image:url('/images/login-slides/slide5.jpg'); }
+
+        /* Dark gradient overlay so text stays readable over any photo */
+        .slideshow-overlay {
+            position:absolute; inset:0; z-index:1; pointer-events:none;
+            background:linear-gradient(
+                135deg,
+                rgba(13,33,68,0.82) 0%,
+                rgba(13,33,68,0.65) 50%,
+                rgba(13,33,68,0.80) 100%
+            );
+        }
+
         /* ---- LEFT PANEL ---- */
         .left-panel {
             flex:1;
@@ -41,7 +80,7 @@
 
         .left-panel::before {
             content:'';
-            position:absolute; top:50%; left:50%;
+            position:absolute; top:50%; left:50%; z-index:2;
             transform:translate(-50%,-50%);
             width:800px; height:800px;
             background:repeating-conic-gradient(
@@ -54,14 +93,14 @@
 
         .left-panel::after {
             content:'';
-            position:absolute; top:-80px; right:-80px;
+            position:absolute; top:-80px; right:-80px; z-index:2;
             width:380px; height:380px;
             background:radial-gradient(circle, rgba(200,134,26,0.08) 0%, transparent 65%);
             pointer-events:none;
         }
 
         .logo-watermark {
-            position:absolute; top:50%; left:50%;
+            position:absolute; top:50%; left:50%; z-index:2;
             transform:translate(-50%,-50%);
             width:520px; height:520px;
             background-image:url("/images/bne-logo.png");
@@ -71,21 +110,56 @@
         }
 
         .left-content {
-            position:relative; z-index:1;
+            position:relative; z-index:3;
             text-align:center; max-width:420px;
         }
 
-        .login-seal {
+        /* ── COIN FLIP ──────────────────────────────────────────────────── */
+        .coin-flip {
             width:115px; height:115px;
-            border-radius:50%; background:#fff;
-            margin:0 auto 24px; overflow:hidden;
+            margin:0 auto 24px;
+            perspective:500px;
+        }
+
+        .coin-inner {
+            width:100%; height:100%;
+            position:relative;
+            transform-style:preserve-3d;
+            animation:coinFlip 6s ease-in-out infinite;
+            border-radius:50%;
+        }
+
+        /* Pause on front → fast spin to back → pause → fast spin to front */
+        @keyframes coinFlip {
+            0%   { transform:rotateY(0deg); }
+            18%  { transform:rotateY(0deg); }      /* hold front face */
+            42%  { transform:rotateY(180deg); }    /* flip to back   */
+            60%  { transform:rotateY(180deg); }    /* hold back face */
+            84%  { transform:rotateY(360deg); }    /* flip to front  */
+            100% { transform:rotateY(360deg); }    /* brief pause    */
+        }
+
+        .coin-front,
+        .coin-back {
+            position:absolute; inset:0;
+            backface-visibility:hidden;
+            -webkit-backface-visibility:hidden;
+            border-radius:50%;
+            background:#fff;
             border:3px solid rgba(200,134,26,0.45);
             box-shadow:
                 0 0 0 7px rgba(200,134,26,0.07),
-                0 24px 60px rgba(0,0,0,0.35);
+                0 24px 60px rgba(0,0,0,0.45);
+            overflow:hidden;
         }
 
-        .login-seal img { width:100%; height:100%; object-fit:cover; display:block; }
+        .coin-back { transform:rotateY(180deg); }
+
+        .coin-front img,
+        .coin-back img {
+            width:100%; height:100%;
+            object-fit:cover; display:block;
+        }
 
         .left-eyebrow {
             font-size:9.5px; font-weight:700;
