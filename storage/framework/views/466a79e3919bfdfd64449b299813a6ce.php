@@ -308,10 +308,13 @@
     width: 100%;
 }
 .cert-punong {
-    font-size: 11pt;
+    font-size: 10pt;
     font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.3;
 }
 .cert-punong-title {
     font-size: 9pt;
@@ -498,14 +501,14 @@
                         </div>
                     </div>
                     
-                    <div style="text-align:center;min-width:180px">
+                    <div style="text-align:center;min-width:200px;max-width:220px">
                         <div style="height:64px"></div>
                         <div style="border-top:1px solid #000;margin-bottom:3px"></div>
                         <div class="cert-punong"><?php echo e($secretaryName); ?></div>
                         <div class="cert-punong-title">Barangay Secretary</div>
                     </div>
                     
-                    <div style="text-align:center;min-width:200px">
+                    <div style="text-align:center;min-width:220px;max-width:240px">
                         <div style="height:64px"></div>
                         <div style="border-top:1px solid #000;margin-bottom:3px"></div>
                         <div class="cert-punong"><?php echo e($officialName); ?></div>
