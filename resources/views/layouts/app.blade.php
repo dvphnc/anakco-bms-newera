@@ -917,23 +917,17 @@
         axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN';
     })();
 
-    // ── Logout: build a fresh form at click-time so the _token is always
-    //    current (read from the meta tag, not the stale @csrf render value).
-    //    A real form submit lets the browser follow the server's redirect
-    //    to /login correctly — Axios would intercept the 302 and break it.
+    // ── Logout via Axios ─────────────────────────────────────────────────
+    // Using Axios means:
+    //   • The request interceptor always injects a fresh CSRF token.
+    //   • The response interceptor catches any 419 and redirects to /login.
+    //   • .then()  → logout succeeded, go to /login.
+    //   • .catch() → session already expired / any other error, go to /login.
+    // In every case the user ends up on the login page, never on a 419 page.
     function bmsLogout() {
-        var form  = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ route('logout') }}';
-        var tok  = document.createElement('input');
-        tok.type  = 'hidden';
-        tok.name  = '_token';
-        tok.value = (document.querySelector('meta[name="csrf-token"]') || {}).getAttribute
-                    ? document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    : '';
-        form.appendChild(tok);
-        document.body.appendChild(form);
-        form.submit();
+        axios.post('{{ route('logout') }}')
+            .then(function ()  { window.location.href = '{{ route('login') }}'; })
+            .catch(function () { window.location.href = '{{ route('login') }}'; });
     }
 
     // ── Refresh _token in plain HTML forms before submission ────────────
