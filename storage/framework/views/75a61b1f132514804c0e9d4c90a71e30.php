@@ -882,15 +882,25 @@
         // way to inject CSRF because custom per-call headers objects in
         // some Axios 1.x builds can shadow defaults.headers.common.
         axios.interceptors.request.use(function (config) {
-            var meta = document.querySelector('meta[name="csrf-token"]');
-            if (meta) {
-                // Ensure the headers object exists
-                config.headers = config.headers || {};
-                config.headers['X-CSRF-TOKEN'] = meta.getAttribute('content');
-            }
+            var meta  = document.querySelector('meta[name="csrf-token"]');
+            var token = meta ? meta.getAttribute('content') : '';
+
+            // ① Always inject fresh CSRF into the request header
             config.headers = config.headers || {};
+            if (token) {
+                config.headers['X-CSRF-TOKEN'] = token;
+            }
             config.headers['X-Requested-With'] = 'XMLHttpRequest';
             config.headers['Accept']           = 'application/json';
+
+            // ② When the body is FormData, replace any stale _token field.
+            //    Laravel reads _token from the body BEFORE the header, so a
+            //    baked-in <?php echo csrf_field(); ?> value from page-load will win if not refreshed.
+            if (token && config.data instanceof FormData) {
+                config.data.delete('_token');
+                config.data.append('_token', token);
+            }
+
             return config;
         });
 
