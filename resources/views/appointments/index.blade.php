@@ -385,6 +385,28 @@ $(document).ready(function () {
         });
     });
 
+    /* ── Open convert modal from DataTable ───────────────────────────── */
+    $('#appointmentsTable').on('click', '.apt-convert-btn', function () {
+        var $btn = $(this);
+        document.getElementById('cvtNum').textContent     = $btn.data('num');
+        document.getElementById('cvtName').textContent    = $btn.data('name');
+        document.getElementById('cvtType').textContent    = $btn.data('type');
+        var purpose = $btn.data('purpose') || '';
+        var purposeRow = document.getElementById('cvtPurposeRow');
+        if (purpose) {
+            document.getElementById('cvtPurpose').textContent = purpose;
+            purposeRow.style.display = '';
+        } else {
+            purposeRow.style.display = 'none';
+        }
+        document.getElementById('cvtFee').value           = '';
+        document.getElementById('cvtOR').value            = '';
+        document.getElementById('cvtError').style.display = 'none';
+        window._cvtUrl = $btn.data('url');
+        window._cvtAptId = $btn.data('id');
+        document.getElementById('aptConvertModal').style.display = 'flex';
+    });
+
     /* ── Open status modal from DataTable ────────────────────────────── */
     $('#appointmentsTable').on('click', '.apt-status-btn', function () {
         _aptId       = $(this).data('id');
@@ -471,6 +493,65 @@ window.aptQuickFilter = function (filterId, values) {
     }
     $('#appointmentsTable').DataTable().ajax.reload();
 };
+
+/* ── Convert Modal ────────────────────────────────────────────────── */
+window._cvtUrl   = null;
+window._cvtAptId = null;
+
+function closeConvertModal() {
+    document.getElementById('aptConvertModal').style.display = 'none';
+    window._cvtUrl   = null;
+    window._cvtAptId = null;
+}
+
+function saveConvert() {
+    if (!window._cvtUrl) return;
+    var btn    = document.getElementById('cvtSaveBtn');
+    var errDiv = document.getElementById('cvtError');
+    var fee    = document.getElementById('cvtFee').value;
+    var or_num = document.getElementById('cvtOR').value;
+
+    errDiv.style.display = 'none';
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Issuing…';
+
+    axios.post(window._cvtUrl, { fee_paid: fee || null, or_number: or_num || null })
+        .then(function (res) {
+            closeConvertModal();
+            bmsToast(res.data.message, 'success');
+
+            // Reload table so the row now shows the View Document button
+            $('#appointmentsTable').DataTable().ajax.reload(null, false);
+
+            // Offer a quick link to view/print the document
+            setTimeout(function () {
+                bmsConfirm({
+                    title:   'Document Issued',
+                    message: res.data.doc_number + ' has been created. Open the document record now?',
+                    ok:      'Open Document',
+                }, function () {
+                    window.open(res.data.view_url, '_blank');
+                });
+            }, 400);
+        })
+        .catch(function (err) {
+            var data = err.response?.data;
+            var msg  = data?.errors
+                ? Object.values(data.errors).flat().join(' ')
+                : (data?.message || 'Failed to issue document.');
+
+            // If already converted, offer the view link
+            if (err.response?.status === 422 && data?.view_url) {
+                msg += ' <a href="' + data.view_url + '" target="_blank" style="color:var(--navy);font-weight:600">View it here →</a>';
+            }
+            errDiv.innerHTML     = msg;
+            errDiv.style.display = 'block';
+        })
+        .finally(function () {
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fas fa-file-circle-check"></i> Issue Document';
+        });
+}
 
 /* ── Status Modal ─────────────────────────────────────────────────── */
 var _aptId = null;
