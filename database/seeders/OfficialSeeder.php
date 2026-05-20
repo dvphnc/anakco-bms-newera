@@ -75,7 +75,7 @@ class OfficialSeeder extends Seeder
             [
                 'full_name'      => 'Twinkle Besas Pineda-Corpuz',
                 'position'       => 'Kagawad',
-                'committee'      => 'Education',
+                'committee'      => 'Health',
                 'contact_number' => null,
             ],
             [
@@ -87,7 +87,7 @@ class OfficialSeeder extends Seeder
             [
                 'full_name'      => 'Medel Reyes Sulpico',
                 'position'       => 'Kagawad',
-                'committee'      => 'Health',
+                'committee'      => 'Education',
                 'contact_number' => null,
             ],
         ];

@@ -634,6 +634,7 @@
     </div>
     <nav class="drawer-nav">
         <a href="{{ route('portal.index') }}"><i class="fas fa-home fa-fw"></i> Home</a>
+        <a href="{{ route('portal.about') }}"><i class="fas fa-landmark fa-fw"></i> About Us</a>
         <a href="{{ route('portal.track') }}"><i class="fas fa-search fa-fw"></i> Track My Status</a>
         <div class="drawer-divider"></div>
         @auth
@@ -753,6 +754,7 @@ function closeMobileNav() {
         { icon: 'fas fa-file-contract',      label: 'Business Permit Application', sub: 'Apply for new permit or renewal',               href: '{{ route("portal.business") }}' },
         { icon: 'fas fa-search',             label: 'Track Appointment Status',    sub: 'Look up an existing appointment number',        href: '{{ route("portal.track") }}' },
         { icon: 'fas fa-home',               label: 'Portal Home',                 sub: 'Back to the main portal page',                  href: '{{ route("portal.index") }}' },
+        { icon: 'fas fa-landmark',           label: 'About Us',                    sub: 'Officials, mission, vision & contact info',     href: '{{ route("portal.about") }}' },
         { icon: 'fas fa-circle-question',    label: 'Frequently Asked Questions',  sub: 'Common questions about barangay documents',     href: '{{ route("portal.index") }}#faq' },
     ];
 
