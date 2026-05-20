@@ -623,7 +623,7 @@
            PORTAL FOOTER  (eGov PH–style)
         ═══════════════════════════════════════════════════════ */
         .portal-footer {
-            background: #131313;
+            background: linear-gradient(160deg, #07162a 0%, #0D2144 60%, #0f2850 100%);
             color: rgba(255,255,255,.55);
             margin-top: auto;
         }
