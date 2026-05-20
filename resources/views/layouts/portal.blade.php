@@ -678,70 +678,64 @@
         .portal-footer-body {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 3rem clamp(1rem, 4vw, 2.5rem) 2.5rem;
+            padding: 2.75rem clamp(1rem, 4vw, 2.5rem) 2rem;
             display: grid;
-            grid-template-columns: 1.4fr 1fr 1fr 1fr;
+            grid-template-columns: 1.6fr 1fr 1fr;
             gap: 2.5rem;
         }
-        .pf-brand { display: flex; flex-direction: column; gap: 1rem; }
+        .pf-brand { display: flex; flex-direction: column; gap: .85rem; }
         .pf-brand-top { display: flex; align-items: center; gap: .75rem; }
         .pf-seal { width: 44px; height: 44px; flex-shrink: 0; }
-        .pf-name { font-size: .92rem; font-weight: 700; color: #fff; line-height: 1.2; }
-        .pf-sub  { font-size: .72rem; color: rgba(255,255,255,.45); margin-top: 2px; }
-        .pf-desc { font-size: .78rem; line-height: 1.7; color: rgba(255,255,255,.45); max-width: 260px; }
-        .pf-contact { display: flex; flex-direction: column; gap: .5rem; margin-top: .25rem; }
-        .pf-contact-row { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: rgba(255,255,255,.5); }
-        .pf-contact-row i { color: var(--gold); opacity: .8; font-size: .72rem; width: 14px; text-align: center; flex-shrink: 0; }
+        .pf-name { font-size: .9rem; font-weight: 700; color: #fff; line-height: 1.2; }
+        .pf-sub  { font-size: .7rem; color: rgba(255,255,255,.4); margin-top: 2px; }
+        .pf-desc { font-size: .78rem; line-height: 1.72; color: rgba(255,255,255,.42); max-width: 280px; }
+
+        /* Republika ng Pilipinas seal — same style as eGov PH */
+        .pf-republika {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            margin-top: .25rem;
+            padding-top: .85rem;
+            border-top: 1px solid rgba(255,255,255,.08);
+        }
+        .pf-republika-seal {
+            width: 36px; height: 36px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+        .pf-republika-text {
+            font-size: .68rem;
+            color: rgba(255,255,255,.45);
+            line-height: 1.4;
+            font-style: italic;
+        }
 
         .pf-col h5 {
-            font-size: .7rem;
+            font-size: .68rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .1em;
             color: var(--gold);
-            margin-bottom: 1rem;
+            margin-bottom: .9rem;
             opacity: .9;
         }
-        .pf-col ul { list-style: none; display: flex; flex-direction: column; gap: .45rem; }
+        .pf-col ul { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
         .pf-col ul li a {
-            font-size: .8rem;
-            color: rgba(255,255,255,.5);
+            font-size: .79rem;
+            color: rgba(255,255,255,.48);
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: .45rem;
+            gap: .4rem;
             transition: color .15s;
         }
-        .pf-col ul li a:hover { color: rgba(255,255,255,.9); }
-        .pf-col ul li a i { font-size: .65rem; opacity: .7; }
-
-        .pf-hours { display: flex; flex-direction: column; gap: .45rem; }
-        .pf-hour-row { display: flex; justify-content: space-between; gap: .5rem; font-size: .78rem; }
-        .pf-hour-day { color: rgba(255,255,255,.45); }
-        .pf-hour-val { color: rgba(255,255,255,.7); font-weight: 500; text-align: right; }
-        .pf-closed { color: rgba(155,28,28,.8) !important; }
-        .pf-badge {
-            display: inline-flex; align-items: center; gap: .4rem;
-            background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.25);
-            border-radius: 99px; padding: 3px 10px;
-            font-size: .68rem; font-weight: 600; color: #4ade80;
-            margin-top: .5rem; align-self: flex-start;
-        }
-        .pf-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; }
-        .pf-republika { margin-top: 1.1rem; }
-        .pf-republika-seal {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-            opacity: .45;
-            filter: brightness(0) invert(1);
-            transition: opacity .2s;
-        }
-        .pf-republika-seal:hover { opacity: .7; }
+        .pf-col ul li a:hover { color: rgba(255,255,255,.88); }
+        .pf-col ul li a i { font-size: .6rem; opacity: .65; }
 
         .portal-footer-bottom {
-            border-top: 1px solid rgba(255,255,255,.08);
-            padding: 1.1rem clamp(1rem, 4vw, 2.5rem);
+            border-top: 1px solid rgba(255,255,255,.07);
+            padding: 1rem clamp(1rem, 4vw, 2.5rem);
         }
         .portal-footer-bottom-inner {
             max-width: 1200px;
@@ -752,16 +746,16 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
-        .pf-copy { font-size: .72rem; color: rgba(255,255,255,.3); }
+        .pf-copy { font-size: .71rem; color: rgba(255,255,255,.28); }
         .pf-legal { display: flex; gap: 1.25rem; flex-wrap: wrap; }
-        .pf-legal a { font-size: .72rem; color: rgba(255,255,255,.3); text-decoration: none; transition: color .15s; }
-        .pf-legal a:hover { color: rgba(255,255,255,.65); }
+        .pf-legal a { font-size: .71rem; color: rgba(255,255,255,.28); text-decoration: none; transition: color .15s; }
+        .pf-legal a:hover { color: rgba(255,255,255,.62); }
 
-        @media (max-width: 900px) {
+        @media (max-width: 820px) {
             .portal-footer-body { grid-template-columns: 1fr 1fr; gap: 2rem; }
         }
-        @media (max-width: 560px) {
-            .portal-footer-body { grid-template-columns: 1fr; gap: 1.75rem; }
+        @media (max-width: 500px) {
+            .portal-footer-body { grid-template-columns: 1fr; gap: 1.5rem; }
             .pf-desc { max-width: 100%; }
         }
 
