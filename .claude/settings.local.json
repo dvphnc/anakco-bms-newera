@@ -48,7 +48,12 @@
       "Bash(del \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\app\\\\Http\\\\Controllers\\\\PortalBlotterController.php\")",
       "Bash(del \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\app\\\\Http\\\\Controllers\\\\PortalBusinessController.php\")",
       "Bash(rm \"D:/laragon/www/anakco_bms/app/Http/Controllers/PortalBlotterController.php\" \"D:/laragon/www/anakco_bms/app/Http/Controllers/PortalBusinessController.php\" && echo \"Deleted\")",
-      "WebFetch(domain:www.barangaydirectory.com)"
+      "WebFetch(domain:www.barangaydirectory.com)",
+      "Bash(cd /d D:\\\\laragon\\\\www\\\\anakco_bms)",
+      "Bash(php -l database/seeders/CommitteeDataSeeder.php)",
+      "Bash(php -l database/seeders/AppointmentSeeder.php)",
+      "Bash(php -l database/factories/BlotterCaseFactory.php)",
+      "Bash(php -l database/seeders/FakeDataSeeder.php)"
     ]
   }
 }
