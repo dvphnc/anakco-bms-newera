@@ -896,7 +896,7 @@
 <footer class="portal-footer" role="contentinfo">
     <div class="portal-footer-body">
 
-        {{-- Brand + Contact --}}
+        {{-- Brand + Republika seal --}}
         <div class="pf-brand">
             <div class="pf-brand-top">
                 <div class="pf-seal">@include('partials._portal_seal')</div>
@@ -905,18 +905,13 @@
                     <div class="pf-sub">District VI, Quezon City</div>
                 </div>
             </div>
-            <p class="pf-desc">Official digital services portal for residents of Barangay New Era. Request documents, file blotter reports, and track your appointment status online.</p>
-            <div class="pf-contact">
-                <div class="pf-contact-row"><i class="fas fa-map-marker-alt"></i> New Era, Quezon City, Metro Manila</div>
-                <div class="pf-contact-row"><i class="fas fa-phone-alt"></i> (02) 8456-7890</div>
-                <div class="pf-contact-row"><i class="fas fa-envelope"></i> bne.secretariat@quezon.gov.ph</div>
-            </div>
-            <div class="pf-badge"><div class="pf-badge-dot"></div> Portal Online &amp; Operational</div>
-            {{-- Republika ng Pilipinas seal — no label --}}
+            <p class="pf-desc">Official digital services portal of Barangay New Era. Request documents and track your appointment status online — free, secure, and available 24/7.</p>
+            {{-- Republika ng Pilipinas seal — eGov PH style --}}
             <div class="pf-republika">
                 <img src="{{ asset('images/republika-seal.png') }}"
                      alt="Republika ng Pilipinas"
                      class="pf-republika-seal">
+                <span class="pf-republika-text">Republika ng Pilipinas<br>Official Government Portal</span>
             </div>
         </div>
 
@@ -925,8 +920,8 @@
             <h5>Services</h5>
             <ul>
                 <li><a href="{{ route('portal.request') }}?type=Barangay+Clearance"><i class="fas fa-chevron-right"></i> Barangay Clearance</a></li>
-                <li><a href="{{ route('portal.request') }}?type=Certificate+of+Indigency"><i class="fas fa-chevron-right"></i> Certificate of Indigency</a></li>
-                <li><a href="{{ route('portal.request') }}?type=Certificate+of+Residency"><i class="fas fa-chevron-right"></i> Certificate of Residency</a></li>
+                <li><a href="{{ route('portal.request') }}?type=Certificate+of+Indigency"><i class="fas fa-chevron-right"></i> Cert. of Indigency</a></li>
+                <li><a href="{{ route('portal.request') }}?type=Certificate+of+Residency"><i class="fas fa-chevron-right"></i> Cert. of Residency</a></li>
                 <li><a href="{{ route('portal.request') }}?type=Business+Clearance"><i class="fas fa-chevron-right"></i> Business Clearance</a></li>
                 <li><a href="{{ route('portal.blotter') }}"><i class="fas fa-chevron-right"></i> File Blotter Report</a></li>
                 <li><a href="{{ route('portal.business') }}"><i class="fas fa-chevron-right"></i> Business Permit</a></li>
@@ -937,26 +932,11 @@
         <div class="pf-col">
             <h5>Quick Links</h5>
             <ul>
-                <li><a href="{{ route('portal.index') }}"><i class="fas fa-chevron-right"></i> Portal Home</a></li>
+                <li><a href="{{ route('portal.index') }}"><i class="fas fa-chevron-right"></i> Home</a></li>
                 <li><a href="{{ route('portal.track') }}"><i class="fas fa-chevron-right"></i> Track My Request</a></li>
-                <li><a href="{{ route('portal.about') }}"><i class="fas fa-chevron-right"></i> About the Barangay</a></li>
+                <li><a href="{{ route('portal.about') }}"><i class="fas fa-chevron-right"></i> About Us</a></li>
                 <li><a href="{{ route('portal.index') }}#faq"><i class="fas fa-chevron-right"></i> FAQ</a></li>
-                <li><a href="{{ route('portal.request') }}"><i class="fas fa-chevron-right"></i> Request a Document</a></li>
             </ul>
-        </div>
-
-        {{-- Office Hours --}}
-        <div class="pf-col">
-            <h5>Office Hours</h5>
-            <div class="pf-hours">
-                <div class="pf-hour-row"><span class="pf-hour-day">Monday</span><span class="pf-hour-val">8:00 AM – 5:00 PM</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Tuesday</span><span class="pf-hour-val">8:00 AM – 5:00 PM</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Wednesday</span><span class="pf-hour-val">8:00 AM – 5:00 PM</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Thursday</span><span class="pf-hour-val">8:00 AM – 5:00 PM</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Friday</span><span class="pf-hour-val">8:00 AM – 5:00 PM</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Saturday</span><span class="pf-hour-val pf-closed">Closed</span></div>
-                <div class="pf-hour-row"><span class="pf-hour-day">Sunday</span><span class="pf-hour-val pf-closed">Closed</span></div>
-            </div>
         </div>
 
     </div>
@@ -964,8 +944,7 @@
         <div class="portal-footer-bottom-inner">
             <span class="pf-copy">© {{ date('Y') }} Barangay New Era, District VI, Quezon City. All rights reserved.</span>
             <div class="pf-legal">
-                <a href="#">Data Privacy Policy</a>
-                <a href="#">Terms of Use</a>
+                <a href="#">Privacy Policy</a>
                 <a href="{{ route('portal.about') }}">Contact Us</a>
             </div>
         </div>
