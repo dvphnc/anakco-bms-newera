@@ -311,10 +311,13 @@
     width: 100%;
 }
 .cert-punong {
-    font-size: 11pt;
+    font-size: 10pt;
     font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.3;
 }
 .cert-punong-title {
     font-size: 9pt;
