@@ -907,7 +907,7 @@
         // ── RESPONSE interceptor — redirect on session expiry ────────────
         axios.interceptors.response.use(null, function (error) {
             if (error.response && (error.response.status === 401 || error.response.status === 419)) {
-                window.location.href = '/login';
+                window.location.href = '{{ route('login') }}';
             }
             return Promise.reject(error);
         });
