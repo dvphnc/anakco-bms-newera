@@ -266,7 +266,7 @@
     font-family: 'Times New Roman', Times, serif;
     color: #000;
     font-size: 10.5pt;
-    line-height: 1.6;
+    line-height: 1.45;
     width: 100%;
     max-width: 6.9in;
     margin: 0 auto;
@@ -323,8 +323,8 @@
     letter-spacing: 0.08em;
     background: #0d2144;
     color: #fff;
-    padding: 4px 10px;
-    margin: 10px 0 6px;
+    padding: 3px 10px;
+    margin: 8px 0 4px;
 }
 
 .rpt-grid {
@@ -489,38 +489,40 @@
     @endif
     @endif
 
-    {{-- Signatures --}}
-    <div class="rpt-sig-area">
-        <div class="rpt-sig-box">
-            <div style="height:36px"></div>
-            <div class="rpt-sig-line"></div>
-            <div class="rpt-sig-name">{{ $blotter->complainant_name ?? '—' }}</div>
-            <div class="rpt-sig-title">Complainant</div>
+    {{-- Signatures + Footer (kept together, no page break between them) --}}
+    <div class="rpt-sig-section">
+        <div class="rpt-sig-area">
+            <div class="rpt-sig-box">
+                <div style="height:36px"></div>
+                <div class="rpt-sig-line"></div>
+                <div class="rpt-sig-name">{{ $blotter->complainant_name ?? '—' }}</div>
+                <div class="rpt-sig-title">Complainant</div>
+            </div>
+            <div class="rpt-sig-box">
+                <div style="height:36px"></div>
+                <div class="rpt-sig-line"></div>
+                <div class="rpt-sig-name">{{ $blotter->respondent_name ?? '—' }}</div>
+                <div class="rpt-sig-title">Respondent</div>
+            </div>
+            <div class="rpt-sig-box">
+                <div style="height:36px"></div>
+                <div class="rpt-sig-line"></div>
+                <div class="rpt-sig-name">{{ $secretaryName }}</div>
+                <div class="rpt-sig-title">Barangay Secretary</div>
+            </div>
+            <div class="rpt-sig-box">
+                <div style="height:36px"></div>
+                <div class="rpt-sig-line"></div>
+                <div class="rpt-sig-name">{{ $officialName }}</div>
+                <div class="rpt-sig-title">Punong Barangay</div>
+            </div>
         </div>
-        <div class="rpt-sig-box">
-            <div style="height:36px"></div>
-            <div class="rpt-sig-line"></div>
-            <div class="rpt-sig-name">{{ $blotter->respondent_name ?? '—' }}</div>
-            <div class="rpt-sig-title">Respondent</div>
-        </div>
-        <div class="rpt-sig-box">
-            <div style="height:36px"></div>
-            <div class="rpt-sig-line"></div>
-            <div class="rpt-sig-name">{{ $secretaryName }}</div>
-            <div class="rpt-sig-title">Barangay Secretary</div>
-        </div>
-        <div class="rpt-sig-box">
-            <div style="height:36px"></div>
-            <div class="rpt-sig-line"></div>
-            <div class="rpt-sig-name">{{ $officialName }}</div>
-            <div class="rpt-sig-title">Punong Barangay</div>
-        </div>
-    </div>
 
-    {{-- Footer --}}
-    <div class="rpt-footer">
-        <span>Printed by: {{ auth()->user()->name }} — {{ now()->format('F d, Y \a\t h:i A') }}</span>
-        <span>Barangay New Era BMS</span>
+        {{-- Footer --}}
+        <div class="rpt-footer">
+            <span>Printed by: {{ auth()->user()->name }} — {{ now()->format('F d, Y \a\t h:i A') }}</span>
+            <span>Barangay New Era BMS</span>
+        </div>
     </div>
 
 </div>
