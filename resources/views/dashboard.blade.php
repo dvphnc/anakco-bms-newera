@@ -834,17 +834,20 @@ document.addEventListener('DOMContentLoaded', function () {
         text: 'Switch between <strong>Overview</strong> (today\'s summary) and <strong>Analytics</strong> (charts and demographics). For appointments, use the dedicated Appointments page from the sidebar.',
         attachTo: { element: '.dash-tabs', on: 'bottom' },
         buttons: [btn('← Back', 'secondary', tour.back), btn('Finish Tour ✓', 'primary', function () {
+            markDone();
             tour.complete();
-            sessionStorage.setItem('bms_tour_done', '1');
         })]
     });
 
-    // Start tour button
+    // Start tour button — always lets the user re-run the tour manually
     const startBtn = document.getElementById('startTourBtn');
-    if (startBtn) startBtn.addEventListener('click', function () { tour.start(); });
+    if (startBtn) startBtn.addEventListener('click', function () {
+        localStorage.removeItem(TOUR_KEY); // reset so it can play fully
+        tour.start();
+    });
 
-    // Auto-start on first visit
-    if (!sessionStorage.getItem('bms_tour_done')) {
+    // Auto-start only on first-ever visit (not seen before for this user)
+    if (!localStorage.getItem(TOUR_KEY)) {
         setTimeout(function () { tour.start(); }, 800);
     }
 });
