@@ -822,16 +822,15 @@
 <div class="gov-strip" role="banner">
     <div class="gov-strip-inner">
         <div class="gov-strip-left">
-            <span class="flag-ph" aria-hidden="true"></span>
+            <img src="{{ asset('images/republika-seal.png') }}"
+                 alt="Republika ng Pilipinas"
+                 class="gov-strip-seal">
+            <span class="gov-strip-name">Republika ng Pilipinas</span>
             <span class="gov-strip-divider" aria-hidden="true"></span>
-            Official Barangay New Era Digital Services Portal
-            <span class="gov-strip-divider" aria-hidden="true"></span>
-            District VI, Quezon City
+            <span class="gov-strip-sub">Barangay New Era — Official Digital Services Portal</span>
         </div>
         <div class="gov-strip-right">
-            <span><i class="fas fa-phone-alt"></i> (02) 8456-7890</span>
-            <span class="gov-strip-divider" aria-hidden="true"></span>
-            <span><i class="fas fa-clock"></i> Mon–Fri &nbsp;8:00 AM – 5:00 PM</span>
+            <i class="fas fa-lock"></i> Secure &amp; Official Government Site
         </div>
     </div>
 </div>
@@ -870,12 +869,6 @@
         </a>
         <a href="{{ route('portal.track') }}" class="{{ request()->routeIs('portal.track*') ? 'nav-active' : '' }}">
             <i class="fas fa-search"></i> Track Status
-        </a>
-        <a href="{{ route('portal.blotter') }}" class="{{ request()->routeIs('portal.blotter*') ? 'nav-active' : '' }}">
-            <i class="fas fa-gavel"></i> Blotter
-        </a>
-        <a href="{{ route('portal.business') }}" class="{{ request()->routeIs('portal.business*') ? 'nav-active' : '' }}">
-            <i class="fas fa-store"></i> Business Permit
         </a>
         <a href="{{ route('portal.request') }}" class="nav-cta {{ request()->routeIs('portal.request') || request()->routeIs('portal.store') ? 'nav-active' : '' }}">
             <i class="fas fa-file-plus"></i> Request Document
