@@ -3555,6 +3555,7 @@ function openEditSpecific(type, tr) {
     html += '<button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save Changes</button>';
     html += '</div></form>';
     document.getElementById('editSpecificBody').innerHTML = html;
+    initTabSelects(document.getElementById('editSpecificBody'));
     // inject real CSRF
     var csrfInput = document.querySelector('meta[name="csrf-token"]');
     var token = csrfInput ? csrfInput.getAttribute('content') : (document.querySelector('input[name="_token"]') ? document.querySelector('input[name="_token"]').value : '');
