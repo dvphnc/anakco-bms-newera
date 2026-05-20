@@ -3117,7 +3117,7 @@ unset($__errorArgs, $__bag); ?></div>
 
 
 <?php $__env->startPush('scripts'); ?>
-<div id="photoLightbox" onclick="if(event.target===this)closePhotoLightbox()" style="display:none;position:fixed;inset:0;background:rgba(8,16,32,.93);z-index:9999;flex-direction:column;align-items:center;justify-content:center">
+<div id="photoLightbox" onclick="closePhotoLightbox()" style="display:none;position:fixed;inset:0;background:rgba(8,16,32,.93);z-index:9999;flex-direction:column;align-items:center;justify-content:center">
     <div onclick="event.stopPropagation()" style="width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;flex-shrink:0">
         <div style="display:flex;align-items:center;gap:10px;min-width:0">
             <div style="width:32px;height:32px;border-radius:8px;background:rgba(200,134,26,.18);border:1px solid rgba(200,134,26,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0">
