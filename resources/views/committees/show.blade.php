@@ -3356,9 +3356,10 @@ document.getElementById('editActivityForm').addEventListener('submit', function(
 });
 
 // ── EDIT: Attendance ──
-var _editAttId = null;
+var _editAttId = null, _editAttEl = null;
 function openEditAttendance(tr) {
     _editAttId = tr.dataset.id;
+    _editAttEl = tr;
     document.getElementById('eAtt_event').value     = tr.dataset.event     || '';
     document.getElementById('eAtt_date').value      = tr.dataset.date      || '';
     document.getElementById('eAtt_venue').value     = tr.dataset.venue     || '';
@@ -3369,7 +3370,7 @@ function openEditAttendance(tr) {
 document.getElementById('editAttendanceForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/{{ $committee['slug'] }}/attendance/' + _editAttId, 'editAttendanceModal', function(rec) {
-        var row = document.querySelector('[data-id="' + _editAttId + '"]');
+        var row = _editAttEl;
         if (row) {
             row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.event_name + '</span>';
             var d = rec.event_date ? rec.event_date.substring(0,10) : '';
@@ -3387,9 +3388,10 @@ document.getElementById('editAttendanceForm').addEventListener('submit', functio
 });
 
 // ── EDIT: Inventory ──
-var _editInvId = null;
+var _editInvId = null, _editInvEl = null;
 function openEditInventory(tr) {
     _editInvId = tr.dataset.id;
+    _editInvEl = tr;
     document.getElementById('eInv_name').value      = tr.dataset.name      || '';
     document.getElementById('eInv_category').value  = tr.dataset.category  || '';
     document.getElementById('eInv_qty').value        = tr.dataset.qty       || '0';
@@ -3401,7 +3403,7 @@ function openEditInventory(tr) {
 document.getElementById('editInventoryForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/{{ $committee['slug'] }}/inventory/' + _editInvId, 'editInventoryModal', function(rec) {
-        var row = document.querySelector('[data-id="' + _editInvId + '"]');
+        var row = _editInvEl;
         if (row) {
             row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.item_name + '</span>';
             row.cells[1].textContent = rec.category || '—';
@@ -3421,9 +3423,10 @@ document.getElementById('editInventoryForm').addEventListener('submit', function
 });
 
 // ── EDIT: Record (title / type / description) ──
-var _editRecId = null;
+var _editRecId = null, _editRecEl = null;
 function openEditRecord(el) {
     _editRecId = el.dataset.id;
+    _editRecEl = el;
     document.getElementById('eRec_title').value       = el.dataset.title       || '';
     document.getElementById('eRec_description').value = el.dataset.description || '';
     $('#eRec_type').val(el.dataset.rtype || '').trigger('change');
@@ -3637,4 +3640,3 @@ function filterMeds() {
 }
 </script>
 @endpush
-                                              
