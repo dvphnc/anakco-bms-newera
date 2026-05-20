@@ -3,393 +3,368 @@
 
 @push('styles')
 <style>
-/* ─────────────────────────────────────────────
-   BASE
-───────────────────────────────────────────── */
 body { background: #fff; }
 
 /* ─────────────────────────────────────────────
-   SHARED SECTION UTILITIES
+   SHARED UTILITIES
 ───────────────────────────────────────────── */
-.sec {
-    padding: clamp(3.5rem, 7vw, 5.5rem) clamp(1rem, 5vw, 2.5rem);
-}
-.sec-inner     { max-width: 1140px; margin: 0 auto; }
-.sec-inner-sm  { max-width: 780px;  margin: 0 auto; }
-.sec-inner-md  { max-width: 960px;  margin: 0 auto; }
-
+.sec { padding: clamp(4rem, 8vw, 6rem) clamp(1rem, 5vw, 2.5rem); }
+.sec-inner    { max-width: 1140px; margin: 0 auto; }
+.sec-inner-sm { max-width: 760px;  margin: 0 auto; }
+.sec-inner-md { max-width: 960px;  margin: 0 auto; }
 .sec-tag {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: .68rem; font-weight: 700;
-    letter-spacing: .14em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: .6rem;
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: .68rem; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: .55rem;
 }
 .sec-tag::before {
-    content: ''; width: 18px; height: 2px;
+    content: ''; width: 20px; height: 2px;
     background: var(--gold); border-radius: 99px;
 }
 .sec-h2 {
-    font-size: clamp(1.55rem, 3.2vw, 2.15rem);
+    font-size: clamp(1.65rem, 3.2vw, 2.2rem);
     font-weight: 800; color: var(--navy);
-    letter-spacing: -0.025em; line-height: 1.18;
-    margin-bottom: .6rem;
+    letter-spacing: -0.028em; line-height: 1.18; margin-bottom: .55rem;
 }
 .sec-h2 em { font-style: normal; color: var(--gold); }
-.sec-p {
+.sec-lead {
     font-size: .95rem; color: #5a6474;
-    line-height: 1.78; max-width: 560px;
+    line-height: 1.8; max-width: 540px;
 }
 
 /* ─────────────────────────────────────────────
    HERO
 ───────────────────────────────────────────── */
 .hero {
-    background: #fff;
-    border-bottom: 1px solid #e8ecf1;
-    padding: clamp(3rem, 7vw, 5rem) clamp(1rem, 5vw, 2.5rem);
-}
-.hero-inner {
-    max-width: 1140px; margin: 0 auto;
-    display: grid; grid-template-columns: 1fr 420px;
-    gap: 3.5rem; align-items: center;
+    background: linear-gradient(140deg, #07162a 0%, #0D2144 50%, #14305e 100%);
+    min-height: 90vh;
+    display: flex; align-items: center;
+    padding: clamp(4rem, 9vw, 7rem) clamp(1rem, 5vw, 2.5rem);
+    position: relative; overflow: hidden;
 }
 
-/* Left */
-.h-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(13,33,68,.06);
-    border: 1px solid rgba(13,33,68,.13);
-    border-radius: 99px; padding: 5px 14px;
-    font-size: .7rem; font-weight: 700; color: var(--navy);
-    letter-spacing: .07em; text-transform: uppercase;
-    margin-bottom: 1.25rem;
+/* Decorative background circles */
+.hero-deco-a {
+    position: absolute; top: -120px; right: -80px;
+    width: 580px; height: 580px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,134,26,.09) 0%, transparent 68%);
+    pointer-events: none;
 }
-.h-badge i { color: var(--gold); font-size: .62rem; }
+.hero-deco-b {
+    position: absolute; bottom: -140px; left: -60px;
+    width: 440px; height: 440px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.03) 0%, transparent 65%);
+    pointer-events: none;
+}
+/* Subtle grid texture */
+.hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+}
+
+.hero-inner {
+    position: relative; z-index: 1;
+    max-width: 1140px; margin: 0 auto; width: 100%;
+    display: grid; grid-template-columns: 1fr 400px;
+    gap: 4rem; align-items: center;
+}
+
+/* ── Hero Left ── */
+.h-eyebrow {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(200,134,26,.15); border: 1px solid rgba(200,134,26,.3);
+    border-radius: 99px; padding: 5px 14px;
+    font-size: .68rem; font-weight: 700; color: #e0a843;
+    letter-spacing: .1em; text-transform: uppercase; margin-bottom: 1.5rem;
+}
+.h-eyebrow i { font-size: .6rem; }
 
 .h-title {
-    font-size: clamp(2.1rem, 4.5vw, 3.1rem);
-    font-weight: 800; color: var(--navy);
-    line-height: 1.1; letter-spacing: -0.03em;
-    margin-bottom: 1rem;
+    font-size: clamp(2.4rem, 5vw, 3.5rem);
+    font-weight: 800; color: #fff;
+    line-height: 1.08; letter-spacing: -0.035em;
+    margin-bottom: 1.25rem;
 }
 .h-title em { font-style: normal; color: var(--gold); }
 
 .h-desc {
-    font-size: clamp(.9rem, 1.8vw, 1.02rem);
-    color: #5a6474; line-height: 1.82;
-    max-width: 460px; margin-bottom: 2rem; font-weight: 400;
+    font-size: clamp(.92rem, 1.7vw, 1.05rem);
+    color: rgba(255,255,255,.6);
+    line-height: 1.85; max-width: 460px; margin-bottom: 2.25rem;
 }
 
-.h-ctas { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 2.75rem; }
+.h-actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
 
-.h-stats {
-    display: flex; gap: 2.75rem;
-    padding-top: 2rem; border-top: 1px solid #eaecf0;
-    flex-wrap: wrap;
+.h-trust {
+    display: flex; align-items: center; gap: 1.5rem;
+    flex-wrap: wrap; padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,.1);
 }
-.h-stat-num {
-    font-size: 1.6rem; font-weight: 800; color: var(--navy);
-    line-height: 1; letter-spacing: -0.025em;
+.h-trust-item {
+    display: flex; align-items: center; gap: .45rem;
+    font-size: .76rem; color: rgba(255,255,255,.5); font-weight: 500;
 }
-.h-stat-num em { font-style: normal; color: var(--gold); }
-.h-stat-lbl {
-    font-size: .72rem; color: #9ca3af;
-    margin-top: .25rem; font-weight: 500;
-}
+.h-trust-item i { color: var(--gold); opacity: .85; font-size: .68rem; }
 
-/* Right: Panel */
+/* ── Hero Right Panel ── */
 .h-panel {
-    background: #fff;
-    border: 1.5px solid #e8ecf1;
-    border-radius: 18px; padding: 1.75rem;
-    box-shadow: 0 8px 36px rgba(13,33,68,.08), 0 2px 8px rgba(13,33,68,.04);
+    background: #fff; border-radius: 20px;
+    padding: 1.85rem;
+    box-shadow: 0 24px 64px rgba(0,0,0,.28), 0 4px 12px rgba(0,0,0,.12);
 }
-.h-panel-head {
-    display: flex; align-items: center; gap: .65rem;
-    margin-bottom: 1.3rem; padding-bottom: 1.1rem;
-    border-bottom: 1px solid #f0f2f5;
+.h-panel-label {
+    font-size: .68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .12em; color: var(--gold); margin-bottom: 1.25rem;
 }
-.h-panel-icon {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: rgba(13,33,68,.07);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--navy); font-size: .95rem; flex-shrink: 0;
+.h-services { display: flex; flex-direction: column; gap: .45rem; margin-bottom: 1.35rem; }
+.h-svc {
+    display: flex; align-items: center; gap: .7rem;
+    padding: .7rem .85rem; border-radius: 10px;
+    border: 1.5px solid #edf0f5; text-decoration: none;
+    background: #fafbfd; transition: border-color .15s, background .15s, box-shadow .15s;
 }
-.h-panel-head h3 { font-size: .95rem; font-weight: 700; color: var(--navy); }
-.h-panel-head p  { font-size: .75rem; color: #9ca3af; margin-top: 1px; }
+.h-svc:hover {
+    border-color: rgba(200,134,26,.35); background: #fffdf7;
+    box-shadow: 0 2px 10px rgba(200,134,26,.1);
+}
+.h-svc-ico {
+    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: .8rem;
+}
+.h-svc-body { flex: 1; min-width: 0; }
+.h-svc-body strong { display: block; font-size: .82rem; font-weight: 600; color: var(--navy); }
+.h-svc-body span   { font-size: .71rem; color: #9ca3af; }
+.h-svc-arr { color: #d1d5db; font-size: .68rem; flex-shrink: 0; transition: color .15s, transform .15s; }
+.h-svc:hover .h-svc-arr { color: var(--gold); transform: translateX(3px); }
 
-.h-track-form { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.1rem; }
-.h-input-wrap { position: relative; }
-.h-input-wrap i {
+.h-divider {
+    display: flex; align-items: center; gap: .65rem;
+    font-size: .68rem; color: #c9cfd9; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .08em; margin-bottom: 1.1rem;
+}
+.h-divider::before, .h-divider::after { content: ''; flex: 1; height: 1px; background: #edf0f5; }
+
+.h-track-form { display: flex; flex-direction: column; gap: .55rem; }
+.h-inp-wrap { position: relative; }
+.h-inp-wrap i {
     position: absolute; left: .9rem; top: 50%;
-    transform: translateY(-50%);
-    color: #b5bec9; font-size: .82rem; pointer-events: none;
+    transform: translateY(-50%); color: #b5bec9; font-size: .8rem; pointer-events: none;
 }
-.h-input-wrap input {
-    width: 100%; height: 48px;
-    padding: 0 .9rem 0 2.5rem;
+.h-inp-wrap input {
+    width: 100%; height: 46px; padding: 0 .9rem 0 2.4rem;
     border: 1.5px solid #dde1e8; border-radius: 10px;
-    font-family: 'Poppins', sans-serif;
-    font-size: .88rem; color: var(--text); background: #fafbfc;
-    transition: border-color .2s, box-shadow .2s;
+    font-family: 'Poppins', sans-serif; font-size: .86rem; color: var(--text);
+    background: #fafbfc; transition: border-color .2s, box-shadow .2s;
 }
-.h-input-wrap input:focus {
+.h-inp-wrap input:focus {
     outline: none; border-color: var(--navy); background: #fff;
     box-shadow: 0 0 0 3px rgba(13,33,68,.08);
 }
-.h-input-wrap input::placeholder { color: #b5bec9; }
+.h-inp-wrap input::placeholder { color: #b5bec9; }
 .h-track-btn {
-    height: 48px; width: 100%;
-    background: var(--navy); color: #fff;
-    border: none; border-radius: 10px;
-    font-family: 'Poppins', sans-serif;
-    font-size: .9rem; font-weight: 600; cursor: pointer;
+    height: 46px; background: var(--navy); color: #fff; border: none;
+    border-radius: 10px; font-family: 'Poppins', sans-serif;
+    font-size: .88rem; font-weight: 600; cursor: pointer;
     display: flex; align-items: center; justify-content: center; gap: .5rem;
     transition: background .2s, box-shadow .2s;
 }
-.h-track-btn:hover { background: var(--navy-mid); box-shadow: 0 4px 14px rgba(13,33,68,.25); }
-
-.h-or {
-    display: flex; align-items: center; gap: .65rem;
-    font-size: .7rem; color: #c0c9d4; font-weight: 600;
-    text-transform: uppercase; letter-spacing: .08em; margin: .15rem 0;
-}
-.h-or::before, .h-or::after { content: ''; flex: 1; height: 1px; background: #eaecf0; }
-
-.h-shortcuts { display: flex; flex-direction: column; gap: .4rem; }
-.h-shortcut {
-    display: flex; align-items: center; gap: .65rem;
-    padding: .65rem .85rem; border: 1px solid #eaecf0;
-    border-radius: 10px; text-decoration: none; background: #fafbfc;
-    transition: border-color .15s, background .15s;
-}
-.h-shortcut:hover { border-color: rgba(200,134,26,.4); background: #fffdf7; }
-.h-s-icon {
-    width: 32px; height: 32px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: .78rem; flex-shrink: 0;
-}
-.h-s-body { flex: 1; min-width: 0; }
-.h-s-body strong { display: block; font-size: .82rem; font-weight: 600; color: var(--navy); }
-.h-s-body span   { font-size: .72rem; color: #9ca3af; }
-.h-s-arrow { color: #d1d5db; font-size: .7rem; transition: color .15s, transform .15s; }
-.h-shortcut:hover .h-s-arrow { color: var(--gold); transform: translateX(2px); }
+.h-track-btn:hover { background: var(--navy-mid); box-shadow: 0 4px 16px rgba(13,33,68,.28); }
 
 /* ─────────────────────────────────────────────
-   THE PROBLEM
+   STATS STRIP
 ───────────────────────────────────────────── */
-.prob-sec { background: #f7f9fc; border-top: 1px solid #eaecf0; border-bottom: 1px solid #eaecf0; }
+.stats-strip {
+    background: #fff; border-top: 1px solid #e8ecf1; border-bottom: 1px solid #e8ecf1;
+    padding: 0 clamp(1rem, 5vw, 2.5rem);
+}
+.stats-strip-inner {
+    max-width: 1140px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+}
+.stat-item {
+    padding: 1.75rem 1.5rem;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; gap: .3rem;
+    position: relative;
+}
+.stat-item:not(:last-child)::after {
+    content: ''; position: absolute; right: 0; top: 20%; bottom: 20%;
+    width: 1px; background: #e8ecf1;
+}
+.stat-num {
+    font-size: 1.9rem; font-weight: 800; color: var(--navy);
+    line-height: 1; letter-spacing: -0.035em;
+}
+.stat-num em { font-style: normal; color: var(--gold); }
+.stat-lbl { font-size: .75rem; color: #9ca3af; font-weight: 500; }
 
-.prob-cards {
+/* ─────────────────────────────────────────────
+   SERVICES
+───────────────────────────────────────────── */
+.services-sec { background: #f8fafd; border-bottom: 1px solid #eaecf0; }
+
+.svc-grid {
     display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem; margin-top: 2.5rem;
+    gap: 1rem; margin-top: 2.75rem;
 }
-.prob-card {
+.svc-card {
     background: #fff; border: 1.5px solid #eceef3;
-    border-radius: 14px; padding: 1.65rem 1.4rem;
-    transition: box-shadow .2s;
-}
-.prob-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.07); }
-.prob-icon {
-    width: 50px; height: 50px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem; margin-bottom: 1.05rem;
-}
-.prob-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .45rem; }
-.prob-card p  { font-size: .84rem; color: #6b7280; line-height: 1.72; }
-
-/* ─────────────────────────────────────────────
-   SOLUTION BANNER
-───────────────────────────────────────────── */
-.sol-banner {
-    background: linear-gradient(110deg, var(--navy-dark) 0%, var(--navy) 55%, #183a70 100%);
-    padding: clamp(2.75rem, 5.5vw, 4.5rem) clamp(1rem, 5vw, 2.5rem);
-    text-align: center; position: relative; overflow: hidden;
-}
-.sol-banner::before {
-    content: ''; position: absolute; top: -60px; right: -60px;
-    width: 340px; height: 340px;
-    background: radial-gradient(circle, rgba(200,134,26,.1) 0%, transparent 65%);
-    pointer-events: none;
-}
-.sol-banner::after {
-    content: ''; position: absolute; bottom: -50px; left: 6%;
-    width: 260px; height: 260px;
-    background: radial-gradient(circle, rgba(255,255,255,.03) 0%, transparent 65%);
-    pointer-events: none;
-}
-.sol-inner { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; }
-.sol-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(200,134,26,.2); border: 1px solid rgba(200,134,26,.35);
-    border-radius: 99px; padding: 5px 16px;
-    font-size: .7rem; font-weight: 700; color: var(--gold-light);
-    letter-spacing: .09em; text-transform: uppercase; margin-bottom: 1.4rem;
-}
-.sol-badge i { font-size: .65rem; }
-.sol-h2 {
-    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
-    font-weight: 800; color: #fff; line-height: 1.32;
-    letter-spacing: -0.02em; margin-bottom: 1.1rem;
-}
-.sol-quote {
-    font-size: .92rem; color: rgba(255,255,255,.48);
-    line-height: 1.8; font-style: italic;
-}
-
-/* ─────────────────────────────────────────────
-   FEATURES / SERVICES
-───────────────────────────────────────────── */
-.feat-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 1.15rem; margin-top: 2.75rem;
-}
-.feat-card {
-    background: #fff; border: 1.5px solid #eceef3;
-    border-radius: 14px; padding: 1.65rem 1.4rem;
+    border-radius: 16px; padding: 1.75rem 1.5rem;
     text-decoration: none; display: flex; flex-direction: column;
-    transition: border-color .2s, box-shadow .2s, transform .15s;
+    transition: border-color .2s, box-shadow .2s, transform .18s;
     position: relative; overflow: hidden;
 }
-.feat-card::after {
+.svc-card::before {
     content: ''; position: absolute; top: 0; left: 0;
-    width: 100%; height: 3px; border-radius: 14px 14px 0 0;
+    width: 100%; height: 3px; border-radius: 16px 16px 0 0;
     opacity: 0; transition: opacity .2s;
 }
-.feat-card:hover {
-    border-color: rgba(200,134,26,.3);
-    box-shadow: 0 8px 28px rgba(200,134,26,.1);
-    transform: translateY(-3px);
+.svc-card:hover {
+    border-color: #d4dae8;
+    box-shadow: 0 10px 36px rgba(13,33,68,.1);
+    transform: translateY(-4px);
 }
-.feat-card:hover::after { opacity: 1; }
-.feat-card.fc-navy::after  { background: var(--navy); }
-.feat-card.fc-gold::after  { background: var(--gold); }
-.feat-card.fc-green::after { background: #16a34a; }
-.feat-card.fc-blue::after  { background: #2563eb; }
-.feat-card.fc-red::after   { background: var(--crimson); }
-.feat-card.fc-teal::after  { background: #0e7490; }
+.svc-card:hover::before { opacity: 1; }
 
-.feat-icon {
+.sc-navy::before  { background: var(--navy); }
+.sc-gold::before  { background: var(--gold); }
+.sc-green::before { background: #16a34a; }
+.sc-blue::before  { background: #2563eb; }
+.sc-red::before   { background: #dc2626; }
+.sc-teal::before  { background: #0e7490; }
+
+.svc-icon {
     width: 52px; height: 52px; border-radius: 13px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem; margin-bottom: 1rem;
+    font-size: 1.2rem; margin-bottom: 1.1rem; flex-shrink: 0;
 }
-.fc-navy  .feat-icon { background: rgba(13,33,68,.07);  color: var(--navy); }
-.fc-gold  .feat-icon { background: rgba(200,134,26,.1); color: var(--gold); }
-.fc-green .feat-icon { background: rgba(22,163,74,.09); color: #16a34a; }
-.fc-blue  .feat-icon { background: rgba(37,99,235,.08); color: #2563eb; }
-.fc-red   .feat-icon { background: rgba(155,28,28,.07); color: var(--crimson); }
-.fc-teal  .feat-icon { background: rgba(14,116,144,.07);color: #0e7490; }
+.sc-navy  .svc-icon { background: rgba(13,33,68,.07);  color: var(--navy); }
+.sc-gold  .svc-icon { background: rgba(200,134,26,.1); color: var(--gold); }
+.sc-green .svc-icon { background: rgba(22,163,74,.09); color: #16a34a; }
+.sc-blue  .svc-icon { background: rgba(37,99,235,.08); color: #2563eb; }
+.sc-red   .svc-icon { background: rgba(220,38,38,.07); color: #dc2626; }
+.sc-teal  .svc-icon { background: rgba(14,116,144,.07);color: #0e7490; }
 
-.feat-card h3 { font-size: .95rem; font-weight: 700; color: var(--navy); margin-bottom: .4rem; line-height: 1.3; }
-.feat-card p  { font-size: .82rem; color: #6b7280; line-height: 1.67; flex: 1; margin-bottom: .9rem; }
-.feat-cta {
+.svc-card h3 {
+    font-size: .97rem; font-weight: 700; color: var(--navy);
+    margin-bottom: .4rem; line-height: 1.3;
+}
+.svc-card p  {
+    font-size: .82rem; color: #6b7280; line-height: 1.7;
+    flex: 1; margin-bottom: 1.1rem;
+}
+.svc-link {
     display: inline-flex; align-items: center; gap: 5px;
-    font-size: .76rem; font-weight: 700; color: var(--navy);
-    text-transform: uppercase; letter-spacing: .05em;
+    font-size: .75rem; font-weight: 700; color: var(--navy);
+    text-transform: uppercase; letter-spacing: .06em;
     transition: gap .15s, color .15s;
 }
-.feat-card:hover .feat-cta { gap: 9px; color: var(--gold); }
-.feat-cta i { font-size: .6rem; }
+.svc-card:hover .svc-link { gap: 9px; color: var(--gold); }
+.svc-link i { font-size: .58rem; }
 
 /* ─────────────────────────────────────────────
    HOW IT WORKS
 ───────────────────────────────────────────── */
-.how-sec { background: #f7f9fc; border-top: 1px solid #eaecf0; border-bottom: 1px solid #eaecf0; }
+.how-sec { background: #fff; }
 
 .how-steps {
     display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 0; margin-top: 3rem; position: relative;
+    gap: 0; margin-top: 3.25rem; position: relative;
 }
 .how-steps::before {
-    content: ''; position: absolute;
-    top: 30px; left: calc(12.5% + 14px); right: calc(12.5% + 14px);
+    content: '';
+    position: absolute;
+    top: 28px; left: calc(12.5% + 18px); right: calc(12.5% + 18px);
     height: 1px;
-    background: linear-gradient(90deg, rgba(200,134,26,.2), rgba(200,134,26,.55), rgba(200,134,26,.2));
+    background: linear-gradient(90deg, transparent, rgba(200,134,26,.4) 20%, rgba(200,134,26,.4) 80%, transparent);
     z-index: 0;
 }
-.how-step { text-align: center; padding: 0 1.2rem; position: relative; z-index: 1; }
+.how-step { text-align: center; padding: 0 1.25rem; position: relative; z-index: 1; }
 .how-num {
-    width: 60px; height: 60px; border-radius: 50%;
+    width: 56px; height: 56px; border-radius: 50%;
     background: var(--navy); color: #fff;
-    font-size: 1.1rem; font-weight: 800;
+    font-size: 1rem; font-weight: 800;
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 1.2rem;
-    border: 3px solid #f7f9fc;
-    box-shadow: 0 0 0 3px rgba(200,134,26,.35), 0 4px 18px rgba(13,33,68,.15);
-    position: relative; z-index: 1;
+    margin: 0 auto 1.35rem;
+    box-shadow: 0 0 0 5px #fff, 0 0 0 6px rgba(200,134,26,.3), 0 6px 20px rgba(13,33,68,.18);
+    position: relative; z-index: 2;
 }
-.how-step h4 { font-size: .92rem; font-weight: 700; color: var(--navy); margin-bottom: .45rem; }
-.how-step p  { font-size: .81rem; color: #6b7280; line-height: 1.68; }
+.how-step h4 { font-size: .92rem; font-weight: 700; color: var(--navy); margin-bottom: .45rem; line-height: 1.3; }
+.how-step p  { font-size: .81rem; color: #6b7280; line-height: 1.72; }
 
 /* ─────────────────────────────────────────────
-   TRUST & SECURITY
+   TRUST & PRIVACY
 ───────────────────────────────────────────── */
-.trust-sec { background: #fff; }
+.trust-sec { background: #f8fafd; border-top: 1px solid #eaecf0; border-bottom: 1px solid #eaecf0; }
+
 .trust-inner {
-    display: grid; grid-template-columns: 1fr 1fr;
+    display: grid; grid-template-columns: 1fr 1.1fr;
     gap: 5rem; align-items: center;
 }
 .trust-shield {
-    width: 76px; height: 76px; border-radius: 50%;
+    width: 72px; height: 72px; border-radius: 50%;
     background: linear-gradient(135deg, var(--navy), var(--navy-mid));
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.85rem; color: #fff; margin-bottom: 1.5rem;
-    box-shadow: 0 8px 28px rgba(13,33,68,.22);
+    font-size: 1.75rem; color: #fff; margin-bottom: 1.5rem;
+    box-shadow: 0 8px 28px rgba(13,33,68,.2);
 }
 .trust-left h2 {
-    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    font-size: clamp(1.5rem, 3vw, 2rem);
     font-weight: 800; color: var(--navy);
-    letter-spacing: -0.02em; margin-bottom: .7rem;
+    letter-spacing: -0.025em; margin-bottom: .7rem; line-height: 1.18;
 }
-.trust-left p { font-size: .92rem; color: #5a6474; line-height: 1.78; margin-bottom: 1.5rem; }
+.trust-left p  { font-size: .92rem; color: #5a6474; line-height: 1.8; margin-bottom: 1.5rem; }
 .trust-dpa {
     display: inline-flex; align-items: center; gap: .5rem;
-    background: rgba(13,33,68,.05); border: 1px solid rgba(13,33,68,.12);
+    background: rgba(13,33,68,.06); border: 1px solid rgba(13,33,68,.13);
     border-radius: 99px; padding: 6px 16px;
-    font-size: .75rem; font-weight: 700; color: var(--navy);
+    font-size: .74rem; font-weight: 700; color: var(--navy);
 }
-.trust-dpa i { color: var(--gold); font-size: .68rem; }
+.trust-dpa i { color: var(--gold); font-size: .65rem; }
 
-.trust-boxes {
-    display: grid; grid-template-columns: 1fr 1fr; gap: .85rem;
-}
+.trust-boxes { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; }
 .trust-box {
-    background: #f7f9fc; border: 1.5px solid #eceef3;
-    border-radius: 14px; padding: 1.25rem 1.1rem;
+    background: #fff; border: 1.5px solid #eceef3;
+    border-radius: 14px; padding: 1.3rem 1.15rem;
     transition: border-color .15s, box-shadow .15s;
 }
-.trust-box:hover { border-color: rgba(13,33,68,.2); box-shadow: 0 4px 16px rgba(13,33,68,.07); }
-.trust-box-icon {
+.trust-box:hover { border-color: #c3cedf; box-shadow: 0 4px 18px rgba(13,33,68,.07); }
+.trust-box-ico {
     width: 38px; height: 38px; border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
     font-size: .88rem; margin-bottom: .8rem;
 }
 .trust-box h4 { font-size: .83rem; font-weight: 700; color: var(--navy); margin-bottom: .3rem; line-height: 1.3; }
-.trust-box p  { font-size: .75rem; color: #9ca3af; line-height: 1.58; }
+.trust-box p  { font-size: .74rem; color: #9ca3af; line-height: 1.6; }
 
 /* ─────────────────────────────────────────────
    FAQ
 ───────────────────────────────────────────── */
-.faq-sec { background: #f7f9fc; border-top: 1px solid #eaecf0; border-bottom: 1px solid #eaecf0; }
-.faq-list { display: flex; flex-direction: column; gap: .6rem; margin-top: 2.25rem; }
+.faq-sec { background: #fff; }
+
+.faq-list { display: flex; flex-direction: column; gap: .5rem; margin-top: 2.5rem; }
 .faq-item {
-    background: #fff; border: 1.5px solid #eceef3;
-    border-radius: 12px; overflow: hidden; transition: border-color .15s;
+    border: 1.5px solid #eceef3; border-radius: 12px;
+    background: #fff; overflow: hidden; transition: border-color .15s;
 }
 .faq-item.open { border-color: #c3cedf; }
 .faq-btn {
-    width: 100%;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 1.05rem 1.25rem; background: none; border: none;
+    width: 100%; display: flex; align-items: center;
+    justify-content: space-between; gap: 12px;
+    padding: 1.1rem 1.3rem; background: none; border: none;
     font-family: 'Poppins', sans-serif;
     font-size: .9rem; font-weight: 600; color: var(--navy);
     cursor: pointer; text-align: left; min-height: 58px;
     transition: background .1s;
 }
-.faq-btn:hover { background: #fafbfc; }
+.faq-btn:hover { background: #fafbfd; }
 .faq-icon {
-    width: 26px; height: 26px; border-radius: 50%;
+    width: 28px; height: 28px; border-radius: 50%;
     background: #f0f2f5; color: var(--navy); flex-shrink: 0;
     display: flex; align-items: center; justify-content: center; font-size: .68rem;
     transition: transform .22s, background .15s, color .15s;
@@ -397,8 +372,8 @@ body { background: #fff; }
 .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--navy); color: #fff; }
 .faq-body {
     display: none; border-top: 1px solid #f0f2f5;
-    padding: .85rem 1.25rem 1.15rem;
-    font-size: .88rem; color: #5a6474; line-height: 1.78;
+    padding: .9rem 1.3rem 1.2rem;
+    font-size: .88rem; color: #5a6474; line-height: 1.8;
 }
 .faq-item.open .faq-body { display: block; }
 
@@ -406,321 +381,286 @@ body { background: #fff; }
    CTA BAND
 ───────────────────────────────────────────── */
 .cta-band {
-    background: linear-gradient(110deg, var(--navy-dark) 0%, var(--navy) 60%, #1b3c72 100%);
-    padding: clamp(3rem, 6vw, 5.5rem) clamp(1rem, 5vw, 2.5rem);
+    background: linear-gradient(135deg, #07162a 0%, #0D2144 55%, #14305e 100%);
+    padding: clamp(3.5rem, 7vw, 6rem) clamp(1rem, 5vw, 2.5rem);
     text-align: center; position: relative; overflow: hidden;
 }
 .cta-band::before {
-    content: ''; position: absolute; top: -80px; right: -60px;
-    width: 380px; height: 380px;
+    content: ''; position: absolute; top: -100px; right: -80px;
+    width: 460px; height: 460px;
     background: radial-gradient(circle, rgba(200,134,26,.1) 0%, transparent 65%);
     pointer-events: none;
 }
 .cta-band::after {
-    content: ''; position: absolute; bottom: -60px; left: 8%;
-    width: 280px; height: 280px;
+    content: ''; position: absolute; bottom: -80px; left: 5%;
+    width: 340px; height: 340px;
     background: radial-gradient(circle, rgba(255,255,255,.03) 0%, transparent 65%);
     pointer-events: none;
 }
-.cta-band-inner { position: relative; z-index: 1; max-width: 620px; margin: 0 auto; }
+.cta-band-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
 .cta-band h2 {
-    font-size: clamp(1.6rem, 3.5vw, 2.35rem);
+    font-size: clamp(1.75rem, 4vw, 2.6rem);
     font-weight: 800; color: #fff;
-    margin-bottom: .75rem; letter-spacing: -0.025em;
+    letter-spacing: -0.03em; margin-bottom: .8rem; line-height: 1.12;
 }
-.cta-band p { font-size: .95rem; color: rgba(255,255,255,.52); line-height: 1.82; margin-bottom: 2.25rem; }
-.cta-band-btns { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+.cta-band h2 em { font-style: normal; color: var(--gold); }
+.cta-band p {
+    font-size: .95rem; color: rgba(255,255,255,.5);
+    line-height: 1.85; margin-bottom: 2.25rem;
+}
+.cta-btns { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
 
 /* ─────────────────────────────────────────────
    RESPONSIVE
 ───────────────────────────────────────────── */
-@media (max-width: 960px) {
-    .hero-inner   { grid-template-columns: 1fr; gap: 2.5rem; }
-    .h-panel      { max-width: 480px; }
-    .trust-inner  { grid-template-columns: 1fr; gap: 2.75rem; }
+@media (max-width: 980px) {
+    .hero-inner  { grid-template-columns: 1fr; gap: 3rem; }
+    .h-panel     { max-width: 480px; }
+    .trust-inner { grid-template-columns: 1fr; gap: 3rem; }
 }
-@media (max-width: 740px) {
-    .feat-grid    { grid-template-columns: 1fr 1fr; }
-    .prob-cards   { grid-template-columns: 1fr; }
-    .trust-boxes  { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 540px) {
-    .feat-grid    { grid-template-columns: 1fr; }
-    .trust-boxes  { grid-template-columns: 1fr; }
-    .h-ctas       { flex-direction: column; }
-    .h-ctas .btn  { width: 100%; justify-content: center; }
-    .cta-band-btns            { flex-direction: column; align-items: stretch; }
-    .cta-band-btns .btn       { width: 100%; justify-content: center; }
+@media (max-width: 760px) {
+    .svc-grid   { grid-template-columns: 1fr 1fr; }
+    .trust-boxes{ grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 640px) {
+    .stats-strip-inner { grid-template-columns: 1fr 1fr; }
+    .stat-item:nth-child(2)::after { display: none; }
+
     .how-steps { grid-template-columns: 1fr; gap: 0; }
     .how-steps::before { display: none; }
     .how-step {
-        display: flex; align-items: flex-start;
-        gap: 1.1rem; text-align: left; padding: 0 0 2.25rem; position: relative;
+        display: flex; align-items: flex-start; gap: 1.1rem;
+        text-align: left; padding: 0 0 2rem; position: relative;
     }
     .how-step:last-child { padding-bottom: 0; }
     .how-step:not(:last-child)::after {
-        content: ''; position: absolute;
-        left: 29px; top: 60px; bottom: 0;
-        width: 1px; background: rgba(200,134,26,.28);
+        content: ''; position: absolute; left: 27px; top: 56px; bottom: 0;
+        width: 1px; background: rgba(200,134,26,.25);
     }
-    .how-num { flex-shrink: 0; margin: 0; }
-    .how-step-body { flex: 1; padding-top: 14px; }
+    .how-num { flex-shrink: 0; margin: 0; box-shadow: 0 0 0 4px #fff, 0 0 0 5px rgba(200,134,26,.3); }
+    .how-step-body { flex: 1; padding-top: 12px; }
+
+    .cta-btns { flex-direction: column; align-items: stretch; }
+    .cta-btns .btn { width: 100%; justify-content: center; }
+    .h-actions { flex-direction: column; }
+    .h-actions .btn { width: 100%; justify-content: center; }
+}
+@media (max-width: 500px) {
+    .svc-grid  { grid-template-columns: 1fr; }
+    .trust-boxes { grid-template-columns: 1fr; }
 }
 </style>
 @endpush
 
 @section('content')
 
-{{-- ══════════════════════════════════════════
+{{-- ════════════════════════════════════════════
      HERO
-══════════════════════════════════════════ --}}
-<section class="hero" aria-label="Resident Portal Home">
+════════════════════════════════════════════ --}}
+<section class="hero" aria-label="Barangay New Era Resident Portal">
+    <div class="hero-deco-a" aria-hidden="true"></div>
+    <div class="hero-deco-b" aria-hidden="true"></div>
     <div class="hero-inner">
 
-        {{-- Left –– Headline + CTAs --}}
+        {{-- Left: Headline + CTAs --}}
         <div>
-            <div class="h-badge">
+            <div class="h-eyebrow">
                 <i class="fas fa-shield-halved"></i>
-                Official Barangay Digital Portal
+                Official Government Digital Portal
             </div>
             <h1 class="h-title">
-                Your Barangay<br>
-                Services, <em>Online.</em>
+                Your Barangay,<br>
+                Always <em>Within Reach.</em>
             </h1>
             <p class="h-desc">
-                Access official barangay documents and services anytime, anywhere — no more
-                unnecessary trips to the barangay hall for simple requests.
+                Access official barangay documents and services online —
+                no queues, no repeated trips, completely free for every resident
+                of Barangay New Era.
             </p>
-            <div class="h-ctas">
+            <div class="h-actions">
                 <a href="{{ route('portal.request') }}" class="btn btn-gold btn-lg">
                     <i class="fas fa-file-plus"></i> Request a Document
                 </a>
-                <a href="{{ route('portal.track') }}" class="btn btn-outline btn-lg">
+                <a href="{{ route('portal.track') }}" class="btn btn-outline-white btn-lg">
                     <i class="fas fa-search"></i> Track My Request
                 </a>
             </div>
-            <div class="h-stats">
-                <div>
-                    <div class="h-stat-num"><em>4</em></div>
-                    <div class="h-stat-lbl">Document Types</div>
-                </div>
-                <div>
-                    <div class="h-stat-num">1<span style="font-size:.85rem;color:#c9d0d9;font-weight:500">–</span>3</div>
-                    <div class="h-stat-lbl">Business Days</div>
-                </div>
-                <div>
-                    <div class="h-stat-num"><em>100%</em></div>
-                    <div class="h-stat-lbl">Free Service</div>
-                </div>
-                <div>
-                    <div class="h-stat-num">24/7</div>
-                    <div class="h-stat-lbl">Online Access</div>
-                </div>
+            <div class="h-trust">
+                <div class="h-trust-item"><i class="fas fa-lock"></i> End-to-end secure</div>
+                <div class="h-trust-item"><i class="fas fa-circle-check"></i> 100% Free Service</div>
+                <div class="h-trust-item"><i class="fas fa-certificate"></i> DPA 2012 Compliant</div>
             </div>
         </div>
 
-        {{-- Right –– Track Panel --}}
+        {{-- Right: Quick Access Panel --}}
         <div class="h-panel">
-            <div class="h-panel-head">
-                <div class="h-panel-icon"><i class="fas fa-magnifying-glass"></i></div>
-                <div>
-                    <h3>Track Your Request</h3>
-                    <p>Enter your appointment number</p>
-                </div>
+            <div class="h-panel-label">Quick Access</div>
+
+            <div class="h-services">
+                <a href="{{ route('portal.request') }}" class="h-svc">
+                    <div class="h-svc-ico" style="background:rgba(13,33,68,.07);color:var(--navy)">
+                        <i class="fas fa-file-shield"></i>
+                    </div>
+                    <div class="h-svc-body">
+                        <strong>Request a Document</strong>
+                        <span>Clearance, Indigency, Residency</span>
+                    </div>
+                    <i class="fas fa-chevron-right h-svc-arr"></i>
+                </a>
+                <a href="{{ route('portal.blotter') }}" class="h-svc">
+                    <div class="h-svc-ico" style="background:rgba(220,38,38,.07);color:#dc2626">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    <div class="h-svc-body">
+                        <strong>File a Blotter Report</strong>
+                        <span>Report an incident online</span>
+                    </div>
+                    <i class="fas fa-chevron-right h-svc-arr"></i>
+                </a>
+                <a href="{{ route('portal.business') }}" class="h-svc">
+                    <div class="h-svc-ico" style="background:rgba(14,116,144,.07);color:#0e7490">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div class="h-svc-body">
+                        <strong>Business Permit</strong>
+                        <span>New application or renewal</span>
+                    </div>
+                    <i class="fas fa-chevron-right h-svc-arr"></i>
+                </a>
             </div>
+
+            <div class="h-divider">or track existing request</div>
 
             <form class="h-track-form" action="{{ route('portal.track.post') }}" method="POST">
                 @csrf
-                <div class="h-input-wrap">
+                <div class="h-inp-wrap">
                     <i class="fas fa-hashtag"></i>
                     <input type="text"
                            name="appointment_number"
                            placeholder="e.g. APT-20260520-AB12"
-                           autocomplete="off"
-                           spellcheck="false"
+                           autocomplete="off" spellcheck="false"
                            aria-label="Appointment number">
                 </div>
                 <button type="submit" class="h-track-btn">
                     <i class="fas fa-search"></i> Check Status
                 </button>
             </form>
-
-            <div class="h-or">or start a new request</div>
-
-            <div class="h-shortcuts">
-                <a href="{{ route('portal.request') }}" class="h-shortcut">
-                    <div class="h-s-icon" style="background:rgba(13,33,68,.07);color:var(--navy)">
-                        <i class="fas fa-file-plus"></i>
-                    </div>
-                    <div class="h-s-body">
-                        <strong>Request a Document</strong>
-                        <span>Clearance, Indigency, Residency</span>
-                    </div>
-                    <i class="fas fa-chevron-right h-s-arrow"></i>
-                </a>
-                <a href="{{ route('portal.blotter') }}" class="h-shortcut">
-                    <div class="h-s-icon" style="background:rgba(155,28,28,.07);color:var(--crimson)">
-                        <i class="fas fa-gavel"></i>
-                    </div>
-                    <div class="h-s-body">
-                        <strong>File a Blotter Report</strong>
-                        <span>Report an incident to the barangay</span>
-                    </div>
-                    <i class="fas fa-chevron-right h-s-arrow"></i>
-                </a>
-                <a href="{{ route('portal.business') }}" class="h-shortcut">
-                    <div class="h-s-icon" style="background:rgba(14,116,144,.07);color:#0e7490">
-                        <i class="fas fa-store"></i>
-                    </div>
-                    <div class="h-s-body">
-                        <strong>Business Permit</strong>
-                        <span>New application or renewal</span>
-                    </div>
-                    <i class="fas fa-chevron-right h-s-arrow"></i>
-                </a>
-            </div>
         </div>
 
     </div>
 </section>
 
-{{-- ══════════════════════════════════════════
-     THE PROBLEM
-══════════════════════════════════════════ --}}
-<section class="sec prob-sec" id="the-problem">
+{{-- ════════════════════════════════════════════
+     STATS STRIP
+════════════════════════════════════════════ --}}
+<div class="stats-strip" aria-label="Portal highlights">
+    <div class="stats-strip-inner">
+        <div class="stat-item">
+            <div class="stat-num"><em>4</em></div>
+            <div class="stat-lbl">Document Types Available</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">1<span style="font-size:.9rem;color:#c9d0d9;font-weight:500">–</span>3</div>
+            <div class="stat-lbl">Business Days to Process</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num"><em>100%</em></div>
+            <div class="stat-lbl">Free for All Residents</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">24<span style="font-size:.9rem;color:#c9d0d9;font-weight:400">/7</span></div>
+            <div class="stat-lbl">Online Accessibility</div>
+        </div>
+    </div>
+</div>
+
+{{-- ════════════════════════════════════════════
+     SERVICES
+════════════════════════════════════════════ --}}
+<section class="sec services-sec" id="services">
     <div class="sec-inner">
-        <div class="sec-tag">The Problem</div>
-        <h2 class="sec-h2">Barangay Services, <em>Simplified.</em></h2>
-        <p class="sec-p">Residents deserve better access to barangay services. No more unnecessary trips, lost paperwork, or confusing processes.</p>
+        <div class="sec-tag">Services</div>
+        <h2 class="sec-h2">What Can We Help <em>You With?</em></h2>
+        <p class="sec-lead">All barangay services, now available digitally. Secure, official, and accessible to every resident of Barangay New Era.</p>
 
-        <div class="prob-cards">
-            <div class="prob-card">
-                <div class="prob-icon" style="background:rgba(239,68,68,.08);color:#ef4444">
-                    <i class="fas fa-users-clock"></i>
-                </div>
-                <h3>Long Queues</h3>
-                <p>Hours spent waiting at the barangay hall for a document that takes only minutes to prepare and sign.</p>
-            </div>
-            <div class="prob-card">
-                <div class="prob-icon" style="background:rgba(234,88,12,.08);color:#ea580c">
-                    <i class="fas fa-route"></i>
-                </div>
-                <h3>Multiple Trips Required</h3>
-                <p>Residents must make repeated visits — once to request, again to follow up, and yet again to claim their document.</p>
-            </div>
-            <div class="prob-card">
-                <div class="prob-icon" style="background:rgba(202,138,4,.08);color:#ca8a04">
-                    <i class="fas fa-triangle-exclamation"></i>
-                </div>
-                <h3>No Real-time Updates</h3>
-                <p>No way to check document status without visiting in person, leaving residents uncertain about their request.</p>
-            </div>
-        </div>
-    </div>
-</section>
+        <div class="svc-grid">
 
-{{-- ══════════════════════════════════════════
-     SOLUTION BANNER
-══════════════════════════════════════════ --}}
-<section class="sol-banner">
-    <div class="sol-inner">
-        <div class="sol-badge">
-            <i class="fas fa-circle-check"></i> The Solution
-        </div>
-        <h2 class="sol-h2">
-            Barangay New Era Portal brings all barangay services into one secure, easy-to-use platform.
-        </h2>
-        <p class="sol-quote">"No more waiting in line. Your barangay is in your hands."</p>
-    </div>
-</section>
-
-{{-- ══════════════════════════════════════════
-     FEATURES / SERVICES
-══════════════════════════════════════════ --}}
-<section class="sec" id="services">
-    <div class="sec-inner">
-        <div class="sec-tag">Features</div>
-        <h2 class="sec-h2">Everything You Need, <em>In One Place.</em></h2>
-        <p class="sec-p">All barangay document services available digitally — secure, free, and accessible to every resident of Barangay New Era.</p>
-
-        <div class="feat-grid">
-
-            <a href="{{ route('portal.request') }}?type=Barangay+Clearance" class="feat-card fc-navy">
-                <div class="feat-icon"><i class="fas fa-file-shield"></i></div>
+            <a href="{{ route('portal.request') }}?type=Barangay+Clearance" class="svc-card sc-navy">
+                <div class="svc-icon"><i class="fas fa-file-shield"></i></div>
                 <h3>Barangay Clearance</h3>
-                <p>Certificate of good standing for employment applications, business permits, loans, and other official requirements.</p>
-                <div class="feat-cta">Request Now <i class="fas fa-arrow-right"></i></div>
+                <p>Certificate of good standing for employment, loans, business permits, and other official requirements.</p>
+                <div class="svc-link">Request Now <i class="fas fa-arrow-right"></i></div>
             </a>
 
-            <a href="{{ route('portal.request') }}?type=Certificate+of+Indigency" class="feat-card fc-gold">
-                <div class="feat-icon"><i class="fas fa-hand-holding-heart"></i></div>
+            <a href="{{ route('portal.request') }}?type=Certificate+of+Indigency" class="svc-card sc-gold">
+                <div class="svc-icon"><i class="fas fa-hand-holding-heart"></i></div>
                 <h3>Certificate of Indigency</h3>
-                <p>For residents who need to avail of government assistance programs, PhilHealth, or medical financial aid.</p>
-                <div class="feat-cta">Request Now <i class="fas fa-arrow-right"></i></div>
+                <p>For residents availing government assistance programs, PhilHealth, or medical financial aid.</p>
+                <div class="svc-link">Request Now <i class="fas fa-arrow-right"></i></div>
             </a>
 
-            <a href="{{ route('portal.request') }}?type=Certificate+of+Residency" class="feat-card fc-green">
-                <div class="feat-icon"><i class="fas fa-house-circle-check"></i></div>
+            <a href="{{ route('portal.request') }}?type=Certificate+of+Residency" class="svc-card sc-green">
+                <div class="svc-icon"><i class="fas fa-house-circle-check"></i></div>
                 <h3>Certificate of Residency</h3>
-                <p>Proof of residence for school enrollment, government transactions, and other official document requirements.</p>
-                <div class="feat-cta">Request Now <i class="fas fa-arrow-right"></i></div>
+                <p>Proof of residence for school enrollment, government transactions, and official requirements.</p>
+                <div class="svc-link">Request Now <i class="fas fa-arrow-right"></i></div>
             </a>
 
-            <a href="{{ route('portal.request') }}?type=Business+Clearance" class="feat-card fc-blue">
-                <div class="feat-icon"><i class="fas fa-building"></i></div>
+            <a href="{{ route('portal.request') }}?type=Business+Clearance" class="svc-card sc-blue">
+                <div class="svc-icon"><i class="fas fa-building"></i></div>
                 <h3>Business Clearance</h3>
-                <p>Required for new business registration and the annual renewal of business permits operating within the barangay.</p>
-                <div class="feat-cta">Request Now <i class="fas fa-arrow-right"></i></div>
+                <p>Required for new business registration and annual renewal of permits within the barangay.</p>
+                <div class="svc-link">Request Now <i class="fas fa-arrow-right"></i></div>
             </a>
 
-            <a href="{{ route('portal.blotter') }}" class="feat-card fc-red">
-                <div class="feat-icon"><i class="fas fa-gavel"></i></div>
+            <a href="{{ route('portal.blotter') }}" class="svc-card sc-red">
+                <div class="svc-icon"><i class="fas fa-gavel"></i></div>
                 <h3>File a Blotter Report</h3>
-                <p>Report an incident to the barangay online. Our Peace &amp; Order committee will follow up and facilitate mediation.</p>
-                <div class="feat-cta">File Report <i class="fas fa-arrow-right"></i></div>
+                <p>Report an incident online. Our Peace &amp; Order committee will follow up and facilitate mediation.</p>
+                <div class="svc-link">File Report <i class="fas fa-arrow-right"></i></div>
             </a>
 
-            <a href="{{ route('portal.business') }}" class="feat-card fc-teal">
-                <div class="feat-icon"><i class="fas fa-file-contract"></i></div>
+            <a href="{{ route('portal.business') }}" class="svc-card sc-teal">
+                <div class="svc-icon"><i class="fas fa-file-contract"></i></div>
                 <h3>Business Permit Application</h3>
-                <p>Apply for a new business permit or annual renewal online. A barangay inspector will review and process your application.</p>
-                <div class="feat-cta">Apply Now <i class="fas fa-arrow-right"></i></div>
+                <p>Apply for a new business permit or annual renewal online. Staff will review and process your application.</p>
+                <div class="svc-link">Apply Now <i class="fas fa-arrow-right"></i></div>
             </a>
 
         </div>
     </div>
 </section>
 
-{{-- ══════════════════════════════════════════
+{{-- ════════════════════════════════════════════
      HOW IT WORKS
-══════════════════════════════════════════ --}}
+════════════════════════════════════════════ --}}
 <section class="sec how-sec" id="how-it-works">
     <div class="sec-inner">
-        <div class="sec-tag">How It Works</div>
-        <h2 class="sec-h2">Get Started in <em>4 Easy Steps.</em></h2>
-        <p class="sec-p">From request to release — the entire process is designed to be as simple as possible for every resident.</p>
+        <div style="text-align:center;margin-bottom:.25rem">
+            <div class="sec-tag" style="justify-content:center">Process</div>
+            <h2 class="sec-h2" style="text-align:center">How It <em>Works.</em></h2>
+            <p class="sec-lead" style="margin:0 auto;text-align:center">From submission to release — the entire process is designed to be simple and transparent.</p>
+        </div>
 
         <div class="how-steps">
             <div class="how-step">
                 <div class="how-num">1</div>
                 <div class="how-step-body">
                     <h4>Fill the Form</h4>
-                    <p>Provide your personal details and choose the barangay document you need. No account required.</p>
+                    <p>Provide your personal details and select the service you need. No account required.</p>
                 </div>
             </div>
             <div class="how-step">
                 <div class="how-num">2</div>
                 <div class="how-step-body">
-                    <h4>Get Your Number</h4>
-                    <p>You'll receive a unique appointment number immediately after submitting your request online.</p>
+                    <h4>Get Your Reference Number</h4>
+                    <p>Receive a unique reference number immediately after submitting your request online.</p>
                 </div>
             </div>
             <div class="how-step">
                 <div class="how-num">3</div>
                 <div class="how-step-body">
-                    <h4>Wait for Confirmation</h4>
+                    <h4>Await Confirmation</h4>
                     <p>Barangay staff will review and confirm your preferred schedule within 1–2 business days.</p>
                 </div>
             </div>
@@ -728,66 +668,60 @@ body { background: #fff; }
                 <div class="how-num">4</div>
                 <div class="how-step-body">
                     <h4>Claim Your Document</h4>
-                    <p>Visit the Barangay Hall on your confirmed date with a valid ID to claim your document for free.</p>
+                    <p>Visit the Barangay Hall on your confirmed date with a valid ID to claim your document.</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-{{-- ══════════════════════════════════════════
-     TRUST & SECURITY
-══════════════════════════════════════════ --}}
-<section class="sec trust-sec" id="privacy-security">
+{{-- ════════════════════════════════════════════
+     TRUST & PRIVACY
+════════════════════════════════════════════ --}}
+<section class="sec trust-sec" id="privacy">
     <div class="sec-inner">
         <div class="trust-inner">
 
-            {{-- Left --}}
             <div class="trust-left">
                 <div class="trust-shield" aria-hidden="true">
                     <i class="fas fa-shield-halved"></i>
                 </div>
                 <h2>Your Data is Safe With Us.</h2>
-                <p>
-                    We are committed to protecting the privacy and security of every resident's information.
-                    Your data is used exclusively for processing your barangay document requests and is
-                    managed only by official Barangay New Era staff.
-                </p>
+                <p>We are committed to protecting the privacy and security of every resident's information. Your data is used exclusively for processing your requests and is accessible only by authorized Barangay New Era personnel.</p>
                 <div class="trust-dpa">
                     <i class="fas fa-certificate"></i>
                     Data Privacy Act of 2012 Compliant
                 </div>
             </div>
 
-            {{-- Right: 2×2 security boxes --}}
             <div class="trust-boxes">
                 <div class="trust-box">
-                    <div class="trust-box-icon" style="background:rgba(37,99,235,.08);color:#2563eb">
+                    <div class="trust-box-ico" style="background:rgba(37,99,235,.08);color:#2563eb">
                         <i class="fas fa-landmark-flag"></i>
                     </div>
-                    <h4>Government-Administered Platform</h4>
-                    <p>Officially operated by Barangay New Era — a unit of the Philippine local government.</p>
+                    <h4>Government Platform</h4>
+                    <p>Officially operated by Barangay New Era, a unit of Philippine local government.</p>
                 </div>
                 <div class="trust-box">
-                    <div class="trust-box-icon" style="background:rgba(22,163,74,.08);color:#16a34a">
+                    <div class="trust-box-ico" style="background:rgba(22,163,74,.08);color:#16a34a">
                         <i class="fas fa-file-shield"></i>
                     </div>
-                    <h4>Data Privacy Compliance</h4>
-                    <p>All data handled under Republic Act 10173 — the Data Privacy Act of the Philippines.</p>
+                    <h4>Data Privacy</h4>
+                    <p>All data handled under Republic Act 10173 — Data Privacy Act of the Philippines.</p>
                 </div>
                 <div class="trust-box">
-                    <div class="trust-box-icon" style="background:rgba(200,134,26,.09);color:var(--gold)">
+                    <div class="trust-box-ico" style="background:rgba(200,134,26,.09);color:var(--gold)">
                         <i class="fas fa-lock"></i>
                     </div>
                     <h4>Encrypted Transactions</h4>
-                    <p>All form submissions are protected with end-to-end HTTPS encryption and CSRF protection.</p>
+                    <p>All form submissions are protected with HTTPS encryption and CSRF protection.</p>
                 </div>
                 <div class="trust-box">
-                    <div class="trust-box-icon" style="background:rgba(13,33,68,.07);color:var(--navy)">
+                    <div class="trust-box-ico" style="background:rgba(13,33,68,.07);color:var(--navy)">
                         <i class="fas fa-user-shield"></i>
                     </div>
-                    <h4>Staff-Only Data Access</h4>
-                    <p>Only verified and authorized barangay personnel can view or process your submitted information.</p>
+                    <h4>Staff-Only Access</h4>
+                    <p>Only verified and authorized barangay personnel can view or process your information.</p>
                 </div>
             </div>
 
@@ -795,15 +729,15 @@ body { background: #fff; }
     </div>
 </section>
 
-{{-- ══════════════════════════════════════════
+{{-- ════════════════════════════════════════════
      FAQ
-══════════════════════════════════════════ --}}
+════════════════════════════════════════════ --}}
 <section class="sec faq-sec" id="faq">
     <div class="sec-inner-md">
         <div style="text-align:center;margin-bottom:2.5rem">
             <div class="sec-tag" style="justify-content:center">FAQ</div>
             <h2 class="sec-h2" style="text-align:center">Frequently Asked <em>Questions.</em></h2>
-            <p class="sec-p" style="margin:0 auto;text-align:center">Everything you need to know about the Barangay New Era Resident Portal.</p>
+            <p class="sec-lead" style="margin:0 auto;text-align:center">Everything you need to know about the Barangay New Era Resident Portal.</p>
         </div>
 
         <div class="faq-list">
@@ -812,65 +746,48 @@ body { background: #fff; }
                     <span>How long does document processing take?</span>
                     <div class="faq-icon"><i class="fas fa-plus"></i></div>
                 </button>
-                <div class="faq-body">
-                    Processing typically takes <strong>1–3 business days</strong> from the date your request is confirmed by barangay staff. Barangay Clearance is usually ready within 1 business day. You will need to visit the hall on your confirmed schedule to personally claim your document.
-                </div>
+                <div class="faq-body">Processing typically takes <strong>1–3 business days</strong> from the date your request is confirmed. Barangay Clearance is usually ready within 1 business day. You will need to visit the hall on your confirmed schedule to personally claim your document.</div>
             </div>
-
             <div class="faq-item">
                 <button class="faq-btn" onclick="toggleFaq(this)" aria-expanded="false">
-                    <span>Is the Barangay New Era Portal free to use?</span>
+                    <span>Is the portal free to use?</span>
                     <div class="faq-icon"><i class="fas fa-plus"></i></div>
                 </button>
-                <div class="faq-body">
-                    Yes. The portal is a <strong>free public service</strong> provided by Barangay New Era to all residents. There are no fees for requesting, processing, or claiming any document through this portal.
-                </div>
+                <div class="faq-body">Yes. This portal is a <strong>free public service</strong> provided by Barangay New Era to all residents. There are no fees for requesting, processing, or claiming any document through this portal.</div>
             </div>
-
             <div class="faq-item">
                 <button class="faq-btn" onclick="toggleFaq(this)" aria-expanded="false">
                     <span>What valid IDs are accepted when claiming my document?</span>
                     <div class="faq-icon"><i class="fas fa-plus"></i></div>
                 </button>
-                <div class="faq-body">
-                    Any government-issued photo ID is accepted: <strong>PhilSys National ID, Passport, Driver's License, SSS/GSIS/Pag-IBIG ID, Voter's ID, or PhilHealth ID</strong>. The name on your ID must match the name provided in your request.
-                </div>
+                <div class="faq-body">Any government-issued photo ID is accepted: <strong>PhilSys National ID, Passport, Driver's License, SSS/GSIS/Pag-IBIG ID, Voter's ID, or PhilHealth ID</strong>. The name on your ID must match the name provided in your request.</div>
             </div>
-
             <div class="faq-item">
                 <button class="faq-btn" onclick="toggleFaq(this)" aria-expanded="false">
                     <span>Can someone else claim my document on my behalf?</span>
                     <div class="faq-icon"><i class="fas fa-plus"></i></div>
                 </button>
-                <div class="faq-body">
-                    A representative may claim on your behalf, but they must present a <strong>Special Power of Attorney (SPA)</strong>, their own valid ID, and a photocopy of the requesting resident's valid ID.
-                </div>
+                <div class="faq-body">A representative may claim on your behalf but must present a <strong>Special Power of Attorney (SPA)</strong>, their own valid ID, and a photocopy of the requesting resident's valid ID.</div>
             </div>
-
             <div class="faq-item">
                 <button class="faq-btn" onclick="toggleFaq(this)" aria-expanded="false">
-                    <span>What if my appointment number is not found?</span>
+                    <span>What if my reference number is not found?</span>
                     <div class="faq-icon"><i class="fas fa-plus"></i></div>
                 </button>
-                <div class="faq-body">
-                    Double-check that you entered the appointment number exactly as shown on your confirmation page (e.g., <code style="background:#f0f2f5;padding:2px 7px;border-radius:5px;font-size:.85em">APT-20260507-AB12</code>). If the issue persists, please visit the Barangay Hall directly during office hours: Monday–Friday, 8:00 AM – 5:00 PM.
-                </div>
+                <div class="faq-body">Double-check that you entered the number exactly as shown on your confirmation page (e.g., <code style="background:#f0f2f5;padding:2px 7px;border-radius:5px;font-size:.85em">APT-20260520-AB12</code>). If the issue persists, visit the Barangay Hall directly: <strong>Monday–Friday, 8:00 AM – 5:00 PM</strong>.</div>
             </div>
         </div>
     </div>
 </section>
 
-{{-- ══════════════════════════════════════════
+{{-- ════════════════════════════════════════════
      CTA BAND
-══════════════════════════════════════════ --}}
+════════════════════════════════════════════ --}}
 <section class="cta-band">
     <div class="cta-band-inner">
-        <h2>Start Using the Portal Today.</h2>
-        <p>
-            Used by residents of Barangay New Era. Submit your request online in under 3 minutes —
-            no account needed, no queues, and your barangay is now always within reach.
-        </p>
-        <div class="cta-band-btns">
+        <h2>Get Started <em>Today.</em></h2>
+        <p>Submit your request in under 3 minutes — no account needed, no queues, completely free.</p>
+        <div class="cta-btns">
             <a href="{{ route('portal.request') }}" class="btn btn-gold btn-lg">
                 <i class="fas fa-file-plus"></i> Request a Document
             </a>
