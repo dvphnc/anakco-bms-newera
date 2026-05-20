@@ -52,6 +52,18 @@ Route::prefix('portal')->name('portal.')->group(function () {
 });
 
 // -------------------------------------------------------
+// GET Logout — no CSRF token needed (safe for intranet).
+// Allows bmsLogout() to do a simple window.location navigation
+// instead of an Axios POST, which avoids all CSRF/redirect issues.
+// -------------------------------------------------------
+Route::get('/signout', function () {
+    \Illuminate\Support\Facades\Auth::guard('web')->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect()->route('login');
+})->name('signout');
+
+// -------------------------------------------------------
 // Guest Routes — handled by Breeze (keep this line)
 // -------------------------------------------------------
 require __DIR__.'/auth.php';
