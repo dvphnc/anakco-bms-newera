@@ -222,7 +222,7 @@
             {{-- Actions --}}
             <div style="display:flex;justify-content:flex-end;gap:10px">
                 <button type="button" onclick="closeConvertModal()" class="btn btn-secondary">Cancel</button>
-                <button type="button" id="cvtSaveBtn" onclick="saveConvert()" class="btn btn-success">
+                <button type="button" id="cvtSaveBtn" onclick="saveConvert()" class="btn btn-primary">
                     <i class="fas fa-file-circle-check"></i> Issue Document
                 </button>
             </div>
@@ -301,11 +301,6 @@
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
-
-/* ── Success button (Issue Document) ─────────────────────────── */
-.btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
-.btn-success:hover { background:#15803d; box-shadow:0 4px 12px rgba(22,163,74,0.25); }
-.btn-success:disabled { opacity:.65; cursor:not-allowed; }
 
 /* ── Filter Select2 — match residents blade ───────────────────── */
 #filterPanel .select2-container { width: 100% !important; }
