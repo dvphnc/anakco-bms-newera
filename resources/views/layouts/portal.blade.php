@@ -819,19 +819,26 @@
 
 {{-- ═══ SPLASH SCREEN ═══ --}}
 <div id="splash" role="status" aria-label="Loading portal">
-    <div class="splash-deco-a" aria-hidden="true"></div>
-    <div class="splash-deco-b" aria-hidden="true"></div>
-    <div class="splash-content">
-        <img src="{{ asset('images/republika-seal.png') }}"
-             alt="Republika ng Pilipinas"
-             class="splash-seal">
-        <div>
-            <div class="splash-name">Barangay New Era</div>
-            <div class="splash-sub">Official Digital Services Portal</div>
+    <div class="splash-coin">
+        <div class="splash-coin-inner">
+            <div class="splash-front">
+                <img src="{{ asset('images/bne-logo.png') }}" alt="Barangay New Era"
+                     onerror="this.style.display='none'">
+            </div>
+            <div class="splash-back">
+                <img src="{{ asset('images/qc-seal.png') }}" alt="Quezon City Seal"
+                     onerror="this.style.display='none'">
+            </div>
         </div>
-        <div class="splash-progress">
-            <div class="splash-progress-bar"></div>
-        </div>
+    </div>
+
+    <div class="splash-line"></div>
+
+    <div class="splash-title">Barangay <span>New Era</span></div>
+    <div class="splash-sub">District VI &bull; Quezon City</div>
+
+    <div class="splash-dots">
+        <span></span><span></span><span></span>
     </div>
 </div>
 
@@ -1173,14 +1180,10 @@ document.addEventListener('DOMContentLoaded', function () {
 (function () {
     var splash = document.getElementById('splash');
     if (!splash) return;
-    /* Dismiss after the progress bar finishes (~1.8s total) */
     setTimeout(function () {
         splash.classList.add('splash-hide');
-        /* Remove from DOM after transition ends so it doesn't block interaction */
-        splash.addEventListener('transitionend', function () {
-            splash.remove();
-        }, { once: true });
-    }, 1800);
+        setTimeout(function () { splash.remove(); }, 700);
+    }, 2800);
 })();
 </script>
 @stack('scripts')
