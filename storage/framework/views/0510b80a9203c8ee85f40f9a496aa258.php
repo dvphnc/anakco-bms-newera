@@ -3622,9 +3622,10 @@ function axiosPatch(form, url, modalId, rowUpdater) {
 }
 
 // ── EDIT: Activity ──
-var _editActId = null, _editActSlug = '<?php echo e($committee['slug']); ?>';
+var _editActId = null, _editActEl = null, _editActSlug = '<?php echo e($committee['slug']); ?>';
 function openEditActivity(tr) {
     _editActId = tr.dataset.id;
+    _editActEl = tr;
     var isAcc = tr.dataset.type === 'Accomplishment';
     document.getElementById('editActivityModalTitle').textContent = isAcc ? 'Edit Accomplishment' : 'Edit Activity';
     document.getElementById('eAct_title').value        = tr.dataset.title        || '';
@@ -3639,7 +3640,7 @@ document.getElementById('editActivityForm').addEventListener('submit', function(
     e.preventDefault();
     var url = '/committees/' + _editActSlug + '/activities/' + _editActId;
     axiosPatch(this, url, 'editActivityModal', function(rec) {
-        var row = document.querySelector('[data-id="' + _editActId + '"]');
+        var row = _editActEl;
         if (!row) return;
         var d = rec.activity_date ? rec.activity_date.substring(0,10) : '';
         var fmtDate = d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'}) : '—';
@@ -3679,9 +3680,10 @@ document.getElementById('editActivityForm').addEventListener('submit', function(
 });
 
 // ── EDIT: Attendance ──
-var _editAttId = null;
+var _editAttId = null, _editAttEl = null;
 function openEditAttendance(tr) {
     _editAttId = tr.dataset.id;
+    _editAttEl = tr;
     document.getElementById('eAtt_event').value     = tr.dataset.event     || '';
     document.getElementById('eAtt_date').value      = tr.dataset.date      || '';
     document.getElementById('eAtt_venue').value     = tr.dataset.venue     || '';
@@ -3692,7 +3694,7 @@ function openEditAttendance(tr) {
 document.getElementById('editAttendanceForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/<?php echo e($committee['slug']); ?>/attendance/' + _editAttId, 'editAttendanceModal', function(rec) {
-        var row = document.querySelector('[data-id="' + _editAttId + '"]');
+        var row = _editAttEl;
         if (row) {
             row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.event_name + '</span>';
             var d = rec.event_date ? rec.event_date.substring(0,10) : '';
@@ -3710,9 +3712,10 @@ document.getElementById('editAttendanceForm').addEventListener('submit', functio
 });
 
 // ── EDIT: Inventory ──
-var _editInvId = null;
+var _editInvId = null, _editInvEl = null;
 function openEditInventory(tr) {
     _editInvId = tr.dataset.id;
+    _editInvEl = tr;
     document.getElementById('eInv_name').value      = tr.dataset.name      || '';
     document.getElementById('eInv_category').value  = tr.dataset.category  || '';
     document.getElementById('eInv_qty').value        = tr.dataset.qty       || '0';
@@ -3724,7 +3727,7 @@ function openEditInventory(tr) {
 document.getElementById('editInventoryForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/<?php echo e($committee['slug']); ?>/inventory/' + _editInvId, 'editInventoryModal', function(rec) {
-        var row = document.querySelector('[data-id="' + _editInvId + '"]');
+        var row = _editInvEl;
         if (row) {
             row.cells[0].innerHTML = '<span style="font-weight:600">' + rec.item_name + '</span>';
             row.cells[1].textContent = rec.category || '—';
@@ -3744,9 +3747,10 @@ document.getElementById('editInventoryForm').addEventListener('submit', function
 });
 
 // ── EDIT: Record (title / type / description) ──
-var _editRecId = null;
+var _editRecId = null, _editRecEl = null;
 function openEditRecord(el) {
     _editRecId = el.dataset.id;
+    _editRecEl = el;
     document.getElementById('eRec_title').value       = el.dataset.title       || '';
     document.getElementById('eRec_description').value = el.dataset.description || '';
     $('#eRec_type').val(el.dataset.rtype || '').trigger('change');
@@ -3755,7 +3759,7 @@ function openEditRecord(el) {
 document.getElementById('editRecordForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/<?php echo e($committee['slug']); ?>/records/' + _editRecId, 'editRecordModal', function(rec) {
-        var el = document.querySelector('[data-id="' + _editRecId + '"]');
+        var el = _editRecEl;
         if (!el) return;
         if (el.tagName === 'TR') {
             // Documents table row — update cells
@@ -3774,9 +3778,10 @@ document.getElementById('editRecordForm').addEventListener('submit', function(e)
 });
 
 // ── EDIT: Partnership ──
-var _editPartId = null;
+var _editPartId = null, _editPartEl = null;
 function openEditPartnership(tr) {
     _editPartId = tr.dataset.pid;
+    _editPartEl = tr;
     document.getElementById('ePart_name').value     = tr.dataset.partner   || '';
     document.getElementById('ePart_mou').value       = tr.dataset.mou       || '';
     document.getElementById('ePart_validity').value  = tr.dataset.validity  || '';
@@ -3789,7 +3794,7 @@ function openEditPartnership(tr) {
 document.getElementById('editPartnershipForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/<?php echo e($committee['slug']); ?>/partnerships/' + _editPartId, 'editPartnershipModal', function(rec) {
-        var row = document.querySelector('[data-pid="' + _editPartId + '"]');
+        var row = _editPartEl;
         if (row) {
             row.cells[0].innerHTML = '<div style="font-weight:600;color:var(--navy)">' + rec.partner_name + '</div>';
             row.cells[4].textContent = rec.contact_person || '—';
