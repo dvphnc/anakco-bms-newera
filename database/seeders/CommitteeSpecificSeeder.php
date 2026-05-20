@@ -118,10 +118,10 @@ class CommitteeSpecificSeeder extends Seeder
         ];
         foreach ($healthRecords as $r) {
             DB::table('committee_health_records')->updateOrInsert(
-                ['patient_name' => $r[0], 'visit_date' => $r[7]],
+                ['patient_name' => $r[0], 'visit_date' => $r[6]],
                 ['patient_name' => $r[0], 'age' => $r[1], 'gender' => $r[2], 'address' => $r[3],
-                 'diagnosis' => $r[4], 'program' => $r[5], 'visit_date' => $r[7],
-                 'attended_by' => $r[8], 'notes' => $r[9], 'created_at' => $now, 'updated_at' => $now]
+                 'diagnosis' => $r[4], 'program' => $r[5], 'visit_date' => $r[6],
+                 'attended_by' => $r[7], 'notes' => $r[8], 'created_at' => $now, 'updated_at' => $now]
             );
         }
 
