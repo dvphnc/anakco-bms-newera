@@ -2793,7 +2793,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 {{-- Lightbox is pushed here (outside .main-content) so position:fixed covers the full viewport
      including the sidebar, which lives in the root stacking context at z-index:300. --}}
 @push('scripts')
-<div id="photoLightbox" onclick="closePhotoLightbox()" style="display:none;position:fixed;inset:0;background:rgba(8,16,32,.93);z-index:9999;flex-direction:column;align-items:center;justify-content:center">
+<div id="photoLightbox" onclick="if(event.target===this)closePhotoLightbox()" style="display:none;position:fixed;inset:0;background:rgba(8,16,32,.93);z-index:9999;flex-direction:column;align-items:center;justify-content:center">
     <div onclick="event.stopPropagation()" style="width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;flex-shrink:0">
         <div style="display:flex;align-items:center;gap:10px;min-width:0">
             <div style="width:32px;height:32px;border-radius:8px;background:rgba(200,134,26,.18);border:1px solid rgba(200,134,26,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -2808,8 +2808,8 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             <i class="fas fa-times"></i>
         </button>
     </div>
-    <div onclick="event.stopPropagation()" style="flex:1;display:flex;align-items:center;justify-content:center;padding:4px 20px 20px;min-height:0;width:100%">
-        <img id="lightboxImg" src="" alt="" style="max-width:min(92vw,940px);max-height:calc(100vh - 120px);border-radius:10px;box-shadow:0 8px 48px rgba(0,0,0,.7);object-fit:contain;display:block">
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:4px 20px 20px;min-height:0;width:100%">
+        <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()" style="max-width:min(92vw,940px);max-height:calc(100vh - 120px);border-radius:10px;box-shadow:0 8px 48px rgba(0,0,0,.7);object-fit:contain;display:block;cursor:default">
     </div>
 </div>
 @endpush
