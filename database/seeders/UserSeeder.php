@@ -10,17 +10,17 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'BMS Administrator',
-            'email' => 'admin@bms.gov.ph',
-            'role' => 'Admin',
-            'password' => Hash::make('Admin@12345'),
+        // Admins are always auto-verified on creation
+        User::updateOrCreate(['email' => 'admin@bms.gov.ph'], [
+            'name'               => 'BMS Administrator',
+            'role'               => 'Admin',
+            'password'           => Hash::make('Admin@12345'),
+            'email_verified_at'  => now(),
         ]);
 
-        User::create([
-            'name' => 'BMS Secretary',
-            'email' => 'secretary@bms.gov.ph',
-            'role' => 'Secretary',
+        User::updateOrCreate(['email' => 'secretary@bms.gov.ph'], [
+            'name'     => 'BMS Secretary',
+            'role'     => 'Secretary',
             'password' => Hash::make('Secretary@12345'),
         ]);
     }
