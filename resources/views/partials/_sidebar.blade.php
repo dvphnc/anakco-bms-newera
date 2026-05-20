@@ -219,14 +219,11 @@
                 </div>
                 <div class="user-role">{{ auth()->user()?->role ?? 'Staff' }}</div>
             </div>
-            <form method="POST" action="{{ route('logout') }}" style="flex-shrink:0">
-                @csrf
-                <button type="submit"
-                        style="background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;padding:4px;font-size:13px"
-                        title="Logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </form>
+            <button type="button" onclick="bmsLogout()"
+                    style="background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;padding:4px;font-size:13px;flex-shrink:0"
+                    title="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
         </div>
     </div>
 

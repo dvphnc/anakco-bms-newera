@@ -917,6 +917,23 @@
         axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN';
     })();
 
+    // ── Logout via Axios so the request interceptor always sends a fresh
+    //    CSRF token, and the response interceptor handles any 419 cleanly.
+    function bmsLogout() {
+        axios.post('{{ route('logout') }}')
+            .then(function () { window.location.href = '/'; })
+            .catch(function () { window.location.href = '/login'; });
+    }
+
+    // ── Refresh _token in plain HTML forms before submission ────────────
+    // Guards against stale @csrf values in non-Axios (regular) form posts.
+    document.addEventListener('submit', function (e) {
+        var meta = document.querySelector('meta[name="csrf-token"]');
+        if (!meta) return;
+        var field = e.target.querySelector('input[name="_token"]');
+        if (field) field.value = meta.getAttribute('content');
+    }, true); // capture phase so it runs before jQuery handlers
+
     // ── Shared alert auto-dismiss (progress bar + fade-collapse) ────────
     function bmsAlertAutoDismiss(el) {
         var bar = document.createElement('div');
