@@ -311,9 +311,10 @@ $(document).ready(function () {
 
     /* ── Open status modal from DataTable ────────────────────────────── */
     $('#appointmentsTable').on('click', '.apt-status-btn', function () {
-        _aptId = $(this).data('id');
+        _aptId       = $(this).data('id');
+        _aptOldStatus = $(this).data('status');   // remember old status for stat-card delta
         document.getElementById('aptModalNum').textContent  = $(this).data('num');
-        document.getElementById('aptModalStatus').value     = $(this).data('status');
+        document.getElementById('aptModalStatus').value     = _aptOldStatus;
         document.getElementById('aptModalNotes').value      = $(this).data('notes') || '';
         document.getElementById('aptStatusError').style.display = 'none';
         document.getElementById('aptStatusModal').style.display = 'flex';
@@ -397,10 +398,29 @@ window.aptQuickFilter = function (filterId, values) {
 
 /* ── Status Modal ─────────────────────────────────────────────────── */
 var _aptId = null;
+var _aptOldStatus = null;
+
+// Maps a status name to its stat-card element ID (only the 3 tracked ones)
+var _aptStatMap = { 'Pending': 'statAptPending', 'Ready': 'statAptReady', 'Released': 'statAptReleased' };
+
+function _aptStatDelta(status, delta) {
+    var elId = _aptStatMap[status];
+    if (!elId) return;
+    var el = document.getElementById(elId);
+    if (!el) return;
+    var current = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
+    var next    = Math.max(0, current + delta);
+    // Animate the number with a brief highlight flash
+    el.textContent = next.toLocaleString();
+    el.style.transition = 'color .15s';
+    el.style.color = delta > 0 ? 'var(--gold)' : 'var(--crimson)';
+    setTimeout(function () { el.style.color = ''; }, 800);
+}
 
 function closeAptModal() {
     document.getElementById('aptStatusModal').style.display = 'none';
-    _aptId = null;
+    _aptId        = null;
+    _aptOldStatus = null;
 }
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeAptModal();
@@ -408,18 +428,33 @@ document.addEventListener('keydown', function (e) {
 
 function saveAptStatus() {
     if (!_aptId) return;
-    const btn    = document.getElementById('aptStatusSaveBtn');
-    const errDiv = document.getElementById('aptStatusError');
-    const status = document.getElementById('aptModalStatus').value;
-    const notes  = document.getElementById('aptModalNotes').value;
+    const btn       = document.getElementById('aptStatusSaveBtn');
+    const errDiv    = document.getElementById('aptStatusError');
+    const newStatus = document.getElementById('aptModalStatus').value;
+    const notes     = document.getElementById('aptModalNotes').value;
+    const oldStatus = _aptOldStatus;
+
+    if (newStatus === oldStatus) {
+        closeAptModal();
+        return;   // nothing to do
+    }
 
     errDiv.style.display = 'none';
     btn.disabled   = true;
     btn.innerHTML  = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Saving…';
 
-    axios.patch('/appointments/' + _aptId + '/status', { status: status, notes: notes })
+    axios.patch('/appointments/' + _aptId + '/status', { status: newStatus, notes: notes })
         .then(function (res) {
             closeAptModal();
+
+            // ── Live stat-card update (no reload needed) ──────────────
+            _aptStatDelta(oldStatus,  -1);   // remove from old bucket
+            _aptStatDelta(newStatus,  +1);   // add to new bucket
+
+            // Update the row's data-status so the next modal open is accurate
+            var btn = document.querySelector('.apt-status-btn[data-id="' + _aptId + '"]');
+            if (btn) $(btn).data('status', newStatus).attr('data-status', newStatus);
+
             bmsToast(res.data.message || 'Status updated.', 'success');
             $('#appointmentsTable').DataTable().ajax.reload(null, false);
         })
