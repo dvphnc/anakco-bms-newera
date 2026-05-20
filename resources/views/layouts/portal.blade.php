@@ -608,8 +608,8 @@
            GOVERNMENT STRIP
         ═══════════════════════════════════════════════════════ */
         .gov-strip {
-            background: #091830;
-            border-bottom: 1px solid rgba(200,134,26,0.25);
+            background: #fff;
+            border-bottom: 1px solid #e2e6ea;
             padding: 0 clamp(1rem, 4vw, 2.5rem);
         }
         .gov-strip-inner {
@@ -618,57 +618,53 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 34px;
+            height: 38px;
             gap: 1rem;
         }
         .gov-strip-left {
             display: flex;
             align-items: center;
-            gap: .5rem;
+            gap: .55rem;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .gov-strip-seal {
+            width: 26px; height: 26px;
+            object-fit: contain;
+            flex-shrink: 0;
+            display: block;
+        }
+        .gov-strip-name {
             font-size: .7rem;
-            color: rgba(255,255,255,.55);
-            font-weight: 500;
+            font-weight: 600;
+            color: #1a2332;
             letter-spacing: .01em;
+        }
+        .gov-strip-divider {
+            width: 1px; height: 14px;
+            background: #d1d5db;
+            flex-shrink: 0;
+        }
+        .gov-strip-sub {
+            font-size: .68rem;
+            color: #6b7280;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .gov-strip-left .flag-ph {
-            background: linear-gradient(180deg, #0038a8 50%, #ce1126 50%);
-            width: 14px; height: 10px;
-            border-radius: 1px;
-            flex-shrink: 0;
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-        }
-        .gov-strip-left .flag-ph::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0;
-            border-top: 5px solid transparent;
-            border-bottom: 5px solid transparent;
-            border-left: 8px solid #fcd116;
-        }
-        .gov-strip-divider {
-            width: 1px; height: 14px;
-            background: rgba(255,255,255,.18);
-            flex-shrink: 0;
-        }
         .gov-strip-right {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            font-size: .7rem;
-            color: rgba(255,255,255,.45);
+            gap: .5rem;
+            font-size: .68rem;
+            color: #6b7280;
             white-space: nowrap;
             flex-shrink: 0;
         }
-        .gov-strip-right span { display: flex; align-items: center; gap: .3rem; }
-        .gov-strip-right i { font-size: .65rem; color: var(--gold); opacity: .8; }
+        .gov-strip-right i { font-size: .6rem; color: var(--navy); opacity: .6; }
         @media (max-width: 640px) {
             .gov-strip-right { display: none; }
-            .gov-strip-left { font-size: .65rem; }
+            .gov-strip-sub   { display: none; }
         }
 
         /* ═══════════════════════════════════════════════════════
