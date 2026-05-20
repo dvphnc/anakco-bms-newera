@@ -88,13 +88,10 @@
             </div>
         </div>
         <div class="topbar-divider"></div>
-        <form method="POST" action="<?php echo e(route('logout')); ?>">
-            <?php echo csrf_field(); ?>
-            <button type="submit" class="topbar-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </button>
-        </form>
+        <button type="button" class="topbar-btn" onclick="bmsLogout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </button>
     </div>
 </header>
 
