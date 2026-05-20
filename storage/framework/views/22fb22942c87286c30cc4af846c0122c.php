@@ -60,12 +60,7 @@
         /* Dark gradient overlay so text stays readable over any photo */
         .slideshow-overlay {
             position:absolute; inset:0; z-index:1; pointer-events:none;
-            background:linear-gradient(
-                135deg,
-                rgba(13,33,68,0.82) 0%,
-                rgba(13,33,68,0.65) 50%,
-                rgba(13,33,68,0.80) 100%
-            );
+            background:rgba(13,33,68,0.88);
         }
 
         /* ---- LEFT PANEL ---- */
@@ -78,36 +73,8 @@
             padding:60px 52px;
         }
 
-        .left-panel::before {
-            content:'';
-            position:absolute; top:50%; left:50%; z-index:2;
-            transform:translate(-50%,-50%);
-            width:800px; height:800px;
-            background:repeating-conic-gradient(
-                from 0deg,
-                rgba(200,134,26,0.03) 0deg 6deg,
-                transparent 6deg 12deg
-            );
-            border-radius:50%; pointer-events:none;
-        }
-
-        .left-panel::after {
-            content:'';
-            position:absolute; top:-80px; right:-80px; z-index:2;
-            width:380px; height:380px;
-            background:radial-gradient(circle, rgba(200,134,26,0.08) 0%, transparent 65%);
-            pointer-events:none;
-        }
-
-        .logo-watermark {
-            position:absolute; top:50%; left:50%; z-index:2;
-            transform:translate(-50%,-50%);
-            width:520px; height:520px;
-            background-image:url("/images/bne-logo.png");
-            background-size:contain; background-repeat:no-repeat;
-            background-position:center;
-            opacity:0.055; pointer-events:none;
-        }
+        .left-panel::before,
+        .left-panel::after { display:none; }
 
         .left-content {
             position:relative; z-index:3;
@@ -397,8 +364,6 @@
             <div class="slide"></div>
         </div>
         <div class="slideshow-overlay"></div>
-
-        <div class="logo-watermark"></div>
 
         <div class="left-content">
 
