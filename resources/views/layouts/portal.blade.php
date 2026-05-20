@@ -1168,6 +1168,22 @@ document.addEventListener('DOMContentLoaded', function () {
     @if(session('error'))   portalToast('{{ addslashes(session('error')) }}',   'error');   @endif
     @if(session('warning')) portalToast('{{ addslashes(session('warning')) }}', 'warning'); @endif
 });
+
+/* ════════════════════════════════════════════════
+   SPLASH SCREEN
+════════════════════════════════════════════════ */
+(function () {
+    var splash = document.getElementById('splash');
+    if (!splash) return;
+    /* Dismiss after the progress bar finishes (~1.8s total) */
+    setTimeout(function () {
+        splash.classList.add('splash-hide');
+        /* Remove from DOM after transition ends so it doesn't block interaction */
+        splash.addEventListener('transitionend', function () {
+            splash.remove();
+        }, { once: true });
+    }, 1800);
+})();
 </script>
 @stack('scripts')
 </bo
