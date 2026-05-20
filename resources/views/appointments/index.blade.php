@@ -48,21 +48,21 @@
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Pending')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-hourglass-half"></i></div>
         <div class="stat-info">
-            <div class="stat-number">{{ number_format($pendingCount) }}</div>
+            <div class="stat-number" id="statAptPending">{{ number_format($pendingCount) }}</div>
             <div class="stat-label">Pending</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Ready')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-box-open"></i></div>
         <div class="stat-info">
-            <div class="stat-number">{{ number_format($readyCount) }}</div>
+            <div class="stat-number" id="statAptReady">{{ number_format($readyCount) }}</div>
             <div class="stat-label">Ready for Pick-up</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Released')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
         <div class="stat-info">
-            <div class="stat-number">{{ number_format($releasedCount) }}</div>
+            <div class="stat-number" id="statAptReleased">{{ number_format($releasedCount) }}</div>
             <div class="stat-label">Released</div>
         </div>
     </div>
