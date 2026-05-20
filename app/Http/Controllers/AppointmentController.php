@@ -61,14 +61,14 @@ class AppointmentController extends Controller
                     if ($a->document) {
                         $viewUrl = route('documents.show', $a->document);
                         $viewBtn = '<a href="'.$viewUrl.'" target="_blank"
-                                      class="btn btn-secondary btn-sm"
+                                      class="btn btn-primary btn-sm"
                                       style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
                                       title="View Document: '.e($a->document->doc_number).'">
                                         <i class="fas fa-file-lines"></i> View Document
                                     </a>';
                     } elseif (in_array($a->status, ['Ready', 'Released'])) {
                         $viewBtn = '
-                            <button class="btn btn-success btn-sm apt-convert-btn"
+                            <button class="btn btn-primary btn-sm apt-convert-btn"
                                     style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
                                     title="View Document"
                                     data-id="'.e($a->id).'"
