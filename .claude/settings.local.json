@@ -61,7 +61,9 @@
       "Bash(php D:/laragon/www/anakco_bms/artisan view:clear)",
       "Bash(php D:/laragon/www/anakco_bms/artisan cache:clear)",
       "Bash(php -l D:/laragon/www/anakco_bms/resources/views/layouts/portal.blade.php)",
-      "Bash(php -l D:/laragon/www/anakco_bms/resources/views/portal/index.blade.php)"
+      "Bash(php -l D:/laragon/www/anakco_bms/resources/views/portal/index.blade.php)",
+      "Bash(php D:/laragon/www/anakco_bms/artisan config:clear)",
+      "Bash(php D:/laragon/www/anakco_bms/artisan optimize:clear)"
     ]
   }
 }
