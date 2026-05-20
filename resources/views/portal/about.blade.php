@@ -518,9 +518,9 @@
                 ['name' => 'Euler Astete Moreno',          'committee' => 'Environment',        'icon' => 'fa-leaf'],
                 ['name' => 'Joel Antonio Tamayo',          'committee' => 'Livelihood',         'icon' => 'fa-briefcase'],
                 ['name' => 'Freddie Cayabyab Marcial',     'committee' => 'Infrastructure',     'icon' => 'fa-road'],
-                ['name' => 'Twinkle Besas Pineda-Corpuz',  'committee' => 'Education',          'icon' => 'fa-graduation-cap'],
+                ['name' => 'Twinkle Besas Pineda-Corpuz',  'committee' => 'Health',             'icon' => 'fa-heartbeat'],
                 ['name' => 'Alfredo Layco Sicat',          'committee' => 'Transport & Comm.',  'icon' => 'fa-bus'],
-                ['name' => 'Medel Reyes Sulpico',          'committee' => 'Health',             'icon' => 'fa-heartbeat'],
+                ['name' => 'Medel Reyes Sulpico',          'committee' => 'Education',          'icon' => 'fa-graduation-cap'],
             ];
             @endphp
 
