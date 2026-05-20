@@ -3563,19 +3563,29 @@ function openEditSpecific(type, tr) {
 
 // ── Photo lightbox ───────────────────────────────────────────
 function openPhotoLightbox(src, title) {
-    var lb = document.getElementById('photoLightbox');
     document.getElementById('lightboxImg').src             = src;
-    document.getElementById('lightboxCaption').textContent = title;
+    document.getElementById('lightboxCaption').textContent = title || 'Photo';
+    var lb = document.getElementById('photoLightbox');
     lb.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    // Animate in
+    lb.style.opacity = '0';
+    requestAnimationFrame(function() {
+        lb.style.transition = 'opacity .18s ease';
+        lb.style.opacity = '1';
+    });
 }
 function closePhotoLightbox() {
-    document.getElementById('photoLightbox').style.display = 'none';
-    document.body.style.overflow = '';
+    var lb = document.getElementById('photoLightbox');
+    lb.style.transition = 'opacity .15s ease';
+    lb.style.opacity = '0';
+    setTimeout(function() {
+        lb.style.display = 'none';
+        lb.style.opacity = '';
+        lb.style.transition = '';
+        document.body.style.overflow = '';
+    }, 150);
 }
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closePhotoLightbox();
-});
 
 // Live search + filter for medicine table
 function filterMeds() {
