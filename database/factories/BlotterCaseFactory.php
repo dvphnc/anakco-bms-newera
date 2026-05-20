@@ -56,7 +56,7 @@ class BlotterCaseFactory extends Factory
             'complainant_contact' => '09'.$this->faker->numerify('#########'),
             'complainant_resident_id' => null,
             'respondent_name' => $this->faker->randomElement($filipinoNames),
-            'respondent_address' => $this->faker->buildingNumber().' Rosal St., Barangay New Era',
+            'respondent_address' => $this->faker->buildingNumber().' '.$this->faker->randomElement(['Purok 1 - Sampaguita', 'Purok 2 - Rosal', 'Purok 3 - Ilang-Ilang', 'Purok 4 - Gumamela', 'Purok 5 - Dahlia', 'Purok 6 - Camia']).', Barangay New Era',
             'respondent_contact' => '09'.$this->faker->numerify('#########'),
             'status' => $status,
             'resolution_notes' => in_array($status, ['Settled', 'Closed', 'Mediated'])

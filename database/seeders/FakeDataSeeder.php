@@ -8,6 +8,7 @@ use App\Models\Document;
 use App\Models\Household;
 use App\Models\Resident;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * FakeDataSeeder
@@ -71,6 +72,14 @@ class FakeDataSeeder extends Seeder
         // ── Step 5: Businesses ───────────────────────────────────────────
         $this->command->info(sprintf('Creating %s businesses…', number_format(self::BUSINESSES)));
         $this->seedInBatches(fn ($n) => Business::factory($n)->create(), self::BUSINESSES);
+
+        // ── Step 6: Committee Demo Data ──────────────────────────────────
+        $this->command->info('Seeding committee activities, attendance, inventory & partnerships…');
+        $this->call(CommitteeDataSeeder::class);
+
+        // ── Step 7: Portal Appointments ──────────────────────────────────
+        $this->command->info('Seeding portal appointment records…');
+        $this->call(AppointmentSeeder::class);
 
         // ── Summary ──────────────────────────────────────────────────────
         $this->command->newLine();
