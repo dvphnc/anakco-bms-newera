@@ -20,7 +20,7 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = DocumentAppointment::select('document_appointments.*')
+            $query = DocumentAppointment::with('document')->select('document_appointments.*')
                 ->when($request->status,        fn ($q) => $q->whereIn('status', (array) $request->status))
                 ->when($request->document_type, fn ($q) => $q->whereIn('document_type', (array) $request->document_type));
 
@@ -52,10 +52,39 @@ class AppointmentController extends Controller
                     return '<span class="badge '.$cls.'">'.e($a->status).'</span>';
                 })
                 ->addColumn('actions', function ($a) {
-                    $deleteUrl = route('appointments.destroy', $a);
+                    $deleteUrl  = route('appointments.destroy', $a);
+                    $convertUrl = route('appointments.convert', $a);
+
+                    // Issue Document button — only when Ready/Released and not yet converted
+                    $issueBtn = '';
+                    if (in_array($a->status, ['Ready', 'Released']) && ! $a->document) {
+                        $issueBtn = '
+                            <button class="btn btn-success btn-sm btn-icon apt-convert-btn"
+                                    title="Issue Document"
+                                    data-id="'.e($a->id).'"
+                                    data-num="'.e($a->appointment_number).'"
+                                    data-name="'.e($a->resident_name).'"
+                                    data-type="'.e($a->document_type).'"
+                                    data-purpose="'.e($a->purpose ?? '').'"
+                                    data-url="'.$convertUrl.'">
+                                <i class="fas fa-file-circle-check"></i>
+                            </button>';
+                    }
+
+                    // View Document link — once converted
+                    $viewBtn = '';
+                    if ($a->document) {
+                        $viewUrl = route('documents.show', $a->document);
+                        $viewBtn = '<a href="'.$viewUrl.'" target="_blank"
+                                      class="btn btn-secondary btn-sm btn-icon"
+                                      title="View Document: '.e($a->document->doc_number).'">
+                                        <i class="fas fa-file-lines"></i>
+                                    </a>';
+                    }
 
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
+                            '.$issueBtn.$viewBtn.'
                             <button class="btn btn-primary btn-sm btn-icon apt-status-btn"
                                     title="Update Status"
                                     data-id="'.$a->id.'"
