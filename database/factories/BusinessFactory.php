@@ -8,7 +8,19 @@ class BusinessFactory extends Factory
 {
     public function definition(): array
     {
-        static $sequence = 1;
+        static $sequence = 0;
+
+        // On first call, derive starting counter from the highest existing permit_number
+        // so re-seeding never collides (format: BIZ-YYYY-NNNNN).
+        if ($sequence === 0) {
+            $max = \App\Models\Business::max('permit_number');
+            if ($max) {
+                $parts    = explode('-', $max);
+                $sequence = (int) end($parts) + 1;
+            } else {
+                $sequence = 1;
+            }
+        }
 
         $businessTypes = [
             'Sari-Sari Store',

@@ -9,7 +9,19 @@ class DocumentFactory extends Factory
 {
     public function definition(): array
     {
-        static $sequence = 1;
+        static $sequence = 0;
+
+        // On first call, derive starting counter from the highest existing doc_number
+        // so re-seeding never collides (format: DOC-YYYY-NNNNN).
+        if ($sequence === 0) {
+            $max = \App\Models\Document::max('doc_number');
+            if ($max) {
+                $parts    = explode('-', $max);
+                $sequence = (int) end($parts) + 1;
+            } else {
+                $sequence = 1;
+            }
+        }
 
         $residentId = Resident::inRandomOrder()->first()?->id ?? 1;
         $year = $this->faker->randomElement([2024, 2025, 2026]);

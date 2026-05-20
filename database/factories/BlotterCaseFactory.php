@@ -8,7 +8,20 @@ class BlotterCaseFactory extends Factory
 {
     public function definition(): array
     {
-        static $sequence = 1;
+        static $sequence = 0;
+
+        // On first call, seed the counter from the highest existing sequence number
+        // so re-running never collides with existing case_number values (BLT-YYYY-NNNNN).
+        if ($sequence === 0) {
+            $max = \App\Models\BlotterCase::max('case_number'); // e.g. "BLT-2025-00350"
+            if ($max) {
+                // Extract the trailing 5-digit sequence from "BLT-YYYY-NNNNN"
+                $parts    = explode('-', $max);
+                $sequence = (int) end($parts) + 1;
+            } else {
+                $sequence = 1;
+            }
+        }
 
         $filipinoNames = [
             'Juan Santos', 'Maria Reyes', 'Jose Cruz', 'Ana Bautista', 'Roberto Garcia',
