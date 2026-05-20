@@ -120,54 +120,6 @@
             white-space: nowrap;
         }
 
-        /* ─── System Health indicator ─── */
-        .sys-health {
-            display: flex;
-            align-items: center;
-            gap: .4rem;
-            font-size: .72rem;
-            font-weight: 500;
-            color: rgba(255,255,255,.65);
-            white-space: nowrap;
-            padding: .3rem .7rem;
-            border: 1px solid rgba(255,255,255,.1);
-            border-radius: 999px;
-            background: rgba(255,255,255,.05);
-        }
-        .sys-health-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #22c55e;
-            box-shadow: 0 0 6px #22c55e;
-            animation: pulse-green 2.5s ease-in-out infinite;
-            flex-shrink: 0;
-        }
-        @keyframes pulse-green {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: .7; transform: scale(1.3); }
-        }
-        @media (max-width: 900px) { .sys-health { display: none; } }
-
-        /* ─── Live clock ─── */
-        .portal-clock {
-            display: flex;
-            align-items: center;
-            gap: .4rem;
-            font-size: .78rem;
-            font-weight: 600;
-            color: rgba(255,255,255,.8);
-            white-space: nowrap;
-            padding: .3rem .75rem;
-            border: 1px solid rgba(255,255,255,.12);
-            border-radius: 999px;
-            background: rgba(255,255,255,.06);
-            font-variant-numeric: tabular-nums;
-            letter-spacing: .01em;
-        }
-        .portal-clock i { font-size: .7rem; opacity: .65; }
-        @media (max-width: 768px) { .portal-clock { display: none; } }
-
         /* ─── Desktop nav ─── */
         .portal-nav {
             display: flex;
@@ -1074,24 +1026,6 @@ function closeMobileNav() {
     document.addEventListener('input', function (e) {
         if (e.target === input) renderItems(input.value);
     });
-})();
-
-/* ════════════════════════════════════════════════
-   LIVE CLOCK
-════════════════════════════════════════════════ */
-(function () {
-    var el = document.getElementById('portalClockTime');
-    if (!el) return;
-    function tick() {
-        var now = new Date();
-        var h = now.getHours();
-        var m = String(now.getMinutes()).padStart(2, '0');
-        var ampm = h >= 12 ? 'PM' : 'AM';
-        h = h % 12 || 12;
-        el.textContent = h + ':' + m + ' ' + ampm;
-    }
-    tick();
-    setInterval(tick, 1000);
 })();
 
 /* ════════════════════════════════════════════════
