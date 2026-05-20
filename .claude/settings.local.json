@@ -57,7 +57,11 @@
       "Bash(findstr /i \"SESSION APP_URL COOKIE\")",
       "Bash(findstr /i \"error exception\")",
       "Bash(php D:/laragon/www/anakco_bms/artisan tinker --execute=\"DB::select\\('SHOW COLUMNS FROM committee_tanod_trainings'\\);\")",
-      "Bash(php D:/laragon/www/anakco_bms/artisan route:list --name=portal)"
+      "Bash(php D:/laragon/www/anakco_bms/artisan route:list --name=portal)",
+      "Bash(php D:/laragon/www/anakco_bms/artisan view:clear)",
+      "Bash(php D:/laragon/www/anakco_bms/artisan cache:clear)",
+      "Bash(php -l D:/laragon/www/anakco_bms/resources/views/layouts/portal.blade.php)",
+      "Bash(php -l D:/laragon/www/anakco_bms/resources/views/portal/index.blade.php)"
     ]
   }
 }
