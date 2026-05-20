@@ -301,6 +301,13 @@
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
 
+/* ── Success button (green — not yet issued) ─────────────────── */
+.btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
+.btn-success:disabled { opacity:.65; cursor:not-allowed; }
+
+/* ── View Document hover — matches Update Status btn-primary hover */
+.apt-viewdoc-btn:hover { box-shadow:0 4px 12px rgba(13,33,68,0.2); transform:translateY(-1px); transition:box-shadow .15s,transform .15s; }
+
 /* ── Filter Select2 — match residents blade ───────────────────── */
 #filterPanel .select2-container { width: 100% !important; }
 #filterPanel .select2-container--default .select2-selection--single,

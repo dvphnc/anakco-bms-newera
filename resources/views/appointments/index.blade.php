@@ -306,8 +306,9 @@
 .btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
 .btn-success:disabled { opacity:.65; cursor:not-allowed; }
 
-/* ── View Document hover — matches Update Status btn-primary hover */
-.apt-viewdoc-btn:hover { box-shadow:0 4px 12px rgba(13,33,68,0.2); transform:translateY(-1px); transition:box-shadow .15s,transform .15s; }
+/* ── View Document hover — same navy highlight as Update Status ── */
+.apt-viewdoc-btn { transition:background .15s, color .15s, border-color .15s, box-shadow .15s; }
+.apt-viewdoc-btn:hover { background:var(--navy) !important; color:#fff !important; border-color:var(--navy) !important; box-shadow:0 4px 12px rgba(13,33,68,0.2); }
 
 /* ── Filter Select2 — match residents blade ───────────────────── */
 #filterPanel .select2-container { width: 100% !important; }
