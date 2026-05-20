@@ -129,11 +129,11 @@ class CommitteeSpecificSeeder extends Seeder
         // HEALTH — Clinic Staff
         // ────────────────────────────────────────────────────────────────
         $clinicStaff = [
-            ['Dr. Alma G. Reyes',    'Barangay Physician',    'Internal Medicine',      'Quezon City Health Office',    '09171112233', 'Mon, Wed, Fri – 8AM to 12PM', 'Active'],
-            ['Liza B. Soriano',      'Barangay Nurse',        'Community Health',       'Barangay New Era',             '09282223344', 'Mon to Fri – 8AM to 5PM',    'Active'],
-            ['Grace T. Mendoza',     'Midwife',               'Maternal & Child Health','QC City Health Center',        '09393334455', 'Tue, Thu – 9AM to 3PM',      'Active'],
-            ['Felix D. Catalan',     'Sanitation Inspector',  'Environmental Health',   'Barangay New Era',             '09504445566', 'Mon to Fri – 7AM to 4PM',    'Active'],
-            ['Marivic R. Espiritu',  'Barangay Health Worker','Community Health',       'Barangay New Era',             '09615556677', 'Mon to Sat – 8AM to 5PM',    'Active'],
+            ['Dr. Alma G. Reyes',    'Doctor',  'Internal Medicine',      'Quezon City Health Office',    '09171112233', 'Mon, Wed, Fri – 8AM to 12PM', 'Active'],
+            ['Liza B. Soriano',      'Nurse',   'Community Health',       'Barangay New Era',             '09282223344', 'Mon to Fri – 8AM to 5PM',    'Active'],
+            ['Grace T. Mendoza',     'Midwife', 'Maternal & Child Health','QC City Health Center',        '09393334455', 'Tue, Thu – 9AM to 3PM',      'Active'],
+            ['Felix D. Catalan',     'Other',   'Environmental Health',   'Barangay New Era',             '09504445566', 'Mon to Fri – 7AM to 4PM',    'Active'],
+            ['Marivic R. Espiritu',  'BHW',     'Community Health',       'Barangay New Era',             '09615556677', 'Mon to Sat – 8AM to 5PM',    'Active'],
         ];
         foreach ($clinicStaff as $s) {
             DB::table('committee_clinic_staff')->updateOrInsert(
@@ -251,7 +251,7 @@ class CommitteeSpecificSeeder extends Seeder
             ['Creek Clearing & Dredging',            'Clean-Up',       '2026-03-22', 'Creek – Zone 3 & 4',  55,  0,   2200, 'Completed', 'Coordinated with MMDA. Creek depth restored.'],
             ['Composting Workshop',                  'Education',      '2026-03-05', 'Barangay Hall',       40,  0,   0,    'Completed', 'Distributed 30 composting kits to participating households.'],
             ['Material Recovery Facility (MRF) Day', 'Recycling',      '2026-02-21', 'Barangay MRF',        80,  0,   950,  'Completed', 'Recyclables sorted and sold to junk shop. Revenue: ₱4,200.'],
-            ['Anti-Plastic Campaign – Purok Level',  'Advocacy',       '2026-05-30', 'All Puroks',          0,   0,   0,    'Upcoming',  'To be conducted in coordination with QC ENRO.'],
+            ['Anti-Plastic Campaign – Purok Level',  'Advocacy',       '2026-05-30', 'All Puroks',          0,   0,   0,    'Planned',   'To be conducted in coordination with QC ENRO.'],
         ];
         foreach ($envPrograms as $p) {
             DB::table('committee_environment_programs')->updateOrInsert(
@@ -361,10 +361,10 @@ class CommitteeSpecificSeeder extends Seeder
         // BDRRM — Evacuation Centers
         // ────────────────────────────────────────────────────────────────
         $evacCenters = [
-            ['Barangay Covered Court',        'Purok 3-Gumamela, New Era',    600, 0,  'Open / Standby', 'Brgy. Kagawad Lino Flores', '09171234100', 'Toilets, water, generator, first-aid kit, cots (80)'],
-            ['New Era Multi-Purpose Hall',    'Barangay Center, New Era',     350, 0,  'Open / Standby', 'Brgy. Secretary Ana Torres', '09282234101', 'Toilets, water, kitchen area, tables and chairs'],
-            ['New Era Elementary School Gym', 'Purok 2-Rosal, New Era',       800, 0,  'Open / Standby', 'School Principal (in coord.)','09393234102', 'Spacious gym, toilets, water, generator'],
-            ['Zone 4 Community Center',       'Purok 4-Adelfa, New Era',      200, 0,  'Open / Standby', 'Purok Leader Dante Cruz',   '09504234103', 'Toilets, water, benches, first-aid kit'],
+            ['Barangay Covered Court',        'Purok 3-Gumamela, New Era',    600, 0,  'Available', 'Brgy. Kagawad Lino Flores', '09171234100', 'Toilets, water, generator, first-aid kit, cots (80)'],
+            ['New Era Multi-Purpose Hall',    'Barangay Center, New Era',     350, 0,  'Available', 'Brgy. Secretary Ana Torres', '09282234101', 'Toilets, water, kitchen area, tables and chairs'],
+            ['New Era Elementary School Gym', 'Purok 2-Rosal, New Era',       800, 0,  'Available', 'School Principal (in coord.)','09393234102', 'Spacious gym, toilets, water, generator'],
+            ['Zone 4 Community Center',       'Purok 4-Adelfa, New Era',      200, 0,  'Available', 'Purok Leader Dante Cruz',   '09504234103', 'Toilets, water, benches, first-aid kit'],
         ];
         foreach ($evacCenters as $e) {
             DB::table('committee_evacuation_centers')->updateOrInsert(
