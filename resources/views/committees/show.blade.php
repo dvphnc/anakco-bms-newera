@@ -789,7 +789,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         <div class="form-group"><label class="form-label">Date <span style="color:var(--crimson)">*</span></label><input type="date" name="event_date" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Venue</label><input type="text" name="venue" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Total Attendees <span style="color:var(--crimson)">*</span></label><input type="number" name="total_attendees" class="form-control" min="0" required></div>
-                        <div class="form-group"><label class="form-label">Attendance Sheet</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png"></div>
+                        <div class="form-group"><label class="form-label">Attendance Sheet</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif,.mp4,.mov,.avi,.doc,.docx,.xls,.xlsx"></div>
                         <div class="form-group" style="grid-column:span 3"><label class="form-label">Notes</label><input type="text" name="notes" class="form-control"></div>
                     </div>
                     <div style="margin-top:14px;display:flex;gap:8px">
@@ -947,7 +947,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         <div class="form-group"><label class="form-label">Contact Person</label><input type="text" name="contact_person" class="form-control" placeholder="Name of focal person"></div>
                         <div class="form-group"><label class="form-label">Contact Number</label><input type="text" name="contact_number" class="form-control"></div>
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Description / Scope</label><textarea name="description" class="form-control" rows="2" placeholder="Brief description of the partnership"></textarea></div>
-                        <div class="form-group"><label class="form-label">MOU / MOA Document</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png"></div>
+                        <div class="form-group"><label class="form-label">MOU / MOA Document</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif,.mp4,.mov,.avi,.doc,.docx,.xls,.xlsx"></div>
                     </div>
                     <div style="margin-top:14px;display:flex;gap:8px">
                         <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
@@ -1891,7 +1891,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Facilitator / Trainer</label><input type="text" name="facilitator" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Participants</label><input type="number" name="participants_count" class="form-control" min="0" value="0"></div>
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Notes</label><input type="text" name="notes" class="form-control"></div>
-                        <div class="form-group"><label class="form-label">Certificate / Attendance Sheet</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png"></div>
+                        <div class="form-group"><label class="form-label">Certificate / Attendance Sheet</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif,.mp4,.mov,.avi,.doc,.docx,.xls,.xlsx"></div>
                     </div>
                     <div style="margin-top:14px;display:flex;gap:8px">
                         <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
@@ -2479,7 +2479,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         <div class="form-group"><label class="form-label">Start Date</label><input type="date" name="start_date" class="form-control"></div>
                         <div class="form-group"><label class="form-label">End Date</label><input type="date" name="end_date" class="form-control"></div>
                         <div class="form-group"><label class="form-label">Status <span style="color:var(--crimson)">*</span></label><select name="status" class="form-control" required>@foreach(['Pending','Active','Completed','Terminated'] as $s)<option>{{ $s }}</option>@endforeach</select></div>
-                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Contract Document</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png"></div>
+                        <div class="form-group" style="grid-column:span 2"><label class="form-label">Contract Document</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif,.mp4,.mov,.avi,.doc,.docx,.xls,.xlsx"></div>
                     </div>
                     <div style="margin-top:14px;display:flex;gap:8px">
                         <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
@@ -2558,7 +2558,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         <div class="form-group"><label class="form-label">Fund Source</label><input type="text" name="fund_source" class="form-control" placeholder="e.g. LDRRMF, GAA, Barangay Fund"></div>
                         <div class="form-group"><label class="form-label">Reference No.</label><input type="text" name="reference_number" class="form-control" placeholder="e.g. DV-2026-001"></div>
                         <div class="form-group" style="grid-column:span 2"><label class="form-label">Remarks</label><input type="text" name="remarks" class="form-control"></div>
-                        <div class="form-group"><label class="form-label">Supporting Document</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png"></div>
+                        <div class="form-group"><label class="form-label">Supporting Document</label><input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif,.mp4,.mov,.avi,.doc,.docx,.xls,.xlsx"></div>
                     </div>
                     <div style="margin-top:14px;display:flex;gap:8px">
                         <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add</button>
