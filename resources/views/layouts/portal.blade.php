@@ -690,36 +690,12 @@
         .pf-col ul li a:hover { color: rgba(255,255,255,.9); }
 
         /* ── Developed By ── */
-        .pf-devby-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: .55rem;
-            background: rgba(255,255,255,.06);
-            border: 1px solid rgba(255,255,255,.1);
-            border-radius: 10px;
-            padding: .75rem 1rem;
-            margin-top: .25rem;
-            text-decoration: none;
-            transition: background .15s, border-color .15s;
-        }
-        .pf-devby-badge:hover {
-            background: rgba(255,255,255,.1);
-            border-color: rgba(255,255,255,.2);
-        }
-        .pf-devby-icon {
-            width: 36px; height: 36px; border-radius: 8px;
-            background: linear-gradient(135deg, var(--navy), #1e3f73);
-            display: flex; align-items: center; justify-content: center;
-            font-size: .82rem; color: var(--gold); flex-shrink: 0;
-            font-weight: 800; font-family: 'Poppins', sans-serif;
-        }
         .pf-devby-name {
-            font-size: .88rem; font-weight: 700; color: #fff;
-            display: block; line-height: 1.2;
+            font-size: .88rem; font-weight: 700; color: rgba(255,255,255,.75);
+            margin-bottom: .25rem;
         }
         .pf-devby-sub {
-            font-size: .68rem; color: rgba(255,255,255,.38);
-            display: block; margin-top: 1px;
+            font-size: .76rem; color: rgba(255,255,255,.38);
         }
 
         /* ── Bottom bar ── */
