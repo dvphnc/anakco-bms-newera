@@ -214,14 +214,14 @@ class CommitteeSpecificSeeder extends Seeder
         // INFRASTRUCTURE — Financials
         // ────────────────────────────────────────────────────────────────
         $financials = [
-            ['20% Development Fund – Q1 2026',       'Budget Release',  'DILG / LGU',       2500000, '2026-01-05', 'DVR-2026-001', 'Released per DILG guidelines. Allocated to 4 projects.'],
-            ['Road Concreting – Mobilization',        'Disbursement',    'Barangay Fund',    174000,  '2026-01-11', 'DVR-2026-002', '30% mobilization fee per contract CTR-2026-001.'],
-            ['Road Concreting – 2nd Progress Billing','Disbursement',    'Barangay Fund',    290000,  '2026-02-20', 'DVR-2026-003', '50% payment upon 50% completion.'],
-            ['Road Concreting – Final Billing',       'Disbursement',    'Barangay Fund',    98000,   '2026-03-18', 'DVR-2026-004', 'Final payment upon COA inspection clearance.'],
-            ['Drainage – Mobilization',               'Disbursement',    'Barangay Fund',    126000,  '2026-02-05', 'DVR-2026-005', '30% mobilization fee per contract CTR-2026-002.'],
-            ['Drainage – Final Billing',              'Disbursement',    'Barangay Fund',    292500,  '2026-05-02', 'DVR-2026-006', 'Final billing cleared by engineering office.'],
-            ['20% Development Fund – Q2 2026',        'Budget Release',  'DILG / LGU',       2500000, '2026-04-03', 'DVR-2026-007', 'Q2 release for remaining projects and new ones.'],
-            ['Solar Lighting – Progress Billing 1',   'Disbursement',    'Barangay Fund',    320000,  '2026-03-10', 'DVR-2026-008', 'Covers materials and first phase installation.'],
+            ['20% Development Fund – Q1 2026',       'Budget',      'DILG / LGU',       2500000, '2026-01-05', 'DVR-2026-001', 'Released per DILG guidelines. Allocated to 4 projects.'],
+            ['Road Concreting – Mobilization',        'Utilization', 'Barangay Fund',    174000,  '2026-01-11', 'DVR-2026-002', '30% mobilization fee per contract CTR-2026-001.'],
+            ['Road Concreting – 2nd Progress Billing','Utilization', 'Barangay Fund',    290000,  '2026-02-20', 'DVR-2026-003', '50% payment upon 50% completion.'],
+            ['Road Concreting – Final Billing',       'Liquidation', 'Barangay Fund',    98000,   '2026-03-18', 'DVR-2026-004', 'Final payment upon COA inspection clearance.'],
+            ['Drainage – Mobilization',               'Utilization', 'Barangay Fund',    126000,  '2026-02-05', 'DVR-2026-005', '30% mobilization fee per contract CTR-2026-002.'],
+            ['Drainage – Final Billing',              'Liquidation', 'Barangay Fund',    292500,  '2026-05-02', 'DVR-2026-006', 'Final billing cleared by engineering office.'],
+            ['20% Development Fund – Q2 2026',        'Budget',      'DILG / LGU',       2500000, '2026-04-03', 'DVR-2026-007', 'Q2 release for remaining projects and new ones.'],
+            ['Solar Lighting – Progress Billing 1',   'Utilization', 'Barangay Fund',    320000,  '2026-03-10', 'DVR-2026-008', 'Covers materials and first phase installation.'],
         ];
         foreach ($financials as $f) {
             DB::table('committee_infra_financials')->updateOrInsert(
