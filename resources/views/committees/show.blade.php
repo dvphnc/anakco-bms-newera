@@ -3308,8 +3308,7 @@ function openEditActivity(tr) {
     document.getElementById('eAct_location').value     = tr.dataset.location     || '';
     document.getElementById('eAct_participants').value = tr.dataset.participants  || '0';
     document.getElementById('eAct_description').value  = tr.dataset.description  || '';
-    var sel = document.getElementById('eAct_status');
-    for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === tr.dataset.status) { sel.selectedIndex = i; break; }
+    $('#eAct_status').val(tr.dataset.status || '').trigger('change');
     document.getElementById('editActivityModal').classList.add('open');
 }
 document.getElementById('editActivityForm').addEventListener('submit', function(e) {
@@ -3395,8 +3394,7 @@ function openEditInventory(tr) {
     document.getElementById('eInv_qty').value        = tr.dataset.qty       || '0';
     document.getElementById('eInv_unit').value       = tr.dataset.unit      || '';
     document.getElementById('eInv_remarks').value    = tr.dataset.remarks   || '';
-    var sel = document.getElementById('eInv_condition');
-    for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === tr.dataset.condition) { sel.selectedIndex = i; break; }
+    $('#eInv_condition').val(tr.dataset.condition || '').trigger('change');
     document.getElementById('editInventoryModal').classList.add('open');
 }
 document.getElementById('editInventoryForm').addEventListener('submit', function(e) {
@@ -3427,10 +3425,7 @@ function openEditRecord(el) {
     _editRecId = el.dataset.id;
     document.getElementById('eRec_title').value       = el.dataset.title       || '';
     document.getElementById('eRec_description').value = el.dataset.description || '';
-    var sel = document.getElementById('eRec_type');
-    for (var i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].value === el.dataset.rtype) { sel.selectedIndex = i; break; }
-    }
+    $('#eRec_type').val(el.dataset.rtype || '').trigger('change');
     document.getElementById('editRecordModal').classList.add('open');
 }
 document.getElementById('editRecordForm').addEventListener('submit', function(e) {
@@ -3464,8 +3459,7 @@ function openEditPartnership(tr) {
     document.getElementById('ePart_contact').value   = tr.dataset.contact   || '';
     document.getElementById('ePart_phone').value     = tr.dataset.phone     || '';
     document.getElementById('ePart_desc').value      = tr.dataset.desc      || '';
-    var sel = document.getElementById('ePart_type');
-    for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === tr.dataset.ptype) { sel.selectedIndex = i; break; }
+    $('#ePart_type').val(tr.dataset.ptype || '').trigger('change');
     document.getElementById('editPartnershipModal').classList.add('open');
 }
 document.getElementById('editPartnershipForm').addEventListener('submit', function(e) {
