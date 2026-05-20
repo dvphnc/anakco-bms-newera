@@ -37,6 +37,11 @@ class UserController extends Controller
 
         $validated['password'] = Hash::make($validated['password']);
 
+        // Admin accounts are always auto-verified
+        if ($validated['role'] === 'Admin') {
+            $validated['email_verified_at'] = now();
+        }
+
         $record = User::create($validated);
         $this->logActivity('created', $record);
 
@@ -79,6 +84,11 @@ class UserController extends Controller
             $validated['password'] = Hash::make($validated['password']);
         } else {
             unset($validated['password']);
+        }
+
+        // If role is set/changed to Admin, auto-verify
+        if ($validated['role'] === 'Admin' && is_null($user->email_verified_at)) {
+            $validated['email_verified_at'] = now();
         }
 
         $oldData = $user->getOriginal();
@@ -148,6 +158,14 @@ class UserController extends Controller
 
     public function verifyToggle(User $user)
     {
+        // Admin accounts are always verified — cannot be toggled
+        if ($user->role === 'Admin') {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Admin accounts are always verified and cannot be changed.'], 422);
+            }
+            return back()->with('error', 'Admin accounts are always verified.');
+        }
+
         $willVerify = is_null($user->email_verified_at);
 
         if (!$willVerify && $user->id === auth()->id()) {
