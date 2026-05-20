@@ -351,10 +351,16 @@
 .rpt-fullwidth .lbl { font-size: 8.5pt; font-weight: bold; color: #555; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; }
 .rpt-fullwidth .val { font-size: 10.5pt; line-height: 1.7; white-space: pre-line; }
 
+.rpt-sig-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    break-before: avoid;
+    page-break-before: avoid;
+    margin-top: 14px;
+}
 .rpt-sig-area {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
     gap: 12px;
 }
 .rpt-sig-box { text-align: center; flex: 1; min-width: 0; }
@@ -363,8 +369,8 @@
 .rpt-sig-title { font-size: 9pt; color: #333; }
 
 .rpt-footer {
-    margin-top: 20px;
-    padding-top: 10px;
+    margin-top: 12px;
+    padding-top: 8px;
     border-top: 1px dashed #aaa;
     font-size: 8pt;
     color: #666;
