@@ -9,7 +9,14 @@ class HouseholdFactory extends Factory
 {
     public function definition(): array
     {
-        static $sequence = 1;
+        static $sequence = 0;
+
+        // On first call, seed the counter from the highest number already in DB
+        // so re-running the seeder never collides with existing household_number values.
+        if ($sequence === 0) {
+            $max = \App\Models\Household::max('household_number'); // e.g. "HH-3400"
+            $sequence = $max ? ((int) ltrim(substr($max, 3), '0') + 1) : 1;
+        }
 
         $purokId = Purok::inRandomOrder()->first()?->id ?? 1;
 
