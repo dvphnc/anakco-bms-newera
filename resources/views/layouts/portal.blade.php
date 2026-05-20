@@ -809,11 +809,6 @@
         <a href="{{ route('portal.about') }}"><i class="fas fa-landmark fa-fw"></i> About Us</a>
         <a href="{{ route('portal.track') }}"><i class="fas fa-search fa-fw"></i> Track My Status</a>
         <div class="drawer-divider"></div>
-        @auth
-            <a href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt fa-fw"></i> Staff Dashboard</a>
-        @else
-            <a href="{{ route('login') }}"><i class="fas fa-sign-in-alt fa-fw"></i> Staff Login</a>
-        @endauth
         <a href="{{ route('portal.blotter') }}"><i class="fas fa-gavel fa-fw"></i> File a Blotter Report</a>
         <a href="{{ route('portal.business') }}"><i class="fas fa-store fa-fw"></i> Business Permit</a>
         <div class="drawer-divider"></div>
@@ -876,15 +871,6 @@
         <a href="{{ route('portal.track') }}" class="{{ request()->routeIs('portal.track*') ? 'nav-active' : '' }}">
             <i class="fas fa-search"></i> Track Status
         </a>
-        @auth
-            <a href="{{ route('dashboard') }}">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
-            </a>
-        @else
-            <a href="{{ route('login') }}">
-                <i class="fas fa-sign-in-alt"></i> Staff Login
-            </a>
-        @endauth
         <a href="{{ route('portal.blotter') }}" class="{{ request()->routeIs('portal.blotter*') ? 'nav-active' : '' }}">
             <i class="fas fa-gavel"></i> Blotter
         </a>
