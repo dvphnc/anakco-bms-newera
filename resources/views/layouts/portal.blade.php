@@ -726,10 +726,116 @@
             .pf-big-seal { width: 90px; height: 90px; }
         }
 
+        /* ═══════════════════════════════════════════════════════
+           SPLASH SCREEN
+        ═══════════════════════════════════════════════════════ */
+        #splash {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: linear-gradient(150deg, #07162a 0%, #0D2144 55%, #14305e 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            transition: opacity .55s ease, visibility .55s ease;
+        }
+        #splash.splash-hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Decorative circles */
+        .splash-deco-a {
+            position: absolute; top: -100px; right: -80px;
+            width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(200,134,26,.1) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .splash-deco-b {
+            position: absolute; bottom: -120px; left: -60px;
+            width: 420px; height: 420px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,.04) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .splash-content {
+            position: relative; z-index: 1;
+            display: flex; flex-direction: column;
+            align-items: center; gap: 1.5rem;
+            animation: splashFadeUp .6s ease both;
+        }
+        @keyframes splashFadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .splash-seal {
+            width: 100px; height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 28px rgba(0,0,0,.45));
+            animation: splashPulse 2s ease-in-out infinite;
+        }
+        @keyframes splashPulse {
+            0%, 100% { transform: scale(1); }
+            50%       { transform: scale(1.04); }
+        }
+
+        .splash-name {
+            font-size: 1.45rem; font-weight: 800;
+            color: #fff; letter-spacing: -0.02em; line-height: 1.15;
+            text-align: center;
+        }
+        .splash-sub {
+            font-size: .78rem; color: rgba(255,255,255,.5);
+            letter-spacing: .04em; text-align: center;
+            margin-top: -.75rem;
+        }
+
+        /* Progress bar */
+        .splash-progress {
+            width: 160px; height: 2px;
+            background: rgba(255,255,255,.12);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: .5rem;
+        }
+        .splash-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), #e0a843);
+            border-radius: 99px;
+            width: 0%;
+            animation: splashLoad 1.6s ease forwards;
+        }
+        @keyframes splashLoad {
+            0%   { width: 0%; }
+            60%  { width: 75%; }
+            100% { width: 100%; }
+        }
+
     </style>
     @stack('styles')
 </head>
 <body>
+
+{{-- ═══ SPLASH SCREEN ═══ --}}
+<div id="splash" role="status" aria-label="Loading portal">
+    <div class="splash-deco-a" aria-hidden="true"></div>
+    <div class="splash-deco-b" aria-hidden="true"></div>
+    <div class="splash-content">
+        <img src="{{ asset('images/republika-seal.png') }}"
+             alt="Republika ng Pilipinas"
+             class="splash-seal">
+        <div>
+            <div class="splash-name">Barangay New Era</div>
+            <div class="splash-sub">Official Digital Services Portal</div>
+        </div>
+        <div class="splash-progress">
+            <div class="splash-progress-bar"></div>
+        </div>
+    </div>
+</div>
 
 {{-- ═══ TOAST ═══ --}}
 <div id="portalToast" role="status" aria-live="polite"></div>
