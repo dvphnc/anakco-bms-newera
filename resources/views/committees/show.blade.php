@@ -3435,7 +3435,7 @@ function openEditRecord(el) {
 document.getElementById('editRecordForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/{{ $committee['slug'] }}/records/' + _editRecId, 'editRecordModal', function(rec) {
-        var el = document.querySelector('[data-id="' + _editRecId + '"]');
+        var el = _editRecEl;
         if (!el) return;
         if (el.tagName === 'TR') {
             // Documents table row — update cells
@@ -3454,9 +3454,10 @@ document.getElementById('editRecordForm').addEventListener('submit', function(e)
 });
 
 // ── EDIT: Partnership ──
-var _editPartId = null;
+var _editPartId = null, _editPartEl = null;
 function openEditPartnership(tr) {
     _editPartId = tr.dataset.pid;
+    _editPartEl = tr;
     document.getElementById('ePart_name').value     = tr.dataset.partner   || '';
     document.getElementById('ePart_mou').value       = tr.dataset.mou       || '';
     document.getElementById('ePart_validity').value  = tr.dataset.validity  || '';
@@ -3469,7 +3470,7 @@ function openEditPartnership(tr) {
 document.getElementById('editPartnershipForm').addEventListener('submit', function(e) {
     e.preventDefault();
     axiosPatch(this, '/committees/{{ $committee['slug'] }}/partnerships/' + _editPartId, 'editPartnershipModal', function(rec) {
-        var row = document.querySelector('[data-pid="' + _editPartId + '"]');
+        var row = _editPartEl;
         if (row) {
             row.cells[0].innerHTML = '<div style="font-weight:600;color:var(--navy)">' + rec.partner_name + '</div>';
             row.cells[4].textContent = rec.contact_person || '—';
