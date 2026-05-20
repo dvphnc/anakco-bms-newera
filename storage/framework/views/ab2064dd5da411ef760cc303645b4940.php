@@ -108,12 +108,15 @@
                                 <i class="fas fa-pen"></i>
                             </button>
                             <?php if($user->id !== auth()->id()): ?>
+                            
+                            <?php if($user->role !== 'Admin'): ?>
                             <button data-verify-btn
                                     onclick="toggleVerify(<?php echo e($user->id); ?>, <?php echo e($user->email_verified_at ? 'true' : 'false'); ?>)"
                                     class="btn btn-secondary btn-sm btn-icon"
                                     title="<?php echo e($user->email_verified_at ? 'Unverify' : 'Verify'); ?>">
                                 <i class="fas <?php echo e($user->email_verified_at ? 'fa-user-xmark' : 'fa-user-check'); ?>"></i>
                             </button>
+                            <?php endif; ?>
                             <button onclick="deleteUser(<?php echo e($user->id); ?>, '<?php echo e(addslashes($user->name)); ?>')"
                                     class="btn btn-danger btn-sm btn-icon" title="Delete">
                                 <i class="fas fa-trash"></i>
