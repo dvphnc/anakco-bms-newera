@@ -16,6 +16,11 @@ class ResidentPortalController extends Controller
         return view('portal.index');
     }
 
+    public function about()
+    {
+        return view('portal.about');
+    }
+
     public function create()
     {
         return view('portal.request', [

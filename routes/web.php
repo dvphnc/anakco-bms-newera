@@ -32,6 +32,7 @@ Route::get('/verify/business/{permitNumber}', [VerifyController::class, 'busines
 // -------------------------------------------------------
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/',                         [ResidentPortalController::class, 'index'])->name('index');
+    Route::get('/about',                    [ResidentPortalController::class, 'about'])->name('about');
     // Document request
     Route::get('/request',                  [ResidentPortalController::class, 'create'])->name('request');
     Route::post('/request',                 [ResidentPortalController::class, 'store'])->name('store');

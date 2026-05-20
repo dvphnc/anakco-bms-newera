@@ -679,6 +679,9 @@
         <a href="{{ route('portal.index') }}" class="{{ request()->routeIs('portal.index') ? 'nav-active' : '' }}">
             <i class="fas fa-home"></i> Home
         </a>
+        <a href="{{ route('portal.about') }}" class="{{ request()->routeIs('portal.about') ? 'nav-active' : '' }}">
+            <i class="fas fa-landmark"></i> About Us
+        </a>
         <a href="{{ route('portal.track') }}" class="{{ request()->routeIs('portal.track*') ? 'nav-active' : '' }}">
             <i class="fas fa-search"></i> Track Status
         </a>
