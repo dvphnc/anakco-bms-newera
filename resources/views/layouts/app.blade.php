@@ -876,8 +876,17 @@
     <script>
     // ── Axios: CSRF + session-expiry interceptor ─────────────────────────
     (function () {
-        const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
-        if (match) axios.defaults.headers.common['X-XSRF-TOKEN'] = decodeURIComponent(match[1]);
+        // Primary: read CSRF token from the server-rendered meta tag.
+        // This is always present and never relies on a cookie being set.
+        var _csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        if (_csrfMeta) {
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = _csrfMeta.getAttribute('content');
+        }
+        // Secondary: tell Axios to also send the XSRF-TOKEN cookie as
+        // X-XSRF-TOKEN automatically on every request (Axios built-in support).
+        axios.defaults.xsrfCookieName = 'XSRF-TOKEN';
+        axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN';
+
         axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
         axios.defaults.headers.common['Accept'] = 'application/json';
         axios.interceptors.response.use(null, function (error) {

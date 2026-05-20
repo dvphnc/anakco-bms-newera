@@ -549,7 +549,7 @@ $(document).on('click', '#residentsTable form[data-confirm] button[type="submit"
         icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
         btn.prop('disabled', true);
 
-        axios.delete(url, { headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } })
+        axios.delete(url)
             .then(res => {
                 const dt = $('#residentsTable').DataTable();
                 dt.row(form.closest('tr')).remove().draw(false);

@@ -109,12 +109,15 @@
                                 <i class="fas fa-pen"></i>
                             </button>
                             @if($user->id !== auth()->id())
+                            {{-- Verify/Unverify: only shown for non-Admin users --}}
+                            @if($user->role !== 'Admin')
                             <button data-verify-btn
                                     onclick="toggleVerify({{ $user->id }}, {{ $user->email_verified_at ? 'true' : 'false' }})"
                                     class="btn btn-secondary btn-sm btn-icon"
                                     title="{{ $user->email_verified_at ? 'Unverify' : 'Verify' }}">
                                 <i class="fas {{ $user->email_verified_at ? 'fa-user-xmark' : 'fa-user-check' }}"></i>
                             </button>
+                            @endif
                             <button onclick="deleteUser({{ $user->id }}, '{{ addslashes($user->name) }}')"
                                     class="btn btn-danger btn-sm btn-icon" title="Delete">
                                 <i class="fas fa-trash"></i>
