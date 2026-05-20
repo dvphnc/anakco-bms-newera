@@ -358,11 +358,11 @@
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-    gap: 20px;
+    gap: 12px;
 }
-.rpt-sig-box { text-align: center; flex: 1; }
+.rpt-sig-box { text-align: center; flex: 1; min-width: 0; }
 .rpt-sig-line { border-top: 1px solid #000; margin-bottom: 4px; }
-.rpt-sig-name { font-size: 11pt; font-weight: bold; text-transform: uppercase; }
+.rpt-sig-name { font-size: 10pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.3; word-break: break-word; overflow-wrap: break-word; }
 .rpt-sig-title { font-size: 9pt; color: #333; }
 
 .rpt-footer {
