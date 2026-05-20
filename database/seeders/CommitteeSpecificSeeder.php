@@ -414,7 +414,7 @@ class CommitteeSpecificSeeder extends Seeder
             ['health',      'Report',     'Q1 2026 Health Statistics Report',                                     '342 consultations, 28 prenatal visits, 18 immunizations.'],
             // Education
             ['education',   'Resolution', 'Resolution No. 2026-06: Scholarship Grant 2026 Recipients',           '10 scholars approved. Total annual grant: ₱59,000.'],
-            ['education',   'MOA',        'Memorandum of Agreement – QCU Scholarship Program 2026',              'MOA signed between Brgy. New Era and QCU on Feb 20, 2026.'],
+            ['education',   'Other',        'Memorandum of Agreement – QCU Scholarship Program 2026',              'MOA signed between Brgy. New Era and QCU on Feb 20, 2026.'],
             // Infrastructure
             ['infrastructure','Resolution','Resolution No. 2026-02: Approval of 20% Dev Fund Projects 2026',     'Six (6) projects approved totaling ₱3,000,000.'],
             ['infrastructure','Report',   'Infrastructure Progress Report – May 2026',                           'Three completed, three ongoing. 85% overall completion.'],
@@ -423,7 +423,7 @@ class CommitteeSpecificSeeder extends Seeder
             ['environment', 'Report',     'Q1 2026 Solid Waste Management Report',                               'Total waste collected: 5,850 kg. Recyclables sold: ₱12,400.'],
             // Livelihood
             ['livelihood',  'Resolution', 'Resolution No. 2026-07: Livelihood Program Beneficiaries 2026',       '12 beneficiaries approved for Negosyo sa Barangay program.'],
-            ['livelihood',  'MOA',        'MOA with DOLE Region NCR – Livelihood Grant Program',                 'Signed February 28, 2026. Total grant pool: ₱120,000.'],
+            ['livelihood',  'Other',        'MOA with DOLE Region NCR – Livelihood Grant Program',                 'Signed February 28, 2026. Total grant pool: ₱120,000.'],
             // Transport
             ['transport',   'Resolution', 'Resolution No. 2026-03: New Era TODA Franchise Renewal 2026',         '12 tricycle units renewed. ₱500 franchise fee per unit.'],
             ['transport',   'Report',     'TODA Compliance Report – Q1 2026',                                    'All 11 active units compliant with LTO requirements.'],
