@@ -547,7 +547,7 @@ $(document).on('click', '#residentsTable form[data-confirm] button[type="submit"
         icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
         btn.prop('disabled', true);
 
-        axios.delete(url, { headers: { 'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>' } })
+        axios.delete(url)
             .then(res => {
                 const dt = $('#residentsTable').DataTable();
                 dt.row(form.closest('tr')).remove().draw(false);
@@ -570,7 +570,7 @@ $(document).on('click', '#residentsTable .res-status-toggle', function () {
 
     btn.html('<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i>').prop('disabled', true);
 
-    axios.patch(`/residents/${id}/toggle-status`, { _token: '<?php echo e(csrf_token()); ?>' })
+    axios.patch(`/residents/${id}/toggle-status`)
         .then(({ data }) => {
             const s = data.residency_status;
             const clsMap = { Active: 'badge-green', Transferred: 'badge-yellow', Deceased: 'badge-gray' };
