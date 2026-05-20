@@ -60,12 +60,7 @@
         /* Dark gradient overlay so text stays readable over any photo */
         .slideshow-overlay {
             position:absolute; inset:0; z-index:1; pointer-events:none;
-            background:linear-gradient(
-                135deg,
-                rgba(13,33,68,0.82) 0%,
-                rgba(13,33,68,0.65) 50%,
-                rgba(13,33,68,0.80) 100%
-            );
+            background:rgba(13,33,68,0.88);
         }
 
         /* ---- LEFT PANEL ---- */
