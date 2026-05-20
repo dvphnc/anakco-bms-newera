@@ -3907,6 +3907,12 @@ function closePhotoLightbox() {
         document.body.style.overflow = '';
     }, 150);
 }
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        var lb = document.getElementById('photoLightbox');
+        if (lb && lb.style.display === 'flex') closePhotoLightbox();
+    }
+});
 
 // Live search + filter for medicine table
 function filterMeds() {
