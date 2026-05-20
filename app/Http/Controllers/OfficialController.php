@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Official;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class OfficialController extends Controller
 {

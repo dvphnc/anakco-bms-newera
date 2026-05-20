@@ -133,6 +133,32 @@ $(function () {
     const s2 = { dropdownParent: $('body'), width: '100%', allowClear: false };
     $('#s2Position').select2($.extend({}, s2, { placeholder: 'Select Position' }));
     $('#s2Committee').select2($.extend({}, s2, { placeholder: 'None / N/A', allowClear: true }));
+
+    // Remove-photo checkbox: dim the preview and disable the file input
+    var $cb      = $('#remove-photo-cb');
+    var $preview = $('#current-photo-preview');
+    var $upload  = $('#photo-upload');
+
+    function syncRemoveState() {
+        if ($cb.is(':checked')) {
+            $preview.css({ opacity: '0.3', filter: 'grayscale(100%)' });
+            $upload.prop('disabled', true).val('');
+        } else {
+            $preview.css({ opacity: '1', filter: 'none' });
+            $upload.prop('disabled', false);
+        }
+    }
+
+    $cb.on('change', syncRemoveState);
+    syncRemoveState(); // run on page load in case old() is checked
+
+    // If user picks a new file, auto-uncheck remove
+    $upload.on('change', function () {
+        if (this.files.length) {
+            $cb.prop('checked', false);
+            syncRemoveState();
+        }
+    });
 });
 </script>
 @endpush
