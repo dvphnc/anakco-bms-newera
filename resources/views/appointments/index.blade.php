@@ -289,6 +289,11 @@
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
 
+/* ── Success button (Issue Document) ─────────────────────────── */
+.btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
+.btn-success:hover { background:#15803d; box-shadow:0 4px 12px rgba(22,163,74,0.25); }
+.btn-success:disabled { opacity:.65; cursor:not-allowed; }
+
 /* ── Filter Select2 — match residents blade ───────────────────── */
 #filterPanel .select2-container { width: 100% !important; }
 #filterPanel .select2-container--default .select2-selection--single,
@@ -580,7 +585,7 @@ function closeAptModal() {
     _aptOldStatus = null;
 }
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeAptModal();
+    if (e.key === 'Escape') { closeAptModal(); closeConvertModal(); }
 });
 
 function saveAptStatus() {
