@@ -556,16 +556,18 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                  data-rtype="Photo"
                  data-description="{{ addslashes($photo->description ?? '') }}">
                 @if($photo->file_path)
-                <div onclick="openPhotoLightbox('{{ asset('storage/'.$photo->file_path) }}','{{ addslashes($photo->title) }}')" style="cursor:zoom-in;line-height:0">
+                <div class="photo-thumb-img" onclick="openPhotoLightbox('{{ asset('storage/'.$photo->file_path) }}','{{ addslashes($photo->title) }}')">
                     <img src="{{ asset('storage/'.$photo->file_path) }}" alt="{{ $photo->title }}">
                 </div>
                 @else
-                <div style="height:90px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-muted)"><i class="fas fa-image fa-2x"></i></div>
+                <div class="photo-thumb-img" style="cursor:default;height:100px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-muted)">
+                    <i class="fas fa-image fa-2x"></i>
+                </div>
                 @endif
                 <div class="photo-thumb-label">{{ $photo->title }}</div>
-                <div style="padding:4px 6px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:4px">
-                    <button type="button" onclick="openEditRecord(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit" style="padding:3px 7px;font-size:11px"><i class="fas fa-pen"></i></button>
-                    <button type="button" onclick="deleteGeneric('records','{{ $photo->id }}','{{ addslashes($photo->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete" style="padding:3px 7px;font-size:11px"><i class="fas fa-trash"></i></button>
+                <div class="photo-thumb-actions">
+                    <button type="button" onclick="openEditRecord(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                    <button type="button" onclick="deleteGeneric('records','{{ $photo->id }}','{{ addslashes($photo->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
             @endforeach

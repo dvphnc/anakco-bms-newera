@@ -120,13 +120,30 @@
 /* ── Photo Grid ──────────────────────────────────────────── */
 .photo-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 10px;
     padding: 16px 20px;
 }
-.photo-thumb { border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); }
-.photo-thumb img { width: 100%; height: 90px; object-fit: cover; display: block; }
-.photo-thumb-label { padding: 6px 8px; font-size: 12px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.photo-thumb {
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    transition: box-shadow .15s;
+}
+.photo-thumb:hover { box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+.photo-thumb-img {
+    overflow: hidden;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    line-height: 0;
+    cursor: zoom-in;
+    flex-shrink: 0;
+}
+.photo-thumb img { width: 100%; height: 100px; object-fit: cover; display: block; transition: transform .2s; }
+.photo-thumb-img:hover img { transform: scale(1.04); }
+.photo-thumb-label { padding: 6px 8px; font-size: 12px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.photo-thumb-actions { padding: 5px 6px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 4px; flex-shrink: 0; }
 
 /* ── Accomplishment Cards ────────────────────────────────── */
 .acc-list { padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
@@ -553,16 +570,18 @@ unset($__errorArgs, $__bag); ?>
                  data-rtype="Photo"
                  data-description="<?php echo e(addslashes($photo->description ?? '')); ?>">
                 <?php if($photo->file_path): ?>
-                <div onclick="openPhotoLightbox('<?php echo e(asset('storage/'.$photo->file_path)); ?>','<?php echo e(addslashes($photo->title)); ?>')" style="cursor:zoom-in;line-height:0">
+                <div class="photo-thumb-img" onclick="openPhotoLightbox('<?php echo e(asset('storage/'.$photo->file_path)); ?>','<?php echo e(addslashes($photo->title)); ?>')">
                     <img src="<?php echo e(asset('storage/'.$photo->file_path)); ?>" alt="<?php echo e($photo->title); ?>">
                 </div>
                 <?php else: ?>
-                <div style="height:90px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-muted)"><i class="fas fa-image fa-2x"></i></div>
+                <div class="photo-thumb-img" style="cursor:default;height:100px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-muted)">
+                    <i class="fas fa-image fa-2x"></i>
+                </div>
                 <?php endif; ?>
                 <div class="photo-thumb-label"><?php echo e($photo->title); ?></div>
-                <div style="padding:4px 6px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:4px">
-                    <button type="button" onclick="openEditRecord(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit" style="padding:3px 7px;font-size:11px"><i class="fas fa-pen"></i></button>
-                    <button type="button" onclick="deleteGeneric('records','<?php echo e($photo->id); ?>','<?php echo e(addslashes($photo->title)); ?>')" class="btn btn-danger btn-sm btn-icon" title="Delete" style="padding:3px 7px;font-size:11px"><i class="fas fa-trash"></i></button>
+                <div class="photo-thumb-actions">
+                    <button type="button" onclick="openEditRecord(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
+                    <button type="button" onclick="deleteGeneric('records','<?php echo e($photo->id); ?>','<?php echo e(addslashes($photo->title)); ?>')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
