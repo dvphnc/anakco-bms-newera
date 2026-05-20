@@ -63,14 +63,14 @@ class AppointmentController extends Controller
                         $viewBtn = '<a href="'.$viewUrl.'" target="_blank"
                                       class="btn btn-secondary btn-sm apt-viewdoc-btn"
                                       style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                      title="View Document: '.e($a->document->doc_number).'">
+                                      data-tippy-content="View Document: '.e($a->document->doc_number).'">
                                         <i class="fas fa-file-lines"></i> View Document
                                     </a>';
                     } elseif (in_array($a->status, ['Ready', 'Released'])) {
                         $viewBtn = '
                             <button class="btn btn-success btn-sm apt-viewdoc-btn apt-convert-btn"
                                     style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                    title="View Document"
+                                    data-tippy-content="View Document"
                                     data-id="'.e($a->id).'"
                                     data-num="'.e($a->appointment_number).'"
                                     data-name="'.e($a->resident_name).'"
