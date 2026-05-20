@@ -2790,6 +2790,30 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 
 @endsection
 
+{{-- Lightbox is pushed here (outside .main-content) so position:fixed covers the full viewport
+     including the sidebar, which lives in the root stacking context at z-index:300. --}}
+@push('scripts')
+<div id="photoLightbox" onclick="closePhotoLightbox()" style="display:none;position:fixed;inset:0;background:rgba(8,16,32,.93);z-index:9999;flex-direction:column;align-items:center;justify-content:center">
+    <div onclick="event.stopPropagation()" style="width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0">
+            <div style="width:32px;height:32px;border-radius:8px;background:rgba(200,134,26,.18);border:1px solid rgba(200,134,26,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <i class="fas fa-image" style="color:var(--gold);font-size:13px"></i>
+            </div>
+            <div style="min-width:0">
+                <div id="lightboxCaption" style="font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:680px"></div>
+                <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:1px">Click outside or press <kbd style="font-size:10px;padding:1px 5px;border-radius:3px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.55)">Esc</kbd> to close</div>
+            </div>
+        </div>
+        <button onclick="closePhotoLightbox()" style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .15s;flex-shrink:0" onmouseover="this.style.background='rgba(255,255,255,.18)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div onclick="event.stopPropagation()" style="flex:1;display:flex;align-items:center;justify-content:center;padding:4px 20px 20px;min-height:0;width:100%">
+        <img id="lightboxImg" src="" alt="" style="max-width:min(92vw,940px);max-height:calc(100vh - 120px);border-radius:10px;box-shadow:0 8px 48px rgba(0,0,0,.7);object-fit:contain;display:block">
+    </div>
+</div>
+@endpush
+
 @push('scripts')
 <script>
 // ── Reload helper: navigate to current page + tab, bypassing cache ──
