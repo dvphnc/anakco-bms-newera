@@ -54,7 +54,8 @@
       "Bash(php -l database/seeders/AppointmentSeeder.php)",
       "Bash(php -l database/factories/BlotterCaseFactory.php)",
       "Bash(php -l database/seeders/FakeDataSeeder.php)",
-      "Bash(findstr /i \"SESSION APP_URL COOKIE\")"
+      "Bash(findstr /i \"SESSION APP_URL COOKIE\")",
+      "Bash(findstr /i \"error exception\")"
     ]
   }
 }
