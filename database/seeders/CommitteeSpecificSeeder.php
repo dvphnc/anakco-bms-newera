@@ -388,8 +388,8 @@ class CommitteeSpecificSeeder extends Seeder
             ['Blanket',                     'Non-Food',       40,   'piece', 'Red Cross QC Chapter',  '2026-03-10', 'Available', 'Stored in sealed plastic bags.'],
             ['Sleeping Mat',                'Non-Food',       35,   'piece', 'LGU QC Donation',       '2026-03-10', 'Available', null],
             ['Flashlight (with batteries)', 'Non-Food',       20,   'unit',  'LGU QC Donation',       '2026-04-15', 'Available', 'Emergency use only.'],
-            ['First Aid Kit (complete)',    'Medical',        10,   'kit',   'Philippine Red Cross',  '2026-02-20', 'Available', 'Each kit covers 20 persons.'],
-            ['Paracetamol 500mg (blister)', 'Medical',        200,  'blister','DOH QC District',      '2026-05-05', 'Available', 'For use during disaster response only.'],
+            ['First Aid Kit (complete)',    'Medicine',       10,   'kit',   'Philippine Red Cross',  '2026-02-20', 'Available', 'Each kit covers 20 persons.'],
+            ['Paracetamol 500mg (blister)', 'Medicine',       200,  'blister','DOH QC District',      '2026-05-05', 'Available', 'For use during disaster response only.'],
         ];
         foreach ($reliefSupplies as $r) {
             DB::table('committee_relief_supplies')->updateOrInsert(
@@ -403,38 +403,40 @@ class CommitteeSpecificSeeder extends Seeder
         // ────────────────────────────────────────────────────────────────
         // SHARED — Committee Records (documents uploaded per committee)
         // ────────────────────────────────────────────────────────────────
+        $adminId = DB::table('users')->where('email', 'admin@bms.gov.ph')->value('id') ?? 1;
+
         $records = [
             // Peace & Order
-            ['peace-order', 'Resolution', 'Resolution No. 2026-01: Creation of Barangay Intelligence Network',   'Approved during regular session on January 10, 2026.', 'Admin'],
-            ['peace-order', 'Report',     'Q1 2026 Peace & Order Situational Report',                             'Covers January–March 2026. Submitted to PNP Station 11.',    'Admin'],
+            ['peace-order', 'Resolution', 'Resolution No. 2026-01: Creation of Barangay Intelligence Network',   'Approved during regular session on January 10, 2026.'],
+            ['peace-order', 'Report',     'Q1 2026 Peace & Order Situational Report',                             'Covers January–March 2026. Submitted to PNP Station 11.'],
             // Health
-            ['health',      'Resolution', 'Resolution No. 2026-04: Approval of Health Center Operating Budget',  'Budget of ₱180,000 approved for Q2 2026 health programs.',   'Admin'],
-            ['health',      'Report',     'Q1 2026 Health Statistics Report',                                     '342 consultations, 28 prenatal visits, 18 immunizations.',   'Admin'],
+            ['health',      'Resolution', 'Resolution No. 2026-04: Approval of Health Center Operating Budget',  'Budget of ₱180,000 approved for Q2 2026 health programs.'],
+            ['health',      'Report',     'Q1 2026 Health Statistics Report',                                     '342 consultations, 28 prenatal visits, 18 immunizations.'],
             // Education
-            ['education',   'Resolution', 'Resolution No. 2026-06: Scholarship Grant 2026 Recipients',           '10 scholars approved. Total annual grant: ₱59,000.',         'Admin'],
-            ['education',   'MOA',        'Memorandum of Agreement – QCU Scholarship Program 2026',              'MOA signed between Brgy. New Era and QCU on Feb 20, 2026.',  'Admin'],
+            ['education',   'Resolution', 'Resolution No. 2026-06: Scholarship Grant 2026 Recipients',           '10 scholars approved. Total annual grant: ₱59,000.'],
+            ['education',   'MOA',        'Memorandum of Agreement – QCU Scholarship Program 2026',              'MOA signed between Brgy. New Era and QCU on Feb 20, 2026.'],
             // Infrastructure
-            ['infrastructure','Resolution','Resolution No. 2026-02: Approval of 20% Dev Fund Projects 2026',     'Six (6) projects approved totaling ₱3,000,000.',             'Admin'],
-            ['infrastructure','Report',   'Infrastructure Progress Report – May 2026',                           'Three completed, three ongoing. 85% overall completion.',    'Admin'],
+            ['infrastructure','Resolution','Resolution No. 2026-02: Approval of 20% Dev Fund Projects 2026',     'Six (6) projects approved totaling ₱3,000,000.'],
+            ['infrastructure','Report',   'Infrastructure Progress Report – May 2026',                           'Three completed, three ongoing. 85% overall completion.'],
             // Environment
-            ['environment', 'Resolution', 'Resolution No. 2026-05: Zero-Waste Barangay Ordinance',               'Ordinance prohibiting single-use plastics within barangay.', 'Admin'],
-            ['environment', 'Report',     'Q1 2026 Solid Waste Management Report',                               'Total waste collected: 5,850 kg. Recyclables sold: ₱12,400.','Admin'],
+            ['environment', 'Resolution', 'Resolution No. 2026-05: Zero-Waste Barangay Ordinance',               'Ordinance prohibiting single-use plastics within barangay.'],
+            ['environment', 'Report',     'Q1 2026 Solid Waste Management Report',                               'Total waste collected: 5,850 kg. Recyclables sold: ₱12,400.'],
             // Livelihood
-            ['livelihood',  'Resolution', 'Resolution No. 2026-07: Livelihood Program Beneficiaries 2026',       '12 beneficiaries approved for Negosyo sa Barangay program.',  'Admin'],
-            ['livelihood',  'MOA',        'MOA with DOLE Region NCR – Livelihood Grant Program',                 'Signed February 28, 2026. Total grant pool: ₱120,000.',      'Admin'],
+            ['livelihood',  'Resolution', 'Resolution No. 2026-07: Livelihood Program Beneficiaries 2026',       '12 beneficiaries approved for Negosyo sa Barangay program.'],
+            ['livelihood',  'MOA',        'MOA with DOLE Region NCR – Livelihood Grant Program',                 'Signed February 28, 2026. Total grant pool: ₱120,000.'],
             // Transport
-            ['transport',   'Resolution', 'Resolution No. 2026-03: New Era TODA Franchise Renewal 2026',         '12 tricycle units renewed. ₱500 franchise fee per unit.',    'Admin'],
-            ['transport',   'Report',     'TODA Compliance Report – Q1 2026',                                    'All 11 active units compliant with LTO requirements.',       'Admin'],
+            ['transport',   'Resolution', 'Resolution No. 2026-03: New Era TODA Franchise Renewal 2026',         '12 tricycle units renewed. ₱500 franchise fee per unit.'],
+            ['transport',   'Report',     'TODA Compliance Report – Q1 2026',                                    'All 11 active units compliant with LTO requirements.'],
             // BDRRM
-            ['bdrrm',       'Resolution', 'Resolution No. 2026-08: Adoption of BDRRM Plan 2026–2028',            'Three-year DRRM plan adopted per RA 10121.',                  'Admin'],
-            ['bdrrm',       'Report',     'Q1 2026 BDRRM Incident Summary Report',                               'Five (5) incidents responded to. No fatalities recorded.',   'Admin'],
+            ['bdrrm',       'Resolution', 'Resolution No. 2026-08: Adoption of BDRRM Plan 2026–2028',            'Three-year DRRM plan adopted per RA 10121.'],
+            ['bdrrm',       'Report',     'Q1 2026 BDRRM Incident Summary Report',                               'Five (5) incidents responded to. No fatalities recorded.'],
         ];
         foreach ($records as $r) {
             DB::table('committee_records')->updateOrInsert(
                 ['committee_slug' => $r[0], 'title' => $r[2]],
                 ['committee_slug' => $r[0], 'record_type' => $r[1], 'title' => $r[2],
                  'description' => $r[3], 'file_path' => null, 'file_type' => null,
-                 'uploaded_by' => $r[4], 'created_at' => $now, 'updated_at' => $now]
+                 'uploaded_by' => $adminId, 'created_at' => $now, 'updated_at' => $now]
             );
         }
 
