@@ -845,18 +845,6 @@
         </div>
     </a>
 
-    {{-- System health pill --}}
-    <div class="sys-health" title="All portal systems operational">
-        <div class="sys-health-dot"></div>
-        Online &amp; Secure
-    </div>
-
-    {{-- Live clock --}}
-    <div class="portal-clock" id="portalClock" title="Current date &amp; time">
-        <i class="fas fa-clock"></i>
-        <span id="portalClockTime">--:-- --</span>
-    </div>
-
     <nav class="portal-nav" aria-label="Main navigation">
         <a href="{{ route('portal.index') }}" class="{{ request()->routeIs('portal.index') ? 'nav-active' : '' }}">
             <i class="fas fa-home"></i> Home
