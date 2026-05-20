@@ -620,95 +620,134 @@
         }
 
         /* ═══════════════════════════════════════════════════════
-           PORTAL FOOTER
+           PORTAL FOOTER  (eGov PH–style)
         ═══════════════════════════════════════════════════════ */
         .portal-footer {
-            background: var(--navy-dark);
-            color: rgba(255,255,255,.6);
+            background: #131313;
+            color: rgba(255,255,255,.55);
             margin-top: auto;
         }
         .portal-footer-body {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2.75rem clamp(1rem, 4vw, 2.5rem) 2rem;
+            padding: 3rem clamp(1rem, 4vw, 2.5rem) 2.5rem;
             display: grid;
-            grid-template-columns: 1.6fr 1fr 1fr;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
             gap: 2.5rem;
+            align-items: start;
         }
-        .pf-brand { display: flex; flex-direction: column; gap: .85rem; }
-        .pf-brand-top { display: flex; align-items: center; gap: .75rem; }
-        .pf-seal { width: 44px; height: 44px; flex-shrink: 0; }
-        .pf-name { font-size: .9rem; font-weight: 700; color: #fff; line-height: 1.2; }
-        .pf-sub  { font-size: .7rem; color: rgba(255,255,255,.4); margin-top: 2px; }
-        .pf-desc { font-size: .78rem; line-height: 1.72; color: rgba(255,255,255,.42); max-width: 280px; }
 
-        /* Republika ng Pilipinas seal — same style as eGov PH */
-        .pf-republika {
+        /* ── Brand column: big seal + text side-by-side ── */
+        .pf-brand {
             display: flex;
-            align-items: center;
-            gap: .6rem;
-            margin-top: .25rem;
-            padding-top: .85rem;
-            border-top: 1px solid rgba(255,255,255,.08);
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 1.25rem;
         }
-        .pf-republika-seal {
-            width: 36px; height: 36px;
+        .pf-big-seal {
+            width: 120px;
+            height: 120px;
             object-fit: contain;
             flex-shrink: 0;
+            opacity: .82;
+            filter: grayscale(20%);
+            transition: opacity .2s;
         }
-        .pf-republika-text {
-            font-size: .68rem;
-            color: rgba(255,255,255,.45);
-            line-height: 1.4;
-            font-style: italic;
+        .pf-big-seal:hover { opacity: 1; }
+        .pf-brand-text { display: flex; flex-direction: column; gap: .55rem; }
+        .pf-name {
+            font-size: 1.05rem; font-weight: 800;
+            color: #fff; line-height: 1.2;
+        }
+        .pf-tagline {
+            font-size: .82rem; font-weight: 400;
+            color: rgba(255,255,255,.62);
+            line-height: 1.6; max-width: 260px;
+        }
+        .pf-sub {
+            font-size: .72rem;
+            color: rgba(255,255,255,.35);
+            line-height: 1.5;
         }
 
+        /* ── Link columns ── */
         .pf-col h5 {
             font-size: .68rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: .1em;
-            color: var(--gold);
-            margin-bottom: .9rem;
-            opacity: .9;
+            letter-spacing: .13em;
+            color: rgba(255,255,255,.9);
+            margin-bottom: 1rem;
         }
-        .pf-col ul { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
+        .pf-col ul { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
         .pf-col ul li a {
-            font-size: .79rem;
-            color: rgba(255,255,255,.48);
+            font-size: .82rem;
+            color: rgba(255,255,255,.45);
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: .4rem;
             transition: color .15s;
+            display: block;
         }
-        .pf-col ul li a:hover { color: rgba(255,255,255,.88); }
-        .pf-col ul li a i { font-size: .6rem; opacity: .65; }
+        .pf-col ul li a:hover { color: rgba(255,255,255,.9); }
 
+        /* ── Developed By ── */
+        .pf-devby-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 10px;
+            padding: .75rem 1rem;
+            margin-top: .25rem;
+            text-decoration: none;
+            transition: background .15s, border-color .15s;
+        }
+        .pf-devby-badge:hover {
+            background: rgba(255,255,255,.1);
+            border-color: rgba(255,255,255,.2);
+        }
+        .pf-devby-icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: linear-gradient(135deg, var(--navy), #1e3f73);
+            display: flex; align-items: center; justify-content: center;
+            font-size: .82rem; color: var(--gold); flex-shrink: 0;
+            font-weight: 800; font-family: 'Poppins', sans-serif;
+        }
+        .pf-devby-name {
+            font-size: .88rem; font-weight: 700; color: #fff;
+            display: block; line-height: 1.2;
+        }
+        .pf-devby-sub {
+            font-size: .68rem; color: rgba(255,255,255,.38);
+            display: block; margin-top: 1px;
+        }
+
+        /* ── Bottom bar ── */
         .portal-footer-bottom {
             border-top: 1px solid rgba(255,255,255,.07);
             padding: 1rem clamp(1rem, 4vw, 2.5rem);
         }
         .portal-footer-bottom-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            flex-wrap: wrap;
+            max-width: 1200px; margin: 0 auto;
+            display: flex; align-items: center;
+            justify-content: space-between; gap: 1rem; flex-wrap: wrap;
         }
-        .pf-copy { font-size: .71rem; color: rgba(255,255,255,.28); }
+        .pf-copy { font-size: .71rem; color: rgba(255,255,255,.25); }
         .pf-legal { display: flex; gap: 1.25rem; flex-wrap: wrap; }
-        .pf-legal a { font-size: .71rem; color: rgba(255,255,255,.28); text-decoration: none; transition: color .15s; }
-        .pf-legal a:hover { color: rgba(255,255,255,.62); }
+        .pf-legal a {
+            font-size: .71rem; color: rgba(255,255,255,.25);
+            text-decoration: none; transition: color .15s;
+        }
+        .pf-legal a:hover { color: rgba(255,255,255,.65); }
 
-        @media (max-width: 820px) {
+        @media (max-width: 960px) {
             .portal-footer-body { grid-template-columns: 1fr 1fr; gap: 2rem; }
+            .pf-brand { grid-column: 1 / -1; }
         }
         @media (max-width: 500px) {
-            .portal-footer-body { grid-template-columns: 1fr; gap: 1.5rem; }
-            .pf-desc { max-width: 100%; }
+            .portal-footer-body { grid-template-columns: 1fr; }
+            .pf-brand { flex-direction: column; align-items: flex-start; }
+            .pf-big-seal { width: 90px; height: 90px; }
         }
 
     </style>
@@ -835,20 +874,13 @@
 
         
         <div class="pf-brand">
-            <div class="pf-brand-top">
-                <div class="pf-seal"><?php echo $__env->make('partials._portal_seal', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?></div>
-                <div>
-                    <div class="pf-name">Barangay New Era</div>
-                    <div class="pf-sub">District VI, Quezon City</div>
-                </div>
-            </div>
-            <p class="pf-desc">Official digital services portal of Barangay New Era. Request documents and track your appointment status online — free, secure, and available 24/7.</p>
-            
-            <div class="pf-republika">
-                <img src="<?php echo e(asset('images/republika-seal.png')); ?>"
-                     alt="Republika ng Pilipinas"
-                     class="pf-republika-seal">
-                <span class="pf-republika-text">Republika ng Pilipinas<br>Official Government Portal</span>
+            <img src="<?php echo e(asset('images/republika-seal.png')); ?>"
+                 alt="Republika ng Pilipinas"
+                 class="pf-big-seal">
+            <div class="pf-brand-text">
+                <div class="pf-name">Barangay New Era</div>
+                <p class="pf-tagline">The official digital services portal of Barangay New Era for citizen services.</p>
+                <div class="pf-sub">District VI, Quezon City<br>Metro Manila, Philippines</div>
             </div>
         </div>
 
@@ -856,12 +888,12 @@
         <div class="pf-col">
             <h5>Services</h5>
             <ul>
-                <li><a href="<?php echo e(route('portal.request')); ?>?type=Barangay+Clearance"><i class="fas fa-chevron-right"></i> Barangay Clearance</a></li>
-                <li><a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Indigency"><i class="fas fa-chevron-right"></i> Cert. of Indigency</a></li>
-                <li><a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Residency"><i class="fas fa-chevron-right"></i> Cert. of Residency</a></li>
-                <li><a href="<?php echo e(route('portal.request')); ?>?type=Business+Clearance"><i class="fas fa-chevron-right"></i> Business Clearance</a></li>
-                <li><a href="<?php echo e(route('portal.blotter')); ?>"><i class="fas fa-chevron-right"></i> File Blotter Report</a></li>
-                <li><a href="<?php echo e(route('portal.business')); ?>"><i class="fas fa-chevron-right"></i> Business Permit</a></li>
+                <li><a href="<?php echo e(route('portal.request')); ?>?type=Barangay+Clearance">Barangay Clearance</a></li>
+                <li><a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Indigency">Cert. of Indigency</a></li>
+                <li><a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Residency">Cert. of Residency</a></li>
+                <li><a href="<?php echo e(route('portal.request')); ?>?type=Business+Clearance">Business Clearance</a></li>
+                <li><a href="<?php echo e(route('portal.blotter')); ?>">File Blotter Report</a></li>
+                <li><a href="<?php echo e(route('portal.business')); ?>">Business Permit</a></li>
             </ul>
         </div>
 
@@ -869,11 +901,24 @@
         <div class="pf-col">
             <h5>Quick Links</h5>
             <ul>
-                <li><a href="<?php echo e(route('portal.index')); ?>"><i class="fas fa-chevron-right"></i> Home</a></li>
-                <li><a href="<?php echo e(route('portal.track')); ?>"><i class="fas fa-chevron-right"></i> Track My Request</a></li>
-                <li><a href="<?php echo e(route('portal.about')); ?>"><i class="fas fa-chevron-right"></i> About Us</a></li>
-                <li><a href="<?php echo e(route('portal.index')); ?>#faq"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                <li><a href="<?php echo e(route('portal.index')); ?>">Home</a></li>
+                <li><a href="<?php echo e(route('portal.track')); ?>">Track My Request</a></li>
+                <li><a href="<?php echo e(route('portal.about')); ?>">About Us</a></li>
+                <li><a href="<?php echo e(route('portal.index')); ?>#faq">FAQs</a></li>
+                <li><a href="#">Privacy Policy</a></li>
             </ul>
+        </div>
+
+        
+        <div class="pf-col">
+            <h5>Developed By</h5>
+            <a href="#" class="pf-devby-badge">
+                <div class="pf-devby-icon">A</div>
+                <div>
+                    <span class="pf-devby-name">AnakCo</span>
+                    <span class="pf-devby-sub">System Developer</span>
+                </div>
+            </a>
         </div>
 
     </div>
