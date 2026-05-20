@@ -147,54 +147,62 @@
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
      onclick="if(event.target===this)closeConvertModal()">
-    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
-                padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:460px;
+                box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
         {{-- Header --}}
-        <div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
-            <div style="display:flex;align-items:center;gap:10px">
-                <i class="fas fa-file-circle-check" style="color:var(--gold);font-size:14px"></i>
-                <span style="font-size:14px;font-weight:700;color:#fff">Issue Document Record</span>
+        <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:9px">
+                <i class="fas fa-file-circle-check" style="color:var(--gold);font-size:13px"></i>
+                <span style="font-size:13.5px;font-weight:700;color:#fff">Issue Document Record</span>
             </div>
             <button onclick="closeConvertModal()"
                     style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
-                           border-radius:var(--radius-sm);width:30px;height:30px;display:flex;
-                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer">
+                           border-radius:var(--radius-sm);width:28px;height:28px;display:flex;
+                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer;font-size:12px">
                 <i class="fas fa-xmark"></i>
             </button>
         </div>
+
         {{-- Body --}}
-        <div style="padding:20px">
+        <div style="padding:18px">
+
             {{-- Appointment summary (read-only) --}}
-            <div style="background:var(--navy-pale);border:1px solid var(--navy-border,#d0daea);
-                        border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:18px;font-size:13px">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px">
+            <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
+                        border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:12px;column-gap:16px">
                     <div>
-                        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Appointment</div>
-                        <div id="cvtNum" style="font-weight:600;color:var(--navy)"></div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Appointment No.</div>
+                        <div id="cvtNum" style="font-size:13px;font-weight:700;color:var(--navy);font-family:monospace"></div>
                     </div>
                     <div>
-                        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Document Type</div>
-                        <div id="cvtType" style="font-weight:600;color:var(--navy)"></div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Document Type</div>
+                        <div id="cvtType" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
                     </div>
-                    <div style="grid-column:1/-1">
-                        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Resident</div>
-                        <div id="cvtName" style="font-weight:600;color:var(--navy)"></div>
+                    <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:10px">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Resident</div>
+                        <div id="cvtName" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
                     </div>
                     <div id="cvtPurposeRow" style="grid-column:1/-1">
-                        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Purpose</div>
-                        <div id="cvtPurpose" style="color:var(--text)"></div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Purpose</div>
+                        <div id="cvtPurpose" style="font-size:13px;color:var(--text)"></div>
                     </div>
                 </div>
             </div>
 
             {{-- Editable fields --}}
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
                 <div class="form-group" style="margin:0">
-                    <label class="form-label">Fee Paid (₱) <span style="font-size:11px;font-weight:400;color:var(--text-subtle)">(optional)</span></label>
+                    <label class="form-label" style="font-size:12.5px">
+                        Fee Paid (₱)
+                        <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span>
+                    </label>
                     <input type="number" id="cvtFee" class="form-control" min="0" step="0.01" placeholder="0.00">
                 </div>
                 <div class="form-group" style="margin:0">
-                    <label class="form-label">O.R. Number <span style="font-size:11px;font-weight:400;color:var(--text-subtle)">(optional)</span></label>
+                    <label class="form-label" style="font-size:12.5px">
+                        O.R. Number
+                        <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span>
+                    </label>
                     <input type="text" id="cvtOR" class="form-control" placeholder="e.g. 2026-00123">
                 </div>
             </div>
@@ -203,17 +211,22 @@
                  padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
                  border:1px solid var(--crimson-border);margin-bottom:12px"></div>
 
-            <div style="font-size:12px;color:var(--text-subtle);margin-bottom:14px;display:flex;align-items:flex-start;gap:7px">
-                <i class="fas fa-circle-info" style="margin-top:2px;flex-shrink:0"></i>
-                This will create a <strong>Released</strong> document record in Document Issuance and automatically mark this appointment as Released.
+            {{-- Info note --}}
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;
+                        color:var(--text-subtle);background:#f8f9fb;border:1px solid var(--border);
+                        border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px">
+                <i class="fas fa-circle-info" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
+                <span>Creates a <strong style="color:var(--navy)">Released</strong> document record in Document Issuance and automatically marks this appointment as Released.</span>
             </div>
 
+            {{-- Actions --}}
             <div style="display:flex;justify-content:flex-end;gap:10px">
                 <button type="button" onclick="closeConvertModal()" class="btn btn-secondary">Cancel</button>
                 <button type="button" id="cvtSaveBtn" onclick="saveConvert()" class="btn btn-success">
                     <i class="fas fa-file-circle-check"></i> Issue Document
                 </button>
             </div>
+
         </div>
     </div>
 </div>
