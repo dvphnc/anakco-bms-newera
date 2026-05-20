@@ -231,7 +231,7 @@ $(document).ready(function () {
             icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
             btn.prop('disabled', true);
 
-            axios.delete(url, { headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } })
+            axios.delete(url)
                 .then(res => {
                     table.row(form.closest('tr')).remove().draw(false);
                     bmsStatDecrement('statHhTotal');

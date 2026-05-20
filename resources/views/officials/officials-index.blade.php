@@ -339,7 +339,7 @@ $(document).ready(function () {
             icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
             btn.prop('disabled', true);
 
-            axios.delete(url, { headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } })
+            axios.delete(url)
                 .then(res => {
                     const row = form.closest('tr');
                     row.css({ transition: 'opacity .3s', opacity: '0' });
@@ -363,9 +363,7 @@ $(document).ready(function () {
 
         btn.html('<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i>').prop('disabled', true);
 
-        axios.patch(`/officials/${id}/toggle-status`, {
-            _token: '{{ csrf_token() }}'
-        })
+        axios.patch(`/officials/${id}/toggle-status`)
         .then(({ data }) => {
             const nowActive = data.is_active;
             btn.removeClass('badge-green badge-gray')

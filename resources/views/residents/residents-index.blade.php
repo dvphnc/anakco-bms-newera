@@ -572,7 +572,7 @@ $(document).on('click', '#residentsTable .res-status-toggle', function () {
 
     btn.html('<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i>').prop('disabled', true);
 
-    axios.patch(`/residents/${id}/toggle-status`, { _token: '{{ csrf_token() }}' })
+    axios.patch(`/residents/${id}/toggle-status`)
         .then(({ data }) => {
             const s = data.residency_status;
             const clsMap = { Active: 'badge-green', Transferred: 'badge-yellow', Deceased: 'badge-gray' };
