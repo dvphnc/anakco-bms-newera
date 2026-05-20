@@ -210,7 +210,7 @@
         .left-footer {
             position:absolute; bottom:22px;
             font-size:10.5px; color:rgba(255,255,255,0.18);
-            font-weight:300; text-align:center; z-index:1;
+            font-weight:300; text-align:center; z-index:3;
             padding:0 20px;
         }
 
@@ -373,12 +373,37 @@
 
     <!-- LEFT PANEL (hidden on mobile) -->
     <div class="left-panel">
+
+        {{-- ── Slideshow background (5 slides) ──────────────────────────
+             Add your photos to:  public/images/login-slides/
+             Name them:  slide1.jpg  slide2.jpg  slide3.jpg  slide4.jpg  slide5.jpg
+             Recommended size: 1200 × 900 px or larger, landscape orientation.
+        ──────────────────────────────────────────────────────────────── --}}
+        <div class="slideshow-bg">
+            <div class="slide"></div>
+            <div class="slide"></div>
+            <div class="slide"></div>
+            <div class="slide"></div>
+            <div class="slide"></div>
+        </div>
+        <div class="slideshow-overlay"></div>
+
         <div class="logo-watermark"></div>
 
         <div class="left-content">
-            <div class="login-seal">
-                <img src="/images/bne-logo.png" alt="Barangay New Era"
-                     onerror="this.style.display='none'">
+
+            {{-- ── Coin flip: front = BNE logo, back = QC seal ── --}}
+            <div class="coin-flip">
+                <div class="coin-inner">
+                    <div class="coin-front">
+                        <img src="/images/bne-logo.png" alt="Barangay New Era Logo"
+                             onerror="this.style.display='none'">
+                    </div>
+                    <div class="coin-back">
+                        <img src="/images/qc-seal.png" alt="Quezon City Seal"
+                             onerror="this.style.display='none'">
+                    </div>
+                </div>
             </div>
 
             <span class="left-eyebrow">Official Barangay Portal</span>
