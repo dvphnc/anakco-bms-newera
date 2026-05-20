@@ -56,7 +56,8 @@
       "Bash(php -l database/seeders/FakeDataSeeder.php)",
       "Bash(findstr /i \"SESSION APP_URL COOKIE\")",
       "Bash(findstr /i \"error exception\")",
-      "Bash(php D:/laragon/www/anakco_bms/artisan tinker --execute=\"DB::select\\('SHOW COLUMNS FROM committee_tanod_trainings'\\);\")"
+      "Bash(php D:/laragon/www/anakco_bms/artisan tinker --execute=\"DB::select\\('SHOW COLUMNS FROM committee_tanod_trainings'\\);\")",
+      "Bash(php D:/laragon/www/anakco_bms/artisan route:list --name=portal)"
     ]
   }
 }
