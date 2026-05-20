@@ -604,6 +604,161 @@
         #portalToast.toast-error   { background: var(--crimson); }
         #portalToast.toast-warning { background: var(--gold); }
 
+        /* ═══════════════════════════════════════════════════════
+           GOVERNMENT STRIP
+        ═══════════════════════════════════════════════════════ */
+        .gov-strip {
+            background: #091830;
+            border-bottom: 1px solid rgba(200,134,26,0.25);
+            padding: 0 clamp(1rem, 4vw, 2.5rem);
+        }
+        .gov-strip-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 34px;
+            gap: 1rem;
+        }
+        .gov-strip-left {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .7rem;
+            color: rgba(255,255,255,.55);
+            font-weight: 500;
+            letter-spacing: .01em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .gov-strip-left .flag-ph {
+            background: linear-gradient(180deg, #0038a8 50%, #ce1126 50%);
+            width: 14px; height: 10px;
+            border-radius: 1px;
+            flex-shrink: 0;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+        .gov-strip-left .flag-ph::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 8px solid #fcd116;
+        }
+        .gov-strip-divider {
+            width: 1px; height: 14px;
+            background: rgba(255,255,255,.18);
+            flex-shrink: 0;
+        }
+        .gov-strip-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: .7rem;
+            color: rgba(255,255,255,.45);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .gov-strip-right span { display: flex; align-items: center; gap: .3rem; }
+        .gov-strip-right i { font-size: .65rem; color: var(--gold); opacity: .8; }
+        @media (max-width: 640px) {
+            .gov-strip-right { display: none; }
+            .gov-strip-left { font-size: .65rem; }
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           PORTAL FOOTER
+        ═══════════════════════════════════════════════════════ */
+        .portal-footer {
+            background: var(--navy-dark);
+            color: rgba(255,255,255,.6);
+            margin-top: auto;
+        }
+        .portal-footer-body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem clamp(1rem, 4vw, 2.5rem) 2.5rem;
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr 1fr;
+            gap: 2.5rem;
+        }
+        .pf-brand { display: flex; flex-direction: column; gap: 1rem; }
+        .pf-brand-top { display: flex; align-items: center; gap: .75rem; }
+        .pf-seal { width: 44px; height: 44px; flex-shrink: 0; }
+        .pf-name { font-size: .92rem; font-weight: 700; color: #fff; line-height: 1.2; }
+        .pf-sub  { font-size: .72rem; color: rgba(255,255,255,.45); margin-top: 2px; }
+        .pf-desc { font-size: .78rem; line-height: 1.7; color: rgba(255,255,255,.45); max-width: 260px; }
+        .pf-contact { display: flex; flex-direction: column; gap: .5rem; margin-top: .25rem; }
+        .pf-contact-row { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: rgba(255,255,255,.5); }
+        .pf-contact-row i { color: var(--gold); opacity: .8; font-size: .72rem; width: 14px; text-align: center; flex-shrink: 0; }
+
+        .pf-col h5 {
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            opacity: .9;
+        }
+        .pf-col ul { list-style: none; display: flex; flex-direction: column; gap: .45rem; }
+        .pf-col ul li a {
+            font-size: .8rem;
+            color: rgba(255,255,255,.5);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: .45rem;
+            transition: color .15s;
+        }
+        .pf-col ul li a:hover { color: rgba(255,255,255,.9); }
+        .pf-col ul li a i { font-size: .65rem; opacity: .7; }
+
+        .pf-hours { display: flex; flex-direction: column; gap: .45rem; }
+        .pf-hour-row { display: flex; justify-content: space-between; gap: .5rem; font-size: .78rem; }
+        .pf-hour-day { color: rgba(255,255,255,.45); }
+        .pf-hour-val { color: rgba(255,255,255,.7); font-weight: 500; text-align: right; }
+        .pf-closed { color: rgba(155,28,28,.8) !important; }
+        .pf-badge {
+            display: inline-flex; align-items: center; gap: .4rem;
+            background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.25);
+            border-radius: 99px; padding: 3px 10px;
+            font-size: .68rem; font-weight: 600; color: #4ade80;
+            margin-top: .5rem; align-self: flex-start;
+        }
+        .pf-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; }
+
+        .portal-footer-bottom {
+            border-top: 1px solid rgba(255,255,255,.08);
+            padding: 1.1rem clamp(1rem, 4vw, 2.5rem);
+        }
+        .portal-footer-bottom-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .pf-copy { font-size: .72rem; color: rgba(255,255,255,.3); }
+        .pf-legal { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+        .pf-legal a { font-size: .72rem; color: rgba(255,255,255,.3); text-decoration: none; transition: color .15s; }
+        .pf-legal a:hover { color: rgba(255,255,255,.65); }
+
+        @media (max-width: 900px) {
+            .portal-footer-body { grid-template-columns: 1fr 1fr; gap: 2rem; }
+        }
+        @media (max-width: 560px) {
+            .portal-footer-body { grid-template-columns: 1fr; gap: 1.75rem; }
+            .pf-desc { max-width: 100%; }
+        }
+
     </style>
     @stack('styles')
 </head>
