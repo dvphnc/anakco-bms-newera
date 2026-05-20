@@ -47,21 +47,21 @@
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Pending')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-hourglass-half"></i></div>
         <div class="stat-info">
-            <div class="stat-number"><?php echo e(number_format($pendingCount)); ?></div>
+            <div class="stat-number" id="statAptPending"><?php echo e(number_format($pendingCount)); ?></div>
             <div class="stat-label">Pending</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Ready')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-box-open"></i></div>
         <div class="stat-info">
-            <div class="stat-number"><?php echo e(number_format($readyCount)); ?></div>
+            <div class="stat-number" id="statAptReady"><?php echo e(number_format($readyCount)); ?></div>
             <div class="stat-label">Ready for Pick-up</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Released')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
         <div class="stat-info">
-            <div class="stat-number"><?php echo e(number_format($releasedCount)); ?></div>
+            <div class="stat-number" id="statAptReleased"><?php echo e(number_format($releasedCount)); ?></div>
             <div class="stat-label">Released</div>
         </div>
     </div>
@@ -310,9 +310,10 @@ $(document).ready(function () {
 
     /* ── Open status modal from DataTable ────────────────────────────── */
     $('#appointmentsTable').on('click', '.apt-status-btn', function () {
-        _aptId = $(this).data('id');
+        _aptId       = $(this).data('id');
+        _aptOldStatus = $(this).data('status');   // remember old status for stat-card delta
         document.getElementById('aptModalNum').textContent  = $(this).data('num');
-        document.getElementById('aptModalStatus').value     = $(this).data('status');
+        document.getElementById('aptModalStatus').value     = _aptOldStatus;
         document.getElementById('aptModalNotes').value      = $(this).data('notes') || '';
         document.getElementById('aptStatusError').style.display = 'none';
         document.getElementById('aptStatusModal').style.display = 'flex';
@@ -396,10 +397,29 @@ window.aptQuickFilter = function (filterId, values) {
 
 /* ── Status Modal ─────────────────────────────────────────────────── */
 var _aptId = null;
+var _aptOldStatus = null;
+
+// Maps a status name to its stat-card element ID (only the 3 tracked ones)
+var _aptStatMap = { 'Pending': 'statAptPending', 'Ready': 'statAptReady', 'Released': 'statAptReleased' };
+
+function _aptStatDelta(status, delta) {
+    var elId = _aptStatMap[status];
+    if (!elId) return;
+    var el = document.getElementById(elId);
+    if (!el) return;
+    var current = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
+    var next    = Math.max(0, current + delta);
+    // Animate the number with a brief highlight flash
+    el.textContent = next.toLocaleString();
+    el.style.transition = 'color .15s';
+    el.style.color = delta > 0 ? 'var(--gold)' : 'var(--crimson)';
+    setTimeout(function () { el.style.color = ''; }, 800);
+}
 
 function closeAptModal() {
     document.getElementById('aptStatusModal').style.display = 'none';
-    _aptId = null;
+    _aptId        = null;
+    _aptOldStatus = null;
 }
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeAptModal();
@@ -407,18 +427,46 @@ document.addEventListener('keydown', function (e) {
 
 function saveAptStatus() {
     if (!_aptId) return;
-    const btn    = document.getElementById('aptStatusSaveBtn');
-    const errDiv = document.getElementById('aptStatusError');
-    const status = document.getElementById('aptModalStatus').value;
-    const notes  = document.getElementById('aptModalNotes').value;
+    const btn       = document.getElementById('aptStatusSaveBtn');
+    const errDiv    = document.getElementById('aptStatusError');
+    const newStatus = document.getElementById('aptModalStatus').value;
+    const notes     = document.getElementById('aptModalNotes').value;
+    const oldStatus = _aptOldStatus;
+
+    if (newStatus === oldStatus) {
+        closeAptModal();
+        return;   // nothing to do
+    }
 
     errDiv.style.display = 'none';
     btn.disabled   = true;
     btn.innerHTML  = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Saving…';
 
-    axios.patch('/appointments/' + _aptId + '/status', { status: status, notes: notes })
+    axios.patch('/appointments/' + _aptId + '/status', { status: newStatus, notes: notes })
         .then(function (res) {
             closeAptModal();
+
+            // ── Sync stat cards from server-confirmed counts ──────────
+            if (res.data.counts) {
+                Object.entries(res.data.counts).forEach(function ([s, n]) {
+                    var elId = _aptStatMap[s];
+                    if (!elId) return;
+                    var el = document.getElementById(elId);
+                    if (!el) return;
+                    var prev = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
+                    el.textContent = n.toLocaleString();
+                    if (n !== prev) {
+                        el.style.transition = 'color .15s';
+                        el.style.color = n > prev ? 'var(--gold)' : 'var(--crimson)';
+                        setTimeout(function () { el.style.color = ''; }, 800);
+                    }
+                });
+            } else {
+                // Fallback: optimistic delta if server didn't return counts
+                _aptStatDelta(oldStatus, -1);
+                _aptStatDelta(newStatus, +1);
+            }
+
             bmsToast(res.data.message || 'Status updated.', 'success');
             $('#appointmentsTable').DataTable().ajax.reload(null, false);
         })

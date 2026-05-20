@@ -138,10 +138,22 @@ class AppointmentController extends Controller
         }
 
         if ($request->expectsJson()) {
+            // Return fresh counts so the client can sync stat cards exactly
+            $counts = DocumentAppointment::selectRaw(
+                "SUM(status='Pending') as pending,
+                 SUM(status='Ready')   as ready,
+                 SUM(status='Released') as released"
+            )->first();
+
             return response()->json([
                 'success' => true,
                 'message' => "Status updated to {$validated['status']}.",
                 'status'  => $validated['status'],
+                'counts'  => [
+                    'Pending'  => (int) $counts->pending,
+                    'Ready'    => (int) $counts->ready,
+                    'Released' => (int) $counts->released,
+                ],
             ]);
         }
 

@@ -447,13 +447,26 @@ function saveAptStatus() {
         .then(function (res) {
             closeAptModal();
 
-            // ── Live stat-card update (no reload needed) ──────────────
-            _aptStatDelta(oldStatus,  -1);   // remove from old bucket
-            _aptStatDelta(newStatus,  +1);   // add to new bucket
-
-            // Update the row's data-status so the next modal open is accurate
-            var btn = document.querySelector('.apt-status-btn[data-id="' + _aptId + '"]');
-            if (btn) $(btn).data('status', newStatus).attr('data-status', newStatus);
+            // ── Sync stat cards from server-confirmed counts ──────────
+            if (res.data.counts) {
+                Object.entries(res.data.counts).forEach(function ([s, n]) {
+                    var elId = _aptStatMap[s];
+                    if (!elId) return;
+                    var el = document.getElementById(elId);
+                    if (!el) return;
+                    var prev = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
+                    el.textContent = n.toLocaleString();
+                    if (n !== prev) {
+                        el.style.transition = 'color .15s';
+                        el.style.color = n > prev ? 'var(--gold)' : 'var(--crimson)';
+                        setTimeout(function () { el.style.color = ''; }, 800);
+                    }
+                });
+            } else {
+                // Fallback: optimistic delta if server didn't return counts
+                _aptStatDelta(oldStatus, -1);
+                _aptStatDelta(newStatus, +1);
+            }
 
             bmsToast(res.data.message || 'Status updated.', 'success');
             $('#appointmentsTable').DataTable().ajax.reload(null, false);
