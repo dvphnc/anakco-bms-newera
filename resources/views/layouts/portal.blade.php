@@ -7,6 +7,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+    // ── Axios CSRF interceptor (portal) ──────────────────────────────────
+    axios.interceptors.request.use(function (config) {
+        var meta  = document.querySelector('meta[name="csrf-token"]');
+        var token = meta ? meta.getAttribute('content') : '';
+        config.headers = config.headers || {};
+        if (token) { config.headers['X-CSRF-TOKEN'] = token; }
+        config.headers['X-Requested-With'] = 'XMLHttpRequest';
+        config.headers['Accept']           = 'application/json';
+        if (token && config.data instanceof FormData) {
+            config.data.delete('_token');
+            config.data.append('_token', token);
+        }
+        return config;
+    });
+    </script>
     <style>
         /* ═══════════════════════════════════════════════════════
            DESIGN TOKENS

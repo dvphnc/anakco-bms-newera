@@ -3561,12 +3561,6 @@ function openEditSpecific(type, tr) {
     html += '</div></form>';
     document.getElementById('editSpecificBody').innerHTML = html;
     initTabSelects(document.getElementById('editSpecificBody'));
-    // inject real CSRF
-    var csrfInput = document.querySelector('meta[name="csrf-token"]');
-    var token = csrfInput ? csrfInput.getAttribute('content') : (document.querySelector('input[name="_token"]') ? document.querySelector('input[name="_token"]').value : '');
-    var tokenInput = document.createElement('input');
-    tokenInput.type = 'hidden'; tokenInput.name = '_token'; tokenInput.value = token;
-    document.getElementById('editSpecificForm').prepend(tokenInput);
     // wire submit
     document.getElementById('editSpecificForm').addEventListener('submit', function(e) {
         e.preventDefault();
