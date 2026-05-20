@@ -769,6 +769,10 @@ function switchDashTab(id) {
 document.addEventListener('DOMContentLoaded', function () {
     if (typeof Shepherd === 'undefined') return;
 
+    // Per-user key so different accounts on the same browser are independent
+    const TOUR_KEY = 'bms_tour_done_{{ auth()->id() }}';
+    const markDone = function () { localStorage.setItem(TOUR_KEY, '1'); };
+
     const tour = new Shepherd.Tour({
         useModalOverlay: true,
         defaultStepOptions: {
@@ -777,6 +781,9 @@ document.addEventListener('DOMContentLoaded', function () {
             popperOptions: { modifiers: [{ name: 'offset', options: { offset: [0, 14] } }] }
         }
     });
+
+    // Mark done whenever the tour is cancelled (X button or Skip)
+    tour.on('cancel', markDone);
 
     const btn = (label, type, action) => ({ text: label, classes: 'shepherd-button-' + type, action });
 

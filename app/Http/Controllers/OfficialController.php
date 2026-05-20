@@ -86,7 +86,15 @@ class OfficialController extends Controller
         ]);
 
         if ($request->hasFile('photo_path')) {
+            // Delete old photo before storing the new one
+            if ($official->photo_path) {
+                Storage::disk('public')->delete($official->photo_path);
+            }
             $validated['photo_path'] = $request->file('photo_path')->store('officials', 'public');
+        } elseif ($request->boolean('remove_photo') && $official->photo_path) {
+            // Remove photo without replacement
+            Storage::disk('public')->delete($official->photo_path);
+            $validated['photo_path'] = null;
         }
 
         $validated['is_active'] = $request->boolean('is_active');
