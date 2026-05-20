@@ -874,27 +874,37 @@
     </div>
 
     <script>
-    // ── Axios: CSRF + session-expiry interceptor ─────────────────────────
+    // ── Axios: CSRF + session-expiry interceptors ────────────────────────
     (function () {
-        // Primary: read CSRF token from the server-rendered meta tag.
-        // This is always present and never relies on a cookie being set.
-        var _csrfMeta = document.querySelector('meta[name="csrf-token"]');
-        if (_csrfMeta) {
-            axios.defaults.headers.common['X-CSRF-TOKEN'] = _csrfMeta.getAttribute('content');
-        }
-        // Secondary: tell Axios to also send the XSRF-TOKEN cookie as
-        // X-XSRF-TOKEN automatically on every request (Axios built-in support).
-        axios.defaults.xsrfCookieName = 'XSRF-TOKEN';
-        axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN';
+        // ── REQUEST interceptor ──────────────────────────────────────────
+        // Runs before EVERY Axios request, regardless of how headers were
+        // passed in the individual call.  This is the only 100 % reliable
+        // way to inject CSRF because custom per-call headers objects in
+        // some Axios 1.x builds can shadow defaults.headers.common.
+        axios.interceptors.request.use(function (config) {
+            var meta = document.querySelector('meta[name="csrf-token"]');
+            if (meta) {
+                // Ensure the headers object exists
+                config.headers = config.headers || {};
+                config.headers['X-CSRF-TOKEN'] = meta.getAttribute('content');
+            }
+            config.headers = config.headers || {};
+            config.headers['X-Requested-With'] = 'XMLHttpRequest';
+            config.headers['Accept']           = 'application/json';
+            return config;
+        });
 
-        axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-        axios.defaults.headers.common['Accept'] = 'application/json';
+        // ── RESPONSE interceptor — redirect on session expiry ────────────
         axios.interceptors.response.use(null, function (error) {
             if (error.response && (error.response.status === 401 || error.response.status === 419)) {
                 window.location.href = '/login';
             }
             return Promise.reject(error);
         });
+
+        // Keep defaults as a fallback for any Axios-internal XSRF handling
+        axios.defaults.xsrfCookieName = 'XSRF-TOKEN';
+        axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN';
     })();
 
     // ── Shared alert auto-dismiss (progress bar + fade-collapse) ────────
