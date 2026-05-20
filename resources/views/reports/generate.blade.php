@@ -479,7 +479,6 @@ function fetchPreview() {
 function quickGenerate(btn) {
     var wrap = btn.parentElement;
     var fd = new FormData();
-    fd.append('_token', '{{ csrf_token() }}');
     fd.append('report_type',   wrap.querySelector('.qg-type').value);
     fd.append('report_module', wrap.querySelector('.qg-module').value);
     fd.append('year',          wrap.querySelector('.qg-year').value);
