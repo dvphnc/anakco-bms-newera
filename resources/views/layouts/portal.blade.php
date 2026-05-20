@@ -912,13 +912,8 @@
         {{-- Column 4: Developed By --}}
         <div class="pf-col">
             <h5>Developed By</h5>
-            <a href="#" class="pf-devby-badge">
-                <div class="pf-devby-icon">A</div>
-                <div>
-                    <span class="pf-devby-name">AnakCo</span>
-                    <span class="pf-devby-sub">System Developer</span>
-                </div>
-            </a>
+            <div class="pf-devby-name">AnakCo</div>
+            <div class="pf-devby-sub">System Developer</div>
         </div>
 
     </div>
