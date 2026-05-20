@@ -2816,6 +2816,23 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 
 @push('scripts')
 <script>
+// ── Select2: initialise all un-initialised <select> in a container ──
+function initTabSelects(container) {
+    var $c = container ? $(container) : $(document);
+    $c.find('select:not(.select2-hidden-accessible)').each(function() {
+        var $s       = $(this);
+        var $backdrop = $s.closest('.crud-modal-backdrop');
+        $s.select2({
+            width: '100%',
+            minimumResultsForSearch: $s.find('option').length > 8 ? 0 : Infinity,
+            allowClear:   $s.find('option[value=""]').length > 0,
+            placeholder:  $s.find('option[value=""]').first().text() || null,
+            dropdownParent: $backdrop.length ? $backdrop : $('body'),
+        });
+    });
+}
+$(document).ready(function () { initTabSelects(); });
+
 // ── Reload helper: navigate to current page + tab, bypassing cache ──
 function _bmsReloadTab(tabId) {
     var base = window.location.pathname;
@@ -2875,6 +2892,7 @@ function axiosForm(form) {
                         }
                     }
                     form.reset();
+                    $(form).find('select.select2-hidden-accessible').trigger('change');
                     if (btn) { btn.classList.remove('btn-loading'); btn.innerHTML = origHtml; btn.className = origClass; }
                     return;
                 }
