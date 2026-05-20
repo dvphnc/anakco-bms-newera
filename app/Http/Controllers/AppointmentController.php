@@ -84,7 +84,7 @@ class AppointmentController extends Controller
 
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
-                            '.$issueBtn.$viewBtn.'
+                            '.$viewBtn.'
                             <button class="btn btn-primary btn-sm btn-icon apt-status-btn"
                                     title="Update Status"
                                     data-id="'.$a->id.'"
