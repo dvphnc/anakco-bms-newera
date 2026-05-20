@@ -471,6 +471,32 @@
 </head>
 <body>
 
+    <!-- ══ SPLASH SCREEN ══════════════════════════════════════════════════ -->
+    <div id="splash">
+        <div class="splash-coin">
+            <div class="splash-coin-inner">
+                <div class="splash-front">
+                    <img src="/images/bne-logo.png" alt="Barangay New Era"
+                         onerror="this.style.display='none'">
+                </div>
+                <div class="splash-back">
+                    <img src="/images/qc-seal.png" alt="Quezon City Seal"
+                         onerror="this.style.display='none'">
+                </div>
+            </div>
+        </div>
+
+        <div class="splash-line"></div>
+
+        <div class="splash-title">Barangay <span>New Era</span></div>
+        <div class="splash-sub">District VI &bull; Quezon City</div>
+
+        <div class="splash-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+    <!-- ══ END SPLASH ═════════════════════════════════════════════════════ -->
+
     <!-- LEFT PANEL (hidden on mobile) -->
     <div class="left-panel">
 
@@ -619,5 +645,17 @@
         </div>
     </div>
 
+    <script>
+        // Dismiss splash after 2.8 s — enough for one full coin flip cycle (2 s)
+        // plus a brief moment showing the dots before the login fades in.
+        window.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                var splash = document.getElementById('splash');
+                splash.classList.add('hide');
+                // Remove from DOM entirely after the fade-out transition (0.7 s)
+                setTimeout(function () { splash.remove(); }, 700);
+            }, 2800);
+        });
+    </script>
 </body>
 </html>

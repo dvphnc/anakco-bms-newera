@@ -57,10 +57,129 @@
         .slide:nth-child(4) { animation-delay: 15s; background-image:url('/images/login-slides/slide4.jpg'); }
         .slide:nth-child(5) { animation-delay: 20s; background-image:url('/images/login-slides/slide5.jpg'); }
 
-        /* Dark gradient overlay so text stays readable over any photo */
+        /* Dark overlay so text stays readable over any photo */
         .slideshow-overlay {
             position:absolute; inset:0; z-index:1; pointer-events:none;
-            background:rgba(13,33,68,0.88);
+            background:rgba(13,33,68,0.93);
+        }
+
+        /* ── SPLASH SCREEN ────────────────────────────────────────────── */
+        #splash {
+            position:fixed; inset:0; z-index:9999;
+            background:var(--navy);
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center; gap:0;
+            transition:opacity 0.7s ease, visibility 0.7s ease;
+        }
+
+        #splash.hide {
+            opacity:0;
+            visibility:hidden;
+        }
+
+        /* Splash coin — larger than login coin */
+        .splash-coin {
+            width:140px; height:140px;
+            perspective:600px;
+            margin-bottom:32px;
+        }
+
+        .splash-coin-inner {
+            width:100%; height:100%;
+            position:relative;
+            transform-style:preserve-3d;
+            animation:splashFlip 2s ease-in-out infinite;
+            border-radius:50%;
+        }
+
+        @keyframes splashFlip {
+            0%   { transform:rotateY(0deg); }
+            18%  { transform:rotateY(0deg); }
+            48%  { transform:rotateY(180deg); }
+            65%  { transform:rotateY(180deg); }
+            95%  { transform:rotateY(360deg); }
+            100% { transform:rotateY(360deg); }
+        }
+
+        .splash-front,
+        .splash-back {
+            position:absolute; inset:0;
+            backface-visibility:hidden;
+            -webkit-backface-visibility:hidden;
+        }
+
+        .splash-front {
+            border-radius:50%;
+            background:#fff;
+            border:3px solid rgba(200,134,26,0.5);
+            box-shadow:
+                0 0 0 9px rgba(200,134,26,0.08),
+                0 0 60px rgba(200,134,26,0.2),
+                0 24px 60px rgba(0,0,0,0.5);
+            overflow:hidden;
+        }
+
+        .splash-front img {
+            width:100%; height:100%;
+            object-fit:cover; display:block;
+        }
+
+        .splash-back {
+            transform:rotateY(180deg);
+            background:transparent;
+            border:none; box-shadow:none;
+            display:flex; align-items:center; justify-content:center;
+        }
+
+        .splash-back img {
+            width:100%; height:100%;
+            object-fit:contain; display:block;
+            filter:drop-shadow(0 4px 20px rgba(0,0,0,0.6));
+        }
+
+        /* Splash text */
+        .splash-title {
+            font-size:26px; font-weight:800;
+            color:#fff; letter-spacing:-0.01em;
+            text-align:center; line-height:1.2;
+            margin-bottom:6px;
+        }
+
+        .splash-title span { color:var(--gold-light); }
+
+        .splash-sub {
+            font-size:11px; font-weight:400;
+            color:rgba(255,255,255,0.35);
+            text-transform:uppercase; letter-spacing:0.2em;
+            text-align:center; margin-bottom:36px;
+        }
+
+        /* Animated loading dots */
+        .splash-dots {
+            display:flex; gap:8px; align-items:center;
+        }
+
+        .splash-dots span {
+            width:7px; height:7px; border-radius:50%;
+            background:var(--gold);
+            opacity:0.25;
+            animation:dotPulse 1.2s ease-in-out infinite;
+        }
+
+        .splash-dots span:nth-child(2) { animation-delay:0.2s; }
+        .splash-dots span:nth-child(3) { animation-delay:0.4s; }
+
+        @keyframes dotPulse {
+            0%, 100% { opacity:0.2; transform:scale(0.8); }
+            50%       { opacity:1;   transform:scale(1.2); }
+        }
+
+        /* Gold accent line under coin */
+        .splash-line {
+            width:60px; height:2px;
+            background:linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin:20px auto 24px;
+            border-radius:2px;
         }
 
         /* ---- LEFT PANEL ---- */
@@ -352,6 +471,32 @@
 </head>
 <body>
 
+    <!-- ══ SPLASH SCREEN ══════════════════════════════════════════════════ -->
+    <div id="splash">
+        <div class="splash-coin">
+            <div class="splash-coin-inner">
+                <div class="splash-front">
+                    <img src="/images/bne-logo.png" alt="Barangay New Era"
+                         onerror="this.style.display='none'">
+                </div>
+                <div class="splash-back">
+                    <img src="/images/qc-seal.png" alt="Quezon City Seal"
+                         onerror="this.style.display='none'">
+                </div>
+            </div>
+        </div>
+
+        <div class="splash-line"></div>
+
+        <div class="splash-title">Barangay <span>New Era</span></div>
+        <div class="splash-sub">District VI &bull; Quezon City</div>
+
+        <div class="splash-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+    <!-- ══ END SPLASH ═════════════════════════════════════════════════════ -->
+
     <!-- LEFT PANEL (hidden on mobile) -->
     <div class="left-panel">
 
@@ -512,5 +657,17 @@ unset($__errorArgs, $__bag); ?>
         </div>
     </div>
 
+    <script>
+        // Dismiss splash after 2.8 s — enough for one full coin flip cycle (2 s)
+        // plus a brief moment showing the dots before the login fades in.
+        window.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                var splash = document.getElementById('splash');
+                splash.classList.add('hide');
+                // Remove from DOM entirely after the fade-out transition (0.7 s)
+                setTimeout(function () { splash.remove(); }, 700);
+            }, 2800);
+        });
+    </script>
 </body>
 </html><?php /**PATH D:\laragon\www\anakco_bms\resources\views/auth/login.blade.php ENDPATH**/ ?>
