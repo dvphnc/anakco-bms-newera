@@ -65,121 +65,70 @@
 
         /* ── SPLASH SCREEN ────────────────────────────────────────────── */
         #splash {
-            position:fixed; inset:0; z-index:9999;
-            background:var(--navy);
-            display:flex; flex-direction:column;
-            align-items:center; justify-content:center; gap:0;
-            transition:opacity 0.7s ease, visibility 0.7s ease;
+            position: fixed; inset: 0; z-index: 9999;
+            background: linear-gradient(150deg, #07162a 0%, #0D2144 55%, #14305e 100%);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            transition: opacity .55s ease, visibility .55s ease;
         }
+        #splash.hide { opacity: 0; visibility: hidden; }
 
-        #splash.hide {
-            opacity:0;
-            visibility:hidden;
+        .splash-deco-a {
+            position: absolute; top: -100px; right: -80px;
+            width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(200,134,26,.1) 0%, transparent 65%);
+            pointer-events: none;
         }
-
-        /* Splash coin — larger than login coin */
-        .splash-coin {
-            width:140px; height:140px;
-            perspective:600px;
-            margin-bottom:32px;
+        .splash-deco-b {
+            position: absolute; bottom: -120px; left: -60px;
+            width: 420px; height: 420px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,.04) 0%, transparent 65%);
+            pointer-events: none;
         }
-
-        .splash-coin-inner {
-            width:100%; height:100%;
-            position:relative;
-            transform-style:preserve-3d;
-            animation:splashFlip 2s ease-in-out infinite;
-            border-radius:50%;
+        .splash-content {
+            position: relative; z-index: 1;
+            display: flex; flex-direction: column;
+            align-items: center; gap: 1.5rem;
+            animation: splashFadeUp .6s ease both;
         }
-
-        @keyframes splashFlip {
-            0%   { transform:rotateY(0deg); }
-            18%  { transform:rotateY(0deg); }
-            48%  { transform:rotateY(180deg); }
-            65%  { transform:rotateY(180deg); }
-            95%  { transform:rotateY(360deg); }
-            100% { transform:rotateY(360deg); }
+        @keyframes splashFadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-
-        .splash-front,
-        .splash-back {
-            position:absolute; inset:0;
-            backface-visibility:hidden;
-            -webkit-backface-visibility:hidden;
+        .splash-seal {
+            width: 110px; height: 110px; object-fit: contain;
+            filter: drop-shadow(0 8px 28px rgba(0,0,0,.45));
+            animation: splashPulse 2s ease-in-out infinite;
         }
-
-        .splash-front {
-            border-radius:50%;
-            background:#fff;
-            border:3px solid rgba(200,134,26,0.5);
-            box-shadow:
-                0 0 0 9px rgba(200,134,26,0.08),
-                0 0 60px rgba(200,134,26,0.2),
-                0 24px 60px rgba(0,0,0,0.5);
-            overflow:hidden;
+        @keyframes splashPulse {
+            0%, 100% { transform: scale(1); }
+            50%       { transform: scale(1.04); }
         }
-
-        .splash-front img {
-            width:100%; height:100%;
-            object-fit:cover; display:block;
+        .splash-name {
+            font-size: 1.5rem; font-weight: 800;
+            color: #fff; letter-spacing: -0.02em;
+            text-align: center; line-height: 1.15;
         }
-
-        .splash-back {
-            transform:rotateY(180deg);
-            background:transparent;
-            border:none; box-shadow:none;
-            display:flex; align-items:center; justify-content:center;
-        }
-
-        .splash-back img {
-            width:100%; height:100%;
-            object-fit:contain; display:block;
-            filter:drop-shadow(0 4px 20px rgba(0,0,0,0.6));
-        }
-
-        /* Splash text */
-        .splash-title {
-            font-size:26px; font-weight:800;
-            color:#fff; letter-spacing:-0.01em;
-            text-align:center; line-height:1.2;
-            margin-bottom:6px;
-        }
-
-        .splash-title span { color:var(--gold-light); }
-
         .splash-sub {
-            font-size:11px; font-weight:400;
-            color:rgba(255,255,255,0.35);
-            text-transform:uppercase; letter-spacing:0.2em;
-            text-align:center; margin-bottom:36px;
+            font-size: .75rem; color: rgba(255,255,255,.45);
+            letter-spacing: .05em; text-align: center;
+            margin-top: -.75rem;
         }
-
-        /* Animated loading dots */
-        .splash-dots {
-            display:flex; gap:8px; align-items:center;
+        .splash-progress {
+            width: 160px; height: 2px;
+            background: rgba(255,255,255,.12);
+            border-radius: 99px; overflow: hidden;
         }
-
-        .splash-dots span {
-            width:7px; height:7px; border-radius:50%;
-            background:var(--gold);
-            opacity:0.25;
-            animation:dotPulse 1.2s ease-in-out infinite;
+        .splash-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #C8861A, #e0a843);
+            border-radius: 99px; width: 0%;
+            animation: splashLoad 1.6s ease forwards;
         }
-
-        .splash-dots span:nth-child(2) { animation-delay:0.2s; }
-        .splash-dots span:nth-child(3) { animation-delay:0.4s; }
-
-        @keyframes dotPulse {
-            0%, 100% { opacity:0.2; transform:scale(0.8); }
-            50%       { opacity:1;   transform:scale(1.2); }
-        }
-
-        /* Gold accent line under coin */
-        .splash-line {
-            width:60px; height:2px;
-            background:linear-gradient(90deg, transparent, var(--gold), transparent);
-            margin:20px auto 24px;
-            border-radius:2px;
+        @keyframes splashLoad {
+            0%   { width: 0%; }
+            60%  { width: 75%; }
+            100% { width: 100%; }
         }
 
         /* ---- LEFT PANEL ---- */
