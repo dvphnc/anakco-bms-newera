@@ -919,6 +919,12 @@
                 <div class="pf-contact-row"><i class="fas fa-envelope"></i> bne.secretariat@quezon.gov.ph</div>
             </div>
             <div class="pf-badge"><div class="pf-badge-dot"></div> Portal Online &amp; Operational</div>
+            {{-- Republika ng Pilipinas seal — no label --}}
+            <div class="pf-republika">
+                <img src="{{ asset('images/republika-seal.png') }}"
+                     alt="Republika ng Pilipinas"
+                     class="pf-republika-seal">
+            </div>
         </div>
 
         {{-- Services --}}
