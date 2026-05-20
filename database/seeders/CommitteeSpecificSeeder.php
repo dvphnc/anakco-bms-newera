@@ -61,12 +61,12 @@ class CommitteeSpecificSeeder extends Seeder
         // PEACE & ORDER — Tanod Trainings
         // ────────────────────────────────────────────────────────────────
         $trainings = [
-            ['Basic Law Enforcement Orientation',     'Orientation',   '2026-01-15', '2 days',  'Barangay Hall – Session Room', 'PNP Quezon City – Station 11',  20, 'Attendance certificate issued to all participants.'],
-            ['Self-Defense & Arnis Training',         'Skills',        '2026-02-10', '3 days',  'Barangay Basketball Court',    'Arnis Philippines Instructor',  18, 'Practical examination conducted on Day 3.'],
-            ['First Aid & Basic Life Support',        'Medical',       '2026-03-05', '1 day',   'Barangay Health Center',       'Philippine Red Cross – QC',     22, 'CPR certification awarded to completers.'],
-            ['Community-Based Disaster Preparedness', 'Disaster',      '2026-03-22', '2 days',  'Covered Court, New Era',       'CDRRMO Quezon City',            19, 'Simulation drill conducted on Day 2.'],
-            ['Gender Sensitivity & Human Rights',     'Values',        '2026-04-18', '1 day',   'Barangay Hall – Main Hall',    'CHR Regional Office',           21, 'Workshop output submitted to committee.'],
-            ['Cyber Crime Awareness Seminar',         'Orientation',   '2026-05-07', '½ day',   'Barangay Hall – Session Room', 'NBI Cyber Division',            15, 'Flyers for community distribution produced.'],
+            ['Basic Law Enforcement Orientation',     'Training',  '2026-01-15', '2 days',  'Barangay Hall – Session Room', 'PNP Quezon City – Station 11',  20, 'Attendance certificate issued to all participants.'],
+            ['Self-Defense & Arnis Training',         'Training',  '2026-02-10', '3 days',  'Barangay Basketball Court',    'Arnis Philippines Instructor',  18, 'Practical examination conducted on Day 3.'],
+            ['First Aid & Basic Life Support',        'Seminar',   '2026-03-05', '1 day',   'Barangay Health Center',       'Philippine Red Cross – QC',     22, 'CPR certification awarded to completers.'],
+            ['Community-Based Disaster Preparedness', 'Drill',     '2026-03-22', '2 days',  'Covered Court, New Era',       'CDRRMO Quezon City',            19, 'Simulation drill conducted on Day 2.'],
+            ['Gender Sensitivity & Human Rights',     'Workshop',  '2026-04-18', '1 day',   'Barangay Hall – Main Hall',    'CHR Regional Office',           21, 'Workshop output submitted to committee.'],
+            ['Cyber Crime Awareness Seminar',         'Seminar',   '2026-05-07', '½ day',   'Barangay Hall – Session Room', 'NBI Cyber Division',            15, 'Flyers for community distribution produced.'],
         ];
         foreach ($trainings as $t) {
             DB::table('committee_tanod_trainings')->updateOrInsert(
