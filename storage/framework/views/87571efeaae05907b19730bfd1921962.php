@@ -142,6 +142,82 @@
 </div>
 
 
+<div id="aptConvertModal"
+     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
+            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
+     onclick="if(event.target===this)closeConvertModal()">
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
+                padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
+        
+        <div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:10px">
+                <i class="fas fa-file-circle-check" style="color:var(--gold);font-size:14px"></i>
+                <span style="font-size:14px;font-weight:700;color:#fff">Issue Document Record</span>
+            </div>
+            <button onclick="closeConvertModal()"
+                    style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+                           border-radius:var(--radius-sm);width:30px;height:30px;display:flex;
+                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        
+        <div style="padding:20px">
+            
+            <div style="background:var(--navy-pale);border:1px solid var(--navy-border,#d0daea);
+                        border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:18px;font-size:13px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px">
+                    <div>
+                        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Appointment</div>
+                        <div id="cvtNum" style="font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Document Type</div>
+                        <div id="cvtType" style="font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div style="grid-column:1/-1">
+                        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Resident</div>
+                        <div id="cvtName" style="font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div id="cvtPurposeRow" style="grid-column:1/-1">
+                        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Purpose</div>
+                        <div id="cvtPurpose" style="color:var(--text)"></div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+                <div class="form-group" style="margin:0">
+                    <label class="form-label">Fee Paid (₱) <span style="font-size:11px;font-weight:400;color:var(--text-subtle)">(optional)</span></label>
+                    <input type="number" id="cvtFee" class="form-control" min="0" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group" style="margin:0">
+                    <label class="form-label">O.R. Number <span style="font-size:11px;font-weight:400;color:var(--text-subtle)">(optional)</span></label>
+                    <input type="text" id="cvtOR" class="form-control" placeholder="e.g. 2026-00123">
+                </div>
+            </div>
+
+            <div id="cvtError" style="display:none;font-size:13px;color:var(--crimson);
+                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
+                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
+
+            <div style="font-size:12px;color:var(--text-subtle);margin-bottom:14px;display:flex;align-items:flex-start;gap:7px">
+                <i class="fas fa-circle-info" style="margin-top:2px;flex-shrink:0"></i>
+                This will create a <strong>Released</strong> document record in Document Issuance and automatically mark this appointment as Released.
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:10px">
+                <button type="button" onclick="closeConvertModal()" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="cvtSaveBtn" onclick="saveConvert()" class="btn btn-success">
+                    <i class="fas fa-file-circle-check"></i> Issue Document
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div id="aptStatusModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -211,6 +287,11 @@
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
 #appointmentsTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
+
+/* ── Success button (Issue Document) ─────────────────────────── */
+.btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
+.btn-success:hover { background:#15803d; box-shadow:0 4px 12px rgba(22,163,74,0.25); }
+.btn-success:disabled { opacity:.65; cursor:not-allowed; }
 
 /* ── Filter Select2 — match residents blade ───────────────────── */
 #filterPanel .select2-container { width: 100% !important; }
@@ -308,6 +389,28 @@ $(document).ready(function () {
         });
     });
 
+    /* ── Open convert modal from DataTable ───────────────────────────── */
+    $('#appointmentsTable').on('click', '.apt-convert-btn', function () {
+        var $btn = $(this);
+        document.getElementById('cvtNum').textContent     = $btn.data('num');
+        document.getElementById('cvtName').textContent    = $btn.data('name');
+        document.getElementById('cvtType').textContent    = $btn.data('type');
+        var purpose = $btn.data('purpose') || '';
+        var purposeRow = document.getElementById('cvtPurposeRow');
+        if (purpose) {
+            document.getElementById('cvtPurpose').textContent = purpose;
+            purposeRow.style.display = '';
+        } else {
+            purposeRow.style.display = 'none';
+        }
+        document.getElementById('cvtFee').value           = '';
+        document.getElementById('cvtOR').value            = '';
+        document.getElementById('cvtError').style.display = 'none';
+        window._cvtUrl = $btn.data('url');
+        window._cvtAptId = $btn.data('id');
+        document.getElementById('aptConvertModal').style.display = 'flex';
+    });
+
     /* ── Open status modal from DataTable ────────────────────────────── */
     $('#appointmentsTable').on('click', '.apt-status-btn', function () {
         _aptId       = $(this).data('id');
@@ -395,6 +498,65 @@ window.aptQuickFilter = function (filterId, values) {
     $('#appointmentsTable').DataTable().ajax.reload();
 };
 
+/* ── Convert Modal ────────────────────────────────────────────────── */
+window._cvtUrl   = null;
+window._cvtAptId = null;
+
+function closeConvertModal() {
+    document.getElementById('aptConvertModal').style.display = 'none';
+    window._cvtUrl   = null;
+    window._cvtAptId = null;
+}
+
+function saveConvert() {
+    if (!window._cvtUrl) return;
+    var btn    = document.getElementById('cvtSaveBtn');
+    var errDiv = document.getElementById('cvtError');
+    var fee    = document.getElementById('cvtFee').value;
+    var or_num = document.getElementById('cvtOR').value;
+
+    errDiv.style.display = 'none';
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Issuing…';
+
+    axios.post(window._cvtUrl, { fee_paid: fee || null, or_number: or_num || null })
+        .then(function (res) {
+            closeConvertModal();
+            bmsToast(res.data.message, 'success');
+
+            // Reload table so the row now shows the View Document button
+            $('#appointmentsTable').DataTable().ajax.reload(null, false);
+
+            // Offer a quick link to view/print the document
+            setTimeout(function () {
+                bmsConfirm({
+                    title:   'Document Issued',
+                    message: res.data.doc_number + ' has been created. Open the document record now?',
+                    ok:      'Open Document',
+                }, function () {
+                    window.open(res.data.view_url, '_blank');
+                });
+            }, 400);
+        })
+        .catch(function (err) {
+            var data = err.response?.data;
+            var msg  = data?.errors
+                ? Object.values(data.errors).flat().join(' ')
+                : (data?.message || 'Failed to issue document.');
+
+            // If already converted, offer the view link
+            if (err.response?.status === 422 && data?.view_url) {
+                msg += ' <a href="' + data.view_url + '" target="_blank" style="color:var(--navy);font-weight:600">View it here →</a>';
+            }
+            errDiv.innerHTML     = msg;
+            errDiv.style.display = 'block';
+        })
+        .finally(function () {
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fas fa-file-circle-check"></i> Issue Document';
+        });
+}
+
 /* ── Status Modal ─────────────────────────────────────────────────── */
 var _aptId = null;
 var _aptOldStatus = null;
@@ -422,7 +584,7 @@ function closeAptModal() {
     _aptOldStatus = null;
 }
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeAptModal();
+    if (e.key === 'Escape') { closeAptModal(); closeConvertModal(); }
 });
 
 function saveAptStatus() {
