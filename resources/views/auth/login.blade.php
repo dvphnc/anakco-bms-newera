@@ -472,20 +472,27 @@
 <body>
 
     <!-- ══ SPLASH SCREEN ══════════════════════════════════════════════════ -->
-    <div id="splash" role="status" aria-label="Loading">
-        <div class="splash-deco-a" aria-hidden="true"></div>
-        <div class="splash-deco-b" aria-hidden="true"></div>
-        <div class="splash-content">
-            <img src="/images/republika-seal.png"
-                 alt="Republika ng Pilipinas"
-                 class="splash-seal">
-            <div>
-                <div class="splash-name">Barangay New Era</div>
-                <div class="splash-sub">Barangay Management System</div>
+    <div id="splash">
+        <div class="splash-coin">
+            <div class="splash-coin-inner">
+                <div class="splash-front">
+                    <img src="/images/bne-logo.png" alt="Barangay New Era"
+                         onerror="this.style.display='none'">
+                </div>
+                <div class="splash-back">
+                    <img src="/images/qc-seal.png" alt="Quezon City Seal"
+                         onerror="this.style.display='none'">
+                </div>
             </div>
-            <div class="splash-progress">
-                <div class="splash-progress-bar"></div>
-            </div>
+        </div>
+
+        <div class="splash-line"></div>
+
+        <div class="splash-title">Barangay <span>New Era</span></div>
+        <div class="splash-sub">District VI &bull; Quezon City</div>
+
+        <div class="splash-dots">
+            <span></span><span></span><span></span>
         </div>
     </div>
     <!-- ══ END SPLASH ═════════════════════════════════════════════════════ -->
@@ -640,13 +647,11 @@
 
     <script>
         window.addEventListener('DOMContentLoaded', function () {
-            var splash = document.getElementById('splash');
             setTimeout(function () {
+                var splash = document.getElementById('splash');
                 splash.classList.add('hide');
-                splash.addEventListener('transitionend', function () {
-                    splash.remove();
-                }, { once: true });
-            }, 1800);
+                setTimeout(function () { splash.remove(); }, 700);
+            }, 2800);
         });
     </script>
 </body>
