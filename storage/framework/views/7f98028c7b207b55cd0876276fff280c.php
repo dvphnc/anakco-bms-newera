@@ -732,6 +732,16 @@
             margin-top: .5rem; align-self: flex-start;
         }
         .pf-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; }
+        .pf-republika { margin-top: 1.1rem; }
+        .pf-republika-seal {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            opacity: .45;
+            filter: brightness(0) invert(1);
+            transition: opacity .2s;
+        }
+        .pf-republika-seal:hover { opacity: .7; }
 
         .portal-footer-bottom {
             border-top: 1px solid rgba(255,255,255,.08);
@@ -919,6 +929,12 @@
                 <div class="pf-contact-row"><i class="fas fa-envelope"></i> bne.secretariat@quezon.gov.ph</div>
             </div>
             <div class="pf-badge"><div class="pf-badge-dot"></div> Portal Online &amp; Operational</div>
+            
+            <div class="pf-republika">
+                <img src="<?php echo e(asset('images/republika-seal.png')); ?>"
+                     alt="Republika ng Pilipinas"
+                     class="pf-republika-seal">
+            </div>
         </div>
 
         
