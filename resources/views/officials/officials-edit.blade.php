@@ -91,14 +91,26 @@
         <div class="form-section-title">Photo</div>
         <div class="form-group">
             @if($official->photo_path)
-            <div style="margin-bottom:10px">
-                <img src="{{ asset('storage/'.$official->photo_path) }}" alt="Current Photo"
-                     style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border)">
-                <div style="font-size:13px;color:var(--text-muted);margin-top:4px">Current photo</div>
+            <div style="margin-bottom:12px">
+                <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+                    <img src="{{ asset('storage/'.$official->photo_path) }}" alt="Current Photo"
+                         id="current-photo-preview"
+                         style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border)">
+                    <div>
+                        <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">Current photo</div>
+                        <label style="display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;color:var(--danger,#c0392b);user-select:none"
+                               id="remove-photo-label">
+                            <input type="checkbox" name="remove_photo" value="1" id="remove-photo-cb"
+                                   style="accent-color:var(--danger,#c0392b);width:15px;height:15px;cursor:pointer"
+                                   {{ old('remove_photo') ? 'checked' : '' }}>
+                            Remove current photo
+                        </label>
+                    </div>
+                </div>
             </div>
             @endif
             <label class="form-label">Upload New Photo</label>
-            <input type="file" name="photo_path" class="form-control" accept="image/*">
+            <input type="file" name="photo_path" id="photo-upload" class="form-control" accept="image/*">
         </div>
 
     </div>
