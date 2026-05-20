@@ -6,6 +6,7 @@ use App\Mail\PortalStatusUpdated;
 use App\Models\AppointmentStatusLog;
 use App\Models\BlotterCase;
 use App\Models\Business;
+use App\Models\Document;
 use App\Models\DocumentAppointment;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
