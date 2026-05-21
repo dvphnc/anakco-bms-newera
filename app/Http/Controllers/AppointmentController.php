@@ -68,10 +68,11 @@ class AppointmentController extends Controller
                     $deleteUrl  = route('appointments.destroy', $a);
                     $convertUrl = route('appointments.convert', $a);
 
-                    // Green "View Document" — Ready/Released but not yet issued (opens Issue modal)
                     // Grey  "View Document" — already issued (links directly to the document)
+                    // Green "Issue Document" — not yet issued, any status except Cancelled
                     $viewBtn = '';
-                    if ($a->document) {
+                    if ($a->document && $a->document->status !== 'Pending') {
+                        // Fully issued — link directly to the document record
                         $viewUrl = route('documents.show', $a->document);
                         $viewBtn = '<a href="'.$viewUrl.'" target="_blank"
                                       class="btn btn-secondary btn-sm apt-viewdoc-btn"
@@ -79,18 +80,19 @@ class AppointmentController extends Controller
                                       data-tippy-content="View Document: '.e($a->document->doc_number).'">
                                         <i class="fas fa-file-lines"></i> View Document
                                     </a>';
-                    } elseif (in_array($a->status, ['Ready', 'Released'])) {
+                    } elseif ($a->status !== 'Cancelled') {
+                        // Not yet issued — show Issue Document button for all non-cancelled statuses
                         $viewBtn = '
                             <button class="btn btn-success btn-sm apt-viewdoc-btn apt-convert-btn"
                                     style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                    data-tippy-content="View Document"
+                                    data-tippy-content="Issue Document"
                                     data-id="'.e($a->id).'"
                                     data-num="'.e($a->appointment_number).'"
                                     data-name="'.e($a->resident_name).'"
                                     data-type="'.e($a->document_type).'"
                                     data-purpose="'.e($a->purpose ?? '').'"
                                     data-url="'.$convertUrl.'">
-                                <i class="fas fa-file-lines"></i> View Document
+                                <i class="fas fa-stamp"></i> Issue Document
                             </button>';
                     }
 
