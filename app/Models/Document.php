@@ -72,10 +72,17 @@ class Document extends Model
 
     public static function generateDocNumber(): string
     {
-        $year  = date('Y');
-        $count = self::whereYear('created_at', $year)->count() + 1;
+        $year   = date('Y');
+        $prefix = 'DOC-'.$year.'-';
 
-        return 'DOC-'.$year.'-'.str_pad($count, 5, '0', STR_PAD_LEFT);
+        // Use MAX on the numeric suffix so gaps from deletions never cause collisions
+        $max = self::where('doc_number', 'like', $prefix.'%')
+            ->selectRaw('MAX(CAST(SUBSTRING(doc_number, ?) AS UNSIGNED)) as max_seq', [strlen($prefix) + 1])
+            ->value('max_seq');
+
+        $next = ($max ?? 0) + 1;
+
+        return $prefix.str_pad($next, 5, '0', STR_PAD_LEFT);
     }
 
     /**
