@@ -895,6 +895,40 @@ $(document).ready(function () {
         });
     });
 
+    /* ── Axios DELETE — Blotter ───────────────────────────────────────── */
+    $('#blotterTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
+        e.preventDefault(); e.stopImmediatePropagation();
+        const btn = $(this), form = btn.closest('form'), url = form.attr('action');
+        bmsConfirm({ title: form.data('confirm-title') || 'Delete Blotter Report', message: form.data('confirm'), ok: 'Delete' }, function () {
+            const icon = btn.find('i'), orig = icon.attr('class');
+            icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
+            btn.prop('disabled', true);
+            axios.delete(url)
+                .then(function (res) {
+                    blotterTable.row(form.closest('tr')).remove().draw(false);
+                    bmsToast(res.data.message || 'Blotter report deleted.', 'success');
+                })
+                .catch(function () {
+                    icon.attr('class', orig).css('color', '');
+                    btn.prop('disabled', false);
+                    bmsToast('Could not delete.', 'error');
+                });
+        });
+    });
+
+    /* ── Open blotter activate modal ──────────────────────────────────── */
+    $('#blotterTable').on('click', '.blotter-activate-btn', function () {
+        var $btn = $(this);
+        document.getElementById('blotterActivateNum').textContent        = $btn.data('num');
+        document.getElementById('blotterActivateType').textContent       = $btn.data('type');
+        document.getElementById('blotterActivateComplainant').textContent = $btn.data('complainant');
+        document.getElementById('blotterActivateDate').textContent       = $btn.data('date');
+        document.getElementById('blotterActivateNotes').value            = '';
+        document.getElementById('blotterActivateError').style.display    = 'none';
+        window._blotterActivateUrl = $btn.data('url');
+        document.getElementById('blotterActivateModal').style.display    = 'flex';
+    });
+
     /* ── Open convert modal ───────────────────────────────────────────── */
     $('#appointmentsTable').on('click', '.apt-convert-btn', function () {
         var $btn = $(this);
