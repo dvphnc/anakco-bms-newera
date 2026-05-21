@@ -72,14 +72,14 @@
 
         <h2 style="font-size:1.3rem;font-weight:700;color:var(--navy);margin-bottom:.4rem">
             <?php if($type === 'blotter'): ?> Blotter Report Submitted
-            <?php else: ?> Business Permit Request Submitted
+            <?php else: ?> Appointment Scheduled
             <?php endif; ?>
         </h2>
         <p style="font-size:.9rem;color:#6b7280;max-width:440px;margin:0 auto .75rem">
             <?php if($type === 'blotter'): ?>
                 Your blotter report has been received. A barangay staff member will contact you for follow-up.
             <?php else: ?>
-                Your business permit application has been received and is now under review.
+                Your business permit appointment has been scheduled. Please visit the Barangay Hall on your preferred date with your documents.
             <?php endif; ?>
         </p>
 
@@ -114,6 +114,8 @@
                 <dd><?php echo e($record->business_name); ?></dd>
                 <dt>Business Type</dt>
                 <dd><?php echo e($record->business_type); ?></dd>
+                <dt>Appointment Date</dt>
+                <dd><?php echo e($record->preferred_date ? $record->preferred_date->format('F d, Y') : '—'); ?></dd>
                 <dt>Status</dt>
                 <dd><span style="color:#c8861a;font-weight:700">Pending</span></dd>
                 <dt>Submitted</dt>
@@ -129,7 +131,11 @@
             <i class="fas fa-triangle-exclamation"></i>
             <span>
                 <strong>Save your reference number:</strong> <?php echo e($number); ?><br>
-                You will need this number for follow-up inquiries. Visit the Barangay Hall (Mon–Fri, 8AM–5PM) if needed.
+                <?php if($type === 'business'): ?>
+                    Bring this number and your required documents on your appointment date. Office hours: Mon–Fri, 8AM–5PM.
+                <?php else: ?>
+                    You will need this number for follow-up inquiries. Visit the Barangay Hall (Mon–Fri, 8AM–5PM) if needed.
+                <?php endif; ?>
             </span>
         </div>
 
@@ -143,7 +149,7 @@
                 </a>
             <?php else: ?>
                 <a href="<?php echo e(route('portal.business')); ?>" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Submit Another
+                    <i class="fas fa-calendar-check"></i> Schedule Another
                 </a>
             <?php endif; ?>
         </div>
