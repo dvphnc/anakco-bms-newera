@@ -496,44 +496,47 @@
                     at Barangay New Era, Quezon City.
                 </div>
 
-                <div class="cert-sig-area">
-                    {{-- Left: photo + thumbmark boxes --}}
-                    <div style="display:flex;gap:10px;align-items:flex-end">
-                        <div style="display:flex;flex-direction:column;align-items:center">
+                <div class="cert-sig-area" style="display:block">
+                    {{-- Row 1: Applicant photos + signature --}}
+                    <div style="display:flex;align-items:flex-end;gap:10px;margin-bottom:20px">
+                        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
                             @if($resident?->photo_path)
                                 <img src="{{ asset('storage/'.$resident->photo_path) }}"
-                                     style="width:75px;height:90px;object-fit:cover;border:1px solid #000;display:block">
+                                     style="width:65px;height:80px;object-fit:cover;border:1px solid #000;display:block">
                             @else
-                                <div style="width:75px;height:90px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666;line-height:1.3">
+                                <div style="width:65px;height:80px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:6.5pt;text-align:center;color:#666;line-height:1.3">
                                     APPLICANT<br>PHOTO
                                 </div>
                             @endif
-                            <div style="font-size:6.5pt;margin-top:3px;text-transform:uppercase;letter-spacing:0.04em;text-align:center;width:75px">Applicant Photo</div>
+                            <div style="font-size:6pt;margin-top:3px;text-transform:uppercase;letter-spacing:0.04em;text-align:center;width:65px">Applicant Photo</div>
                         </div>
-                        <div style="display:flex;flex-direction:column;align-items:center">
-                            <div style="width:75px;height:90px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:7pt;text-align:center;color:#666;line-height:1.3">
+                        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+                            <div style="width:65px;height:80px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:6.5pt;text-align:center;color:#666;line-height:1.3">
                                 APPLICANT<br>THUMBMARK
                             </div>
-                            <div style="font-size:6.5pt;margin-top:3px;text-transform:uppercase;letter-spacing:0.04em;text-align:center;width:75px">Applicant Thumbmark</div>
+                            <div style="font-size:6pt;margin-top:3px;text-transform:uppercase;letter-spacing:0.04em;text-align:center;width:65px">Applicant Thumbmark</div>
                         </div>
-                        <div style="display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:20px;margin-left:6px">
-                            <div style="font-size:8.5pt;margin-bottom:28px">Applicant's Signature:</div>
-                            <div style="border-top:1px solid #000;width:150px"></div>
+                        <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:20px;margin-left:8px">
+                            <div style="font-size:8.5pt;margin-bottom:26px">Applicant's Signature:</div>
+                            <div style="border-top:1px solid #000;width:100%;max-width:280px"></div>
                         </div>
                     </div>
-                    {{-- Center: secretary countersignature --}}
-                    <div style="text-align:center;min-width:200px;max-width:220px">
-                        <div style="height:64px"></div>
-                        <div style="border-top:1px solid #000;margin-bottom:3px"></div>
-                        <div class="cert-punong">{{ $secretaryName }}</div>
-                        <div class="cert-punong-title">Barangay Secretary</div>
-                    </div>
-                    {{-- Right: punong signature --}}
-                    <div style="text-align:center;min-width:220px;max-width:240px">
-                        <div style="height:64px"></div>
-                        <div style="border-top:1px solid #000;margin-bottom:3px"></div>
-                        <div class="cert-punong">{{ $officialName }}</div>
-                        <div class="cert-punong-title">Punong Barangay</div>
+                    {{-- Row 2: Officials side-by-side --}}
+                    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px">
+                        {{-- Secretary countersignature --}}
+                        <div style="text-align:center;flex:1">
+                            <div style="height:56px"></div>
+                            <div style="border-top:1px solid #000;margin-bottom:3px"></div>
+                            <div class="cert-punong">{{ $secretaryName }}</div>
+                            <div class="cert-punong-title">Barangay Secretary</div>
+                        </div>
+                        {{-- Punong Barangay signature --}}
+                        <div style="text-align:center;flex:1">
+                            <div style="height:56px"></div>
+                            <div style="border-top:1px solid #000;margin-bottom:3px"></div>
+                            <div class="cert-punong">{{ $officialName }}</div>
+                            <div class="cert-punong-title">Punong Barangay</div>
+                        </div>
                     </div>
                 </div>
                 <div style="margin-top:16px;font-size:8pt;color:#555;border-top:1px solid #ccc;padding-top:8px">
