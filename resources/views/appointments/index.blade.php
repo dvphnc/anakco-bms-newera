@@ -717,9 +717,7 @@ $(document).ready(function () {
 
     /* ── Stat-card quick-filter (documents tab) ─────────────────── */
     window.aptQuickStatus = function (status) {
-        var el = document.getElementById('docStatusFilter');
-        if (!el) return;
-        el.value = status;
+        $('#docStatusFilter').val(status).trigger('change');
         if (docTable) docTable.ajax.reload();
     };
 
@@ -810,7 +808,7 @@ $(document).ready(function () {
 
     window.resetBizFilters = function () {
         $('#bizSearch').val('');
-        $('#bizStatusFilter').val('');
+        $('#bizStatusFilter').val(null).trigger('change');
         bizTable.ajax.reload();
     };
 
@@ -854,7 +852,7 @@ $(document).ready(function () {
 
     window.resetBlotterFilters = function () {
         $('#blotterSearch').val('');
-        $('#blotterStatusFilter').val('');
+        $('#blotterStatusFilter').val(null).trigger('change');
         blotterTable.ajax.reload();
     };
 
