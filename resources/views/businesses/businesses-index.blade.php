@@ -159,7 +159,7 @@
                     <label class="form-label">Status</label>
                     <select id="statusFilter">
                         <option value=""></option>
-                        @foreach(['Active','Pending','For Review','Expired','Suspended','Cancelled'] as $s)
+                        @foreach(['Active','Expired','Suspended','Cancelled'] as $s)
                             <option value="{{ $s }}">{{ $s }}</option>
                         @endforeach
                     </select>
