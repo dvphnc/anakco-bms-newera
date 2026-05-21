@@ -137,7 +137,7 @@ class ResidentPortalController extends Controller
             'complainant_contact' => $validated['contact_number'],
             'email'               => $validated['email'] ?? null,
             'respondent_name'     => $validated['respondent_name'] ?? null,
-            'status'              => 'Active',
+            'status'              => 'Pending',
         ]);
 
         $redirectUrl = route('portal.submitted', ['type' => 'blotter', 'number' => $case->case_number]);

@@ -79,13 +79,14 @@ class BlotterCase extends Model
     public function getStatusBadgeAttribute(): string
     {
         return match ($this->status) {
-            'Active' => 'badge-red',
-            'Under Investigation' => 'badge-yellow',
-            'Mediated' => 'badge-blue',
-            'Settled' => 'badge-green',
-            'Closed' => 'badge-gray',
+            'Pending'                      => 'badge-yellow',
+            'Active'                       => 'badge-red',
+            'Under Investigation'          => 'badge-yellow',
+            'Mediated'                     => 'badge-blue',
+            'Settled'                      => 'badge-green',
+            'Closed'                       => 'badge-gray',
             'Referred to Higher Authority' => 'badge-orange',
-            default => 'badge-gray',
+            default                        => 'badge-gray',
         };
     }
 }
