@@ -310,15 +310,38 @@ class AppointmentController extends Controller
             })
             ->addColumn('actions', function ($b) {
                 $viewUrl   = route('businesses.show', $b);
+                $issueUrl  = route('appointments.bizIssue', $b);
                 $deleteUrl = route('businesses.destroy', $b);
+
+                // Green = not yet issued (appointment pending), Grey = already a real permit
+                if ($b->permit_date) {
+                    $issueBtn = '<a href="'.$viewUrl.'" target="_blank"
+                                   class="btn btn-secondary btn-sm biz-viewpermit-btn"
+                                   style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
+                                   data-tippy-content="View Permit: '.e($b->permit_number).'">
+                                    <i class="fas fa-file-certificate"></i> View Permit
+                                </a>';
+                } elseif (in_array($b->status, ['For Review', 'Pending'])) {
+                    $issueBtn = '<button class="btn btn-success btn-sm biz-issue-btn"
+                                         style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
+                                         data-tippy-content="Issue Business Permit"
+                                         data-id="'.e($b->id).'"
+                                         data-num="'.e($b->permit_number).'"
+                                         data-biz="'.e($b->business_name).'"
+                                         data-owner="'.e($b->owner_name).'"
+                                         data-appt="'.($b->preferred_date ? \Carbon\Carbon::parse($b->preferred_date)->format('M d, Y') : '—').'"
+                                         data-url="'.$issueUrl.'">
+                                    <i class="fas fa-file-certificate"></i> Issue Permit
+                                </button>';
+                } else {
+                    $issueBtn = '';
+                }
 
                 return '
                     <div style="display:flex;justify-content:flex-end;gap:6px">
-                        <a href="'.$viewUrl.'" class="btn btn-secondary btn-sm btn-icon" title="View Permit">
-                            <i class="fas fa-eye"></i>
-                        </a>
+                        '.$issueBtn.'
                         <button class="btn btn-primary btn-sm btn-icon biz-apt-status-btn"
-                                title="Update Status"
+                                data-tippy-content="Update Status"
                                 data-id="'.$b->id.'"
                                 data-num="'.e($b->permit_number).'"
                                 data-biz="'.e($b->business_name).'"

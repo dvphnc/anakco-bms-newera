@@ -211,6 +211,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('appointments.bizData')->middleware('role:Admin,Secretary');
     Route::patch('appointments/biz/{business}/status', [AppointmentController::class, 'updateBizStatus'])
         ->name('appointments.bizStatus')->middleware('role:Admin,Secretary');
+    Route::post('appointments/biz/{business}/issue', [AppointmentController::class, 'issueBizPermit'])
+        ->name('appointments.bizIssue')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Portal Pending Count — for sidebar badge (Admin + Secretary)
