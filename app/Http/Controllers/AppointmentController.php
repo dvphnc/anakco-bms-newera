@@ -65,60 +65,35 @@ class AppointmentController extends Controller
                     return '<span class="badge '.$cls.'">'.e($a->status).'</span>';
                 })
                 ->addColumn('actions', function ($a) {
-                    $deleteUrl  = route('appointments.destroy', $a);
                     $convertUrl = route('appointments.convert', $a);
 
-                    // Grey  "View Document" — already issued (links directly to the document)
-                    // Green "Issue Document" — not yet issued, any status except Cancelled
-                    $viewBtn = '';
                     if ($a->document && $a->document->status !== 'Pending') {
-                        // Fully issued — link directly to the document record
+                        // Already issued — view link
                         $viewUrl = route('documents.show', $a->document);
-                        $viewBtn = '<a href="'.$viewUrl.'" target="_blank"
-                                      class="btn btn-secondary btn-sm apt-viewdoc-btn"
-                                      style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                      data-tippy-content="View Document: '.e($a->document->doc_number).'">
-                                        <i class="fas fa-file-lines"></i> View Document
-                                    </a>';
+                        return '<div style="display:flex;justify-content:flex-end">
+                                    <a href="'.$viewUrl.'" target="_blank"
+                                       class="btn btn-secondary btn-sm"
+                                       style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px">
+                                        <i class="fas fa-file-lines"></i> View Doc
+                                    </a>
+                                </div>';
                     } elseif ($a->status !== 'Cancelled') {
-                        // Not yet issued — show Issue Document button for all non-cancelled statuses
-                        $viewBtn = '
-                            <button class="btn btn-success btn-sm apt-viewdoc-btn apt-convert-btn"
-                                    style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                    data-tippy-content="Issue Document"
-                                    data-id="'.e($a->id).'"
-                                    data-num="'.e($a->appointment_number).'"
-                                    data-name="'.e($a->resident_name).'"
-                                    data-type="'.e($a->document_type).'"
-                                    data-purpose="'.e($a->purpose ?? '').'"
-                                    data-url="'.$convertUrl.'">
-                                <i class="fas fa-stamp"></i> Issue Document
-                            </button>';
+                        return '<div style="display:flex;justify-content:flex-end">
+                                    <button class="btn btn-success btn-sm apt-convert-btn"
+                                            style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
+                                            data-id="'.e($a->id).'"
+                                            data-num="'.e($a->appointment_number).'"
+                                            data-name="'.e($a->resident_name).'"
+                                            data-type="'.e($a->document_type).'"
+                                            data-purpose="'.e($a->purpose ?? '').'"
+                                            data-url="'.$convertUrl.'">
+                                        <i class="fas fa-stamp"></i> Issue
+                                    </button>
+                                </div>';
                     }
-
-                    return '
-                        <div style="display:flex;justify-content:flex-end;gap:6px">
-                            '.$viewBtn.'
-                            <button class="btn btn-primary btn-sm btn-icon apt-status-btn"
-                                    title="Update Status"
-                                    data-id="'.$a->id.'"
-                                    data-num="'.e($a->appointment_number).'"
-                                    data-status="'.e($a->status).'"
-                                    data-notes="'.e($a->notes ?? '').'"
-                                    data-preferred-date="'.($a->preferred_date ? $a->preferred_date->format('Y-m-d') : '').'"
-                                    data-pickup-date="'.($a->pickup_date ? $a->pickup_date->format('Y-m-d') : '').'"
-                                    >
-                                <i class="fas fa-rotate"></i>
-                            </button>
-                            <form method="POST" action="'.$deleteUrl.'"
-                                  data-confirm="Delete appointment '.e($a->appointment_number).'? This cannot be undone."
-                                  data-confirm-title="Delete Appointment"
-                                  data-confirm-ok="Delete">
-                                <input type="hidden" name="_token" value="'.csrf_token().'">
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
-                            </form>
-                        </div>';
+                    return '<div style="display:flex;justify-content:flex-end">
+                                <span class="badge badge-gray" style="font-size:11px">Cancelled</span>
+                            </div>';
                 })
                 ->filter(function ($query) use ($request) {
                     if ($request->has('search') && $request->search['value']) {
