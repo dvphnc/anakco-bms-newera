@@ -204,6 +204,7 @@
                     <th>Permit Date</th>
                     <th>Expiry Date</th>
                     <th>Status</th>
+                    <th style="display:none"></th>
                     <th style="text-align:right;width:110px">Actions</th>
                 </tr>
             </thead>
@@ -385,9 +386,10 @@ $(document).ready(function () {
             { data: 'permit_date_col', name: 'permit_date',    width: '110px' },
             { data: 'expiry_col',      name: 'expiry_date',    width: '140px' },
             { data: 'status_col',      name: 'status',         width: '100px' },
+            { data: 'updated_at',      name: 'updated_at',     visible: false, searchable: false },
             { data: 'actions',         name: 'actions',        orderable: false, searchable: false, width: '110px' },
         ],
-        order: [[5, 'asc']],
+        order: [[7, 'desc']],
         pageLength: 15,
         language: {
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',

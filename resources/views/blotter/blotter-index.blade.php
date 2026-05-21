@@ -273,9 +273,10 @@ $(document).ready(function () {
             { data: 'respondent_col',  name: 'respondent_name' },
             { data: 'date_col',        name: 'incident_date' },
             { data: 'status_col',      name: 'status' },
+            { data: 'updated_at',      name: 'updated_at', visible: false, searchable: false },
             { data: 'actions',         name: 'actions', orderable: false, searchable: false },
         ],
-        order: [[4, 'desc']],
+        order: [[6, 'desc']],
         pageLength: 15,
         language: {
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
