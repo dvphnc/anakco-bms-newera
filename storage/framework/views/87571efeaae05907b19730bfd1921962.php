@@ -1296,6 +1296,7 @@ function saveAptStatus() {
                 });
             }
             bmsToast(res.data.message || 'Status updated.', 'success');
+            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
             $('#appointmentsTable').DataTable().ajax.reload(null, false);
         })
         .catch(function (err) {
@@ -1328,6 +1329,7 @@ function saveBlotterActivate() {
         .then(function (res) {
             closeBlotterActivateModal();
             bmsToast(res.data.message, 'success');
+            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
 
             // Sync blotter pending stat card
             if (typeof res.data.blotter_pending !== 'undefined') {
@@ -1411,6 +1413,7 @@ function saveBlotterStatus() {
                 }
             }
             bmsToast(res.data.message || 'Status updated.', 'success');
+            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
             $('#blotterTable').DataTable().ajax.reload(null, false);
         })
         .catch(function (err) {
@@ -1451,6 +1454,7 @@ function saveBizIssue() {
     .then(function (res) {
         closeBizIssueModal();
         bmsToast(res.data.message, 'success');
+        if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
 
         // Sync biz pending stat card
         if (typeof res.data.biz_pending !== 'undefined') {
@@ -1534,6 +1538,7 @@ function saveBizStatus() {
                 }
             }
             bmsToast(res.data.message || 'Status updated.', 'success');
+            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
             $('#bizTable').DataTable().ajax.reload(null, false);
         })
         .catch(function (err) {

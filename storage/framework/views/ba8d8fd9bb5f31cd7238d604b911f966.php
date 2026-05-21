@@ -236,13 +236,20 @@
 
 <?php if(in_array(auth()->user()?->role, ['Admin', 'Secretary'])): ?>
 <script>
-/* ── Portal pending badge polling ──────────────────────── */
+/* ── Portal pending badge — real-time ──────────────────── */
 (function () {
     function setBadge(id, n) {
         var el = document.getElementById(id);
         if (!el) return;
-        el.textContent    = n > 99 ? '99+' : n;
-        el.style.display  = n > 0  ? 'inline-block' : 'none';
+        var prev = parseInt(el.textContent, 10) || 0;
+        el.textContent   = n > 99 ? '99+' : n;
+        el.style.display = n > 0 ? 'inline-block' : 'none';
+        // Flash gold → white when count drops (action just taken)
+        if (n !== prev && el.style.display !== 'none') {
+            el.style.transition = 'opacity .2s';
+            el.style.opacity = '.4';
+            setTimeout(function () { el.style.opacity = '1'; }, 220);
+        }
     }
 
     function updatePortalBadges(data) {
@@ -257,9 +264,18 @@
             .catch(function () { /* silent */ });
     }
 
+    // Expose globally so action handlers on any page can trigger an instant refresh
+    window.refreshPortalBadges = fetchPendingCount;
+
     document.addEventListener('DOMContentLoaded', function () {
         fetchPendingCount();
-        setInterval(fetchPendingCount, 60000);
+        // Fallback poll every 30 s in case another staff member takes an action
+        setInterval(fetchPendingCount, 30000);
+    });
+
+    // Refresh immediately when the user switches back to this tab
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') fetchPendingCount();
     });
 })();
 </script>
