@@ -29,7 +29,9 @@
     $readyCount    = $aptCounts['Ready']    ?? 0;
     $bizPending     = \App\Models\Business::where('source','portal')->whereIn('status',['Pending','For Review'])->count();
 ?>
-<div class="grid-4 mb-6" style="grid-template-columns:repeat(6,1fr)">
+
+
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-file-lines"></i></div>
         <div class="stat-info">
@@ -38,14 +40,14 @@
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Pending')">
-        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-hourglass-half"></i></div>
+        <div class="stat-icon" style="background:rgba(200,134,26,0.10);color:var(--gold)"><i class="fas fa-hourglass-half"></i></div>
         <div class="stat-info">
             <div class="stat-number" id="statAptPending"><?php echo e(number_format($pendingCount)); ?></div>
-            <div class="stat-label">Doc. Pending</div>
+            <div class="stat-label">Pending</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Ready')">
-        <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-box-open"></i></div>
+        <div class="stat-icon" style="background:rgba(22,163,74,0.10);color:#16a34a"><i class="fas fa-box-open"></i></div>
         <div class="stat-info">
             <div class="stat-number" id="statAptReady"><?php echo e(number_format($readyCount)); ?></div>
             <div class="stat-label">Ready for Pick-up</div>
@@ -58,18 +60,22 @@
             <div class="stat-label">Released</div>
         </div>
     </div>
+</div>
+
+
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px">
     <div class="stat-card" style="cursor:pointer" onclick="bizQuickFilter('bizStatusFilter','Pending')">
         <div class="stat-icon" style="background:rgba(200,134,26,0.10);color:var(--gold)"><i class="fas fa-store"></i></div>
         <div class="stat-info">
             <div class="stat-number" id="statBizPending"><?php echo e(number_format($bizPending)); ?></div>
-            <div class="stat-label">Biz. Permit Pending</div>
+            <div class="stat-label">Business Permit Appointments Pending</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="blotterQuickFilter('blotterStatusFilter','Pending')">
         <div class="stat-icon" style="background:rgba(220,38,38,0.08);color:#dc2626"><i class="fas fa-shield-halved"></i></div>
         <div class="stat-info">
             <div class="stat-number" id="statBlotterPending"><?php echo e(number_format($blotterPending)); ?></div>
-            <div class="stat-label">Blotter Pending</div>
+            <div class="stat-label">Blotter Reports Pending Activation</div>
         </div>
     </div>
 </div>
