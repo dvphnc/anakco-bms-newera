@@ -1231,6 +1231,72 @@ function saveAptStatus() {
         .finally(function () { btn.disabled = false; btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Status'; });
 }
 
+/* ── Blotter Activate Modal ───────────────────────────────────────── */
+window._blotterActivateUrl = null;
+
+function closeBlotterActivateModal() {
+    document.getElementById('blotterActivateModal').style.display = 'none';
+    window._blotterActivateUrl = null;
+}
+
+function saveBlotterActivate() {
+    if (!window._blotterActivateUrl) return;
+    var btn    = document.getElementById('blotterActivateSaveBtn');
+    var errDiv = document.getElementById('blotterActivateError');
+    var notes  = document.getElementById('blotterActivateNotes').value;
+
+    errDiv.style.display = 'none';
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Activating…';
+
+    axios.post(window._blotterActivateUrl, { notes: notes || null })
+        .then(function (res) {
+            closeBlotterActivateModal();
+            bmsToast(res.data.message, 'success');
+
+            // Sync blotter pending stat card
+            if (typeof res.data.blotter_pending !== 'undefined') {
+                var el = document.getElementById('statBlotterPending');
+                if (el) {
+                    var prev = parseInt(el.textContent.replace(/,/g,''), 10) || 0;
+                    el.textContent = res.data.blotter_pending.toLocaleString();
+                    if (res.data.blotter_pending !== prev) {
+                        el.style.transition = 'color .15s';
+                        el.style.color = 'var(--crimson)';
+                        setTimeout(() => el.style.color = '', 800);
+                    }
+                }
+            }
+
+            $('#blotterTable').DataTable().ajax.reload(null, false);
+
+            setTimeout(function () {
+                bmsConfirm({
+                    title:   'Case Activated',
+                    message: res.data.case_number + ' is now active. Open the case record now?',
+                    ok:      'Open Case',
+                }, function () {
+                    window.open(res.data.view_url, '_blank');
+                });
+            }, 400);
+        })
+        .catch(function (err) {
+            var data = err.response?.data;
+            var msg  = data?.errors
+                ? Object.values(data.errors).flat().join(' ')
+                : (data?.message || 'Failed to activate case.');
+            if (err.response?.status === 422 && data?.view_url) {
+                msg += ' <a href="' + data.view_url + '" target="_blank" style="color:var(--navy);font-weight:600">View it here →</a>';
+            }
+            errDiv.innerHTML     = msg;
+            errDiv.style.display = 'block';
+        })
+        .finally(function () {
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fas fa-shield-halved"></i> Activate Case';
+        });
+}
+
 /* ── Biz Issue Modal ──────────────────────────────────────────────── */
 window._bizIssueUrl = null;
 
@@ -1355,7 +1421,7 @@ function saveBizStatus() {
 }
 
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { closeAptModal(); closeConvertModal(); closeBizModal(); closeBizIssueModal(); }
+    if (e.key === 'Escape') { closeAptModal(); closeConvertModal(); closeBizModal(); closeBizIssueModal(); closeBlotterActivateModal(); }
 });
 </script>
 @endpush
