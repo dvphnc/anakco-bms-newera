@@ -80,7 +80,7 @@
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', null)">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-store"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statBizTotal">{{ number_format(array_sum([$summaryCounts['Active'],$summaryCounts['Pending'],$summaryCounts['Expired'],$summaryCounts['Suspended'],$summaryCounts['Cancelled']])) }}</div>
+            <div class="stat-number" id="statBizTotal">{{ number_format(array_sum([$summaryCounts['Active'],$summaryCounts['Expired'],$summaryCounts['Suspended'],$summaryCounts['Cancelled']])) }}</div>
             <div class="stat-label">Total Businesses</div>
         </div>
     </div>
@@ -243,8 +243,6 @@
             <div class="form-group" style="margin-bottom:14px">
                 <label class="form-label">New Status</label>
                 <select id="bizModalStatus" class="form-control" style="height:42px">
-                    <option value="Pending">Pending</option>
-                    <option value="For Review">For Review</option>
                     <option value="Active">Active</option>
                     <option value="Suspended">Suspended</option>
                     <option value="Expired">Expired</option>
