@@ -27,9 +27,9 @@
     $totalCount    = \App\Models\DocumentAppointment::count();
     $releasedCount = $aptCounts['Released'] ?? 0;
     $readyCount    = $aptCounts['Ready']    ?? 0;
-    $bizPending    = \App\Models\Business::where('source','portal')->whereIn('status',['Pending','For Review'])->count();
+    $bizPending     = \App\Models\Business::where('source','portal')->whereIn('status',['Pending','For Review'])->count();
 ?>
-<div class="grid-4 mb-6" style="grid-template-columns:repeat(5,1fr)">
+<div class="grid-4 mb-6" style="grid-template-columns:repeat(6,1fr)">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-file-lines"></i></div>
         <div class="stat-info">
@@ -63,6 +63,13 @@
         <div class="stat-info">
             <div class="stat-number" id="statBizPending"><?php echo e(number_format($bizPending)); ?></div>
             <div class="stat-label">Biz. Permit Pending</div>
+        </div>
+    </div>
+    <div class="stat-card" style="cursor:pointer" onclick="blotterQuickFilter('blotterStatusFilter','Pending')">
+        <div class="stat-icon" style="background:rgba(220,38,38,0.08);color:#dc2626"><i class="fas fa-shield-halved"></i></div>
+        <div class="stat-info">
+            <div class="stat-number" id="statBlotterPending"><?php echo e(number_format($blotterPending)); ?></div>
+            <div class="stat-label">Blotter Pending</div>
         </div>
     </div>
 </div>
@@ -212,6 +219,78 @@
 
 
 
+<div class="card mb-6">
+    <div class="card-header" style="cursor:pointer" onclick="toggleFilters('blotter')">
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="card-title"><i class="fas fa-shield-halved"></i> Blotter Reports from Portal</span>
+            <span id="blotterFilterBadge" class="badge badge-gold" style="display:none"></span>
+        </div>
+        <button type="button" class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleFilters('blotter')">
+            <i class="fas fa-sliders"></i>
+            <span id="blotterFilterToggleText">Show Filters</span>
+        </button>
+    </div>
+    <div id="blotterFilterPanel" style="display:none">
+        <div class="card-body" style="padding:20px 22px">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+                <div class="form-group" style="grid-column:1/-1">
+                    <label class="form-label">Search</label>
+                    <div style="position:relative">
+                        <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
+                        <input type="text" id="blotterSearchInput" class="form-control" style="padding-left:32px"
+                               placeholder="Complainant, case number, location…">
+                    </div>
+                </div>
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Status</label>
+                    <select id="blotterStatusFilter">
+                        <option value=""></option>
+                        <option value="Pending">Pending</option>
+                        <option value="Active">Active</option>
+                        <option value="Under Investigation">Under Investigation</option>
+                        <option value="Mediated">Mediated</option>
+                        <option value="Settled">Settled</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Incident Type</label>
+                    <select id="blotterTypeFilter">
+                        <option value=""></option>
+                        <?php $__currentLoopData = $incidentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $it): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($it); ?>"><?php echo e($it); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+                <button type="button" id="blotterResetBtn" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-xmark"></i> Reset Filters
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table id="blotterTable" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Case No.</th>
+                    <th>Complainant</th>
+                    <th>Incident Type</th>
+                    <th>Location / Date</th>
+                    <th>Submitted</th>
+                    <th>Status</th>
+                    <th style="text-align:right">Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+
 
 <div id="aptConvertModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
@@ -325,6 +404,79 @@
                 <button type="button" onclick="closeAptModal()" class="btn btn-secondary">Cancel</button>
                 <button type="button" id="aptStatusSaveBtn" onclick="saveAptStatus()" class="btn btn-primary">
                     <i class="fas fa-floppy-disk"></i> Save Status
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="blotterActivateModal"
+     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
+            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
+     onclick="if(event.target===this)closeBlotterActivateModal()">
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:460px;
+                box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
+        <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:9px">
+                <i class="fas fa-shield-halved" style="color:var(--gold);font-size:13px"></i>
+                <span style="font-size:13.5px;font-weight:700;color:#fff">Activate Blotter Case</span>
+            </div>
+            <button onclick="closeBlotterActivateModal()"
+                    style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+                           border-radius:var(--radius-sm);width:28px;height:28px;display:flex;
+                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer;font-size:12px">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div style="padding:18px">
+            
+            <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
+                        border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:10px;column-gap:16px">
+                    <div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Case No.</div>
+                        <div id="blotterActivateNum" style="font-size:13px;font-weight:700;color:var(--navy);font-family:monospace"></div>
+                    </div>
+                    <div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Incident Type</div>
+                        <div id="blotterActivateType" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:10px">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Complainant</div>
+                        <div id="blotterActivateComplainant" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div style="grid-column:1/-1">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Incident Date</div>
+                        <div id="blotterActivateDate" style="font-size:13px;color:var(--text)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:14px">
+                <label class="form-label" style="font-size:12.5px">
+                    Staff Notes
+                    <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span>
+                </label>
+                <textarea id="blotterActivateNotes" class="form-control" rows="3"
+                          placeholder="e.g., Verified with complainant; proceeding with mediation…"></textarea>
+            </div>
+
+            <div id="blotterActivateError" style="display:none;font-size:13px;color:var(--crimson);
+                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
+                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
+
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;
+                        color:var(--text-subtle);background:#f8f9fb;border:1px solid var(--border);
+                        border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px">
+                <i class="fas fa-circle-info" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
+                <span>Sets the case to <strong style="color:var(--navy)">Active</strong> and makes it visible as a real case record in the Blotter section.</span>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:10px">
+                <button type="button" onclick="closeBlotterActivateModal()" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="blotterActivateSaveBtn" onclick="saveBlotterActivate()" class="btn btn-success">
+                    <i class="fas fa-shield-halved"></i> Activate Case
                 </button>
             </div>
         </div>
@@ -519,31 +671,46 @@
 #bizTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
 #bizTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
 
+#blotterTable_wrapper .dataTables_length,
+#blotterTable_wrapper .dataTables_filter { display:none; }
+#blotterTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
+#blotterTable_wrapper .dataTables_paginate { padding:12px 20px; }
+#blotterTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
+#blotterTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
+#blotterTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
+
 .btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
 .btn-success:disabled { opacity:.65; cursor:not-allowed; }
 
 #filterPanel .select2-container,
-#bizFilterPanel .select2-container { width: 100% !important; }
+#bizFilterPanel .select2-container,
+#blotterFilterPanel .select2-container { width: 100% !important; }
 #filterPanel .select2-container--default .select2-selection--single,
 #filterPanel .select2-container--default .select2-selection--multiple,
 #bizFilterPanel .select2-container--default .select2-selection--single,
-#bizFilterPanel .select2-container--default .select2-selection--multiple {
+#bizFilterPanel .select2-container--default .select2-selection--multiple,
+#blotterFilterPanel .select2-container--default .select2-selection--single,
+#blotterFilterPanel .select2-container--default .select2-selection--multiple {
     border: 1px solid var(--border); border-radius: var(--radius-sm);
     background: var(--surface); min-height: 38px;
 }
 #filterPanel .select2-container--default .select2-selection--single,
-#bizFilterPanel .select2-container--default .select2-selection--single {
+#bizFilterPanel .select2-container--default .select2-selection--single,
+#blotterFilterPanel .select2-container--default .select2-selection--single {
     padding: 0 32px 0 10px; display: flex; align-items: center;
 }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__rendered,
-#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__rendered {
+#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__rendered,
+#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: var(--text); font-size: 13.5px; padding: 0;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal;
 }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder,
-#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
+#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder,
+#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow,
-#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
+#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__arrow,
+#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
 </style>
 <script>
 $(document).ready(function () {
@@ -566,9 +733,12 @@ $(document).ready(function () {
     $('#docTypeFilter').data('placeholder', 'All document types…');
     $('#bizStatusFilter').data('placeholder', 'All statuses…');
     $('#bizTypeFilter').data('placeholder', 'All types…');
+    $('#blotterStatusFilter').data('placeholder', 'All statuses…');
+    $('#blotterTypeFilter').data('placeholder', 'All types…');
 
     initSelect2InPanel($('#filterPanel'));
     initSelect2InPanel($('#bizFilterPanel'));
+    initSelect2InPanel($('#blotterFilterPanel'));
 
     /* ─────────────────────────────────────────────────────────────────────
      |  TABLE 1 — DOCUMENT APPOINTMENTS
@@ -649,6 +819,45 @@ $(document).ready(function () {
         }
     });
 
+    /* ─────────────────────────────────────────────────────────────────────
+     |  TABLE 3 — BLOTTER PORTAL REPORTS
+     |────────────────────────────────────────────────────────────────────── */
+    var blotterTable = $('#blotterTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '<?php echo e(route('appointments.blotterData')); ?>',
+            data: function (d) {
+                d.status        = $('#blotterStatusFilter').val();
+                d.incident_type = $('#blotterTypeFilter').val();
+                d.search        = { value: $('#blotterSearchInput').val() };
+            }
+        },
+        columns: [
+            { data: 'number_col',      name: 'case_number',     width: '140px' },
+            { data: 'complainant_col', name: 'complainant_name', orderable: false },
+            { data: 'type_col',        name: 'incident_type',   width: '130px', orderable: false },
+            { data: 'incident_col',    name: 'incident_location', orderable: false },
+            { data: 'submitted_col',   name: 'created_at',      width: '100px' },
+            { data: 'status_col',      name: 'status',          width: '110px' },
+            { data: 'actions',         name: 'actions', orderable: false, searchable: false, width: '160px' },
+        ],
+        order: [[4, 'desc']],
+        pageLength: 15,
+        drawCallback: function () {
+            if (typeof tippy !== 'undefined') {
+                tippy('#blotterTable [data-tippy-content]', {
+                    theme: 'bms', placement: 'top', arrow: true, animation: 'shift-away', duration: [150, 100]
+                });
+            }
+        },
+        language: {
+            processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
+            emptyTable:  '<div class="empty-state"><i class="fas fa-shield-halved"></i><p>No blotter reports from portal found.</p></div>',
+            zeroRecords: '<div class="empty-state"><i class="fas fa-search"></i><p>No reports match your filters. <a href="#" onclick="document.getElementById(\'blotterResetBtn\').click();return false" style="color:var(--navy);font-weight:600">Clear filters</a></p></div>',
+        }
+    });
+
     /* ── Axios DELETE — Document ──────────────────────────────────────── */
     $('#appointmentsTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
         e.preventDefault(); e.stopImmediatePropagation();
@@ -690,6 +899,40 @@ $(document).ready(function () {
                     bmsToast('Could not delete.', 'error');
                 });
         });
+    });
+
+    /* ── Axios DELETE — Blotter ───────────────────────────────────────── */
+    $('#blotterTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
+        e.preventDefault(); e.stopImmediatePropagation();
+        const btn = $(this), form = btn.closest('form'), url = form.attr('action');
+        bmsConfirm({ title: form.data('confirm-title') || 'Delete Blotter Report', message: form.data('confirm'), ok: 'Delete' }, function () {
+            const icon = btn.find('i'), orig = icon.attr('class');
+            icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
+            btn.prop('disabled', true);
+            axios.delete(url)
+                .then(function (res) {
+                    blotterTable.row(form.closest('tr')).remove().draw(false);
+                    bmsToast(res.data.message || 'Blotter report deleted.', 'success');
+                })
+                .catch(function () {
+                    icon.attr('class', orig).css('color', '');
+                    btn.prop('disabled', false);
+                    bmsToast('Could not delete.', 'error');
+                });
+        });
+    });
+
+    /* ── Open blotter activate modal ──────────────────────────────────── */
+    $('#blotterTable').on('click', '.blotter-activate-btn', function () {
+        var $btn = $(this);
+        document.getElementById('blotterActivateNum').textContent        = $btn.data('num');
+        document.getElementById('blotterActivateType').textContent       = $btn.data('type');
+        document.getElementById('blotterActivateComplainant').textContent = $btn.data('complainant');
+        document.getElementById('blotterActivateDate').textContent       = $btn.data('date');
+        document.getElementById('blotterActivateNotes').value            = '';
+        document.getElementById('blotterActivateError').style.display    = 'none';
+        window._blotterActivateUrl = $btn.data('url');
+        document.getElementById('blotterActivateModal').style.display    = 'flex';
     });
 
     /* ── Open convert modal ───────────────────────────────────────────── */
@@ -795,6 +1038,16 @@ $(document).ready(function () {
         else { badge.style.display = 'none'; }
     }
 
+    function updateBlotterBadge() {
+        let n = 0;
+        if ($('#blotterSearchInput').val())  n++;
+        if ($('#blotterStatusFilter').val()) n++;
+        if ($('#blotterTypeFilter').val())   n++;
+        const badge = document.getElementById('blotterFilterBadge');
+        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter' : ' filters') + ' active'; badge.style.display = ''; }
+        else { badge.style.display = 'none'; }
+    }
+
     window.toggleFilters = function (key) {
         if (key === 'biz') {
             const panel  = document.getElementById('bizFilterPanel');
@@ -802,6 +1055,12 @@ $(document).ready(function () {
             panel.style.display = isOpen ? 'none' : 'block';
             document.getElementById('bizFilterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
             localStorage.setItem('fp_biz', isOpen ? '0' : '1');
+        } else if (key === 'blotter') {
+            const panel  = document.getElementById('blotterFilterPanel');
+            const isOpen = panel.style.display !== 'none';
+            panel.style.display = isOpen ? 'none' : 'block';
+            document.getElementById('blotterFilterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+            localStorage.setItem('fp_blotter', isOpen ? '0' : '1');
         } else {
             const panel  = document.getElementById('filterPanel');
             const isOpen = panel.style.display !== 'none';
@@ -820,8 +1079,13 @@ $(document).ready(function () {
         document.getElementById('bizFilterPanel').style.display = 'block';
         document.getElementById('bizFilterToggleText').textContent = 'Hide Filters';
     }
+    if (localStorage.getItem('fp_blotter') === '1') {
+        document.getElementById('blotterFilterPanel').style.display = 'block';
+        document.getElementById('blotterFilterToggleText').textContent = 'Hide Filters';
+    }
     updateBadge();
     updateBizBadge();
+    updateBlotterBadge();
 
     /* ── Filters — doc ────────────────────────────────────────────────── */
     let debounce;
@@ -842,6 +1106,16 @@ $(document).ready(function () {
         $('#bizStatusFilter, #bizTypeFilter').val(null).trigger('change');
         updateBizBadge(); bizTable.ajax.reload();
     });
+
+    /* ── Filters — blotter ────────────────────────────────────────────── */
+    let blotterDebounce;
+    $('#blotterSearchInput').on('input', function () { clearTimeout(blotterDebounce); blotterDebounce = setTimeout(() => { updateBlotterBadge(); blotterTable.ajax.reload(); }, 380); });
+    $('#blotterStatusFilter, #blotterTypeFilter').on('change', function () { updateBlotterBadge(); blotterTable.ajax.reload(); });
+    $('#blotterResetBtn').on('click', function () {
+        $('#blotterSearchInput').val('');
+        $('#blotterStatusFilter, #blotterTypeFilter').val(null).trigger('change');
+        updateBlotterBadge(); blotterTable.ajax.reload();
+    });
 });
 
 window.aptQuickFilter = function (filterId, values) {
@@ -852,6 +1126,16 @@ window.aptQuickFilter = function (filterId, values) {
         localStorage.setItem('fp_appointments', '1');
     }
     $('#appointmentsTable').DataTable().ajax.reload();
+};
+
+window.blotterQuickFilter = function (filterId, values) {
+    $('#' + filterId).val(values).trigger('change');
+    if (document.getElementById('blotterFilterPanel').style.display === 'none') {
+        document.getElementById('blotterFilterPanel').style.display = 'block';
+        document.getElementById('blotterFilterToggleText').textContent = 'Hide Filters';
+        localStorage.setItem('fp_blotter', '1');
+    }
+    $('#blotterTable').DataTable().ajax.reload();
 };
 
 window.bizQuickFilter = function (filterId, values) {
@@ -951,6 +1235,72 @@ function saveAptStatus() {
             errDiv.style.display = 'block';
         })
         .finally(function () { btn.disabled = false; btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Status'; });
+}
+
+/* ── Blotter Activate Modal ───────────────────────────────────────── */
+window._blotterActivateUrl = null;
+
+function closeBlotterActivateModal() {
+    document.getElementById('blotterActivateModal').style.display = 'none';
+    window._blotterActivateUrl = null;
+}
+
+function saveBlotterActivate() {
+    if (!window._blotterActivateUrl) return;
+    var btn    = document.getElementById('blotterActivateSaveBtn');
+    var errDiv = document.getElementById('blotterActivateError');
+    var notes  = document.getElementById('blotterActivateNotes').value;
+
+    errDiv.style.display = 'none';
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Activating…';
+
+    axios.post(window._blotterActivateUrl, { notes: notes || null })
+        .then(function (res) {
+            closeBlotterActivateModal();
+            bmsToast(res.data.message, 'success');
+
+            // Sync blotter pending stat card
+            if (typeof res.data.blotter_pending !== 'undefined') {
+                var el = document.getElementById('statBlotterPending');
+                if (el) {
+                    var prev = parseInt(el.textContent.replace(/,/g,''), 10) || 0;
+                    el.textContent = res.data.blotter_pending.toLocaleString();
+                    if (res.data.blotter_pending !== prev) {
+                        el.style.transition = 'color .15s';
+                        el.style.color = 'var(--crimson)';
+                        setTimeout(() => el.style.color = '', 800);
+                    }
+                }
+            }
+
+            $('#blotterTable').DataTable().ajax.reload(null, false);
+
+            setTimeout(function () {
+                bmsConfirm({
+                    title:   'Case Activated',
+                    message: res.data.case_number + ' is now active. Open the case record now?',
+                    ok:      'Open Case',
+                }, function () {
+                    window.open(res.data.view_url, '_blank');
+                });
+            }, 400);
+        })
+        .catch(function (err) {
+            var data = err.response?.data;
+            var msg  = data?.errors
+                ? Object.values(data.errors).flat().join(' ')
+                : (data?.message || 'Failed to activate case.');
+            if (err.response?.status === 422 && data?.view_url) {
+                msg += ' <a href="' + data.view_url + '" target="_blank" style="color:var(--navy);font-weight:600">View it here →</a>';
+            }
+            errDiv.innerHTML     = msg;
+            errDiv.style.display = 'block';
+        })
+        .finally(function () {
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fas fa-shield-halved"></i> Activate Case';
+        });
 }
 
 /* ── Biz Issue Modal ──────────────────────────────────────────────── */
@@ -1077,7 +1427,7 @@ function saveBizStatus() {
 }
 
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { closeAptModal(); closeConvertModal(); closeBizModal(); closeBizIssueModal(); }
+    if (e.key === 'Escape') { closeAptModal(); closeConvertModal(); closeBizModal(); closeBizIssueModal(); closeBlotterActivateModal(); }
 });
 </script>
 <?php $__env->stopPush(); ?>
