@@ -559,6 +559,18 @@
         /* ═══════════════════════════════════════════════════════
            GOVERNMENT STRIP
         ═══════════════════════════════════════════════════════ */
+        /* ── Scroll progress bar ──────────────────────────────────────── */
+        #scroll-progress {
+            position: fixed;
+            top: 0; left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
+            z-index: 9999;
+            transition: width .08s linear;
+            box-shadow: 0 0 8px rgba(200,134,26,.5);
+        }
+
         .gov-strip {
             background: #fff;
             border-bottom: 1px solid #e2e6ea;
@@ -818,6 +830,10 @@
 <body>
 
 
+<div id="scroll-progress" aria-hidden="true"></div>
+
+
+
 <div id="splash" role="status" aria-label="Loading portal">
     <div class="splash-coin">
         <div class="splash-coin-inner">
@@ -899,6 +915,9 @@
         <div class="gov-strip-left">
             <img src="<?php echo e(asset('images/republika-seal.png')); ?>"
                  alt="Republika ng Pilipinas"
+                 class="gov-strip-seal">
+            <img src="<?php echo e(asset('images/qc-seal.png')); ?>"
+                 alt="Quezon City"
                  class="gov-strip-seal">
             <span class="gov-strip-name">Republika ng Pilipinas</span>
             <span class="gov-strip-divider" aria-hidden="true"></span>
@@ -1187,4 +1206,20 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 <?php echo $__env->yieldPushContent('scripts'); ?>
+
+<script>
+// ── Scroll progress bar ─────────────────────────────────────────────
+(function () {
+    var bar = document.getElementById('scroll-progress');
+    if (!bar) return;
+    function updateProgress() {
+        var scrollTop    = window.scrollY || document.documentElement.scrollTop;
+        var docHeight    = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var pct          = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        bar.style.width  = Math.min(pct, 100) + '%';
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+})();
+</script>
 </bo<?php /**PATH D:\laragon\www\anakco_bms\resources\views/layouts/portal.blade.php ENDPATH**/ ?>
