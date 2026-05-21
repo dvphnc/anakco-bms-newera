@@ -319,11 +319,36 @@ body { background: #fff; }
     margin: 0 auto 1.35rem;
     box-shadow: 0 0 0 5px #fff, 0 0 0 6px rgba(200,134,26,.3), 0 6px 20px rgba(13,33,68,.18);
     position: relative; z-index: 2;
-    transition: transform .25s, box-shadow .25s;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1),
+                background .3s ease,
+                box-shadow .3s ease,
+                color .3s ease;
+}
+/* Ping ring on hover */
+.how-num::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    opacity: 0;
+    transform: scale(.8);
+    transition: opacity .3s ease, transform .3s ease;
 }
 .how-step:hover .how-num {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 5px #fff, 0 0 0 7px rgba(200,134,26,.5), 0 8px 28px rgba(13,33,68,.25);
+    background: var(--gold);
+    color: #fff;
+    transform: scale(1.12) translateY(-3px);
+    box-shadow: 0 0 0 5px #fff, 0 0 0 7px rgba(200,134,26,.45), 0 12px 32px rgba(200,134,26,.35);
+}
+.how-step:hover .how-num::after {
+    opacity: 1;
+    transform: scale(1.22);
+    animation: how-ping .7s ease-out infinite;
+}
+@keyframes how-ping {
+    0%   { transform: scale(1.1); opacity: .8; }
+    100% { transform: scale(1.5); opacity: 0;  }
 }
 .how-step h4 { font-size: .92rem; font-weight: 700; color: var(--navy); margin-bottom: .45rem; line-height: 1.3; }
 .how-step p  { font-size: .81rem; color: #6b7280; line-height: 1.72; }
