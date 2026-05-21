@@ -334,54 +334,32 @@ class AppointmentController extends Controller
                 return '<span class="badge '.$cls.'">'.e($b->status).'</span>';
             })
             ->addColumn('actions', function ($b) {
-                $viewUrl   = route('businesses.show', $b);
-                $issueUrl  = route('appointments.bizIssue', $b);
-                $deleteUrl = route('businesses.destroy', $b);
+                $viewUrl  = route('businesses.show', $b);
+                $issueUrl = route('appointments.bizIssue', $b);
 
-                // Green = not yet issued (appointment pending), Grey = already a real permit
                 if ($b->permit_date) {
-                    $issueBtn = '<a href="'.$viewUrl.'" target="_blank"
-                                   class="btn btn-secondary btn-sm biz-viewpermit-btn"
-                                   style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                   data-tippy-content="View Permit: '.e($b->permit_number).'">
+                    return '<div style="display:flex;justify-content:flex-end">
+                                <a href="'.$viewUrl.'" target="_blank"
+                                   class="btn btn-secondary btn-sm"
+                                   style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px">
                                     <i class="fas fa-stamp"></i> View Permit
-                                </a>';
+                                </a>
+                            </div>';
                 } elseif (in_array($b->status, ['For Review', 'Pending'])) {
-                    $issueBtn = '<button class="btn btn-success btn-sm biz-issue-btn"
-                                         style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                         data-tippy-content="Issue Business Permit"
-                                         data-id="'.e($b->id).'"
-                                         data-num="'.e($b->permit_number).'"
-                                         data-biz="'.e($b->business_name).'"
-                                         data-owner="'.e($b->owner_name).'"
-                                         data-appt="'.($b->preferred_date ? \Carbon\Carbon::parse($b->preferred_date)->format('M d, Y') : '—').'"
-                                         data-url="'.$issueUrl.'">
+                    return '<div style="display:flex;justify-content:flex-end">
+                                <button class="btn btn-success btn-sm biz-issue-btn"
+                                        style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
+                                        data-id="'.e($b->id).'"
+                                        data-num="'.e($b->permit_number).'"
+                                        data-biz="'.e($b->business_name).'"
+                                        data-owner="'.e($b->owner_name).'"
+                                        data-appt="'.($b->preferred_date ? \Carbon\Carbon::parse($b->preferred_date)->format('M d, Y') : '—').'"
+                                        data-url="'.$issueUrl.'">
                                     <i class="fas fa-stamp"></i> Issue Permit
-                                </button>';
-                } else {
-                    $issueBtn = '';
+                                </button>
+                            </div>';
                 }
-
-                return '
-                    <div style="display:flex;justify-content:flex-end;gap:6px">
-                        '.$issueBtn.'
-                        <button class="btn btn-primary btn-sm btn-icon biz-apt-status-btn"
-                                data-tippy-content="Update Status"
-                                data-id="'.$b->id.'"
-                                data-num="'.e($b->permit_number).'"
-                                data-biz="'.e($b->business_name).'"
-                                data-status="'.e($b->status).'">
-                            <i class="fas fa-rotate"></i>
-                        </button>
-                        <form method="POST" action="'.$deleteUrl.'"
-                              data-confirm="Delete appointment for '.e($b->business_name).'? This cannot be undone."
-                              data-confirm-title="Delete Business Appointment"
-                              data-confirm-ok="Delete">
-                            <input type="hidden" name="_token" value="'.csrf_token().'">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
-                        </form>
-                    </div>';
+                return '';
             })
             ->filter(function ($query) use ($request) {
                 if ($request->has('search') && $request->search['value']) {
