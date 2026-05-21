@@ -602,7 +602,7 @@ body { background: #fff; }
             </p>
             <div class="h-actions h-anim h-anim-4">
                 <a href="<?php echo e(route('portal.request')); ?>" class="btn btn-gold btn-lg">
-                    <i class="fas fa-file-plus"></i> Request a Document
+                    <i class="fas fa-file-arrow-up"></i> Request a Document
                 </a>
                 <a href="<?php echo e(route('portal.track')); ?>" class="btn btn-outline-white btn-lg">
                     <i class="fas fa-search"></i> Track My Request
@@ -878,7 +878,7 @@ body { background: #fff; }
         <p>Submit your request in under 3 minutes — no account needed, no queues, completely free.</p>
         <div class="cta-btns">
             <a href="<?php echo e(route('portal.request')); ?>" class="btn btn-gold btn-lg">
-                <i class="fas fa-file-plus"></i> Request a Document
+                <i class="fas fa-file-arrow-up"></i> Request a Document
             </a>
             <a href="<?php echo e(route('portal.track')); ?>" class="btn btn-outline-white btn-lg">
                 <i class="fas fa-search"></i> Track Existing Request

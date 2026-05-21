@@ -1148,9 +1148,10 @@
                 <span class="cmd-hint"><kbd>↵</kbd> Open</span>
                 <span class="cmd-hint"><kbd>Esc</kbd> Close</span>
                 <span style="flex:1"></span>
-                <span style="font-size:11px;color:var(--text-subtle);display:flex;align-items:center;gap:5px">
+                <span style="font-size:11px;color:var(--text-subtle);display:flex;align-items:center;gap:4px">
                     <kbd style="background:var(--navy);color:#fff;border:none;
                                 border-radius:4px;padding:1px 6px;font-family:monospace;font-size:10px">Ctrl</kbd>
+                    <span style="font-size:10px;font-weight:600">+</span>
                     <kbd style="background:var(--navy);color:#fff;border:none;
                                 border-radius:4px;padding:1px 6px;font-family:monospace;font-size:10px">K</kbd>
                     to open anywhere
