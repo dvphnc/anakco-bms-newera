@@ -1100,6 +1100,16 @@ $(document).ready(function () {
         $('#bizStatusFilter, #bizTypeFilter').val(null).trigger('change');
         updateBizBadge(); bizTable.ajax.reload();
     });
+
+    /* ── Filters — blotter ────────────────────────────────────────────── */
+    let blotterDebounce;
+    $('#blotterSearchInput').on('input', function () { clearTimeout(blotterDebounce); blotterDebounce = setTimeout(() => { updateBlotterBadge(); blotterTable.ajax.reload(); }, 380); });
+    $('#blotterStatusFilter, #blotterTypeFilter').on('change', function () { updateBlotterBadge(); blotterTable.ajax.reload(); });
+    $('#blotterResetBtn').on('click', function () {
+        $('#blotterSearchInput').val('');
+        $('#blotterStatusFilter, #blotterTypeFilter').val(null).trigger('change');
+        updateBlotterBadge(); blotterTable.ajax.reload();
+    });
 });
 
 window.aptQuickFilter = function (filterId, values) {
@@ -1110,6 +1120,16 @@ window.aptQuickFilter = function (filterId, values) {
         localStorage.setItem('fp_appointments', '1');
     }
     $('#appointmentsTable').DataTable().ajax.reload();
+};
+
+window.blotterQuickFilter = function (filterId, values) {
+    $('#' + filterId).val(values).trigger('change');
+    if (document.getElementById('blotterFilterPanel').style.display === 'none') {
+        document.getElementById('blotterFilterPanel').style.display = 'block';
+        document.getElementById('blotterFilterToggleText').textContent = 'Hide Filters';
+        localStorage.setItem('fp_blotter', '1');
+    }
+    $('#blotterTable').DataTable().ajax.reload();
 };
 
 window.bizQuickFilter = function (filterId, values) {
