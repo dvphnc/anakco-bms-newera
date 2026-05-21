@@ -32,8 +32,7 @@
     cursor: pointer;
 }
 .confirm-number::after {
-    content: ' 📋';
-    font-size: .8em;
+    content: '';
 }
 .detail-grid {
     display: grid;
