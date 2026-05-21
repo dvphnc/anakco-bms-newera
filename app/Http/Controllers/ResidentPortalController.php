@@ -94,11 +94,27 @@ class ResidentPortalController extends Controller
             'appointment_number' => 'required|string',
         ]);
 
-        $appointment = DocumentAppointment::with('statusLogs')
-            ->where('appointment_number', strtoupper(trim($request->appointment_number)))
-            ->first();
+        $number = strtoupper(trim($request->appointment_number));
 
-        return view('portal.track', compact('appointment'));
+        [$type, $record] = $this->resolveTrackRecord($number);
+
+        return view('portal.track', compact('type', 'record', 'number'));
+    }
+
+    /* Resolve a reference number to its record type + model */
+    private function resolveTrackRecord(string $number): array
+    {
+        $doc = DocumentAppointment::with('statusLogs')
+            ->where('appointment_number', $number)->first();
+        if ($doc) return ['document', $doc];
+
+        $biz = Business::where('permit_number', $number)->where('source', 'portal')->first();
+        if ($biz) return ['business', $biz];
+
+        $blotter = BlotterCase::where('case_number', $number)->where('source', 'portal')->first();
+        if ($blotter) return ['blotter', $blotter];
+
+        return [null, null];
     }
 
     /* ─────────────────────────────────────────────────────
