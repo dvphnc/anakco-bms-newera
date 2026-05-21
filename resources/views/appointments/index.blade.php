@@ -533,10 +533,17 @@ $(document).ready(function () {
             { data: 'appt_date_col', name: 'preferred_date', width: '110px' },
             { data: 'submitted_col', name: 'created_at',     width: '100px' },
             { data: 'status_col',    name: 'status',         width: '100px' },
-            { data: 'actions',       name: 'actions', orderable: false, searchable: false, width: '110px' },
+            { data: 'actions',       name: 'actions', orderable: false, searchable: false, width: '140px' },
         ],
         order: [[4, 'asc']],
         pageLength: 15,
+        drawCallback: function () {
+            if (typeof tippy !== 'undefined') {
+                tippy('#bizTable [data-tippy-content]', {
+                    theme: 'bms', placement: 'top', arrow: true, animation: 'shift-away', duration: [150, 100]
+                });
+            }
+        },
         language: {
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
             emptyTable:  '<div class="empty-state"><i class="fas fa-store"></i><p>No business permit appointments found.</p></div>',
