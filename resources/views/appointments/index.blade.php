@@ -1052,12 +1052,17 @@ $(document).ready(function () {
 
     /* ── Open doc status modal ────────────────────────────────────────── */
     $('#appointmentsTable').on('click', '.apt-status-btn', function () {
-        _aptId        = $(this).data('id');
-        _aptOldStatus = $(this).data('status');
+        _aptId          = $(this).data('id');
+        _aptOldStatus   = $(this).data('status');
+        _aptPreferredDate = $(this).data('preferred-date') || '';
         document.getElementById('aptModalNum').textContent    = $(this).data('num');
         document.getElementById('aptModalStatus').value       = _aptOldStatus;
         document.getElementById('aptModalNotes').value        = $(this).data('notes') || '';
         document.getElementById('aptStatusError').style.display = 'none';
+        // Pre-fill pickup date: use existing pickup_date if set, else preferred_date
+        var existingPickup = $(this).data('pickup-date') || '';
+        document.getElementById('aptModalPickupDate').value   = existingPickup || _aptPreferredDate;
+        onAptStatusChange();
         document.getElementById('aptStatusModal').style.display = 'flex';
     });
 
@@ -1289,12 +1294,19 @@ function saveConvert() {
 }
 
 /* ── Doc Status Modal ─────────────────────────────────────────────── */
-var _aptId = null, _aptOldStatus = null;
+var _aptId = null, _aptOldStatus = null, _aptPreferredDate = '';
 var _aptStatMap = { 'Pending': 'statAptPending', 'Ready': 'statAptReady', 'Released': 'statAptReleased' };
+
+function onAptStatusChange() {
+    var status = document.getElementById('aptModalStatus').value;
+    var group  = document.getElementById('aptPickupDateGroup');
+    group.style.display = (status === 'Ready') ? '' : 'none';
+}
 
 function closeAptModal() {
     document.getElementById('aptStatusModal').style.display = 'none';
-    _aptId = null; _aptOldStatus = null;
+    document.getElementById('aptPickupDateGroup').style.display = 'none';
+    _aptId = null; _aptOldStatus = null; _aptPreferredDate = '';
 }
 
 function saveAptStatus() {
@@ -1305,11 +1317,24 @@ function saveAptStatus() {
     const notes = document.getElementById('aptModalNotes').value;
     const oldStatus = _aptOldStatus;
     if (newStatus === oldStatus) { closeAptModal(); return; }
+
+    // Require pickup_date when setting to Ready
+    var pickupDate = null;
+    if (newStatus === 'Ready') {
+        pickupDate = document.getElementById('aptModalPickupDate').value;
+        if (!pickupDate) {
+            errDiv.textContent = 'Please set a Ready for Pick-up Date.';
+            errDiv.style.display = 'block';
+            document.getElementById('aptModalPickupDate').focus();
+            return;
+        }
+    }
+
     errDiv.style.display = 'none';
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Saving…';
 
-    axios.patch('/appointments/' + _aptId + '/status', { status: newStatus, notes: notes })
+    axios.patch('/appointments/' + _aptId + '/status', { status: newStatus, notes: notes, pickup_date: pickupDate })
         .then(function (res) {
             closeAptModal();
             if (res.data.counts) {
