@@ -218,6 +218,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('appointments.blotterData')->middleware('role:Admin,Secretary');
     Route::post('appointments/blotter/{blotterCase}/activate', [AppointmentController::class, 'activateBlotter'])
         ->name('appointments.blotterActivate')->middleware('role:Admin,Secretary');
+    Route::patch('appointments/blotter/{blotterCase}/status', [AppointmentController::class, 'updateBlotterStatus'])
+        ->name('appointments.blotterStatus')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Portal Pending Count — for sidebar badge (Admin + Secretary)

@@ -628,6 +628,47 @@ class AppointmentController extends Controller
         ]);
     }
 
+    public function updateBlotterStatus(Request $request, BlotterCase $blotterCase)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:Pending,Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
+            'notes'  => 'nullable|string|max:500',
+        ]);
+
+        $old = $blotterCase->status;
+        $blotterCase->update(['status' => $validated['status']]);
+
+        if ($validated['notes'] ?? null) {
+            $blotterCase->update(['resolution_notes' => $validated['notes']]);
+        }
+
+        $this->logActivity('updated', $blotterCase, ['status' => $old], ['status' => $validated['status']]);
+
+        // Send email notification if available
+        if ($blotterCase->email) {
+            try {
+                Mail::to($blotterCase->email)->send(new PortalStatusUpdated(
+                    type:          'blotter',
+                    requestNumber: $blotterCase->case_number,
+                    residentName:  $blotterCase->complainant_name,
+                    newStatus:     $validated['status'],
+                    notes:         $validated['notes'] ?? null,
+                    preferredDate: null,
+                ));
+            } catch (\Exception $e) {
+                logger()->warning('Blotter portal status email failed: ' . $e->getMessage());
+            }
+        }
+
+        $blotterPending = BlotterCase::where('source', 'portal')->where('status', 'Pending')->count();
+
+        return response()->json([
+            'success'         => true,
+            'message'         => "Status updated to {$validated['status']}.",
+            'blotter_pending' => $blotterPending,
+        ]);
+    }
+
     public function destroy(Request $request, DocumentAppointment $appointment)
     {
         $num = $appointment->appointment_number;
