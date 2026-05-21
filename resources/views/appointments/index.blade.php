@@ -1461,6 +1461,7 @@ function saveBizIssue() {
     .then(function (res) {
         closeBizIssueModal();
         bmsToast(res.data.message, 'success');
+        if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
 
         // Sync biz pending stat card
         if (typeof res.data.biz_pending !== 'undefined') {
