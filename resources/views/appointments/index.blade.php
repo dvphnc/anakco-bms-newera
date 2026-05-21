@@ -1545,6 +1545,7 @@ function saveBizStatus() {
                 }
             }
             bmsToast(res.data.message || 'Status updated.', 'success');
+            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
             $('#bizTable').DataTable().ajax.reload(null, false);
         })
         .catch(function (err) {
