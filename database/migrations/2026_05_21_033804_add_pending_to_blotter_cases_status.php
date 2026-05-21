@@ -1,28 +1,32 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::table('blotter_cases_status', function (Blueprint $table) {
-            //
-        });
+        DB::statement("ALTER TABLE blotter_cases MODIFY COLUMN status ENUM(
+            'Pending',
+            'Active',
+            'Under Investigation',
+            'Mediated',
+            'Settled',
+            'Closed',
+            'Referred to Higher Authority'
+        ) NOT NULL DEFAULT 'Active'");
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('blotter_cases_status', function (Blueprint $table) {
-            //
-        });
+        DB::statement("ALTER TABLE blotter_cases MODIFY COLUMN status ENUM(
+            'Active',
+            'Under Investigation',
+            'Mediated',
+            'Settled',
+            'Closed',
+            'Referred to Higher Authority'
+        ) NOT NULL DEFAULT 'Active'");
     }
 };
