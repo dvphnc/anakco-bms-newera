@@ -401,11 +401,24 @@
             </p>
             <div class="form-group">
                 <label class="form-label">New Status <span style="color:var(--crimson)">*</span></label>
-                <select id="aptModalStatus" class="form-control">
+                <select id="aptModalStatus" class="form-control" onchange="onAptStatusChange()">
                     @foreach($statuses as $s)
                         <option value="{{ $s }}">{{ $s }}</option>
                     @endforeach
                 </select>
+            </div>
+            {{-- Pickup date — only shown when status = Ready --}}
+            <div class="form-group" id="aptPickupDateGroup" style="display:none">
+                <label class="form-label">
+                    <i class="fas fa-calendar-check" style="color:#16a34a;margin-right:4px"></i>
+                    Ready for Pick-up Date <span style="color:var(--crimson)">*</span>
+                </label>
+                <input type="date" id="aptModalPickupDate" class="form-control"
+                       min="{{ now()->format('Y-m-d') }}">
+                <div style="font-size:11.5px;color:#6b7280;margin-top:4px">
+                    <i class="fas fa-circle-info" style="color:var(--navy)"></i>
+                    This will be shown to the resident on the portal tracker as their official pick-up date.
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Notes <span style="font-size:12px;color:var(--text-subtle);font-weight:400">(optional)</span></label>

@@ -102,7 +102,10 @@ class AppointmentController extends Controller
                                     data-id="'.$a->id.'"
                                     data-num="'.e($a->appointment_number).'"
                                     data-status="'.e($a->status).'"
-                                    data-notes="'.e($a->notes ?? '').'">
+                                    data-notes="'.e($a->notes ?? '').'"
+                                    data-preferred-date="'.($a->preferred_date ? $a->preferred_date->format('Y-m-d') : '').'"
+                                    data-pickup-date="'.($a->pickup_date ? $a->pickup_date->format('Y-m-d') : '').'"
+                                    >
                                 <i class="fas fa-rotate"></i>
                             </button>
                             <form method="POST" action="'.$deleteUrl.'"

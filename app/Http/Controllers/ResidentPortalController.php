@@ -262,6 +262,7 @@ class ResidentPortalController extends Controller
             'resident_name'      => $a->resident_name,
             'document_type'      => $a->document_type,
             'preferred_date'     => $a->preferred_date?->format('F j, Y'),
+            'pickup_date'        => $a->pickup_date?->format('F j, Y'),
             'purpose'            => $a->purpose,
             'notes'              => $a->notes,
             'processed_by'       => $a->processed_by,
