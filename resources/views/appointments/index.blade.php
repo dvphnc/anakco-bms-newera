@@ -1337,6 +1337,7 @@ function saveBlotterActivate() {
         .then(function (res) {
             closeBlotterActivateModal();
             bmsToast(res.data.message, 'success');
+            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
 
             // Sync blotter pending stat card
             if (typeof res.data.blotter_pending !== 'undefined') {
