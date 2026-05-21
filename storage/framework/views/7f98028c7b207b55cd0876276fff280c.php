@@ -905,7 +905,7 @@
         <a href="<?php echo e(route('portal.track')); ?>"><i class="fas fa-search fa-fw"></i> Track My Status</a>
         <div class="drawer-divider"></div>
         <a href="<?php echo e(route('portal.request')); ?>" class="drawer-cta">
-            <i class="fas fa-file-plus fa-fw"></i> Request a Document
+            <i class="fas fa-file-arrow-up fa-fw"></i> Request a Document
         </a>
     </nav>
 </div>
@@ -954,7 +954,7 @@
             <i class="fas fa-search"></i> Track Status
         </a>
         <a href="<?php echo e(route('portal.request')); ?>" class="nav-cta <?php echo e(request()->routeIs('portal.request') || request()->routeIs('portal.store') ? 'nav-active' : ''); ?>">
-            <i class="fas fa-file-plus"></i> Request Document
+            <i class="fas fa-file-arrow-up"></i> Request Document
         </a>
     </nav>
 
@@ -1057,7 +1057,7 @@ function closeMobileNav() {
 ════════════════════════════════════════════════ */
 (function () {
     var ACTIONS = [
-        { icon: 'fas fa-file-plus',          label: 'Request a Document',         sub: 'Start a new barangay document request',        href: '<?php echo e(route("portal.request")); ?>' },
+        { icon: 'fas fa-file-arrow-up',          label: 'Request a Document',         sub: 'Start a new barangay document request',        href: '<?php echo e(route("portal.request")); ?>' },
         { icon: 'fas fa-file-shield',        label: 'Barangay Clearance',          sub: 'Certificate of good standing',                  href: '<?php echo e(route("portal.request")); ?>?type=Barangay+Clearance' },
         { icon: 'fas fa-hand-holding-heart', label: 'Certificate of Indigency',    sub: 'For government assistance programs',            href: '<?php echo e(route("portal.request")); ?>?type=Certificate+of+Indigency' },
         { icon: 'fas fa-house-circle-check', label: 'Certificate of Residency',    sub: 'Proof of residence document',                   href: '<?php echo e(route("portal.request")); ?>?type=Certificate+of+Residency' },
