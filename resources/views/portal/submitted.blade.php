@@ -115,6 +115,8 @@
                 <dd>{{ $record->business_name }}</dd>
                 <dt>Business Type</dt>
                 <dd>{{ $record->business_type }}</dd>
+                <dt>Appointment Date</dt>
+                <dd>{{ $record->preferred_date ? $record->preferred_date->format('F d, Y') : '—' }}</dd>
                 <dt>Status</dt>
                 <dd><span style="color:#c8861a;font-weight:700">Pending</span></dd>
                 <dt>Submitted</dt>
@@ -130,7 +132,11 @@
             <i class="fas fa-triangle-exclamation"></i>
             <span>
                 <strong>Save your reference number:</strong> {{ $number }}<br>
-                You will need this number for follow-up inquiries. Visit the Barangay Hall (Mon–Fri, 8AM–5PM) if needed.
+                @if($type === 'business')
+                    Bring this number and your required documents on your appointment date. Office hours: Mon–Fri, 8AM–5PM.
+                @else
+                    You will need this number for follow-up inquiries. Visit the Barangay Hall (Mon–Fri, 8AM–5PM) if needed.
+                @endif
             </span>
         </div>
 
@@ -144,7 +150,7 @@
                 </a>
             @else
                 <a href="{{ route('portal.business') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Submit Another
+                    <i class="fas fa-calendar-check"></i> Schedule Another
                 </a>
             @endif
         </div>
