@@ -58,7 +58,16 @@ class BusinessController extends Controller
 
                     return '<div style="font-size:13px">'.e($b->owner_name).'</div>'.$contact;
                 })
-                ->addColumn('permit_date_col', fn ($b) => '<span class="td-muted">'.($b->permit_date ? Carbon::parse($b->permit_date)->format('M d, Y') : '—').'</span>')
+                ->addColumn('permit_date_col', function ($b) {
+                    if ($b->permit_date) {
+                        return '<span class="td-muted">'.Carbon::parse($b->permit_date)->format('M d, Y').'</span>';
+                    }
+                    if ($b->preferred_date && $b->source === 'portal') {
+                        return '<span class="td-muted" style="color:#1e40af"><i class="fas fa-calendar-check" style="font-size:10px"></i> '.Carbon::parse($b->preferred_date)->format('M d, Y').'</span>
+                                <div style="font-size:10px;color:#9ca3af">Appt. Date</div>';
+                    }
+                    return '<span class="td-muted">—</span>';
+                })
                 ->addColumn('expiry_col', function ($b) {
                     if (! $b->expiry_date) {
                         return '<span class="td-muted">—</span>';
