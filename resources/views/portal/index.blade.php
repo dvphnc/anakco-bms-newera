@@ -309,10 +309,8 @@ body { background: #fff; }
     width: 52px; height: 52px; border-radius: 13px;
     display: flex; align-items: center; justify-content: center;
     font-size: 1.2rem; margin-bottom: 1.1rem; flex-shrink: 0;
-    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
     position: relative; z-index: 1;
 }
-.svc-card:hover .svc-icon { transform: scale(1.1) rotate(-3deg); }
 .sc-navy  .svc-icon { background: rgba(13,33,68,.07);   color: var(--navy); }
 .sc-gold  .svc-icon { background: rgba(200,134,26,.1);  color: var(--gold); }
 .sc-green .svc-icon { background: rgba(22,163,74,.09);  color: #16a34a; }
