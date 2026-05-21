@@ -309,7 +309,7 @@ $(document).ready(function () {
             { data: 'type_col',     name: 'document_type' },
             { data: 'purpose_col',  name: 'purpose',       orderable: false },
             { data: 'fee_col',      name: 'fee_paid',      orderable: false },
-            { data: 'date_col',     name: 'created_at' },
+            { data: 'date_col',     name: 'updated_at' },
             { data: 'status_col',   name: 'status' },
             { data: 'actions',      name: 'actions',       orderable: false, searchable: false },
         ],

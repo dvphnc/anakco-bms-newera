@@ -136,6 +136,7 @@
                     <th>Respondent</th>
                     <th>Incident Date</th>
                     <th>Status</th>
+                    <th style="display:none"></th>
                     <th style="text-align:right">Actions</th>
                 </tr>
             </thead>
