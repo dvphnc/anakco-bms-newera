@@ -602,11 +602,7 @@
 <script>
 $(document).ready(function () {
 
-    /* ── Tab switching ──────────────────────────────────────────── */
-    var _activeTab = localStorage.getItem('apt_active_tab') || 'documents';
-    switchTab(_activeTab);
-    checkTabOverflow();
-
+    /* ── Tab switching — define FIRST so calls below work ───────── */
     window.switchTab = function (tab) {
         document.querySelectorAll('.apt-tab').forEach(t => t.classList.remove('active'));
         var btn = document.querySelector('.apt-tab[data-tab="' + tab + '"]');
@@ -618,13 +614,9 @@ $(document).ready(function () {
         localStorage.setItem('apt_active_tab', tab);
 
         // Adjust DataTables column widths when panel becomes visible
-        if (tab === 'documents' && docTable) docTable.columns.adjust();
-        if (tab === 'business'  && bizTable)  bizTable.columns.adjust();
-        if (tab === 'blotter'   && blotterTable) blotterTable.columns.adjust();
-    };
-
-    window.scrollTabBar = function () {
-        document.getElementById('aptTabBar').scrollBy({ left: 160, behavior: 'smooth' });
+        if (tab === 'documents' && typeof docTable !== 'undefined') docTable.columns.adjust();
+        if (tab === 'business'  && typeof bizTable  !== 'undefined') bizTable.columns.adjust();
+        if (tab === 'blotter'   && typeof blotterTable !== 'undefined') blotterTable.columns.adjust();
     };
 
     function checkTabOverflow() {
@@ -633,7 +625,17 @@ $(document).ready(function () {
         if (!bar || !btn) return;
         btn.style.display = bar.scrollWidth > bar.clientWidth ? '' : 'none';
     }
+
+    window.scrollTabBar = function () {
+        document.getElementById('aptTabBar').scrollBy({ left: 160, behavior: 'smooth' });
+    };
+
     window.addEventListener('resize', checkTabOverflow);
+
+    /* ── Restore last-active tab then check overflow ─────────────── */
+    var _activeTab = localStorage.getItem('apt_active_tab') || 'documents';
+    switchTab(_activeTab);
+    checkTabOverflow();
 
     /* ── Stat-card quick-filter (documents tab) ─────────────────── */
     window.aptQuickStatus = function (status) {
