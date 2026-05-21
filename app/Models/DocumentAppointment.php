@@ -24,6 +24,7 @@ class DocumentAppointment extends Model
         'document_type',
         'purpose',
         'preferred_date',
+        'pickup_date',
         'status',
         'notes',
         'processed_by',
@@ -32,6 +33,7 @@ class DocumentAppointment extends Model
 
     protected $casts = [
         'preferred_date' => 'date',
+        'pickup_date'    => 'date',
         'released_at'    => 'datetime',
     ];
 
