@@ -170,6 +170,7 @@ class ResidentPortalController extends Controller
             'business_type'    => 'required|string',
             'business_address' => 'required|string|max:500',
             'purpose'          => 'nullable|string|max:500',
+            'preferred_date'   => 'required|date|after:today',
         ]);
 
         $business = Business::create([
@@ -181,6 +182,7 @@ class ResidentPortalController extends Controller
             'business_name'    => $validated['business_name'],
             'business_type'    => $validated['business_type'],
             'business_address' => $validated['business_address'],
+            'preferred_date'   => $validated['preferred_date'],
             'status'           => 'Pending',
         ]);
 

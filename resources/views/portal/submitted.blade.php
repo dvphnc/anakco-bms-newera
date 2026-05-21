@@ -73,14 +73,14 @@
 
         <h2 style="font-size:1.3rem;font-weight:700;color:var(--navy);margin-bottom:.4rem">
             @if($type === 'blotter') Blotter Report Submitted
-            @else Business Permit Request Submitted
+            @else Appointment Scheduled
             @endif
         </h2>
         <p style="font-size:.9rem;color:#6b7280;max-width:440px;margin:0 auto .75rem">
             @if($type === 'blotter')
                 Your blotter report has been received. A barangay staff member will contact you for follow-up.
             @else
-                Your business permit application has been received and is now under review.
+                Your business permit appointment has been scheduled. Please visit the Barangay Hall on your preferred date with your documents.
             @endif
         </p>
 
