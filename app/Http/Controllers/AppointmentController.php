@@ -201,10 +201,9 @@ class AppointmentController extends Controller
                 ->where('status', '!=', 'Pending')
                 ->whereNotIn('status', ['Settled', 'Closed'])
                 ->count(),
-            // Only count business permits that have actually been issued (permit_date set)
+            // Count portal business applications that are still pending (not yet issued)
             'business'  => Business::where('source', 'portal')
-                ->whereNotNull('permit_date')
-                ->where('status', 'Active')
+                ->whereIn('status', ['Pending', 'For Review'])
                 ->count(),
         ]);
     }
