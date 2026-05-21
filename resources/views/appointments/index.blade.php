@@ -143,7 +143,7 @@
                     <th>Appt. No.</th>
                     <th>Resident</th>
                     <th>Document Type</th>
-                    <th>Preferred Date</th>
+                    <th>Pick-up Date</th>
                     <th>Submitted</th>
                     <th>Status</th>
                     <th style="text-align:right">Actions</th>

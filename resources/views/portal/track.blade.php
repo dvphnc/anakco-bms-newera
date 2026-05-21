@@ -500,15 +500,25 @@
 
     /* ── Info grids per type ── */
     function infoGridDocument(d) {
+        // Build pickup date cell with a highlight if set
+        var pickupCell = '';
+        if (d.pickup_date) {
+            pickupCell = '<div class="info-cell" style="border:1.5px solid #bbf7d0;background:#f0fdf4">' +
+                '<div class="ic-label" style="color:#16a34a"><i class="fas fa-calendar-check"></i> Ready for Pick-up</div>' +
+                '<div class="ic-value" style="color:#15803d;font-size:.95rem">' + esc(d.pickup_date) + '</div>' +
+                '</div>';
+        } else if (d.preferred_date) {
+            pickupCell = infoCell('Preferred Pick-up Date', d.preferred_date);
+        }
         return '<div class="info-grid">' +
-            infoCell('Name',           d.resident_name) +
-            infoCell('Document',       d.document_type) +
-            infoCell('Preferred Date', d.preferred_date) +
-            infoCell('Purpose',        d.purpose) +
-            infoCell('Processed By',   d.processed_by) +
-            infoCell('Released On',    d.released_at) +
-            infoCell('Last Updated',   d.updated_at) +
-            infoCell('Staff Notes',    d.notes, true) +
+            infoCell('Name',         d.resident_name) +
+            infoCell('Document',     d.document_type) +
+            pickupCell +
+            infoCell('Purpose',      d.purpose) +
+            infoCell('Processed By', d.processed_by) +
+            infoCell('Released On',  d.released_at) +
+            infoCell('Last Updated', d.updated_at) +
+            infoCell('Staff Notes',  d.notes, true) +
             '</div>';
     }
     function infoGridBusiness(d) {
