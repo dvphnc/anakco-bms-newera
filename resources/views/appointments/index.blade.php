@@ -637,6 +637,9 @@ $(document).ready(function () {
     switchTab(_activeTab);
     checkTabOverflow();
 
+    /* ── DataTable vars — declared early so switchTab typeof checks work ── */
+    var docTable, bizTable, blotterTable;
+
     /* ── Stat-card quick-filter (documents tab) ─────────────────── */
     window.aptQuickStatus = function (status) {
         var el = document.getElementById('docStatusFilter');
@@ -646,7 +649,7 @@ $(document).ready(function () {
     };
 
     /* ── TABLE 1 — DOCUMENT REQUESTS ────────────────────────────── */
-    var docTable = $('#appointmentsTable').DataTable({
+    docTable = $('#appointmentsTable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -692,7 +695,7 @@ $(document).ready(function () {
     };
 
     /* ── TABLE 2 — BUSINESS PERMIT APPOINTMENTS ─────────────────── */
-    var bizTable = $('#bizTable').DataTable({
+    bizTable = $('#bizTable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -737,7 +740,7 @@ $(document).ready(function () {
     };
 
     /* ── TABLE 3 — BLOTTER PORTAL REPORTS ───────────────────────── */
-    var blotterTable = $('#blotterTable').DataTable({
+    blotterTable = $('#blotterTable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
