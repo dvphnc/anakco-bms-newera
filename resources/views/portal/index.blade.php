@@ -350,8 +350,9 @@ body { background: #fff; }
     0%   { transform: scale(1.1); opacity: .8; }
     100% { transform: scale(1.5); opacity: 0;  }
 }
-.how-step h4 { font-size: .92rem; font-weight: 700; color: var(--navy); margin-bottom: .45rem; line-height: 1.3; }
+.how-step h4 { font-size: .92rem; font-weight: 700; color: var(--navy); margin-bottom: .45rem; line-height: 1.3; transition: color .3s ease; }
 .how-step p  { font-size: .81rem; color: #6b7280; line-height: 1.72; }
+.how-step:hover h4 { color: var(--gold); }
 
 /* ─────────────────────────────────────────────
    TRUST & PRIVACY
