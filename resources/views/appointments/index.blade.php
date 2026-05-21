@@ -92,18 +92,22 @@
                 <input type="text" id="docSearch" class="apt-search"
                        placeholder="Name, appt. no., document type…">
             </div>
-            <select id="docStatusFilter" class="apt-select" style="min-width:145px">
-                <option value="">All statuses</option>
-                @foreach($statuses as $s)
-                    <option value="{{ $s }}">{{ $s }}</option>
-                @endforeach
-            </select>
-            <select id="docTypeFilter" class="apt-select" style="min-width:165px">
-                <option value="">All document types</option>
-                @foreach($documentTypes as $dt)
-                    <option value="{{ $dt }}">{{ $dt }}</option>
-                @endforeach
-            </select>
+            <div style="min-width:150px">
+                <select id="docStatusFilter">
+                    <option value=""></option>
+                    @foreach($statuses as $s)
+                        <option value="{{ $s }}">{{ $s }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div style="min-width:185px">
+                <select id="docTypeFilter">
+                    <option value=""></option>
+                    @foreach($documentTypes as $dt)
+                        <option value="{{ $dt }}">{{ $dt }}</option>
+                    @endforeach
+                </select>
+            </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="resetDocFilters()">
                 <i class="fas fa-xmark"></i> Reset
             </button>
@@ -135,13 +139,15 @@
                 <input type="text" id="bizSearch" class="apt-search"
                        placeholder="Business name, owner, permit no.…">
             </div>
-            <select id="bizStatusFilter" class="apt-select" style="min-width:145px">
-                <option value="">All statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="For Review">For Review</option>
-                <option value="Active">Active</option>
-                <option value="Cancelled">Cancelled</option>
-            </select>
+            <div style="min-width:150px">
+                <select id="bizStatusFilter">
+                    <option value=""></option>
+                    <option value="Pending">Pending</option>
+                    <option value="For Review">For Review</option>
+                    <option value="Active">Active</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="resetBizFilters()">
                 <i class="fas fa-xmark"></i> Reset
             </button>
