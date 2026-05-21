@@ -172,6 +172,10 @@
                 <input type="date" id="preferred_date" name="preferred_date" class="form-control"
                        min="{{ now()->addDay()->format('Y-m-d') }}">
                 <div class="form-error" id="err-preferred_date" style="display:none"></div>
+                <div style="font-size:.72rem;color:#9ca3af;margin-top:4px">
+                    <i class="fas fa-circle-info" style="color:#9ca3af"></i>
+                    This is your requested timeframe. The actual pick-up date will be confirmed by barangay staff.
+                </div>
             </div>
         </div>
 
