@@ -211,12 +211,14 @@ class AppointmentController extends Controller
 
     public function convertToDocument(Request $request, DocumentAppointment $appointment)
     {
-        // Already converted — return the existing doc
-        if ($appointment->document()->exists()) {
+        $existingDoc = Document::where('appointment_id', $appointment->id)->first();
+
+        // Already fully issued — just return the existing record
+        if ($existingDoc && $existingDoc->status !== 'Pending') {
             return response()->json([
                 'success'  => false,
                 'message'  => 'This appointment has already been issued as a document record.',
-                'view_url' => route('documents.show', $appointment->document),
+                'view_url' => route('documents.show', $existingDoc),
             ], 422);
         }
 
@@ -225,24 +227,37 @@ class AppointmentController extends Controller
             'or_number' => 'nullable|string|max:100',
         ]);
 
-        $document = Document::create([
-            'doc_number'             => Document::generateDocNumber(),
-            'appointment_id'         => $appointment->id,
-            'source'                 => 'portal',
-            'resident_name_portal'   => $appointment->resident_name,
-            'requestor_name'         => $appointment->requestor_name,
-            'requestor_relationship' => $appointment->requestor_relationship,
-            'requestor_contact'      => $appointment->requestor_contact,
-            'document_type'          => $appointment->document_type,
-            'purpose'                => $appointment->purpose,
-            'fee_paid'               => $validated['fee_paid'] ?? 0,
-            'or_number'              => $validated['or_number'] ?? null,
-            'status'                 => 'Released',
-            'issued_by'              => auth()->id(),
-            'released_at'            => now(),
-        ]);
-
-        $this->logActivity('created', $document);
+        if ($existingDoc) {
+            // Portal placeholder exists (status=Pending) — upgrade it in-place
+            $existingDoc->update([
+                'fee_paid'    => $validated['fee_paid'] ?? 0,
+                'or_number'   => $validated['or_number'] ?? null,
+                'status'      => 'Released',
+                'issued_by'   => auth()->id(),
+                'released_at' => now(),
+            ]);
+            $document = $existingDoc->fresh();
+            $this->logActivity('updated', $document);
+        } else {
+            // No pre-existing doc — create one fresh
+            $document = Document::create([
+                'doc_number'             => Document::generateDocNumber(),
+                'appointment_id'         => $appointment->id,
+                'source'                 => 'portal',
+                'resident_name_portal'   => $appointment->resident_name,
+                'requestor_name'         => $appointment->requestor_name,
+                'requestor_relationship' => $appointment->requestor_relationship,
+                'requestor_contact'      => $appointment->requestor_contact,
+                'document_type'          => $appointment->document_type,
+                'purpose'                => $appointment->purpose,
+                'fee_paid'               => $validated['fee_paid'] ?? 0,
+                'or_number'              => $validated['or_number'] ?? null,
+                'status'                 => 'Released',
+                'issued_by'              => auth()->id(),
+                'released_at'            => now(),
+            ]);
+            $this->logActivity('created', $document);
+        }
 
         // Auto-release the appointment if not already released
         if ($appointment->status !== 'Released') {
