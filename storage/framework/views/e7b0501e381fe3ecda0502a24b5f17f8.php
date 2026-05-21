@@ -392,6 +392,13 @@ $(document).ready(function () {
         ],
         order: [[7, 'desc']],
         pageLength: 15,
+        drawCallback: function () {
+            if (typeof tippy !== 'undefined') {
+                tippy('#businessesTable [data-tippy-content]', {
+                    theme: 'bms', placement: 'top', arrow: true, animation: 'shift-away', duration: [150, 100]
+                });
+            }
+        },
         language: {
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
             emptyTable:  '<div class="empty-state"><i class="fas fa-store"></i><p>No businesses found.</p></div>',
