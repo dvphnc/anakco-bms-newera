@@ -623,6 +623,29 @@ $(document).ready(function () {
         document.getElementById('aptStatusModal').style.display = 'flex';
     });
 
+    /* ── Open biz issue modal ─────────────────────────────────────────── */
+    $('#bizTable').on('click', '.biz-issue-btn', function () {
+        var $btn = $(this);
+        document.getElementById('bizIssueNum').textContent   = $btn.data('num');
+        document.getElementById('bizIssueBiz').textContent   = $btn.data('biz');
+        document.getElementById('bizIssueOwner').textContent = $btn.data('owner');
+        document.getElementById('bizIssueAppt').textContent  = $btn.data('appt');
+
+        // Default permit date = today, expiry = +1 year
+        var today     = new Date();
+        var nextYear  = new Date(today);
+        nextYear.setFullYear(nextYear.getFullYear() + 1);
+        var fmt = function (d) { return d.toISOString().slice(0,10); };
+        document.getElementById('bizIssuePermitDate').value  = fmt(today);
+        document.getElementById('bizIssueExpiryDate').value  = fmt(nextYear);
+        document.getElementById('bizIssueFee').value         = '';
+        document.getElementById('bizIssueOR').value          = '';
+        document.getElementById('bizIssueError').style.display = 'none';
+
+        window._bizIssueUrl = $btn.data('url');
+        document.getElementById('bizIssueModal').style.display = 'flex';
+    });
+
     /* ── Open biz status modal ────────────────────────────────────────── */
     $('#bizTable').on('click', '.biz-apt-status-btn', function () {
         _bizId        = $(this).data('id');
@@ -830,6 +853,82 @@ function saveAptStatus() {
             errDiv.style.display = 'block';
         })
         .finally(function () { btn.disabled = false; btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Status'; });
+}
+
+/* ── Biz Issue Modal ──────────────────────────────────────────────── */
+window._bizIssueUrl = null;
+
+function closeBizIssueModal() {
+    document.getElementById('bizIssueModal').style.display = 'none';
+    window._bizIssueUrl = null;
+}
+
+function saveBizIssue() {
+    if (!window._bizIssueUrl) return;
+    var btn        = document.getElementById('bizIssueSaveBtn');
+    var errDiv     = document.getElementById('bizIssueError');
+    var permitDate = document.getElementById('bizIssuePermitDate').value;
+    var expiryDate = document.getElementById('bizIssueExpiryDate').value;
+    var fee        = document.getElementById('bizIssueFee').value;
+    var orNum      = document.getElementById('bizIssueOR').value;
+
+    errDiv.style.display = 'none';
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Issuing…';
+
+    axios.post(window._bizIssueUrl, {
+        permit_date: permitDate,
+        expiry_date: expiryDate,
+        fee_paid:    fee   || null,
+        or_number:   orNum || null,
+    })
+    .then(function (res) {
+        closeBizIssueModal();
+        bmsToast(res.data.message, 'success');
+
+        // Sync biz pending stat card
+        if (typeof res.data.biz_pending !== 'undefined') {
+            var el = document.getElementById('statBizPending');
+            if (el) {
+                var prev = parseInt(el.textContent.replace(/,/g,''), 10) || 0;
+                el.textContent = res.data.biz_pending.toLocaleString();
+                if (res.data.biz_pending !== prev) {
+                    el.style.transition = 'color .15s';
+                    el.style.color = 'var(--crimson)';
+                    setTimeout(() => el.style.color = '', 800);
+                }
+            }
+        }
+
+        // Reload table so row now shows grey "View Permit"
+        $('#bizTable').DataTable().ajax.reload(null, false);
+
+        // Offer to open the permit record
+        setTimeout(function () {
+            bmsConfirm({
+                title:   'Permit Issued',
+                message: res.data.permit_num + ' is now active. Open the permit record now?',
+                ok:      'Open Permit',
+            }, function () {
+                window.open(res.data.view_url, '_blank');
+            });
+        }, 400);
+    })
+    .catch(function (err) {
+        var data = err.response?.data;
+        var msg  = data?.errors
+            ? Object.values(data.errors).flat().join(' ')
+            : (data?.message || 'Failed to issue permit.');
+        if (err.response?.status === 422 && data?.view_url) {
+            msg += ' <a href="' + data.view_url + '" target="_blank" style="color:var(--navy);font-weight:600">View it here →</a>';
+        }
+        errDiv.innerHTML     = msg;
+        errDiv.style.display = 'block';
+    })
+    .finally(function () {
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fas fa-file-certificate"></i> Issue Permit';
+    });
 }
 
 /* ── Biz Status Modal ─────────────────────────────────────────────── */
