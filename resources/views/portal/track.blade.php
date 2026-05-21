@@ -510,11 +510,24 @@
         } else if (d.preferred_date) {
             pickupCell = infoCell('Preferred Pick-up Date', d.preferred_date);
         }
+        // Representative cell
+        var repCell = '';
+        if (d.requestor_name) {
+            var repVal = esc(d.requestor_name);
+            if (d.requestor_relationship) repVal += '<span style="font-size:.75rem;color:#6b7280;font-weight:400"> (' + esc(d.requestor_relationship) + ')</span>';
+            if (d.requestor_contact)      repVal += '<div style="font-size:.75rem;color:#6b7280;margin-top:2px">' + esc(d.requestor_contact) + '</div>';
+            repCell = '<div class="info-cell" style="border:1.5px solid #fde68a;background:#fffbeb">' +
+                '<div class="ic-label" style="color:#92400e"><i class="fas fa-user-group"></i> Representative</div>' +
+                '<div class="ic-value">' + repVal + '</div>' +
+                '</div>';
+        }
+
         return '<div class="info-grid">' +
             infoCell('Name',         d.resident_name) +
             infoCell('Document',     d.document_type) +
             pickupCell +
             infoCell('Purpose',      d.purpose) +
+            (repCell || '') +
             infoCell('Processed By', d.processed_by) +
             infoCell('Released On',  d.released_at) +
             infoCell('Last Updated', d.updated_at) +
