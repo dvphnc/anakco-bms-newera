@@ -263,6 +263,128 @@ class AppointmentController extends Controller
         ]);
     }
 
+    /* ─────────────────────────────────────────────────────────────────────
+     |  BUSINESS PERMIT PORTAL APPOINTMENTS  (second table on same page)
+     |────────────────────────────────────────────────────────────────────── */
+
+    public function bizAppointments(Request $request)
+    {
+        $query = Business::where('source', 'portal')
+            ->when($request->status, fn ($q) => $q->whereIn('status', (array) $request->status))
+            ->when($request->business_type, fn ($q) => $q->whereIn('business_type', (array) $request->business_type));
+
+        return DataTables::of($query)
+            ->addColumn('number_col', function ($b) {
+                return '<span class="td-mono">'.e($b->permit_number).'</span>
+                        <span class="badge badge-blue" style="font-size:10px;margin-left:4px">Portal</span>';
+            })
+            ->addColumn('owner_col', function ($b) {
+                $contact = $b->owner_contact ? '<div class="td-muted">'.e($b->owner_contact).'</div>' : '';
+                return '<div style="font-weight:600;font-size:13px;color:var(--navy)">'.e($b->owner_name).'</div>'.$contact;
+            })
+            ->addColumn('biz_col', function ($b) {
+                return '<div style="font-weight:600;font-size:13px">'.e($b->business_name).'</div>
+                        <div class="td-muted" style="font-size:11.5px">'.e($b->business_address).'</div>';
+            })
+            ->addColumn('type_col', fn ($b) => '<span class="badge badge-navy">'.e($b->business_type).'</span>')
+            ->addColumn('appt_date_col', function ($b) {
+                if (! $b->preferred_date) return '<span class="td-muted">—</span>';
+                $date = \Carbon\Carbon::parse($b->preferred_date);
+                $past = $date->isPast() && ! in_array($b->status, ['Active', 'Cancelled']);
+                $style = $past ? 'color:#b45309;font-weight:600' : 'color:var(--text-muted)';
+                return '<span style="'.$style.'">'.$date->format('M d, Y').'</span>';
+            })
+            ->addColumn('submitted_col', fn ($b) => '<span class="td-muted">'.$b->created_at->format('M d, Y').'</span>')
+            ->addColumn('status_col', function ($b) {
+                $cls = match ($b->status) {
+                    'Active'     => 'badge-green',
+                    'Pending'    => 'badge-yellow',
+                    'For Review' => 'badge-blue',
+                    'Cancelled'  => 'badge-red',
+                    'Suspended'  => 'badge-yellow',
+                    'Expired'    => 'badge-red',
+                    default      => 'badge-gray',
+                };
+                return '<span class="badge '.$cls.'">'.e($b->status).'</span>';
+            })
+            ->addColumn('actions', function ($b) {
+                $viewUrl   = route('businesses.show', $b);
+                $deleteUrl = route('businesses.destroy', $b);
+
+                return '
+                    <div style="display:flex;justify-content:flex-end;gap:6px">
+                        <a href="'.$viewUrl.'" class="btn btn-secondary btn-sm btn-icon" title="View Permit">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <button class="btn btn-primary btn-sm btn-icon biz-apt-status-btn"
+                                title="Update Status"
+                                data-id="'.$b->id.'"
+                                data-num="'.e($b->permit_number).'"
+                                data-biz="'.e($b->business_name).'"
+                                data-status="'.e($b->status).'">
+                            <i class="fas fa-rotate"></i>
+                        </button>
+                        <form method="POST" action="'.$deleteUrl.'"
+                              data-confirm="Delete appointment for '.e($b->business_name).'? This cannot be undone."
+                              data-confirm-title="Delete Business Appointment"
+                              data-confirm-ok="Delete">
+                            <input type="hidden" name="_token" value="'.csrf_token().'">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </div>';
+            })
+            ->filter(function ($query) use ($request) {
+                if ($request->has('search') && $request->search['value']) {
+                    $s = $request->search['value'];
+                    $query->where(fn ($q) => $q
+                        ->where('business_name', 'like', "%$s%")
+                        ->orWhere('owner_name', 'like', "%$s%")
+                        ->orWhere('permit_number', 'like', "%$s%")
+                        ->orWhere('owner_contact', 'like', "%$s%"));
+                }
+            })
+            ->rawColumns(['number_col', 'owner_col', 'biz_col', 'type_col', 'appt_date_col', 'submitted_col', 'status_col', 'actions'])
+            ->make(true);
+    }
+
+    public function updateBizStatus(Request $request, Business $business)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:Pending,For Review,Active,Cancelled',
+            'notes'  => 'nullable|string|max:500',
+        ]);
+
+        $old = $business->status;
+        $business->update(['status' => $validated['status']]);
+
+        $this->logActivity('updated', $business, ['status' => $old], ['status' => $validated['status']]);
+
+        // Send email notification if available
+        if ($business->email) {
+            try {
+                Mail::to($business->email)->send(new PortalStatusUpdated(
+                    type:          'business',
+                    requestNumber: $business->permit_number,
+                    residentName:  $business->owner_name,
+                    newStatus:     $validated['status'],
+                    notes:         $validated['notes'] ?? null,
+                    preferredDate: $business->preferred_date?->format('Y-m-d'),
+                ));
+            } catch (\Exception $e) {
+                logger()->warning('Business portal email failed: ' . $e->getMessage());
+            }
+        }
+
+        $bizPending = Business::where('source', 'portal')->whereIn('status', ['Pending', 'For Review'])->count();
+
+        return response()->json([
+            'success'    => true,
+            'message'    => "Status updated to {$validated['status']}.",
+            'biz_pending' => $bizPending,
+        ]);
+    }
+
     public function destroy(Request $request, DocumentAppointment $appointment)
     {
         $num = $appointment->appointment_number;
