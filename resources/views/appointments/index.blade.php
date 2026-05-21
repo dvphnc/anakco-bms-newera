@@ -987,6 +987,19 @@ $(document).ready(function () {
         });
     });
 
+    /* ── Open blotter status modal ───────────────────────────────────── */
+    $('#blotterTable').on('click', '.blotter-status-btn', function () {
+        _blotterId        = $(this).data('id');
+        _blotterOldStatus = $(this).data('status');
+        document.getElementById('blotterStatusModalNum').textContent         = $(this).data('num');
+        document.getElementById('blotterStatusModalComplainant').textContent = $(this).data('complainant');
+        document.getElementById('blotterStatusModalStatus').value            = _blotterOldStatus;
+        document.getElementById('blotterStatusModalNotes').value             = '';
+        document.getElementById('blotterStatusError').style.display          = 'none';
+        window._blotterStatusUrl = $(this).data('url');
+        document.getElementById('blotterStatusModal').style.display          = 'flex';
+    });
+
     /* ── Open blotter activate modal ──────────────────────────────────── */
     $('#blotterTable').on('click', '.blotter-activate-btn', function () {
         var $btn = $(this);
