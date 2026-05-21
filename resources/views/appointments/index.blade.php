@@ -686,6 +686,32 @@ $(document).ready(function () {
     switchTab(_activeTab);
     checkTabOverflow();
 
+    /* ── Select2 filters ────────────────────────────────────────── */
+    // Helper: temporarily reveal hidden panel so Select2 can measure width
+    function initS2(panelId, $el, placeholder) {
+        var $panel = $('#' + panelId);
+        var wasHidden = $panel.css('display') === 'none';
+        if (wasHidden) {
+            $panel.css({ visibility: 'hidden', display: '' });
+        }
+        $el.select2({
+            dropdownParent: $('body'),
+            allowClear:     true,
+            placeholder:    placeholder,
+            width:          '100%',
+            minimumResultsForSearch: Infinity,
+            language: { noResults: function () { return 'No matches'; } }
+        });
+        if (wasHidden) {
+            $panel.css({ visibility: '', display: 'none' });
+        }
+    }
+
+    initS2('panelDocuments', $('#docStatusFilter'), 'All statuses…');
+    initS2('panelDocuments', $('#docTypeFilter'),   'All document types…');
+    initS2('panelBusiness',  $('#bizStatusFilter'), 'All statuses…');
+    initS2('panelBlotter',   $('#blotterStatusFilter'), 'All statuses…');
+
     /* ── DataTable vars — declared early so switchTab typeof checks work ── */
     var docTable, bizTable, blotterTable;
 
@@ -738,8 +764,8 @@ $(document).ready(function () {
 
     window.resetDocFilters = function () {
         $('#docSearch').val('');
-        $('#docStatusFilter').val('');
-        $('#docTypeFilter').val('');
+        $('#docStatusFilter').val(null).trigger('change');
+        $('#docTypeFilter').val(null).trigger('change');
         docTable.ajax.reload();
     };
 
