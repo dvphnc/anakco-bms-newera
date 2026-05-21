@@ -80,122 +80,6 @@ unset($__errorArgs, $__bag); ?>
         </div>
 
         
-        <?php
-            /* Determine initial representative state:
-               A representative exists when requestor_name is set AND differs from the resident's own name.
-               On validation failure, respect old('is_representative'). */
-            $residentFullName  = $document->resident?->full_name ?? '';
-            $savedReqName      = $document->requestor_name ?? '';
-            $isRep             = old('is_representative') !== null
-                                    ? (bool) old('is_representative')
-                                    : ($savedReqName !== '' && $savedReqName !== $residentFullName);
-        ?>
-
-        <div class="form-section-title">Requestor / Processed By</div>
-
-        
-        <div class="form-group mb-3">
-            <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer" onclick="document.getElementById('isRepCheck').click()">
-                <input type="hidden" name="is_representative" value="0">
-                <input type="checkbox" name="is_representative" id="isRepCheck" value="1"
-                       style="width:17px;height:17px;accent-color:var(--navy);cursor:pointer;flex-shrink:0;pointer-events:none"
-                       <?php echo e($isRep ? 'checked' : ''); ?>>
-                <div style="pointer-events:none">
-                    <div style="font-size:14px;font-weight:500;color:var(--text)">A <strong>representative</strong> is picking up / requesting this document</div>
-                    <div style="font-size:12px;color:var(--text-muted);margin-top:1px">Check this if someone other than the resident collected the document (e.g. child, spouse, attorney).</div>
-                </div>
-            </div>
-        </div>
-
-        
-        <div id="selfPickupInfo" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(200,134,26,0.08);border:1px solid rgba(200,134,26,0.25);border-radius:var(--radius);margin-bottom:20px<?php echo e($isRep ? ';display:none!important' : ''); ?>">
-            <i class="fas fa-circle-check" style="color:var(--navy);font-size:14px"></i>
-            <span style="font-size:13px;color:var(--navy)">Will be picked up by: <strong id="selfPickupName"><?php echo e($residentFullName ?: 'the resident'); ?></strong></span>
-        </div>
-
-        
-        <div id="repPanel" style="<?php echo e($isRep ? '' : 'display:none;'); ?>margin-bottom:8px">
-            <div class="form-grid-2 mb-2" style="margin-top:16px">
-                <div class="form-group">
-                    <label class="form-label">Representative Name <span style="color:var(--crimson)">*</span></label>
-                    <input type="text" name="requestor_name" id="requestorName"
-                           class="form-control <?php $__errorArgs = ['requestor_name'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                           value="<?php echo e(old('requestor_name', $document->requestor_name)); ?>"
-                           placeholder="Full name of the person picking up">
-                    <?php $__errorArgs = ['requestor_name'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?><span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> <?php echo e($message); ?></span><?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Relationship to Resident <span style="color:var(--crimson)">*</span></label>
-                    <select name="requestor_relationship" id="requestorRelationship"
-                            class="form-control select2-rel <?php $__errorArgs = ['requestor_relationship'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>">
-                        <option value="">Select Relationship</option>
-                        <?php $__currentLoopData = $relationships; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($rel); ?>"
-                                <?php echo e(old('requestor_relationship', $document->requestor_relationship) === $rel ? 'selected' : ''); ?>>
-                                <?php echo e($rel); ?>
-
-                            </option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </select>
-                    <?php $__errorArgs = ['requestor_relationship'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?><span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> <?php echo e($message); ?></span><?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">
-                        Representative Contact
-                        <span class="help-icon" data-tippy-content="Optional — phone or email to notify the representative when the document is ready.">?</span>
-                    </label>
-                    <input type="text" name="requestor_contact"
-                           class="form-control <?php $__errorArgs = ['requestor_contact'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                           value="<?php echo e(old('requestor_contact', $document->requestor_contact)); ?>"
-                           placeholder="Phone or email (optional)">
-                    <?php $__errorArgs = ['requestor_contact'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?><span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> <?php echo e($message); ?></span><?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                </div>
-            </div>
-        </div>
-
-        
         <div class="form-section-title">Request Details</div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
@@ -365,60 +249,11 @@ unset($__errorArgs, $__bag); ?>
 </style>
 <script>
 (function () {
-    var repCheck = document.getElementById('isRepCheck');
-    var repPanel = document.getElementById('repPanel');
-    var selfInfo = document.getElementById('selfPickupInfo');
-    var selfName = document.getElementById('selfPickupName');
-    var resSel   = document.getElementById('resident_id');
-
-    function syncToggle() {
-        var checked = repCheck.checked;
-        repPanel.style.display = checked ? '' : 'none';
-        selfInfo.style.display = checked ? 'none' : '';
-    }
-
-    function syncResidentLabel() {
-        if (!resSel) return;
-        var opt = resSel.options[resSel.selectedIndex];
-        if (opt && opt.value) {
-            selfName.textContent = opt.text.split('—')[0].trim();
-        } else {
-            selfName.textContent = 'the resident';
-        }
-    }
-
-    repCheck.addEventListener('change', syncToggle);
-
-    if (resSel) {
-        $(resSel).on('select2:select',   syncResidentLabel);
-        $(resSel).on('select2:unselect', function () { selfName.textContent = 'the resident'; });
-        // Populate label from pre-selected option on page load
-        syncResidentLabel();
-    }
-
-    $('#requestorRelationship').select2({
-        placeholder: 'Select relationship',
-        allowClear: true,
-        minimumResultsForSearch: Infinity,
-        width: '100%'
-    });
-
-    document.getElementById('docEditForm').addEventListener('submit', function (e) {
-        if (repCheck.checked) {
-            var rName = document.querySelector('[name="requestor_name"]').value.trim();
-            var rRel  = document.querySelector('[name="requestor_relationship"]').value;
-            if (!rName || !rRel) {
-                e.preventDefault();
-                return;
-            }
-        }
+    document.getElementById('docEditForm').addEventListener('submit', function () {
         document.getElementById('docEditLabel').style.display   = 'none';
         document.getElementById('docEditSpinner').style.display = '';
         document.getElementById('docEditSubmitBtn').disabled = true;
     });
-
-    // Init
-    syncToggle();
 })();
 </script>
 <?php $__env->stopPush(); ?>
