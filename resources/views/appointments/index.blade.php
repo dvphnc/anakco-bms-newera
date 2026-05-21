@@ -558,7 +558,7 @@
         {{-- Header --}}
         <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
             <div style="display:flex;align-items:center;gap:9px">
-                <i class="fas fa-file-certificate" style="color:var(--gold);font-size:13px"></i>
+                <i class="fas fa-stamp" style="color:var(--gold);font-size:13px"></i>
                 <span style="font-size:13.5px;font-weight:700;color:#fff">Issue Business Permit</span>
             </div>
             <button onclick="closeBizIssueModal()"
@@ -645,7 +645,7 @@
             <div style="display:flex;justify-content:flex-end;gap:10px">
                 <button type="button" onclick="closeBizIssueModal()" class="btn btn-secondary">Cancel</button>
                 <button type="button" id="bizIssueSaveBtn" onclick="saveBizIssue()" class="btn btn-success">
-                    <i class="fas fa-file-certificate"></i> Issue Permit
+                    <i class="fas fa-stamp"></i> Issue Permit
                 </button>
             </div>
 
@@ -1502,7 +1502,7 @@ function saveBizIssue() {
     })
     .finally(function () {
         btn.disabled  = false;
-        btn.innerHTML = '<i class="fas fa-file-certificate"></i> Issue Permit';
+        btn.innerHTML = '<i class="fas fa-stamp"></i> Issue Permit';
     });
 }
 

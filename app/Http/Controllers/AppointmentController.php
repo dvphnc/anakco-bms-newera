@@ -329,7 +329,7 @@ class AppointmentController extends Controller
                                    class="btn btn-secondary btn-sm biz-viewpermit-btn"
                                    style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
                                    data-tippy-content="View Permit: '.e($b->permit_number).'">
-                                    <i class="fas fa-file-certificate"></i> View Permit
+                                    <i class="fas fa-stamp"></i> View Permit
                                 </a>';
                 } elseif (in_array($b->status, ['For Review', 'Pending'])) {
                     $issueBtn = '<button class="btn btn-success btn-sm biz-issue-btn"
