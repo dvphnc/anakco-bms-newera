@@ -144,6 +144,9 @@
             <a href="{{ route('portal.index') }}" class="btn btn-outline">
                 <i class="fas fa-home"></i> Back to Portal
             </a>
+            <a href="{{ route('portal.track') }}?ref={{ $number }}" class="btn btn-outline">
+                <i class="fas fa-magnifying-glass"></i> Track Status
+            </a>
             @if($type === 'blotter')
                 <a href="{{ route('portal.blotter') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> File Another Report
