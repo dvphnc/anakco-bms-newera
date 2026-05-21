@@ -255,44 +255,81 @@ body { background: #fff; }
     background: #fff; border: 1.5px solid #eceef3;
     border-radius: 16px; padding: 1.75rem 1.5rem;
     text-decoration: none; display: flex; flex-direction: column;
-    transition: border-color .25s, box-shadow .25s, transform .25s;
+    transition: border-color .3s ease, box-shadow .3s ease,
+                transform .3s cubic-bezier(.34,1.56,.64,1), background .3s ease;
     position: relative; overflow: hidden;
 }
+/* Colored top accent bar */
 .svc-card::before {
     content: ''; position: absolute; top: 0; left: 0;
     width: 100%; height: 3px; border-radius: 16px 16px 0 0;
-    opacity: 0; transition: opacity .25s;
+    opacity: 0; transition: opacity .3s ease;
 }
-.svc-card:hover { border-color: #d4dae8; box-shadow: 0 10px 36px rgba(13,33,68,.1); transform: translateY(-5px); }
-.svc-card:hover::before { opacity: 1; }
 .sc-navy::before  { background: var(--navy); }
 .sc-gold::before  { background: var(--gold); }
 .sc-green::before { background: #16a34a; }
 .sc-blue::before  { background: #2563eb; }
 .sc-red::before   { background: #dc2626; }
 .sc-teal::before  { background: #0e7490; }
+.svc-card:hover::before { opacity: 1; }
+
+/* ── Per-color hover: background tint + border + shadow ─────────── */
+.svc-card:hover { transform: translateY(-5px); }
+
+.sc-navy:hover  { background: rgba(13,33,68,.04);    border-color: rgba(13,33,68,.22);    box-shadow: 0 12px 36px rgba(13,33,68,.13); }
+.sc-gold:hover  { background: rgba(200,134,26,.06);  border-color: rgba(200,134,26,.35);  box-shadow: 0 12px 36px rgba(200,134,26,.15); }
+.sc-green:hover { background: rgba(22,163,74,.05);   border-color: rgba(22,163,74,.3);    box-shadow: 0 12px 36px rgba(22,163,74,.13); }
+.sc-blue:hover  { background: rgba(37,99,235,.05);   border-color: rgba(37,99,235,.28);   box-shadow: 0 12px 36px rgba(37,99,235,.13); }
+.sc-red:hover   { background: rgba(220,38,38,.05);   border-color: rgba(220,38,38,.28);   box-shadow: 0 12px 36px rgba(220,38,38,.13); }
+.sc-teal:hover  { background: rgba(14,116,144,.05);  border-color: rgba(14,116,144,.28);  box-shadow: 0 12px 36px rgba(14,116,144,.13); }
+
+/* ── Icon ────────────────────────────────────────────────────────── */
 .svc-icon {
     width: 52px; height: 52px; border-radius: 13px;
     display: flex; align-items: center; justify-content: center;
     font-size: 1.2rem; margin-bottom: 1.1rem; flex-shrink: 0;
-    transition: transform .25s;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1), background .3s ease;
 }
-.svc-card:hover .svc-icon { transform: scale(1.1) rotate(-3deg); }
-.sc-navy  .svc-icon { background: rgba(13,33,68,.07);  color: var(--navy); }
-.sc-gold  .svc-icon { background: rgba(200,134,26,.1); color: var(--gold); }
-.sc-green .svc-icon { background: rgba(22,163,74,.09); color: #16a34a; }
-.sc-blue  .svc-icon { background: rgba(37,99,235,.08); color: #2563eb; }
-.sc-red   .svc-icon { background: rgba(220,38,38,.07); color: #dc2626; }
-.sc-teal  .svc-icon { background: rgba(14,116,144,.07);color: #0e7490; }
-.svc-card h3 { font-size: .97rem; font-weight: 700; color: var(--navy); margin-bottom: .4rem; line-height: 1.3; }
+.svc-card:hover .svc-icon { transform: scale(1.12) rotate(-4deg); }
+
+.sc-navy  .svc-icon { background: rgba(13,33,68,.07);   color: var(--navy); }
+.sc-gold  .svc-icon { background: rgba(200,134,26,.1);  color: var(--gold); }
+.sc-green .svc-icon { background: rgba(22,163,74,.09);  color: #16a34a; }
+.sc-blue  .svc-icon { background: rgba(37,99,235,.08);  color: #2563eb; }
+.sc-red   .svc-icon { background: rgba(220,38,38,.07);  color: #dc2626; }
+.sc-teal  .svc-icon { background: rgba(14,116,144,.07); color: #0e7490; }
+
+/* Icon bg intensifies on hover */
+.sc-navy:hover  .svc-icon { background: rgba(13,33,68,.13); }
+.sc-gold:hover  .svc-icon { background: rgba(200,134,26,.2); }
+.sc-green:hover .svc-icon { background: rgba(22,163,74,.16); }
+.sc-blue:hover  .svc-icon { background: rgba(37,99,235,.15); }
+.sc-red:hover   .svc-icon { background: rgba(220,38,38,.14); }
+.sc-teal:hover  .svc-icon { background: rgba(14,116,144,.14); }
+
+/* ── Title & link color shift ────────────────────────────────────── */
+.svc-card h3 { font-size: .97rem; font-weight: 700; color: var(--navy); margin-bottom: .4rem; line-height: 1.3; transition: color .3s ease; }
 .svc-card p  { font-size: .82rem; color: #6b7280; line-height: 1.7; flex: 1; margin-bottom: 1.1rem; }
+
+.sc-navy:hover  h3 { color: var(--navy); }
+.sc-gold:hover  h3 { color: var(--gold); }
+.sc-green:hover h3 { color: #16a34a; }
+.sc-blue:hover  h3 { color: #2563eb; }
+.sc-red:hover   h3 { color: #dc2626; }
+.sc-teal:hover  h3 { color: #0e7490; }
+
 .svc-link {
     display: inline-flex; align-items: center; gap: 5px;
     font-size: .75rem; font-weight: 700; color: var(--navy);
     text-transform: uppercase; letter-spacing: .06em;
-    transition: gap .2s, color .2s;
+    transition: gap .25s, color .3s ease;
 }
-.svc-card:hover .svc-link { gap: 9px; color: var(--gold); }
+.sc-navy:hover  .svc-link { gap: 9px; color: var(--navy); }
+.sc-gold:hover  .svc-link { gap: 9px; color: var(--gold); }
+.sc-green:hover .svc-link { gap: 9px; color: #16a34a; }
+.sc-blue:hover  .svc-link { gap: 9px; color: #2563eb; }
+.sc-red:hover   .svc-link { gap: 9px; color: #dc2626; }
+.sc-teal:hover  .svc-link { gap: 9px; color: #0e7490; }
 .svc-link i { font-size: .58rem; }
 
 /* ─────────────────────────────────────────────
