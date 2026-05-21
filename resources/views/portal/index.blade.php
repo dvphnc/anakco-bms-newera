@@ -256,14 +256,15 @@ body { background: #fff; }
     border-radius: 16px; padding: 1.75rem 1.5rem;
     text-decoration: none; display: flex; flex-direction: column;
     transition: border-color .3s ease, box-shadow .3s ease,
-                transform .3s cubic-bezier(.34,1.56,.64,1), background .3s ease;
+                transform .3s cubic-bezier(.34,1.56,.64,1);
     position: relative; overflow: hidden;
 }
-/* Colored top accent bar */
+
+/* ── Colored top accent bar ──────────────────────────────────────── */
 .svc-card::before {
     content: ''; position: absolute; top: 0; left: 0;
     width: 100%; height: 3px; border-radius: 16px 16px 0 0;
-    opacity: 0; transition: opacity .3s ease;
+    opacity: 0; transition: opacity .3s ease; z-index: 1;
 }
 .sc-navy::before  { background: var(--navy); }
 .sc-gold::before  { background: var(--gold); }
@@ -273,25 +274,45 @@ body { background: #fff; }
 .sc-teal::before  { background: #0e7490; }
 .svc-card:hover::before { opacity: 1; }
 
-/* ── Per-color hover: background tint + border + shadow ─────────── */
-.svc-card:hover { transform: translateY(-5px); }
+/* ── Color splash — blooms from icon corner on hover ─────────────── */
+.svc-card::after {
+    content: ''; position: absolute;
+    top: -30%; left: -20%;
+    width: 140%; height: 140%;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0);
+    transform-origin: 25% 25%;
+    transition: transform .55s cubic-bezier(.22,1,.36,1), opacity .45s ease;
+    pointer-events: none; z-index: 0;
+}
+.sc-navy::after  { background: radial-gradient(ellipse at center, rgba(13,33,68,.09)  0%, transparent 70%); }
+.sc-gold::after  { background: radial-gradient(ellipse at center, rgba(200,134,26,.13) 0%, transparent 70%); }
+.sc-green::after { background: radial-gradient(ellipse at center, rgba(22,163,74,.11)  0%, transparent 70%); }
+.sc-blue::after  { background: radial-gradient(ellipse at center, rgba(37,99,235,.10)  0%, transparent 70%); }
+.sc-red::after   { background: radial-gradient(ellipse at center, rgba(220,38,38,.10)  0%, transparent 70%); }
+.sc-teal::after  { background: radial-gradient(ellipse at center, rgba(14,116,144,.10) 0%, transparent 70%); }
 
-.sc-navy:hover  { background: rgba(13,33,68,.04);    border-color: rgba(13,33,68,.22);    box-shadow: 0 12px 36px rgba(13,33,68,.13); }
-.sc-gold:hover  { background: rgba(200,134,26,.06);  border-color: rgba(200,134,26,.35);  box-shadow: 0 12px 36px rgba(200,134,26,.15); }
-.sc-green:hover { background: rgba(22,163,74,.05);   border-color: rgba(22,163,74,.3);    box-shadow: 0 12px 36px rgba(22,163,74,.13); }
-.sc-blue:hover  { background: rgba(37,99,235,.05);   border-color: rgba(37,99,235,.28);   box-shadow: 0 12px 36px rgba(37,99,235,.13); }
-.sc-red:hover   { background: rgba(220,38,38,.05);   border-color: rgba(220,38,38,.28);   box-shadow: 0 12px 36px rgba(220,38,38,.13); }
-.sc-teal:hover  { background: rgba(14,116,144,.05);  border-color: rgba(14,116,144,.28);  box-shadow: 0 12px 36px rgba(14,116,144,.13); }
+.svc-card:hover::after { opacity: 1; transform: scale(1); }
+
+/* ── Hover lift + matching shadow ───────────────────────────────── */
+.svc-card:hover { transform: translateY(-5px); border-color: #d4dae8; }
+.sc-navy:hover  { box-shadow: 0 12px 36px rgba(13,33,68,.14); }
+.sc-gold:hover  { box-shadow: 0 12px 36px rgba(200,134,26,.18); }
+.sc-green:hover { box-shadow: 0 12px 36px rgba(22,163,74,.15); }
+.sc-blue:hover  { box-shadow: 0 12px 36px rgba(37,99,235,.15); }
+.sc-red:hover   { box-shadow: 0 12px 36px rgba(220,38,38,.15); }
+.sc-teal:hover  { box-shadow: 0 12px 36px rgba(14,116,144,.15); }
 
 /* ── Icon ────────────────────────────────────────────────────────── */
 .svc-icon {
     width: 52px; height: 52px; border-radius: 13px;
     display: flex; align-items: center; justify-content: center;
     font-size: 1.2rem; margin-bottom: 1.1rem; flex-shrink: 0;
-    transition: transform .3s cubic-bezier(.34,1.56,.64,1), background .3s ease;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+    position: relative; z-index: 1;
 }
-.svc-card:hover .svc-icon { transform: scale(1.12) rotate(-4deg); }
-
+.svc-card:hover .svc-icon { transform: scale(1.1) rotate(-3deg); }
 .sc-navy  .svc-icon { background: rgba(13,33,68,.07);   color: var(--navy); }
 .sc-gold  .svc-icon { background: rgba(200,134,26,.1);  color: var(--gold); }
 .sc-green .svc-icon { background: rgba(22,163,74,.09);  color: #16a34a; }
@@ -299,37 +320,17 @@ body { background: #fff; }
 .sc-red   .svc-icon { background: rgba(220,38,38,.07);  color: #dc2626; }
 .sc-teal  .svc-icon { background: rgba(14,116,144,.07); color: #0e7490; }
 
-/* Icon bg intensifies on hover */
-.sc-navy:hover  .svc-icon { background: rgba(13,33,68,.13); }
-.sc-gold:hover  .svc-icon { background: rgba(200,134,26,.2); }
-.sc-green:hover .svc-icon { background: rgba(22,163,74,.16); }
-.sc-blue:hover  .svc-icon { background: rgba(37,99,235,.15); }
-.sc-red:hover   .svc-icon { background: rgba(220,38,38,.14); }
-.sc-teal:hover  .svc-icon { background: rgba(14,116,144,.14); }
-
-/* ── Title & link color shift ────────────────────────────────────── */
-.svc-card h3 { font-size: .97rem; font-weight: 700; color: var(--navy); margin-bottom: .4rem; line-height: 1.3; transition: color .3s ease; }
-.svc-card p  { font-size: .82rem; color: #6b7280; line-height: 1.7; flex: 1; margin-bottom: 1.1rem; }
-
-.sc-navy:hover  h3 { color: var(--navy); }
-.sc-gold:hover  h3 { color: var(--gold); }
-.sc-green:hover h3 { color: #16a34a; }
-.sc-blue:hover  h3 { color: #2563eb; }
-.sc-red:hover   h3 { color: #dc2626; }
-.sc-teal:hover  h3 { color: #0e7490; }
-
+/* ── Text (keep original colors, just lift above splash) ─────────── */
+.svc-card h3 { font-size: .97rem; font-weight: 700; color: var(--navy); margin-bottom: .4rem; line-height: 1.3; position: relative; z-index: 1; }
+.svc-card p  { font-size: .82rem; color: #6b7280; line-height: 1.7; flex: 1; margin-bottom: 1.1rem; position: relative; z-index: 1; }
 .svc-link {
     display: inline-flex; align-items: center; gap: 5px;
     font-size: .75rem; font-weight: 700; color: var(--navy);
     text-transform: uppercase; letter-spacing: .06em;
-    transition: gap .25s, color .3s ease;
+    transition: gap .2s, color .2s;
+    position: relative; z-index: 1;
 }
-.sc-navy:hover  .svc-link { gap: 9px; color: var(--navy); }
-.sc-gold:hover  .svc-link { gap: 9px; color: var(--gold); }
-.sc-green:hover .svc-link { gap: 9px; color: #16a34a; }
-.sc-blue:hover  .svc-link { gap: 9px; color: #2563eb; }
-.sc-red:hover   .svc-link { gap: 9px; color: #dc2626; }
-.sc-teal:hover  .svc-link { gap: 9px; color: #0e7490; }
+.svc-card:hover .svc-link { gap: 9px; color: var(--gold); }
 .svc-link i { font-size: .58rem; }
 
 /* ─────────────────────────────────────────────
