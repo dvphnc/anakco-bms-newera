@@ -341,7 +341,7 @@ class AppointmentController extends Controller
                                          data-owner="'.e($b->owner_name).'"
                                          data-appt="'.($b->preferred_date ? \Carbon\Carbon::parse($b->preferred_date)->format('M d, Y') : '—').'"
                                          data-url="'.$issueUrl.'">
-                                    <i class="fas fa-file-certificate"></i> Issue Permit
+                                    <i class="fas fa-stamp"></i> Issue Permit
                                 </button>';
                 } else {
                     $issueBtn = '';
