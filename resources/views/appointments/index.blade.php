@@ -1305,6 +1305,7 @@ function saveAptStatus() {
                 });
             }
             bmsToast(res.data.message || 'Status updated.', 'success');
+            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
             $('#appointmentsTable').DataTable().ajax.reload(null, false);
         })
         .catch(function (err) {
@@ -1421,6 +1422,7 @@ function saveBlotterStatus() {
                 }
             }
             bmsToast(res.data.message || 'Status updated.', 'success');
+            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
             $('#blotterTable').DataTable().ajax.reload(null, false);
         })
         .catch(function (err) {
