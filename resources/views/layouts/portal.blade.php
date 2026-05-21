@@ -829,6 +829,10 @@
 </head>
 <body>
 
+{{-- Scroll progress bar --}}
+<div id="scroll-progress" aria-hidden="true"></div>
+
+
 {{-- ═══ SPLASH SCREEN ═══ --}}
 <div id="splash" role="status" aria-label="Loading portal">
     <div class="splash-coin">
@@ -1196,4 +1200,26 @@ document.addEventListener('DOMContentLoaded', function () {
     var splash = document.getElementById('splash');
     if (!splash) return;
     setTimeout(function () {
-        splash.classLis
+        splash.classList.add('splash-hide');
+        setTimeout(function () { splash.remove(); }, 700);
+    }, 2800);
+})();
+</script>
+@stack('scripts')
+
+<script>
+// ── Scroll progress bar ─────────────────────────────────────────────
+(function () {
+    var bar = document.getElementById('scroll-progress');
+    if (!bar) return;
+    function updateProgress() {
+        var scrollTop    = window.scrollY || document.documentElement.scrollTop;
+        var docHeight    = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var pct          = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        bar.style.width  = Math.min(pct, 100) + '%';
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+})();
+</script>
+</bo
