@@ -160,9 +160,26 @@
         size: letter;
         margin: 0.5in 0.7in;
     }
+
+    /* Hide everything on the page first */
+    body * { visibility: hidden; }
+
+    /* Then show only the certificate and its children */
+    #certificate, #certificate * { visibility: visible; }
+
+    /* Pull the certificate to the very top-left of the page,
+       bypassing any sidebar offsets or layout margins */
+    #certificate {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
     .no-print { display: none !important; }
     .print-only { display: block !important; }
-    header, nav, footer, .sidebar, .topbar, .page-header { display: none !important; }
 }
 .print-only { display: none; }
 
