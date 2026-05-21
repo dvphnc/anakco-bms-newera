@@ -684,20 +684,25 @@
 .btn-success:disabled { opacity:.65; cursor:not-allowed; }
 
 #filterPanel .select2-container,
-#bizFilterPanel .select2-container { width: 100% !important; }
+#bizFilterPanel .select2-container,
+#blotterFilterPanel .select2-container { width: 100% !important; }
 #filterPanel .select2-container--default .select2-selection--single,
 #filterPanel .select2-container--default .select2-selection--multiple,
 #bizFilterPanel .select2-container--default .select2-selection--single,
-#bizFilterPanel .select2-container--default .select2-selection--multiple {
+#bizFilterPanel .select2-container--default .select2-selection--multiple,
+#blotterFilterPanel .select2-container--default .select2-selection--single,
+#blotterFilterPanel .select2-container--default .select2-selection--multiple {
     border: 1px solid var(--border); border-radius: var(--radius-sm);
     background: var(--surface); min-height: 38px;
 }
 #filterPanel .select2-container--default .select2-selection--single,
-#bizFilterPanel .select2-container--default .select2-selection--single {
+#bizFilterPanel .select2-container--default .select2-selection--single,
+#blotterFilterPanel .select2-container--default .select2-selection--single {
     padding: 0 32px 0 10px; display: flex; align-items: center;
 }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__rendered,
-#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__rendered {
+#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__rendered,
+#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: var(--text); font-size: 13.5px; padding: 0;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal;
 }
