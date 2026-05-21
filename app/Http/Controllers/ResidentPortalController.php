@@ -30,18 +30,30 @@ class ResidentPortalController extends Controller
 
     public function store(Request $request)
     {
+        $isRep = $request->boolean('is_representative');
+
         $validated = $request->validate([
-            'resident_name'  => 'required|string|max:255',
-            'contact_number' => 'required|string|max:20',
-            'email'          => 'nullable|email|max:255',
-            'document_type'  => 'required|string',
-            'purpose'        => 'nullable|string|max:500',
-            'preferred_date' => 'required|date|after:today',
+            'resident_name'          => 'required|string|max:255',
+            'contact_number'         => 'required|string|max:20',
+            'email'                  => 'nullable|email|max:255',
+            'document_type'          => 'required|string',
+            'purpose'                => 'nullable|string|max:500',
+            'preferred_date'         => 'required|date|after:today',
+            'requestor_name'         => $isRep ? 'required|string|max:255' : 'nullable|string|max:255',
+            'requestor_relationship' => $isRep ? 'required|string|max:100' : 'nullable|string|max:100',
+            'requestor_contact'      => 'nullable|string|max:255',
         ]);
 
         $validated['appointment_number'] = DocumentAppointment::generateNumber();
         $validated['status']             = 'Pending';
         $validated['source']             = 'portal';
+
+        // Clear requestor fields if not a representative submission
+        if (! $isRep) {
+            $validated['requestor_name']         = null;
+            $validated['requestor_relationship'] = null;
+            $validated['requestor_contact']      = null;
+        }
 
         $appointment = DocumentAppointment::create($validated);
 

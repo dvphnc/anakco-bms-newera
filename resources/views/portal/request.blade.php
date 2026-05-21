@@ -293,6 +293,33 @@
         }
     }
 
+    /* ── Representative checkbox toggle ── */
+    document.addEventListener('DOMContentLoaded', function () {
+        var repCheck  = document.getElementById('isRepCheck');
+        var repHidden = document.getElementById('isRepHidden');
+        var repFields = document.getElementById('repFields');
+        var repToggle = document.getElementById('repToggle');
+
+        function syncRep() {
+            var checked = repCheck.checked;
+            repHidden.value = checked ? '1' : '0';
+            repFields.style.display = checked ? '' : 'none';
+            repToggle.style.borderColor = checked ? 'var(--navy)' : '#e5e7eb';
+            repToggle.style.background  = checked ? 'rgba(13,33,68,.04)' : '#f9fafb';
+            // Clear errors on hide
+            if (!checked) {
+                ['requestor_name','requestor_relationship','requestor_contact'].forEach(function (f) {
+                    var el = document.getElementById('err-' + f);
+                    if (el) { el.style.display = 'none'; el.textContent = ''; }
+                    var inp = document.getElementById(f);
+                    if (inp) inp.style.borderColor = '';
+                });
+            }
+        }
+        repCheck.addEventListener('change', syncRep);
+        syncRep(); // run on load
+    });
+
     /* ── localStorage pre-fill ── */
     document.addEventListener('DOMContentLoaded', function () {
         var name    = localStorage.getItem(LS_NAME);
