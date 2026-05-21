@@ -180,15 +180,17 @@
                 <input type="text" id="blotterSearch" class="apt-search"
                        placeholder="Complainant, case no., incident type…">
             </div>
-            <select id="blotterStatusFilter" class="apt-select" style="min-width:145px">
-                <option value="">All statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="Active">Active</option>
-                <option value="Under Investigation">Under Investigation</option>
-                <option value="Mediated">Mediated</option>
-                <option value="Settled">Settled</option>
-                <option value="Closed">Closed</option>
-            </select>
+            <div style="min-width:150px">
+                <select id="blotterStatusFilter">
+                    <option value=""></option>
+                    <option value="Pending">Pending</option>
+                    <option value="Active">Active</option>
+                    <option value="Under Investigation">Under Investigation</option>
+                    <option value="Mediated">Mediated</option>
+                    <option value="Settled">Settled</option>
+                    <option value="Closed">Closed</option>
+                </select>
+            </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="resetBlotterFilters()">
                 <i class="fas fa-xmark"></i> Reset
             </button>
@@ -603,6 +605,47 @@
 }
 .btn-success { background:#16a34a;color:#fff;border-color:#16a34a; }
 .btn-success:disabled { opacity:.65;cursor:not-allowed; }
+
+/* ── Select2 inside apt-toolbar ── */
+.apt-toolbar .select2-container { width: 100% !important; }
+.apt-toolbar .select2-container--default .select2-selection--single {
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    padding: 0 32px 0 10px;
+}
+.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    padding: 0;
+    line-height: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: var(--text-subtle);
+    font-size: 13px;
+}
+.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 34px;
+    top: 0;
+    right: 6px;
+}
+.apt-toolbar .select2-container--default.select2-container--open .select2-selection--single {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 2px rgba(13,33,68,.1);
+}
+.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__clear {
+    font-size: 16px;
+    line-height: 1;
+    color: var(--text-subtle);
+    margin-right: 4px;
+}
 </style>
 
 <script>
