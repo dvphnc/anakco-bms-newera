@@ -116,11 +116,13 @@ class AppointmentController extends Controller
                 ->make(true);
         }
 
-        $statuses      = DocumentAppointment::$statuses;
-        $documentTypes = DocumentAppointment::$documentTypes;
-        $businessTypes = Business::distinct()->where('source', 'portal')->pluck('business_type')->sort()->values()->toArray();
+        $statuses       = DocumentAppointment::$statuses;
+        $documentTypes  = DocumentAppointment::$documentTypes;
+        $businessTypes  = Business::distinct()->where('source', 'portal')->pluck('business_type')->sort()->values()->toArray();
+        $incidentTypes  = BlotterCase::distinct()->where('source', 'portal')->pluck('incident_type')->sort()->values()->toArray();
+        $blotterPending = BlotterCase::where('source', 'portal')->where('status', 'Pending')->count();
 
-        return view('appointments.index', compact('statuses', 'documentTypes', 'businessTypes'));
+        return view('appointments.index', compact('statuses', 'documentTypes', 'businessTypes', 'incidentTypes', 'blotterPending'));
     }
 
     public function updateStatus(Request $request, DocumentAppointment $appointment)

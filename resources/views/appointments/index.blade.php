@@ -28,9 +28,9 @@
     $totalCount    = \App\Models\DocumentAppointment::count();
     $releasedCount = $aptCounts['Released'] ?? 0;
     $readyCount    = $aptCounts['Ready']    ?? 0;
-    $bizPending    = \App\Models\Business::where('source','portal')->whereIn('status',['Pending','For Review'])->count();
+    $bizPending     = \App\Models\Business::where('source','portal')->whereIn('status',['Pending','For Review'])->count();
 @endphp
-<div class="grid-4 mb-6" style="grid-template-columns:repeat(5,1fr)">
+<div class="grid-4 mb-6" style="grid-template-columns:repeat(6,1fr)">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-file-lines"></i></div>
         <div class="stat-info">
