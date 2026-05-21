@@ -196,8 +196,16 @@ class AppointmentController extends Controller
     {
         return response()->json([
             'documents' => DocumentAppointment::where('status', 'Pending')->where('source', 'portal')->count(),
-            'blotter'   => BlotterCase::where('source', 'portal')->whereNotIn('status', ['Settled', 'Closed'])->count(),
-            'business'  => Business::where('source', 'portal')->whereIn('status', ['Pending', 'For Review'])->count(),
+            // Only count blotter cases that have been activated (not still sitting as Pending in Appointments)
+            'blotter'   => BlotterCase::where('source', 'portal')
+                ->where('status', '!=', 'Pending')
+                ->whereNotIn('status', ['Settled', 'Closed'])
+                ->count(),
+            // Only count business permits that have actually been issued (permit_date set)
+            'business'  => Business::where('source', 'portal')
+                ->whereNotNull('permit_date')
+                ->where('status', 'Active')
+                ->count(),
         ]);
     }
 
