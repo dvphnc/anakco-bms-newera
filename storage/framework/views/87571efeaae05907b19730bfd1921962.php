@@ -1545,7 +1545,7 @@ function saveBizStatus() {
 }
 
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { closeAptModal(); closeConvertModal(); closeBizModal(); closeBizIssueModal(); closeBlotterActivateModal(); }
+    if (e.key === 'Escape') { closeAptModal(); closeConvertModal(); closeBizModal(); closeBizIssueModal(); closeBlotterActivateModal(); closeBlotterStatusModal(); }
 });
 </script>
 <?php $__env->stopPush(); ?>
