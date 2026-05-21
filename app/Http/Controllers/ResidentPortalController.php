@@ -227,44 +227,107 @@ class ResidentPortalController extends Controller
 
     public function trackLookup(Request $request)
     {
-        $number      = strtoupper(trim($request->input('number', '')));
-        $appointment = $number
-            ? DocumentAppointment::where('appointment_number', $number)->first()
-            : null;
+        $number = strtoupper(trim($request->input('number', '')));
+        if (! $number) return response()->json(['found' => false]);
 
-        if (! $appointment) {
-            return response()->json(['found' => false]);
-        }
+        [$type, $record] = $this->resolveTrackRecord($number);
 
+        if (! $record) return response()->json(['found' => false]);
+
+        return response()->json(match ($type) {
+            'document' => $this->trackDocumentPayload($record),
+            'business' => $this->trackBusinessPayload($record),
+            'blotter'  => $this->trackBlotterPayload($record),
+        });
+    }
+
+    private function trackDocumentPayload(DocumentAppointment $a): array
+    {
         $steps     = ['Pending', 'Confirmed', 'Processing', 'Ready', 'Released'];
-        $stepIndex = array_search($appointment->status, $steps);
+        $stepIndex = array_search($a->status, $steps);
 
-        $logs = $appointment->statusLogs->map(fn ($l) => [
-            'from'       => $l->from_status,
-            'to'         => $l->to_status,
-            'by'         => $l->changed_by,
-            'note'       => $l->note,
-            'date'       => $l->created_at->format('M d, Y'),
-            'time'       => $l->created_at->format('g:i A'),
+        $logs = $a->statusLogs->map(fn ($l) => [
+            'from' => $l->from_status,
+            'to'   => $l->to_status,
+            'by'   => $l->changed_by,
+            'note' => $l->note,
+            'date' => $l->created_at->format('M d, Y'),
+            'time' => $l->created_at->format('g:i A'),
         ]);
 
-        return response()->json([
+        return [
             'found'              => true,
-            'appointment_number' => $appointment->appointment_number,
-            'resident_name'      => $appointment->resident_name,
-            'document_type'      => $appointment->document_type,
-            'preferred_date'     => $appointment->preferred_date->format('F j, Y'),
-            'purpose'            => $appointment->purpose,
-            'notes'              => $appointment->notes,
-            'processed_by'       => $appointment->processed_by,
-            'released_at'        => $appointment->released_at?->format('F j, Y g:i A'),
-            'created_at'         => $appointment->created_at->format('M d, Y g:i A'),
-            'updated_at'         => $appointment->updated_at->format('M d, Y g:i A'),
-            'status'             => $appointment->status,
-            'cancelled'          => $appointment->status === 'Cancelled',
+            'type'               => 'document',
+            'reference_number'   => $a->appointment_number,
+            'resident_name'      => $a->resident_name,
+            'document_type'      => $a->document_type,
+            'preferred_date'     => $a->preferred_date?->format('F j, Y'),
+            'purpose'            => $a->purpose,
+            'notes'              => $a->notes,
+            'processed_by'       => $a->processed_by,
+            'released_at'        => $a->released_at?->format('F j, Y g:i A'),
+            'created_at'         => $a->created_at->format('M d, Y g:i A'),
+            'updated_at'         => $a->updated_at->format('M d, Y g:i A'),
+            'status'             => $a->status,
+            'cancelled'          => $a->status === 'Cancelled',
             'step_index'         => $stepIndex === false ? -1 : (int) $stepIndex,
             'steps'              => $steps,
             'logs'               => $logs,
-        ]);
+        ];
+    }
+
+    private function trackBusinessPayload(Business $b): array
+    {
+        $steps     = ['Pending', 'For Review', 'Active'];
+        $stepIndex = array_search($b->status, $steps);
+
+        return [
+            'found'            => true,
+            'type'             => 'business',
+            'reference_number' => $b->permit_number,
+            'owner_name'       => $b->owner_name,
+            'business_name'    => $b->business_name,
+            'business_type'    => $b->business_type,
+            'business_address' => $b->business_address,
+            'appointment_date' => $b->preferred_date?->format('F j, Y'),
+            'permit_date'      => $b->permit_date?->format('F j, Y'),
+            'expiry_date'      => $b->expiry_date?->format('F j, Y'),
+            'created_at'       => $b->created_at->format('M d, Y g:i A'),
+            'updated_at'       => $b->updated_at->format('M d, Y g:i A'),
+            'status'           => $b->status,
+            'cancelled'        => $b->status === 'Cancelled',
+            'step_index'       => $stepIndex === false ? -1 : (int) $stepIndex,
+            'steps'            => $steps,
+            'logs'             => [],
+        ];
+    }
+
+    private function trackBlotterPayload(BlotterCase $c): array
+    {
+        $steps     = ['Pending', 'Active', 'Settled'];
+        $stepIndex = array_search($c->status, $steps);
+        // Treat all closure-type statuses as past "Settled"
+        if (in_array($c->status, ['Closed', 'Referred to Higher Authority', 'Mediated'])) {
+            $stepIndex = 2;
+        }
+
+        return [
+            'found'              => true,
+            'type'               => 'blotter',
+            'reference_number'   => $c->case_number,
+            'complainant_name'   => $c->complainant_name,
+            'incident_type'      => $c->incident_type,
+            'incident_date'      => $c->incident_date?->format('F j, Y'),
+            'incident_location'  => $c->incident_location,
+            'respondent_name'    => $c->respondent_name,
+            'resolution_notes'   => $c->resolution_notes,
+            'created_at'         => $c->created_at->format('M d, Y g:i A'),
+            'updated_at'         => $c->updated_at->format('M d, Y g:i A'),
+            'status'             => $c->status,
+            'cancelled'          => $c->status === 'Closed',
+            'step_index'         => $stepIndex === false ? 0 : (int) $stepIndex,
+            'steps'              => $steps,
+            'logs'               => [],
+        ];
     }
 }
