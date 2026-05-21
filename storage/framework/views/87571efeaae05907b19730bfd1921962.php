@@ -1,8 +1,7 @@
-@extends('layouts.app')
-@section('title', 'Portal Appointments')
-@section('page-title', 'Portal Appointments')
-@section('page-subtitle', 'Document requests & business permit appointments from the Resident Portal')
-@section('content')
+<?php $__env->startSection('title', 'Portal Appointments'); ?>
+<?php $__env->startSection('page-title', 'Portal Appointments'); ?>
+<?php $__env->startSection('page-subtitle', 'Document requests & business permit appointments from the Resident Portal'); ?>
+<?php $__env->startSection('content'); ?>
 
 <div class="page-header">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -12,14 +11,14 @@
         </div>
     </div>
     <div class="page-actions">
-        <a href="{{ route('portal.index') }}" class="btn btn-secondary" target="_blank">
+        <a href="<?php echo e(route('portal.index')); ?>" class="btn btn-secondary" target="_blank">
             <i class="fas fa-external-link-alt"></i> View Portal
         </a>
     </div>
 </div>
 
-{{-- Stat cards --}}
-@php
+
+<?php
     $aptCounts = [];
     foreach($statuses as $s) {
         $aptCounts[$s] = \App\Models\DocumentAppointment::where('status', $s)->count();
@@ -29,57 +28,55 @@
     $releasedCount = $aptCounts['Released'] ?? 0;
     $readyCount    = $aptCounts['Ready']    ?? 0;
     $bizPending     = \App\Models\Business::where('source','portal')->whereIn('status',['Pending','For Review'])->count();
-@endphp
+?>
 <div class="grid-4 mb-6" style="grid-template-columns:repeat(6,1fr)">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-file-lines"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statApptTotal">{{ number_format($totalCount) }}</div>
+            <div class="stat-number" id="statApptTotal"><?php echo e(number_format($totalCount)); ?></div>
             <div class="stat-label">Document Requests</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Pending')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-hourglass-half"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statAptPending">{{ number_format($pendingCount) }}</div>
+            <div class="stat-number" id="statAptPending"><?php echo e(number_format($pendingCount)); ?></div>
             <div class="stat-label">Doc. Pending</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Ready')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-box-open"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statAptReady">{{ number_format($readyCount) }}</div>
+            <div class="stat-number" id="statAptReady"><?php echo e(number_format($readyCount)); ?></div>
             <div class="stat-label">Ready for Pick-up</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Released')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statAptReleased">{{ number_format($releasedCount) }}</div>
+            <div class="stat-number" id="statAptReleased"><?php echo e(number_format($releasedCount)); ?></div>
             <div class="stat-label">Released</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="bizQuickFilter('bizStatusFilter','Pending')">
         <div class="stat-icon" style="background:rgba(200,134,26,0.10);color:var(--gold)"><i class="fas fa-store"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statBizPending">{{ number_format($bizPending) }}</div>
+            <div class="stat-number" id="statBizPending"><?php echo e(number_format($bizPending)); ?></div>
             <div class="stat-label">Biz. Permit Pending</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="blotterQuickFilter('blotterStatusFilter','Pending')">
         <div class="stat-icon" style="background:rgba(220,38,38,0.08);color:#dc2626"><i class="fas fa-shield-halved"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statBlotterPending">{{ number_format($blotterPending) }}</div>
+            <div class="stat-number" id="statBlotterPending"><?php echo e(number_format($blotterPending)); ?></div>
             <div class="stat-label">Blotter Pending</div>
         </div>
     </div>
 </div>
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 1 — DOCUMENT REQUEST APPOINTMENTS
-════════════════════════════════════════════════════════════ --}}
 
-{{-- Filter Bar (Document) --}}
+
+
 <div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('appointments')">
         <div style="display:flex;align-items:center;gap:10px">
@@ -106,18 +103,18 @@
                     <label class="form-label">Status</label>
                     <select id="statusFilter">
                         <option value=""></option>
-                        @foreach($statuses as $s)
-                            <option value="{{ $s }}">{{ $s }}</option>
-                        @endforeach
+                        <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                 </div>
                 <div class="form-group" style="grid-column:span 2">
                     <label class="form-label">Document Type</label>
                     <select id="docTypeFilter">
                         <option value=""></option>
-                        @foreach($documentTypes as $dt)
-                            <option value="{{ $dt }}">{{ $dt }}</option>
-                        @endforeach
+                        <?php $__currentLoopData = $documentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($dt); ?>"><?php echo e($dt); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                 </div>
             </div>
@@ -129,7 +126,7 @@
         </div>
     </div>
 
-    {{-- Document Appointments Table --}}
+    
     <div class="table-responsive">
         <table id="appointmentsTable" style="width:100%">
             <thead>
@@ -148,9 +145,7 @@
     </div>
 </div>
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 2 — BUSINESS PERMIT APPOINTMENTS
-════════════════════════════════════════════════════════════ --}}
+
 
 <div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('biz')">
@@ -188,9 +183,9 @@
                     <label class="form-label">Business Type</label>
                     <select id="bizTypeFilter">
                         <option value=""></option>
-                        @foreach($businessTypes as $bt)
-                            <option value="{{ $bt }}">{{ $bt }}</option>
-                        @endforeach
+                        <?php $__currentLoopData = $businessTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($bt); ?>"><?php echo e($bt); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                 </div>
             </div>
@@ -202,7 +197,7 @@
         </div>
     </div>
 
-    {{-- Business Appointments Table --}}
+    
     <div class="table-responsive">
         <table id="bizTable" style="width:100%">
             <thead>
@@ -222,9 +217,7 @@
     </div>
 </div>
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 3 — BLOTTER REPORTS FROM PORTAL
-════════════════════════════════════════════════════════════ --}}
+
 
 <div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('blotter')">
@@ -264,9 +257,9 @@
                     <label class="form-label">Incident Type</label>
                     <select id="blotterTypeFilter">
                         <option value=""></option>
-                        @foreach($incidentTypes as $it)
-                            <option value="{{ $it }}">{{ $it }}</option>
-                        @endforeach
+                        <?php $__currentLoopData = $incidentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $it): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($it); ?>"><?php echo e($it); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                 </div>
             </div>
@@ -296,11 +289,9 @@
     </div>
 </div>
 
-{{-- ═══════════════════════════════════════════════════════════
-     MODALS
-════════════════════════════════════════════════════════════ --}}
 
-{{-- Issue Document Modal --}}
+
+
 <div id="aptConvertModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -370,7 +361,7 @@
     </div>
 </div>
 
-{{-- Document Appointment Status Modal --}}
+
 <div id="aptStatusModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -396,9 +387,9 @@
             <div class="form-group">
                 <label class="form-label">New Status <span style="color:var(--crimson)">*</span></label>
                 <select id="aptModalStatus" class="form-control">
-                    @foreach($statuses as $s)
-                        <option value="{{ $s }}">{{ $s }}</option>
-                    @endforeach
+                    <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
             <div class="form-group">
@@ -419,7 +410,7 @@
     </div>
 </div>
 
-{{-- Activate Blotter Case Modal --}}
+
 <div id="blotterActivateModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -439,7 +430,7 @@
             </button>
         </div>
         <div style="padding:18px">
-            {{-- Case summary --}}
+            
             <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
                         border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px">
                 <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:10px;column-gap:16px">
@@ -492,7 +483,7 @@
     </div>
 </div>
 
-{{-- Blotter Status Modal --}}
+
 <div id="blotterStatusModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -548,14 +539,14 @@
     </div>
 </div>
 
-{{-- Issue Business Permit Modal --}}
+
 <div id="bizIssueModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
      onclick="if(event.target===this)closeBizIssueModal()">
     <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
                 box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
-        {{-- Header --}}
+        
         <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
             <div style="display:flex;align-items:center;gap:9px">
                 <i class="fas fa-file-certificate" style="color:var(--gold);font-size:13px"></i>
@@ -569,10 +560,10 @@
             </button>
         </div>
 
-        {{-- Body --}}
+        
         <div style="padding:18px">
 
-            {{-- Appointment summary (read-only) --}}
+            
             <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
                         border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px">
                 <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:10px;column-gap:16px">
@@ -595,7 +586,7 @@
                 </div>
             </div>
 
-            {{-- Permit dates --}}
+            
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
                 <div class="form-group" style="margin:0">
                     <label class="form-label" style="font-size:12.5px">
@@ -611,7 +602,7 @@
                 </div>
             </div>
 
-            {{-- Fee & OR --}}
+            
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
                 <div class="form-group" style="margin:0">
                     <label class="form-label" style="font-size:12.5px">
@@ -633,7 +624,7 @@
                  padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
                  border:1px solid var(--crimson-border);margin-bottom:12px"></div>
 
-            {{-- Info note --}}
+            
             <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;
                         color:var(--text-subtle);background:#f8f9fb;border:1px solid var(--border);
                         border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px">
@@ -641,7 +632,7 @@
                 <span>Sets the permit to <strong style="color:var(--navy)">Active</strong> and makes it visible as a real permit record in the Business Permits section.</span>
             </div>
 
-            {{-- Actions --}}
+            
             <div style="display:flex;justify-content:flex-end;gap:10px">
                 <button type="button" onclick="closeBizIssueModal()" class="btn btn-secondary">Cancel</button>
                 <button type="button" id="bizIssueSaveBtn" onclick="saveBizIssue()" class="btn btn-success">
@@ -653,7 +644,7 @@
     </div>
 </div>
 
-{{-- Business Permit Status Modal --}}
+
 <div id="bizStatusModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -706,13 +697,13 @@
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
 .main-content { background: #F8F9FA; }
@@ -812,7 +803,7 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route('appointments.index') }}',
+            url: '<?php echo e(route('appointments.index')); ?>',
             data: function (d) {
                 d.status        = $('#statusFilter').val();
                 d.document_type = $('#docTypeFilter').val();
@@ -851,7 +842,7 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route('appointments.bizData') }}',
+            url: '<?php echo e(route('appointments.bizData')); ?>',
             data: function (d) {
                 d.status        = $('#bizStatusFilter').val();
                 d.business_type = $('#bizTypeFilter').val();
@@ -891,7 +882,7 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route('appointments.blotterData') }}',
+            url: '<?php echo e(route('appointments.blotterData')); ?>',
             data: function (d) {
                 d.status        = $('#blotterStatusFilter').val();
                 d.incident_type = $('#blotterTypeFilter').val();
@@ -1554,7 +1545,9 @@ function saveBizStatus() {
 }
 
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { closeAptModal(); closeConvertModal(); closeBizModal(); closeBizIssueModal(); closeBlotterActivateModal(); closeBlotterStatusModal(); }
+    if (e.key === 'Escape') { closeAptModal(); closeConvertModal(); closeBizModal(); closeBizIssueModal(); closeBlotterActivateModal(); }
 });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\anakco_bms\resources\views/appointments/index.blade.php ENDPATH**/ ?>
