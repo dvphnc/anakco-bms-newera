@@ -19,6 +19,8 @@ class BusinessController extends Controller
     {
         if ($request->ajax()) {
             $query = Business::select('businesses.*')
+                // Portal submissions that haven't been issued yet live in Appointments, not here
+                ->where(fn ($q) => $q->where('source', '!=', 'portal')->orWhereNotNull('permit_date'))
                 ->when($request->status, fn ($q) => $q->whereIn('status', (array) $request->status))
                 ->when($request->business_type, fn ($q) => $q->whereIn('business_type', (array) $request->business_type))
                 ->when($request->expiry_filter, function ($q) use ($request) {
@@ -163,16 +165,19 @@ class BusinessController extends Controller
         }
 
         $businessTypes = ['Sari-Sari Store', 'Restaurant / Carinderia', 'Salon / Barbershop', 'Repair Shop', 'Pharmacy / Drugstore', 'Laundry', 'Printing / Photocopy', 'Retail Store', 'Online Selling / E-commerce', 'Other'];
+        // Base scope: exclude portal submissions that haven't been issued yet
+        $issued = fn ($q) => $q->where(fn ($q2) => $q2->where('source', '!=', 'portal')->orWhereNotNull('permit_date'));
+
         $summaryCounts = [
-            'Active' => Business::where('status', 'Active')->count(),
-            'Pending' => Business::whereIn('status', ['Pending', 'For Review'])->count(),
-            'Expired' => Business::where('status', 'Expired')->count(),
-            'Suspended' => Business::where('status', 'Suspended')->count(),
-            'Cancelled' => Business::where('status', 'Cancelled')->count(),
-            'ExpiringSoon' => Business::where('status', 'Active')
+            'Active'      => Business::where('status', 'Active')->tap($issued)->count(),
+            'Pending'     => Business::whereIn('status', ['Pending', 'For Review'])->tap($issued)->count(),
+            'Expired'     => Business::where('status', 'Expired')->tap($issued)->count(),
+            'Suspended'   => Business::where('status', 'Suspended')->tap($issued)->count(),
+            'Cancelled'   => Business::where('status', 'Cancelled')->tap($issued)->count(),
+            'ExpiringSoon'=> Business::where('status', 'Active')->tap($issued)
                 ->whereBetween('expiry_date', [now(), now()->addDays(30)])
                 ->count(),
-            'Overdue' => Business::where('status', 'Active')
+            'Overdue'     => Business::where('status', 'Active')->tap($issued)
                 ->where('expiry_date', '<', now())
                 ->count(),
         ];
