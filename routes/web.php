@@ -206,6 +206,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('appointments.convert')->middleware('role:Admin,Secretary');
     Route::delete('appointments/{appointment}', [AppointmentController::class, 'destroy'])
         ->name('appointments.destroy')->middleware('role:Admin,Secretary');
+    // Business permit portal appointments (separate DataTable on same page)
+    Route::get('appointments/biz-data', [AppointmentController::class, 'bizAppointments'])
+        ->name('appointments.bizData')->middleware('role:Admin,Secretary');
+    Route::patch('appointments/biz/{business}/status', [AppointmentController::class, 'updateBizStatus'])
+        ->name('appointments.bizStatus')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Portal Pending Count — for sidebar badge (Admin + Secretary)
