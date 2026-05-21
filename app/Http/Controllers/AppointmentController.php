@@ -349,6 +349,63 @@ class AppointmentController extends Controller
             ->make(true);
     }
 
+    public function issueBizPermit(Request $request, Business $business)
+    {
+        // Guard: already issued
+        if ($business->permit_date) {
+            return response()->json([
+                'success'  => false,
+                'message'  => 'This business has already been issued a permit.',
+                'view_url' => route('businesses.show', $business),
+            ], 422);
+        }
+
+        $validated = $request->validate([
+            'permit_date' => 'required|date',
+            'expiry_date' => 'required|date|after:permit_date',
+            'fee_paid'    => 'nullable|numeric|min:0',
+            'or_number'   => 'nullable|string|max:100',
+        ]);
+
+        $old = $business->toArray();
+
+        $business->update([
+            'permit_date' => $validated['permit_date'],
+            'expiry_date' => $validated['expiry_date'],
+            'issued_by'   => auth()->id(),
+            'status'      => 'Active',
+        ]);
+
+        $this->logActivity('updated', $business, $old, $business->fresh()->toArray());
+
+        // Notify applicant if email is available
+        if ($business->email) {
+            try {
+                Mail::to($business->email)->send(new PortalStatusUpdated(
+                    type:          'business',
+                    requestNumber: $business->permit_number,
+                    residentName:  $business->owner_name,
+                    newStatus:     'Active',
+                    notes:         'Your business permit has been issued. Permit valid until '
+                                   .\Carbon\Carbon::parse($validated['expiry_date'])->format('F d, Y').'.',
+                    preferredDate: $business->preferred_date?->format('Y-m-d'),
+                ));
+            } catch (\Exception $e) {
+                logger()->warning('Business permit issued email failed: '.$e->getMessage());
+            }
+        }
+
+        $bizPending = Business::where('source', 'portal')->whereIn('status', ['Pending', 'For Review'])->count();
+
+        return response()->json([
+            'success'     => true,
+            'message'     => "Permit {$business->permit_number} issued successfully.",
+            'permit_num'  => $business->permit_number,
+            'view_url'    => route('businesses.show', $business),
+            'biz_pending' => $bizPending,
+        ]);
+    }
+
     public function updateBizStatus(Request $request, Business $business)
     {
         $validated = $request->validate([
