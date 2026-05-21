@@ -190,7 +190,7 @@
         </table>
 
         <div class="confirm-actions">
-            <a href="{{ route('portal.track') }}?apt={{ $appointment->appointment_number }}" class="btn btn-primary">
+            <a href="{{ route('portal.track') }}?ref={{ $appointment->appointment_number }}" class="btn btn-primary">
                 <i class="fas fa-search"></i> Track My Status
             </a>
             <a href="{{ route('portal.index') }}" class="btn btn-outline">

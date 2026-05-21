@@ -1,4 +1,4 @@
-<?php $__env->startSection('title', 'Track Appointment'); ?>
+<?php $__env->startSection('title', 'Track Your Request'); ?>
 
 <?php $__env->startPush('styles'); ?>
 <style>
@@ -9,6 +9,21 @@
     color: var(--navy); margin-bottom: .25rem;
 }
 .track-hd p { font-size: .82rem; color: #6b7280; }
+
+/* ─── Type pills hint ─────────────────────────────────────── */
+.ref-hints {
+    display: flex; flex-wrap: wrap; gap: .5rem;
+    margin-top: .75rem;
+}
+.ref-hint {
+    display: inline-flex; align-items: center; gap: .35rem;
+    font-size: .72rem; font-weight: 600;
+    padding: .25rem .65rem; border-radius: 99px;
+    border: 1px solid;
+}
+.rh-doc     { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+.rh-biz     { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+.rh-blotter { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
 
 /* ─── Search bar ──────────────────────────────────────────── */
 .search-row { display: flex; gap: .75rem; align-items: flex-start; }
@@ -40,6 +55,15 @@
     font-size: .65rem; opacity: .65;
     text-transform: uppercase; letter-spacing: .07em; margin-bottom: .2rem;
 }
+.result-header .type-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: .65rem; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
+    border-radius: 99px; padding: .2rem .6rem;
+    color: rgba(255,255,255,.8);
+    margin-top: .3rem;
+}
 
 /* Status badge in header */
 .apt-status-badge {
@@ -48,12 +72,19 @@
     font-size: .72rem; font-weight: 700; letter-spacing: .04em;
     border: 1.5px solid;
 }
-.apt-status-badge.s-pending    { background: rgba(200,134,26,.18); color: #e6a020; border-color: rgba(200,134,26,.35); }
-.apt-status-badge.s-confirmed  { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.3); }
-.apt-status-badge.s-processing { background: rgba(37,99,235,.25); color: #93c5fd; border-color: rgba(37,99,235,.4); }
-.apt-status-badge.s-ready      { background: rgba(22,163,74,.2); color: #86efac; border-color: rgba(22,163,74,.4); }
-.apt-status-badge.s-released   { background: rgba(255,255,255,.08); color: #d1d5db; border-color: rgba(255,255,255,.2); }
-.apt-status-badge.s-cancelled  { background: rgba(220,38,38,.2); color: #fca5a5; border-color: rgba(220,38,38,.35); }
+.apt-status-badge.s-pending             { background: rgba(200,134,26,.18); color: #e6a020; border-color: rgba(200,134,26,.35); }
+.apt-status-badge.s-confirmed           { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.3); }
+.apt-status-badge.s-processing          { background: rgba(37,99,235,.25); color: #93c5fd; border-color: rgba(37,99,235,.4); }
+.apt-status-badge.s-ready               { background: rgba(22,163,74,.2); color: #86efac; border-color: rgba(22,163,74,.4); }
+.apt-status-badge.s-released            { background: rgba(255,255,255,.08); color: #d1d5db; border-color: rgba(255,255,255,.2); }
+.apt-status-badge.s-cancelled           { background: rgba(220,38,38,.2); color: #fca5a5; border-color: rgba(220,38,38,.35); }
+.apt-status-badge.s-active              { background: rgba(220,38,38,.2); color: #fca5a5; border-color: rgba(220,38,38,.35); }
+.apt-status-badge.s-for-review          { background: rgba(37,99,235,.25); color: #93c5fd; border-color: rgba(37,99,235,.4); }
+.apt-status-badge.s-under-investigation { background: rgba(200,134,26,.18); color: #e6a020; border-color: rgba(200,134,26,.35); }
+.apt-status-badge.s-mediated            { background: rgba(37,99,235,.25); color: #93c5fd; border-color: rgba(37,99,235,.4); }
+.apt-status-badge.s-settled             { background: rgba(22,163,74,.2); color: #86efac; border-color: rgba(22,163,74,.4); }
+.apt-status-badge.s-closed              { background: rgba(255,255,255,.08); color: #d1d5db; border-color: rgba(255,255,255,.2); }
+.apt-status-badge.s-referred-to-higher-authority { background: rgba(124,58,237,.2); color: #c4b5fd; border-color: rgba(124,58,237,.35); }
 
 /* ─── Info grid ───────────────────────────────────────────── */
 .result-body { padding: 1.4rem 1.5rem; }
@@ -159,30 +190,27 @@
     background: #e5e7eb;
     border-radius: 2px;
 }
-
-.tl-item {
-    position: relative;
-    margin-bottom: .9rem;
-}
+.tl-item { position: relative; margin-bottom: .9rem; }
 .tl-item.tl-last { margin-bottom: 0; }
-
 .tl-dot {
     position: absolute;
-    left: -1.6rem;
-    top: .3rem;
+    left: -1.6rem; top: .3rem;
     width: 16px; height: 16px;
     border-radius: 50%;
     border: 2px solid;
     background: #fff;
     z-index: 1;
 }
-/* dot colours */
-.tl-dot-pending    { border-color: var(--gold);   background: rgba(200,134,26,.15); }
-.tl-dot-confirmed  { border-color: var(--navy);   background: rgba(13,33,68,.1); }
-.tl-dot-processing { border-color: #2563eb;       background: rgba(37,99,235,.1); }
-.tl-dot-ready      { border-color: #16a34a;       background: rgba(22,163,74,.1); }
-.tl-dot-released   { border-color: #6b7280;       background: rgba(107,114,128,.1); }
-.tl-dot-cancelled  { border-color: #dc2626;       background: rgba(220,38,38,.1); }
+.tl-dot-pending    { border-color: var(--gold);  background: rgba(200,134,26,.15); }
+.tl-dot-confirmed  { border-color: var(--navy);  background: rgba(13,33,68,.1); }
+.tl-dot-processing { border-color: #2563eb;      background: rgba(37,99,235,.1); }
+.tl-dot-ready      { border-color: #16a34a;      background: rgba(22,163,74,.1); }
+.tl-dot-released   { border-color: #6b7280;      background: rgba(107,114,128,.1); }
+.tl-dot-cancelled  { border-color: #dc2626;      background: rgba(220,38,38,.1); }
+.tl-dot-active     { border-color: #dc2626;      background: rgba(220,38,38,.1); }
+.tl-dot-settled    { border-color: #16a34a;      background: rgba(22,163,74,.1); }
+.tl-dot-mediated   { border-color: #2563eb;      background: rgba(37,99,235,.1); }
+.tl-dot-closed     { border-color: #6b7280;      background: rgba(107,114,128,.1); }
 
 .tl-card {
     background: #fff;
@@ -191,29 +219,20 @@
     padding: .65rem .85rem;
     box-shadow: 0 1px 4px rgba(0,0,0,.04);
 }
-.tl-status {
-    font-size: .85rem; font-weight: 700; color: var(--navy); margin-bottom: .2rem;
-}
+.tl-status { font-size: .85rem; font-weight: 700; color: var(--navy); margin-bottom: .2rem; }
 .tl-meta {
     font-size: .72rem; color: #9ca3af;
     display: flex; flex-wrap: wrap; gap: .25rem .5rem;
 }
-.tl-meta .tl-who {
-    color: #6b7280; font-weight: 600;
-}
+.tl-meta .tl-who { color: #6b7280; font-weight: 600; }
 .tl-note {
-    margin-top: .4rem;
-    font-size: .77rem;
-    color: #6b7280;
-    background: #f9fafb;
-    border-left: 3px solid #e5e7eb;
-    padding: .35rem .6rem;
-    border-radius: 0 4px 4px 0;
-    font-style: italic;
+    margin-top: .4rem; font-size: .77rem; color: #6b7280;
+    background: #f9fafb; border-left: 3px solid #e5e7eb;
+    padding: .35rem .6rem; border-radius: 0 4px 4px 0; font-style: italic;
 }
 
-/* ─── Cancelled banner ────────────────────────────────────── */
-.cancelled-banner {
+/* ─── Closed/cancelled banner ─────────────────────────────── */
+.closed-banner {
     display: flex; align-items: flex-start; gap: .75rem;
     padding: .9rem 1.1rem;
     background: #fef2f2;
@@ -221,20 +240,16 @@
     border: 1px solid #fecaca;
     margin-bottom: 1.25rem;
 }
-.cancelled-banner .cb-icon {
+.closed-banner .cb-icon {
     width: 36px; height: 36px; flex-shrink: 0;
-    border-radius: 50%;
-    background: #dc2626; color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: .9rem;
+    border-radius: 50%; background: #dc2626; color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: .9rem;
 }
-.cancelled-banner .cb-title { font-size: .88rem; font-weight: 700; color: #991b1b; margin-bottom: .15rem; }
-.cancelled-banner .cb-text  { font-size: .8rem; color: #b91c1c; }
+.closed-banner .cb-title { font-size: .88rem; font-weight: 700; color: #991b1b; margin-bottom: .15rem; }
+.closed-banner .cb-text  { font-size: .8rem; color: #b91c1c; }
 
 /* ─── Not found ───────────────────────────────────────────── */
-.not-found {
-    text-align: center; padding: 2.5rem 1rem; margin-top: 1.5rem;
-}
+.not-found { text-align: center; padding: 2.5rem 1rem; margin-top: 1.5rem; }
 .nf-icon {
     width: 56px; height: 56px; border-radius: 50%;
     background: #fef2f2; color: #dc2626;
@@ -244,11 +259,7 @@
 .not-found h3 { font-size: 1rem; color: var(--navy); margin-bottom: .35rem; }
 .not-found p  { font-size: .82rem; color: #6b7280; }
 
-/* ─── Divider between info and timeline ──────────────────── */
-.section-divider {
-    height: 1px; background: #f0f1f3;
-    margin: 1.25rem 0;
-}
+.section-divider { height: 1px; background: #f0f1f3; margin: 1.25rem 0; }
 
 /* ─── Mobile ──────────────────────────────────────────────── */
 @media (max-width: 600px) {
@@ -257,7 +268,6 @@
     .info-grid { grid-template-columns: 1fr; }
     .info-cell.full-width { grid-column: 1; }
     .result-header { flex-direction: column; align-items: flex-start; gap: .5rem; }
-
     .progress-steps {
         flex-direction: column; align-items: flex-start;
         gap: 0; padding-left: .5rem;
@@ -284,17 +294,22 @@
 <div class="p-card">
 
     <div class="track-hd">
-        <h2><i class="fas fa-search" style="color:var(--gold)"></i>&nbsp; Track Your Appointment</h2>
-        <p>Enter your appointment number (e.g., <code>APT-20260507-AB12</code>) to check the status of your request.</p>
+        <h2><i class="fas fa-magnifying-glass" style="color:var(--gold)"></i>&nbsp; Track Your Request</h2>
+        <p>Enter your reference number to check the status of your document appointment, business permit, or blotter report.</p>
+        <div class="ref-hints">
+            <span class="ref-hint rh-doc"><i class="fas fa-file-lines"></i> Document — <code>APT-...</code></span>
+            <span class="ref-hint rh-biz"><i class="fas fa-store"></i> Business Permit — <code>BP-...</code></span>
+            <span class="ref-hint rh-blotter"><i class="fas fa-shield-halved"></i> Blotter Report — <code>CASE-...</code></span>
+        </div>
     </div>
 
-    <form id="trackForm" method="POST" action="<?php echo e(route('portal.track.post')); ?>">
+    <form id="trackForm" method="POST" action="<?php echo e(route('track.post')); ?>">
         <?php echo csrf_field(); ?>
         <div class="search-row">
             <input type="text" name="appointment_number" id="trackInput" class="form-control"
-                   placeholder="APT-YYYYMMDD-XXXX"
-                   value="<?php echo e(request('apt') ?? old('appointment_number') ?? (isset($appointment) ? $appointment->appointment_number : '')); ?>"
-                   style="text-transform:uppercase;letter-spacing:.08em"
+                   placeholder="APT-..., BP-..., or CASE-..."
+                   value="<?php echo e(request('ref') ?? old('appointment_number') ?? (isset($number) ? $number : '')); ?>"
+                   style="text-transform:uppercase;letter-spacing:.06em"
                    autocomplete="off"
                    required>
             <button type="submit" id="trackBtn" class="btn btn-primary">
@@ -315,155 +330,45 @@ unset($__errorArgs, $__bag); ?>
     <div id="trackResult" style="display:none"></div>
 
     
-    <?php if(isset($appointment)): ?>
-        <?php if($appointment): ?>
-            <?php
-                $steps     = ['Pending','Confirmed','Processing','Ready','Released'];
-                $current   = $appointment->status;
-                $cancelled = $current === 'Cancelled';
-                $stepIndex = array_search($current, $steps);
-                $statusSlug = strtolower(str_replace(' ', '-', $current));
-            ?>
-
+    <?php if(isset($type)): ?>
+        <?php if($type && $record): ?>
             <div class="result-card" id="serverResult">
-
-                
                 <div class="result-header">
                     <div>
-                        <div class="apt-label">Appointment Number</div>
-                        <div class="apt-num"><?php echo e($appointment->appointment_number); ?></div>
+                        <div class="apt-label">Reference Number</div>
+                        <div class="apt-num"><?php echo e($number); ?></div>
+                        <div class="type-chip">
+                            <?php if($type === 'document'): ?> <i class="fas fa-file-lines"></i> Document Appointment
+                            <?php elseif($type === 'business'): ?> <i class="fas fa-store"></i> Business Permit
+                            <?php else: ?> <i class="fas fa-shield-halved"></i> Blotter Report
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.4rem">
-                        <span class="apt-status-badge s-<?php echo e($statusSlug); ?>">
+                        <?php $slug = strtolower(str_replace([' ', '/'], ['-', ''], $record->status)); ?>
+                        <span class="apt-status-badge s-<?php echo e($slug); ?>">
                             <i class="fas fa-circle" style="font-size:.45rem"></i>
-                            <?php echo e($appointment->status); ?>
+                            <?php echo e($record->status); ?>
 
                         </span>
                         <div style="font-size:.72rem;opacity:.6;text-align:right">
-                            Submitted <?php echo e($appointment->created_at->format('M d, Y · g:i A')); ?>
+                            Submitted <?php echo e($record->created_at->format('M d, Y · g:i A')); ?>
 
                         </div>
                     </div>
                 </div>
-
                 <div class="result-body">
-
-                    
-                    <?php if($cancelled): ?>
-                    <div class="cancelled-banner">
-                        <div class="cb-icon"><i class="fas fa-ban"></i></div>
-                        <div>
-                            <div class="cb-title">This appointment has been cancelled.</div>
-                            <div class="cb-text"><?php echo e($appointment->notes ?? 'Please visit the barangay hall or submit a new request.'); ?></div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
-                    
-                    <?php if(!$cancelled): ?>
-                    <div class="progress-section">
-                        <div class="ps-title"><i class="fas fa-route"></i>&nbsp; Progress</div>
-                        <div class="progress-steps">
-                            <?php $__currentLoopData = $steps; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $step): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php
-                                    $isDone    = $stepIndex !== false && $i < $stepIndex;
-                                    $isCurrent = $current === $step;
-                                ?>
-                                <div class="prog-step <?php echo e($isDone ? 'done' : ''); ?> <?php echo e($isCurrent ? 'current' : ''); ?>">
-                                    <div class="prog-dot">
-                                        <?php if($isDone): ?> <i class="fas fa-check"></i>
-                                        <?php elseif($isCurrent): ?> <i class="fas fa-circle-dot"></i>
-                                        <?php else: ?> <?php echo e($i + 1); ?> <?php endif; ?>
-                                    </div>
-                                    <div class="prog-label"><?php echo e($step); ?></div>
-                                </div>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
-                    
-                    <div class="info-grid">
-                        <div class="info-cell">
-                            <div class="ic-label">Name</div>
-                            <div class="ic-value"><?php echo e($appointment->resident_name); ?></div>
-                        </div>
-                        <div class="info-cell">
-                            <div class="ic-label">Document</div>
-                            <div class="ic-value"><?php echo e($appointment->document_type); ?></div>
-                        </div>
-                        <div class="info-cell">
-                            <div class="ic-label">Preferred Date</div>
-                            <div class="ic-value"><?php echo e($appointment->preferred_date->format('F j, Y')); ?></div>
-                        </div>
-                        <?php if($appointment->purpose): ?>
-                        <div class="info-cell">
-                            <div class="ic-label">Purpose</div>
-                            <div class="ic-value"><?php echo e($appointment->purpose); ?></div>
-                        </div>
-                        <?php endif; ?>
-                        <?php if($appointment->processed_by): ?>
-                        <div class="info-cell">
-                            <div class="ic-label">Processed By</div>
-                            <div class="ic-value"><?php echo e($appointment->processed_by); ?></div>
-                        </div>
-                        <?php endif; ?>
-                        <?php if($appointment->released_at): ?>
-                        <div class="info-cell">
-                            <div class="ic-label">Released On</div>
-                            <div class="ic-value"><?php echo e($appointment->released_at->format('F j, Y · g:i A')); ?></div>
-                        </div>
-                        <?php endif; ?>
-                        <div class="info-cell">
-                            <div class="ic-label">Last Updated</div>
-                            <div class="ic-value"><?php echo e($appointment->updated_at->format('M d, Y · g:i A')); ?></div>
-                        </div>
-                        <?php if($appointment->notes): ?>
-                        <div class="info-cell full-width">
-                            <div class="ic-label">Staff Notes</div>
-                            <div class="ic-value"><?php echo e($appointment->notes); ?></div>
-                        </div>
-                        <?php endif; ?>
-                    </div>
-
-                    
-                    <?php if($appointment->statusLogs->count()): ?>
-                    <div class="section-divider"></div>
-                    <div class="timeline-section">
-                        <div class="timeline-hd">
-                            <i class="fas fa-clock-rotate-left"></i> Status History
-                        </div>
-                        <div class="timeline">
-                            <?php $__currentLoopData = $appointment->statusLogs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $log): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <?php $slug = strtolower(str_replace(' ', '-', $log->to_status)); ?>
-                            <div class="tl-item <?php echo e($loop->last ? 'tl-last' : ''); ?>">
-                                <div class="tl-dot tl-dot-<?php echo e($slug); ?>"></div>
-                                <div class="tl-card">
-                                    <div class="tl-status"><?php echo e($log->to_status); ?></div>
-                                    <div class="tl-meta">
-                                        <span><?php echo e($log->created_at->format('M d, Y · g:i A')); ?></span>
-                                        <?php if($log->changed_by): ?>
-                                            <span class="tl-who"><?php echo e($log->changed_by); ?></span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <?php if($log->note): ?>
-                                    <div class="tl-note"><?php echo e($log->note); ?></div>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
+                    <p style="font-size:.85rem;color:#6b7280;text-align:center;padding:1rem 0">
+                        <i class="fas fa-circle-info" style="color:var(--navy)"></i>
+                        Your request was found. The full status details are displayed above.
+                    </p>
                 </div>
             </div>
-
         <?php else: ?>
             <div class="not-found" id="serverResult">
                 <div class="nf-icon"><i class="fas fa-circle-xmark"></i></div>
-                <h3>Appointment Not Found</h3>
-                <p>No record found for that appointment number. Please double-check and try again.</p>
+                <h3>Reference Not Found</h3>
+                <p>No record found for <strong><?php echo e($number); ?></strong>. Please double-check your reference number and try again.</p>
             </div>
         <?php endif; ?>
     <?php endif; ?>
@@ -518,13 +423,13 @@ unset($__errorArgs, $__bag); ?>
             });
     }
 
+    /* ── Helpers ── */
     function esc(str) {
         if (str === null || str === undefined) return '';
         return String(str)
             .replace(/&/g,'&amp;').replace(/</g,'&lt;')
             .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
-
     function infoCell(label, value, full) {
         if (!value) return '';
         return '<div class="info-cell' + (full ? ' full-width' : '') + '">' +
@@ -532,13 +437,42 @@ unset($__errorArgs, $__bag); ?>
             '<div class="ic-value">' + esc(value) + '</div>' +
             '</div>';
     }
-
-    function statusSlug(s) { return s ? s.toLowerCase().replace(/\s+/g, '-') : ''; }
-
+    function statusSlug(s) {
+        return s ? s.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '') : '';
+    }
     function statusBadgeHtml(s) {
         return '<span class="apt-status-badge s-' + statusSlug(s) + '">' +
             '<i class="fas fa-circle" style="font-size:.45rem"></i> ' + esc(s) +
             '</span>';
+    }
+    function typeChip(type) {
+        var map = {
+            document: { icon: 'fa-file-lines',    label: 'Document Appointment' },
+            business: { icon: 'fa-store',          label: 'Business Permit' },
+            blotter:  { icon: 'fa-shield-halved',  label: 'Blotter Report' },
+        };
+        var t = map[type] || { icon: 'fa-circle', label: type };
+        return '<div class="type-chip"><i class="fas ' + t.icon + '"></i> ' + t.label + '</div>';
+    }
+
+    function renderStepper(d) {
+        if (!d.steps || !d.steps.length || d.cancelled) return '';
+        var dots = d.steps.map(function (step, i) {
+            var isDone    = d.step_index !== -1 && i < d.step_index;
+            var isCurrent = d.status === step;
+            var cls  = isDone ? 'done' : (isCurrent ? 'current' : '');
+            var icon = isDone
+                ? '<i class="fas fa-check"></i>'
+                : (isCurrent ? '<i class="fas fa-circle-dot"></i>' : (i + 1));
+            return '<div class="prog-step ' + cls + '">' +
+                '<div class="prog-dot">' + icon + '</div>' +
+                '<div class="prog-label">' + esc(step) + '</div>' +
+                '</div>';
+        }).join('');
+        return '<div class="progress-section">' +
+            '<div class="ps-title"><i class="fas fa-route"></i>&nbsp; Progress</div>' +
+            '<div class="progress-steps">' + dots + '</div>' +
+            '</div>';
     }
 
     function renderTimeline(logs) {
@@ -557,7 +491,6 @@ unset($__errorArgs, $__bag); ?>
                 '</div>' +
                 '</div>';
         }).join('');
-
         return '<div class="section-divider"></div>' +
             '<div class="timeline-section">' +
             '<div class="timeline-hd"><i class="fas fa-clock-rotate-left"></i> Status History</div>' +
@@ -565,61 +498,17 @@ unset($__errorArgs, $__bag); ?>
             '</div>';
     }
 
-    function renderResult(d) {
-        if (!d.found) {
-            return '<div class="not-found">' +
-                '<div class="nf-icon"><i class="fas fa-circle-xmark"></i></div>' +
-                '<h3>Appointment Not Found</h3>' +
-                '<p>No record found for that appointment number. Please double-check and try again.</p>' +
-                '</div>';
-        }
-
-        var slug = statusSlug(d.status);
-
-        /* ── Header ── */
-        var header = '<div class="result-header">' +
-            '<div>' +
-                '<div class="apt-label">Appointment Number</div>' +
-                '<div class="apt-num">' + esc(d.appointment_number) + '</div>' +
-            '</div>' +
-            '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:.4rem">' +
-                statusBadgeHtml(d.status) +
-                '<div style="font-size:.72rem;opacity:.6;text-align:right">Submitted ' + esc(d.created_at) + '</div>' +
-            '</div>' +
+    function closedBanner(title, text, icon) {
+        return '<div class="closed-banner">' +
+            '<div class="cb-icon"><i class="fas ' + (icon||'fa-ban') + '"></i></div>' +
+            '<div><div class="cb-title">' + title + '</div>' +
+            '<div class="cb-text">' + text + '</div></div>' +
             '</div>';
+    }
 
-        /* ── Cancelled banner ── */
-        var cancelBanner = '';
-        if (d.cancelled) {
-            var cNote = d.notes ? esc(d.notes) : 'Please visit the barangay hall or submit a new request.';
-            cancelBanner = '<div class="cancelled-banner">' +
-                '<div class="cb-icon"><i class="fas fa-ban"></i></div>' +
-                '<div><div class="cb-title">This appointment has been cancelled.</div>' +
-                '<div class="cb-text">' + cNote + '</div></div>' +
-                '</div>';
-        }
-
-        /* ── Progress stepper ── */
-        var progress = '';
-        if (!d.cancelled) {
-            var dots = (d.steps || []).map(function (step, i) {
-                var cls  = i < d.step_index ? 'done' : (d.status === step ? 'current' : '');
-                var icon = i < d.step_index
-                    ? '<i class="fas fa-check"></i>'
-                    : (d.status === step ? '<i class="fas fa-circle-dot"></i>' : (i + 1));
-                return '<div class="prog-step ' + cls + '">' +
-                    '<div class="prog-dot">' + icon + '</div>' +
-                    '<div class="prog-label">' + esc(step) + '</div>' +
-                    '</div>';
-            }).join('');
-            progress = '<div class="progress-section">' +
-                '<div class="ps-title"><i class="fas fa-route"></i>&nbsp; Progress</div>' +
-                '<div class="progress-steps">' + dots + '</div>' +
-                '</div>';
-        }
-
-        /* ── Info grid ── */
-        var grid = '<div class="info-grid">' +
+    /* ── Info grids per type ── */
+    function infoGridDocument(d) {
+        return '<div class="info-grid">' +
             infoCell('Name',           d.resident_name) +
             infoCell('Document',       d.document_type) +
             infoCell('Preferred Date', d.preferred_date) +
@@ -629,13 +518,78 @@ unset($__errorArgs, $__bag); ?>
             infoCell('Last Updated',   d.updated_at) +
             infoCell('Staff Notes',    d.notes, true) +
             '</div>';
+    }
+    function infoGridBusiness(d) {
+        return '<div class="info-grid">' +
+            infoCell('Owner',            d.owner_name) +
+            infoCell('Business Name',    d.business_name) +
+            infoCell('Business Type',    d.business_type) +
+            infoCell('Appointment Date', d.appointment_date) +
+            infoCell('Business Address', d.business_address, true) +
+            (d.permit_date ? infoCell('Permit Date',  d.permit_date)  : '') +
+            (d.expiry_date ? infoCell('Expiry Date',  d.expiry_date)  : '') +
+            infoCell('Last Updated',     d.updated_at) +
+            '</div>';
+    }
+    function infoGridBlotter(d) {
+        return '<div class="info-grid">' +
+            infoCell('Complainant',    d.complainant_name) +
+            infoCell('Incident Type',  d.incident_type) +
+            infoCell('Incident Date',  d.incident_date) +
+            infoCell('Last Updated',   d.updated_at) +
+            infoCell('Location',       d.incident_location, true) +
+            (d.respondent_name ? infoCell('Respondent', d.respondent_name) : '') +
+            (d.resolution_notes ? infoCell('Staff Notes', d.resolution_notes, true) : '') +
+            '</div>';
+    }
+
+    /* ── Main render ── */
+    function renderResult(d) {
+        if (!d.found) {
+            return '<div class="not-found">' +
+                '<div class="nf-icon"><i class="fas fa-circle-xmark"></i></div>' +
+                '<h3>Reference Not Found</h3>' +
+                '<p>No record found for that reference number. Please double-check and try again.</p>' +
+                '</div>';
+        }
+
+        var header = '<div class="result-header">' +
+            '<div>' +
+                '<div class="apt-label">Reference Number</div>' +
+                '<div class="apt-num">' + esc(d.reference_number) + '</div>' +
+                typeChip(d.type) +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:.4rem">' +
+                statusBadgeHtml(d.status) +
+                '<div style="font-size:.72rem;opacity:.6;text-align:right">Submitted ' + esc(d.created_at) + '</div>' +
+            '</div>' +
+            '</div>';
+
+        var banner = '';
+        if (d.cancelled) {
+            if (d.type === 'blotter') {
+                banner = closedBanner('This blotter case has been closed.', d.resolution_notes || 'The case has been resolved.', 'fa-shield-halved');
+            } else if (d.type === 'business') {
+                banner = closedBanner('This permit application has been cancelled.', 'Please visit the Barangay Hall for assistance.', 'fa-ban');
+            } else {
+                var cNote = d.notes || 'Please visit the barangay hall or submit a new request.';
+                banner = closedBanner('This appointment has been cancelled.', cNote, 'fa-ban');
+            }
+        }
+
+        var progress = renderStepper(d);
+
+        var grid = '';
+        if (d.type === 'document') grid = infoGridDocument(d);
+        else if (d.type === 'business') grid = infoGridBusiness(d);
+        else if (d.type === 'blotter') grid = infoGridBlotter(d);
 
         var timeline = renderTimeline(d.logs || []);
 
         return '<div class="result-card">' +
             header +
             '<div class="result-body">' +
-                cancelBanner + progress + grid + timeline +
+                banner + progress + grid + timeline +
             '</div>' +
             '</div>';
     }
