@@ -371,6 +371,10 @@
     $resident     = $document->resident;
     $purok        = $resident?->purok?->name ?? 'Barangay New Era';
     $address      = $resident?->address ?? 'Barangay New Era, Quezon City';
+    // Strip any trailing barangay/city from the stored address to avoid duplication
+    // since all templates already append ", Barangay New Era, Quezon City"
+    $addrStreet   = trim(preg_replace('/[,\s]*(Barangay\s+)?New Era[,\s]*(Quezon City)?[,\s]*(Metro Manila)?[,\s]*$/i', '', $address), ', ');
+    if (empty($addrStreet)) $addrStreet = $address;
     $fullName     = $resident?->full_name ?? $document->resident_name_portal ?? '—';
     $age          = $resident?->age ? $resident->age . ' years old' : 'of legal age';
     $civilStatus  = $resident?->civil_status ? strtolower($resident->civil_status) . ', ' : '';
