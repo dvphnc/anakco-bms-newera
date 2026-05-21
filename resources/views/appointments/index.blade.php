@@ -680,6 +680,14 @@
 #bizTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
 #bizTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
 
+#blotterTable_wrapper .dataTables_length,
+#blotterTable_wrapper .dataTables_filter { display:none; }
+#blotterTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
+#blotterTable_wrapper .dataTables_paginate { padding:12px 20px; }
+#blotterTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
+#blotterTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
+#blotterTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
+
 .btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
 .btn-success:disabled { opacity:.65; cursor:not-allowed; }
 
@@ -707,9 +715,11 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal;
 }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder,
-#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
+#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder,
+#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow,
-#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
+#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__arrow,
+#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
 </style>
 <script>
 $(document).ready(function () {
