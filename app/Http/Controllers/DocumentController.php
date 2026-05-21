@@ -183,9 +183,8 @@ class DocumentController extends Controller
     {
         $residents     = Resident::active()->orderBy('last_name')->get();
         $documentTypes = ['Barangay Clearance', 'Certificate of Residency', 'Certificate of Indigency', 'Good Moral Character', 'Business Clearance', 'Certificate of Live Birth', 'Other'];
-        $relationships = ['Son', 'Daughter', 'Parent / Guardian', 'Spouse', 'Sibling', 'Cousin', 'Nephew / Niece', 'Legal Guardian', 'Attorney-in-Fact (SPA)', 'Other'];
 
-        return view('documents.documents-edit', compact('document', 'residents', 'documentTypes', 'relationships'));
+        return view('documents.documents-edit', compact('document', 'residents', 'documentTypes'));
     }
 
     public function update(Request $request, Document $document)
