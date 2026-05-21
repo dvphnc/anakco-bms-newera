@@ -81,7 +81,7 @@
     <div class="stat-card" style="cursor:pointer" onclick="quickFilter('statusFilter', null)">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-store"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statBizTotal"><?php echo e(number_format(array_sum([$summaryCounts['Active'],$summaryCounts['Expired'],$summaryCounts['Suspended'],$summaryCounts['Cancelled']]))); ?></div>
+            <div class="stat-number" id="statBizTotal"><?php echo e(number_format(array_sum([$summaryCounts['Active'],$summaryCounts['Pending'],$summaryCounts['Expired'],$summaryCounts['Suspended'],$summaryCounts['Cancelled']]))); ?></div>
             <div class="stat-label">Total Businesses</div>
         </div>
     </div>
@@ -160,7 +160,7 @@
                     <label class="form-label">Status</label>
                     <select id="statusFilter">
                         <option value=""></option>
-                        <?php $__currentLoopData = ['Active','Expired','Suspended','Cancelled']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $__currentLoopData = ['Active','Pending','For Review','Expired','Suspended','Cancelled']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
@@ -542,7 +542,7 @@ function openBizPanel(url) {
                 : b.expiry_status === 'expiring_soon'
                     ? `<span class="badge badge-yellow"><i class="fas fa-clock"></i> Expiring in ${b.expiry_days ?? '?'} days</span>`
                     : '';
-            const statusCls = { Active: 'badge-green', Expired: 'badge-red', Suspended: 'badge-yellow', Cancelled: 'badge-gray' };
+            const statusCls = { Active: 'badge-green', Expired: 'badge-red', Suspended: 'badge-yellow', Cancelled: 'badge-gray', Pending: 'badge-yellow', 'For Review': 'badge-blue' };
 
             body.innerHTML = `
                 <div style="padding:18px 20px 14px;border-bottom:1px solid var(--border)">
