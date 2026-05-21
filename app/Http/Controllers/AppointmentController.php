@@ -118,8 +118,9 @@ class AppointmentController extends Controller
 
         $statuses      = DocumentAppointment::$statuses;
         $documentTypes = DocumentAppointment::$documentTypes;
+        $businessTypes = Business::distinct()->where('source', 'portal')->pluck('business_type')->sort()->values()->toArray();
 
-        return view('appointments.index', compact('statuses', 'documentTypes'));
+        return view('appointments.index', compact('statuses', 'documentTypes', 'businessTypes'));
     }
 
     public function updateStatus(Request $request, DocumentAppointment $appointment)
