@@ -1032,6 +1032,16 @@ $(document).ready(function () {
         else { badge.style.display = 'none'; }
     }
 
+    function updateBlotterBadge() {
+        let n = 0;
+        if ($('#blotterSearchInput').val())  n++;
+        if ($('#blotterStatusFilter').val()) n++;
+        if ($('#blotterTypeFilter').val())   n++;
+        const badge = document.getElementById('blotterFilterBadge');
+        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter' : ' filters') + ' active'; badge.style.display = ''; }
+        else { badge.style.display = 'none'; }
+    }
+
     window.toggleFilters = function (key) {
         if (key === 'biz') {
             const panel  = document.getElementById('bizFilterPanel');
@@ -1039,6 +1049,12 @@ $(document).ready(function () {
             panel.style.display = isOpen ? 'none' : 'block';
             document.getElementById('bizFilterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
             localStorage.setItem('fp_biz', isOpen ? '0' : '1');
+        } else if (key === 'blotter') {
+            const panel  = document.getElementById('blotterFilterPanel');
+            const isOpen = panel.style.display !== 'none';
+            panel.style.display = isOpen ? 'none' : 'block';
+            document.getElementById('blotterFilterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+            localStorage.setItem('fp_blotter', isOpen ? '0' : '1');
         } else {
             const panel  = document.getElementById('filterPanel');
             const isOpen = panel.style.display !== 'none';
@@ -1057,8 +1073,13 @@ $(document).ready(function () {
         document.getElementById('bizFilterPanel').style.display = 'block';
         document.getElementById('bizFilterToggleText').textContent = 'Hide Filters';
     }
+    if (localStorage.getItem('fp_blotter') === '1') {
+        document.getElementById('blotterFilterPanel').style.display = 'block';
+        document.getElementById('blotterFilterToggleText').textContent = 'Hide Filters';
+    }
     updateBadge();
     updateBizBadge();
+    updateBlotterBadge();
 
     /* ── Filters — doc ────────────────────────────────────────────────── */
     let debounce;
