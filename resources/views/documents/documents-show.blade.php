@@ -391,40 +391,39 @@
     $certBody = match($document->document_type) {
         'Barangay Clearance' =>
             "This is to certify that <span class='resident-name'>$fullName</span>, $age, $civilStatus".
-            "Filipino citizen, and a <span class='highlight'>bonafide resident</span> of <span class='highlight'>$address</span>, ".
-            "Barangay New Era, Quezon City, has been known to be of <span class='highlight'>good moral character</span> ".
+            "Filipino citizen, and a <span class='highlight'>bonafide resident</span> of <span class='highlight'>$addrStreet, Barangay New Era, Quezon City</span>, ".
+            "has been known to be of <span class='highlight'>good moral character</span> ".
             "and has no derogatory record on file in this barangay as of this date.",
 
         'Certificate of Indigency' =>
             "This is to certify that <span class='resident-name'>$fullName</span>, $age, $civilStatus".
-            "a resident of <span class='highlight'>$address</span>, Barangay New Era, Quezon City, ".
+            "a resident of <span class='highlight'>$addrStreet, Barangay New Era, Quezon City</span>, ".
             "belongs to an <span class='highlight'>indigent family</span> in this barangay. ".
             "This certification is issued upon the request of the aforementioned person ".
             "for the purpose of <span class='highlight'>".e($purpose)."</span>.",
 
         'Certificate of Residency' =>
             "This is to certify that <span class='resident-name'>$fullName</span>, $age, $civilStatus".
-            "is a <span class='highlight'>bonafide resident</span> of <span class='highlight'>$address</span>, ".
-            "Barangay New Era, Quezon City. ".
+            "is a <span class='highlight'>bonafide resident</span> of <span class='highlight'>$addrStreet, Barangay New Era, Quezon City</span>. ".
             "$heShe has been residing in this barangay for a considerable period of time ".
             "and is personally known to the undersigned.",
 
         'Good Moral Character' =>
             "This is to certify that <span class='resident-name'>$fullName</span>, $age, $civilStatus".
-            "a resident of <span class='highlight'>$address</span>, Barangay New Era, Quezon City, ".
+            "a resident of <span class='highlight'>$addrStreet, Barangay New Era, Quezon City</span>, ".
             "is personally known to us and is a person of <span class='highlight'>good moral character, ".
             "good standing, and a reputable member</span> of this community. ".
             "No derogatory record has been filed against $hisHer in this office.",
 
         'Business Clearance' =>
             "This is to certify that the business establishment owned/operated by ".
-            "<span class='resident-name'>$fullName</span>, located at <span class='highlight'>$address</span>, ".
+            "<span class='resident-name'>$fullName</span>, located at <span class='highlight'>$addrStreet, Barangay New Era, Quezon City</span>, ".
             "has been granted <span class='highlight'>barangay clearance</span> to operate within the jurisdiction ".
             "of Barangay New Era, Quezon City for the purpose of <span class='highlight'>".e($purpose)."</span>.",
 
         'First Time Job Seeker' =>
             "This is to certify that <span class='resident-name'>$fullName</span>, $age, $civilStatus".
-            "a resident of <span class='highlight'>$address</span>, Barangay New Era, Quezon City, ".
+            "a resident of <span class='highlight'>$addrStreet, Barangay New Era, Quezon City</span>, ".
             "is a <span class='highlight'>first-time job seeker</span> as defined under Republic Act No. 11261. ".
             "$heShe is hereby entitled to the privileges and exemptions provided under the said Act. ".
             "This certification is issued for employment application purposes.",
@@ -432,20 +431,18 @@
         'Barangay ID' =>
             "This is to certify that <span class='resident-name'>$fullName</span>".
             ($birthdate ? ", born on <span class='highlight'>$birthdate</span>," : ", $age,").
-            " is a registered resident of <span class='highlight'>$address</span>, ".
-            "Barangay New Era, District VI, Quezon City. ".
+            " is a registered resident of <span class='highlight'>$addrStreet, Barangay New Era, District VI, Quezon City</span>. ".
             "This identification is issued by the Office of the Punong Barangay.",
 
         'Certificate of Live Birth' =>
             "This is to certify that based on records available in this barangay, ".
             "<span class='resident-name'>$fullName</span>".
             ($birthdate ? ", born on <span class='highlight'>$birthdate</span>," : "").
-            " is a registered resident of <span class='highlight'>$address</span>, ".
-            "Barangay New Era, Quezon City.",
+            " is a registered resident of <span class='highlight'>$addrStreet, Barangay New Era, Quezon City</span>.",
 
         default =>
             "This is to certify that <span class='resident-name'>$fullName</span>, $age, $civilStatus".
-            "a resident of <span class='highlight'>$address</span>, Barangay New Era, Quezon City, ".
+            "a resident of <span class='highlight'>$addrStreet, Barangay New Era, Quezon City</span>, ".
             "has requested this certification for the purpose of ".
             "<span class='highlight'>".e($purpose)."</span>.",
     };
