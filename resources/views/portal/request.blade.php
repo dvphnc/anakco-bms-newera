@@ -186,6 +186,57 @@
             <div class="form-error" id="err-purpose" style="display:none"></div>
         </div>
 
+        <div class="section-label">Pick-up / Representative</div>
+
+        {{-- Representative toggle --}}
+        <input type="hidden" name="is_representative" id="isRepHidden" value="0">
+        <label id="repToggle" for="isRepCheck" style="
+            display:flex; align-items:flex-start; gap:.75rem;
+            background:#f9fafb; border:1.5px solid #e5e7eb; border-radius:8px;
+            padding:.85rem 1rem; cursor:pointer; margin-bottom:1rem;
+            transition: border-color .15s, background .15s;">
+            <input type="checkbox" id="isRepCheck" value="1" style="margin-top:2px;accent-color:var(--navy);width:16px;height:16px;flex-shrink:0">
+            <div>
+                <div style="font-size:.88rem;font-weight:600;color:var(--navy)">
+                    A <strong>representative</strong> is picking up / requesting this document
+                </div>
+                <div style="font-size:.75rem;color:#6b7280;margin-top:2px">
+                    Check this if someone other than the resident will claim the document (e.g. child, spouse, attorney).
+                </div>
+            </div>
+        </label>
+
+        {{-- Representative fields — shown only when checkbox is checked --}}
+        <div id="repFields" style="display:none">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="requestor_name">Representative Name <span class="req">*</span></label>
+                    <input type="text" id="requestor_name" name="requestor_name" class="form-control"
+                           placeholder="Full name of the person picking up">
+                    <div class="form-error" id="err-requestor_name" style="display:none"></div>
+                </div>
+                <div class="form-group">
+                    <label for="requestor_relationship">Relationship to Resident <span class="req">*</span></label>
+                    <select id="requestor_relationship" name="requestor_relationship" class="form-control" style="height:48px;border:1.5px solid #d1d5db;border-radius:8px;font-family:'Poppins',sans-serif;font-size:1rem;padding:0 1rem;background:#fff">
+                        <option value="">Select relationship</option>
+                        @foreach(['Son','Daughter','Parent / Guardian','Spouse','Sibling','Cousin','Nephew / Niece','Legal Guardian','Attorney-in-Fact (SPA)','Other'] as $rel)
+                            <option value="{{ $rel }}">{{ $rel }}</option>
+                        @endforeach
+                    </select>
+                    <div class="form-error" id="err-requestor_relationship" style="display:none"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="requestor_contact">
+                    Representative Contact
+                    <span style="color:#9ca3af;font-weight:400">(optional — phone or email)</span>
+                </label>
+                <input type="text" id="requestor_contact" name="requestor_contact" class="form-control"
+                       placeholder="Phone or email (optional)">
+                <div class="form-error" id="err-requestor_contact" style="display:none"></div>
+            </div>
+        </div>
+
         <div class="form-actions">
             <a href="{{ route('portal.index') }}" class="btn btn-outline">Cancel</a>
             <button type="submit" id="submitBtn" class="btn btn-primary">
