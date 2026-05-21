@@ -511,55 +511,30 @@ class AppointmentController extends Controller
                 return '<span class="badge '.$cls.'">'.e($c->status).'</span>';
             })
             ->addColumn('actions', function ($c) {
-                $viewUrl    = route('blotter.show', $c);
+                $viewUrl     = route('blotter.show', $c);
                 $activateUrl = route('appointments.blotterActivate', $c);
-                $deleteUrl  = route('blotter.destroy', $c);
 
-                $statusUrl = route('appointments.blotterStatus', $c);
-
-                // Green = pending (not yet activated), Grey = already an active case
                 if ($c->status === 'Pending') {
-                    $activateBtn = '<button class="btn btn-success btn-sm blotter-activate-btn"
-                                            style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                            data-tippy-content="Activate as Blotter Case"
-                                            data-id="'.e($c->id).'"
-                                            data-num="'.e($c->case_number).'"
-                                            data-complainant="'.e($c->complainant_name).'"
-                                            data-type="'.e($c->incident_type).'"
-                                            data-date="'.($c->incident_date ? \Carbon\Carbon::parse($c->incident_date)->format('M d, Y') : '—').'"
-                                            data-url="'.$activateUrl.'">
-                                        <i class="fas fa-shield-halved"></i> Activate Case
-                                    </button>';
-                } else {
-                    $activateBtn = '<a href="'.$viewUrl.'" target="_blank"
-                                      class="btn btn-secondary btn-sm"
-                                      style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                      data-tippy-content="View Case: '.e($c->case_number).'">
-                                        <i class="fas fa-shield-halved"></i> View Case
-                                    </a>';
+                    return '<div style="display:flex;justify-content:flex-end">
+                                <button class="btn btn-success btn-sm blotter-activate-btn"
+                                        style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
+                                        data-id="'.e($c->id).'"
+                                        data-num="'.e($c->case_number).'"
+                                        data-complainant="'.e($c->complainant_name).'"
+                                        data-type="'.e($c->incident_type).'"
+                                        data-date="'.($c->incident_date ? \Carbon\Carbon::parse($c->incident_date)->format('M d, Y') : '—').'"
+                                        data-url="'.$activateUrl.'">
+                                    <i class="fas fa-shield-halved"></i> Activate
+                                </button>
+                            </div>';
                 }
-
-                return '
-                    <div style="display:flex;justify-content:flex-end;gap:6px">
-                        '.$activateBtn.'
-                        <button class="btn btn-primary btn-sm btn-icon blotter-status-btn"
-                                data-tippy-content="Update Status"
-                                data-id="'.e($c->id).'"
-                                data-num="'.e($c->case_number).'"
-                                data-complainant="'.e($c->complainant_name).'"
-                                data-status="'.e($c->status).'"
-                                data-url="'.$statusUrl.'">
-                            <i class="fas fa-rotate"></i>
-                        </button>
-                        <form method="POST" action="'.$deleteUrl.'"
-                              data-confirm="Delete blotter report '.e($c->case_number).'? This cannot be undone."
-                              data-confirm-title="Delete Blotter Report"
-                              data-confirm-ok="Delete">
-                            <input type="hidden" name="_token" value="'.csrf_token().'">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
-                        </form>
-                    </div>';
+                return '<div style="display:flex;justify-content:flex-end">
+                            <a href="'.$viewUrl.'" target="_blank"
+                               class="btn btn-secondary btn-sm"
+                               style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px">
+                                <i class="fas fa-shield-halved"></i> View Case
+                            </a>
+                        </div>';
             })
             ->filter(function ($query) use ($request) {
                 if ($request->has('search') && $request->search['value']) {

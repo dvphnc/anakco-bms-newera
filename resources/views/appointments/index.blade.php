@@ -1,15 +1,11 @@
 @extends('layouts.app')
 @section('title', 'Portal Appointments')
-@section('page-title', 'Portal Appointments')
-@section('page-subtitle', 'Document requests & business permit appointments from the Resident Portal')
 @section('content')
 
 <div class="page-header">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <div>
-            <h1 class="page-title">Portal Appointments</h1>
-            <p class="page-subtitle">Document requests &amp; business permit appointments from the Resident Portal</p>
-        </div>
+    <div>
+        <h1 class="page-title">Portal Appointments</h1>
+        <p class="page-subtitle">Track pick-up dates and request statuses from the Resident Portal</p>
     </div>
     <div class="page-actions">
         <a href="{{ route('portal.index') }}" class="btn btn-secondary" target="_blank">
@@ -18,21 +14,17 @@
     </div>
 </div>
 
-{{-- Stat cards --}}
 @php
-    $aptCounts = [];
-    foreach($statuses as $s) {
-        $aptCounts[$s] = \App\Models\DocumentAppointment::where('status', $s)->count();
-    }
-    $pendingCount  = $aptCounts['Pending']  ?? 0;
-    $totalCount    = \App\Models\DocumentAppointment::count();
-    $releasedCount = $aptCounts['Released'] ?? 0;
-    $readyCount    = $aptCounts['Ready']    ?? 0;
-    $bizPending     = \App\Models\Business::where('source','portal')->whereIn('status',['Pending','For Review'])->count();
+    $pendingCount   = \App\Models\DocumentAppointment::where('status', 'Pending')->count();
+    $readyCount     = \App\Models\DocumentAppointment::where('status', 'Ready')->count();
+    $releasedCount  = \App\Models\DocumentAppointment::where('status', 'Released')->count();
+    $totalCount     = \App\Models\DocumentAppointment::count();
+    $bizPending     = \App\Models\Business::where('source', 'portal')->whereIn('status', ['Pending', 'For Review'])->count();
+    $blotterPending = \App\Models\BlotterCase::where('source', 'portal')->where('status', 'Pending')->count();
 @endphp
 
-{{-- Row 1: Document appointment stats --}}
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px">
+{{-- Stat cards --}}
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-file-lines"></i></div>
         <div class="stat-info">
@@ -40,21 +32,21 @@
             <div class="stat-label">Document Requests</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Pending')">
+    <div class="stat-card" style="cursor:pointer" onclick="switchTab('documents');aptQuickStatus('Pending')">
         <div class="stat-icon" style="background:rgba(200,134,26,0.10);color:var(--gold)"><i class="fas fa-hourglass-half"></i></div>
         <div class="stat-info">
             <div class="stat-number" id="statAptPending">{{ number_format($pendingCount) }}</div>
             <div class="stat-label">Pending</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Ready')">
+    <div class="stat-card" style="cursor:pointer" onclick="switchTab('documents');aptQuickStatus('Ready')">
         <div class="stat-icon" style="background:rgba(22,163,74,0.10);color:#16a34a"><i class="fas fa-box-open"></i></div>
         <div class="stat-info">
             <div class="stat-number" id="statAptReady">{{ number_format($readyCount) }}</div>
             <div class="stat-label">Ready for Pick-up</div>
         </div>
     </div>
-    <div class="stat-card" style="cursor:pointer" onclick="aptQuickFilter('statusFilter','Released')">
+    <div class="stat-card" style="cursor:pointer" onclick="switchTab('documents');aptQuickStatus('Released')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
         <div class="stat-info">
             <div class="stat-number" id="statAptReleased">{{ number_format($releasedCount) }}</div>
@@ -63,250 +55,161 @@
     </div>
 </div>
 
-{{-- Row 2: Portal module pending --}}
-<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px">
-    <div class="stat-card" style="cursor:pointer" onclick="bizQuickFilter('bizStatusFilter','Pending')">
-        <div class="stat-icon" style="background:rgba(200,134,26,0.10);color:var(--gold)"><i class="fas fa-store"></i></div>
-        <div class="stat-info">
-            <div class="stat-number" id="statBizPending">{{ number_format($bizPending) }}</div>
-            <div class="stat-label">Business Permit Appointments Pending</div>
-        </div>
-    </div>
-    <div class="stat-card" style="cursor:pointer" onclick="blotterQuickFilter('blotterStatusFilter','Pending')">
-        <div class="stat-icon" style="background:rgba(220,38,38,0.08);color:#dc2626"><i class="fas fa-shield-halved"></i></div>
-        <div class="stat-info">
-            <div class="stat-number" id="statBlotterPending">{{ number_format($blotterPending) }}</div>
-            <div class="stat-label">Blotter Reports Pending Activation</div>
-        </div>
-    </div>
-</div>
+{{-- Tabbed card --}}
+<div class="card" style="overflow:hidden">
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 1 — DOCUMENT REQUEST APPOINTMENTS
-════════════════════════════════════════════════════════════ --}}
-
-{{-- Filter Bar (Document) --}}
-<div class="card mb-6">
-    <div class="card-header" style="cursor:pointer" onclick="toggleFilters('appointments')">
-        <div style="display:flex;align-items:center;gap:10px">
-            <span class="card-title"><i class="fas fa-file-lines"></i> Document Request Appointments</span>
-            <span id="filterBadge" class="badge badge-gold" style="display:none"></span>
+    {{-- ── Tab bar ── --}}
+    <div class="apt-tabbar-wrap">
+        <div class="apt-tabbar" id="aptTabBar">
+            <button class="apt-tab active" data-tab="documents" onclick="switchTab('documents')">
+                <i class="fas fa-file-lines"></i>
+                Document Requests
+                <span class="apt-tab-badge" id="tabBadgeDocs">{{ $totalCount }}</span>
+            </button>
+            <button class="apt-tab" data-tab="business" onclick="switchTab('business')">
+                <i class="fas fa-store"></i>
+                Business Permits
+                <span class="apt-tab-badge" id="tabBadgeBiz">{{ $bizPending }}</span>
+            </button>
+            <button class="apt-tab" data-tab="blotter" onclick="switchTab('blotter')">
+                <i class="fas fa-shield-halved"></i>
+                Blotter Reports
+                <span class="apt-tab-badge" id="tabBadgeBlotter">{{ $blotterPending }}</span>
+            </button>
         </div>
-        <button type="button" class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleFilters('appointments')">
-            <i class="fas fa-sliders" id="filterToggleIcon"></i>
-            <span id="filterToggleText">Show Filters</span>
+        <button class="apt-tab-more" id="aptTabMore" onclick="scrollTabBar()" title="Scroll tabs">
+            <i class="fas fa-chevron-right"></i>
         </button>
     </div>
-    <div id="filterPanel" style="display:none">
-        <div class="card-body" style="padding:20px 22px">
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
-                <div class="form-group" style="grid-column:1/-1">
-                    <label class="form-label">Search</label>
-                    <div style="position:relative">
-                        <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
-                        <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
-                               placeholder="Resident name, appointment number…">
-                    </div>
-                </div>
-                <div class="form-group" style="grid-column:span 2">
-                    <label class="form-label">Status</label>
-                    <select id="statusFilter">
-                        <option value=""></option>
-                        @foreach($statuses as $s)
-                            <option value="{{ $s }}">{{ $s }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group" style="grid-column:span 2">
-                    <label class="form-label">Document Type</label>
-                    <select id="docTypeFilter">
-                        <option value=""></option>
-                        @foreach($documentTypes as $dt)
-                            <option value="{{ $dt }}">{{ $dt }}</option>
-                        @endforeach
-                    </select>
-                </div>
+
+    {{-- ══════════════════════════════════════════════════════════
+         PANEL 1 — DOCUMENT REQUESTS
+    ═══════════════════════════════════════════════════════════ --}}
+    <div id="panelDocuments" class="apt-panel">
+        <div class="apt-toolbar">
+            <div style="position:relative;flex:1;max-width:320px">
+                <i class="fas fa-search apt-search-icon"></i>
+                <input type="text" id="docSearch" class="apt-search"
+                       placeholder="Name, appt. no., document type…">
             </div>
-            <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-                <button type="button" id="resetBtn" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-xmark"></i> Reset Filters
-                </button>
-            </div>
+            <select id="docStatusFilter" class="apt-select" style="min-width:145px">
+                <option value="">All statuses</option>
+                @foreach($statuses as $s)
+                    <option value="{{ $s }}">{{ $s }}</option>
+                @endforeach
+            </select>
+            <select id="docTypeFilter" class="apt-select" style="min-width:165px">
+                <option value="">All document types</option>
+                @foreach($documentTypes as $dt)
+                    <option value="{{ $dt }}">{{ $dt }}</option>
+                @endforeach
+            </select>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="resetDocFilters()">
+                <i class="fas fa-xmark"></i> Reset
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table id="appointmentsTable" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Resident</th>
+                        <th>Document Type</th>
+                        <th>Date Requested</th>
+                        <th>Pick-up Date</th>
+                        <th>Status</th>
+                        <th style="text-align:right">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 
-    {{-- Document Appointments Table --}}
-    <div class="table-responsive">
-        <table id="appointmentsTable" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Appt. No.</th>
-                    <th>Resident</th>
-                    <th>Document Type</th>
-                    <th>Pick-up Date</th>
-                    <th>Submitted</th>
-                    <th>Status</th>
-                    <th style="text-align:right">Actions</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-</div>
-
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 2 — BUSINESS PERMIT APPOINTMENTS
-════════════════════════════════════════════════════════════ --}}
-
-<div class="card mb-6">
-    <div class="card-header" style="cursor:pointer" onclick="toggleFilters('biz')">
-        <div style="display:flex;align-items:center;gap:10px">
-            <span class="card-title"><i class="fas fa-store"></i> Business Permit Appointments</span>
-            <span id="bizFilterBadge" class="badge badge-gold" style="display:none"></span>
+    {{-- ══════════════════════════════════════════════════════════
+         PANEL 2 — BUSINESS PERMITS
+    ═══════════════════════════════════════════════════════════ --}}
+    <div id="panelBusiness" class="apt-panel" style="display:none">
+        <div class="apt-toolbar">
+            <div style="position:relative;flex:1;max-width:320px">
+                <i class="fas fa-search apt-search-icon"></i>
+                <input type="text" id="bizSearch" class="apt-search"
+                       placeholder="Business name, owner, permit no.…">
+            </div>
+            <select id="bizStatusFilter" class="apt-select" style="min-width:145px">
+                <option value="">All statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="For Review">For Review</option>
+                <option value="Active">Active</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="resetBizFilters()">
+                <i class="fas fa-xmark"></i> Reset
+            </button>
         </div>
-        <button type="button" class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleFilters('biz')">
-            <i class="fas fa-sliders"></i>
-            <span id="bizFilterToggleText">Show Filters</span>
-        </button>
-    </div>
-    <div id="bizFilterPanel" style="display:none">
-        <div class="card-body" style="padding:20px 22px">
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
-                <div class="form-group" style="grid-column:1/-1">
-                    <label class="form-label">Search</label>
-                    <div style="position:relative">
-                        <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
-                        <input type="text" id="bizSearchInput" class="form-control" style="padding-left:32px"
-                               placeholder="Business name, owner, permit number…">
-                    </div>
-                </div>
-                <div class="form-group" style="grid-column:span 2">
-                    <label class="form-label">Status</label>
-                    <select id="bizStatusFilter">
-                        <option value=""></option>
-                        <option value="Pending">Pending</option>
-                        <option value="For Review">For Review</option>
-                        <option value="Active">Active</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
-                </div>
-                <div class="form-group" style="grid-column:span 2">
-                    <label class="form-label">Business Type</label>
-                    <select id="bizTypeFilter">
-                        <option value=""></option>
-                        @foreach($businessTypes as $bt)
-                            <option value="{{ $bt }}">{{ $bt }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-                <button type="button" id="bizResetBtn" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-xmark"></i> Reset Filters
-                </button>
-            </div>
+        <div class="table-responsive">
+            <table id="bizTable" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Owner</th>
+                        <th>Business</th>
+                        <th>Type</th>
+                        <th>Appt. Date</th>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th style="text-align:right">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 
-    {{-- Business Appointments Table --}}
-    <div class="table-responsive">
-        <table id="bizTable" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Permit No.</th>
-                    <th>Owner</th>
-                    <th>Business</th>
-                    <th>Type</th>
-                    <th>Appt. Date</th>
-                    <th>Submitted</th>
-                    <th>Status</th>
-                    <th style="text-align:right">Actions</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-</div>
-
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 3 — BLOTTER REPORTS FROM PORTAL
-════════════════════════════════════════════════════════════ --}}
-
-<div class="card mb-6">
-    <div class="card-header" style="cursor:pointer" onclick="toggleFilters('blotter')">
-        <div style="display:flex;align-items:center;gap:10px">
-            <span class="card-title"><i class="fas fa-shield-halved"></i> Blotter Reports from Portal</span>
-            <span id="blotterFilterBadge" class="badge badge-gold" style="display:none"></span>
+    {{-- ══════════════════════════════════════════════════════════
+         PANEL 3 — BLOTTER REPORTS
+    ═══════════════════════════════════════════════════════════ --}}
+    <div id="panelBlotter" class="apt-panel" style="display:none">
+        <div class="apt-toolbar">
+            <div style="position:relative;flex:1;max-width:320px">
+                <i class="fas fa-search apt-search-icon"></i>
+                <input type="text" id="blotterSearch" class="apt-search"
+                       placeholder="Complainant, case no., incident type…">
+            </div>
+            <select id="blotterStatusFilter" class="apt-select" style="min-width:145px">
+                <option value="">All statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="Active">Active</option>
+                <option value="Under Investigation">Under Investigation</option>
+                <option value="Mediated">Mediated</option>
+                <option value="Settled">Settled</option>
+                <option value="Closed">Closed</option>
+            </select>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="resetBlotterFilters()">
+                <i class="fas fa-xmark"></i> Reset
+            </button>
         </div>
-        <button type="button" class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleFilters('blotter')">
-            <i class="fas fa-sliders"></i>
-            <span id="blotterFilterToggleText">Show Filters</span>
-        </button>
-    </div>
-    <div id="blotterFilterPanel" style="display:none">
-        <div class="card-body" style="padding:20px 22px">
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
-                <div class="form-group" style="grid-column:1/-1">
-                    <label class="form-label">Search</label>
-                    <div style="position:relative">
-                        <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
-                        <input type="text" id="blotterSearchInput" class="form-control" style="padding-left:32px"
-                               placeholder="Complainant, case number, location…">
-                    </div>
-                </div>
-                <div class="form-group" style="grid-column:span 2">
-                    <label class="form-label">Status</label>
-                    <select id="blotterStatusFilter">
-                        <option value=""></option>
-                        <option value="Pending">Pending</option>
-                        <option value="Active">Active</option>
-                        <option value="Under Investigation">Under Investigation</option>
-                        <option value="Mediated">Mediated</option>
-                        <option value="Settled">Settled</option>
-                        <option value="Closed">Closed</option>
-                    </select>
-                </div>
-                <div class="form-group" style="grid-column:span 2">
-                    <label class="form-label">Incident Type</label>
-                    <select id="blotterTypeFilter">
-                        <option value=""></option>
-                        @foreach($incidentTypes as $it)
-                            <option value="{{ $it }}">{{ $it }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-                <button type="button" id="blotterResetBtn" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-xmark"></i> Reset Filters
-                </button>
-            </div>
+        <div class="table-responsive">
+            <table id="blotterTable" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Complainant</th>
+                        <th>Incident Type</th>
+                        <th>Location / Date</th>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th style="text-align:right">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 
-    <div class="table-responsive">
-        <table id="blotterTable" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Case No.</th>
-                    <th>Complainant</th>
-                    <th>Incident Type</th>
-                    <th>Location / Date</th>
-                    <th>Submitted</th>
-                    <th>Status</th>
-                    <th style="text-align:right">Actions</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-</div>
+</div>{{-- /card --}}
 
-{{-- ═══════════════════════════════════════════════════════════
-     MODALS
-════════════════════════════════════════════════════════════ --}}
 
-{{-- Issue Document Modal --}}
+{{-- ══════════════════════════════════════════════════════════════
+     MODAL — Issue Document
+═══════════════════════════════════════════════════════════════ --}}
 <div id="aptConvertModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -376,205 +279,15 @@
     </div>
 </div>
 
-{{-- Document Appointment Status Modal --}}
-<div id="aptStatusModal"
-     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
-            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
-     onclick="if(event.target===this)closeAptModal()">
-    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:440px;
-                padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
-        <div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
-            <div style="display:flex;align-items:center;gap:10px">
-                <i class="fas fa-rotate" style="color:var(--gold);font-size:14px"></i>
-                <span style="font-size:14px;font-weight:700;color:#fff">Update Appointment Status</span>
-            </div>
-            <button onclick="closeAptModal()"
-                    style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
-                           border-radius:var(--radius-sm);width:30px;height:30px;display:flex;
-                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer">
-                <i class="fas fa-xmark"></i>
-            </button>
-        </div>
-        <div style="padding:20px">
-            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">
-                Appointment: <strong id="aptModalNum" style="color:var(--navy)"></strong>
-            </p>
-            <div class="form-group">
-                <label class="form-label">New Status <span style="color:var(--crimson)">*</span></label>
-                <select id="aptModalStatus" class="form-control" onchange="onAptStatusChange()">
-                    @foreach($statuses as $s)
-                        <option value="{{ $s }}">{{ $s }}</option>
-                    @endforeach
-                </select>
-            </div>
-            {{-- Pickup date — only shown when status = Ready --}}
-            <div class="form-group" id="aptPickupDateGroup" style="display:none">
-                <label class="form-label">
-                    <i class="fas fa-calendar-check" style="color:#16a34a;margin-right:4px"></i>
-                    Ready for Pick-up Date <span style="color:var(--crimson)">*</span>
-                </label>
-                <input type="date" id="aptModalPickupDate" class="form-control"
-                       min="{{ now()->format('Y-m-d') }}">
-                <div style="font-size:11.5px;color:#6b7280;margin-top:4px">
-                    <i class="fas fa-circle-info" style="color:var(--navy)"></i>
-                    This will be shown to the resident on the portal tracker as their official pick-up date.
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Notes <span style="font-size:12px;color:var(--text-subtle);font-weight:400">(optional)</span></label>
-                <textarea id="aptModalNotes" class="form-control" rows="3"
-                          placeholder="e.g., Document is ready for pick-up…"></textarea>
-            </div>
-            <div id="aptStatusError" style="display:none;font-size:13px;color:var(--crimson);
-                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
-                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
-            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
-                <button type="button" onclick="closeAptModal()" class="btn btn-secondary">Cancel</button>
-                <button type="button" id="aptStatusSaveBtn" onclick="saveAptStatus()" class="btn btn-primary">
-                    <i class="fas fa-floppy-disk"></i> Save Status
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- Activate Blotter Case Modal --}}
-<div id="blotterActivateModal"
-     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
-            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
-     onclick="if(event.target===this)closeBlotterActivateModal()">
-    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:460px;
-                box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
-        <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
-            <div style="display:flex;align-items:center;gap:9px">
-                <i class="fas fa-shield-halved" style="color:var(--gold);font-size:13px"></i>
-                <span style="font-size:13.5px;font-weight:700;color:#fff">Activate Blotter Case</span>
-            </div>
-            <button onclick="closeBlotterActivateModal()"
-                    style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
-                           border-radius:var(--radius-sm);width:28px;height:28px;display:flex;
-                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer;font-size:12px">
-                <i class="fas fa-xmark"></i>
-            </button>
-        </div>
-        <div style="padding:18px">
-            {{-- Case summary --}}
-            <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
-                        border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px">
-                <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:10px;column-gap:16px">
-                    <div>
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Case No.</div>
-                        <div id="blotterActivateNum" style="font-size:13px;font-weight:700;color:var(--navy);font-family:monospace"></div>
-                    </div>
-                    <div>
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Incident Type</div>
-                        <div id="blotterActivateType" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
-                    </div>
-                    <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:10px">
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Complainant</div>
-                        <div id="blotterActivateComplainant" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
-                    </div>
-                    <div style="grid-column:1/-1">
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Incident Date</div>
-                        <div id="blotterActivateDate" style="font-size:13px;color:var(--text)"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-bottom:14px">
-                <label class="form-label" style="font-size:12.5px">
-                    Staff Notes
-                    <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span>
-                </label>
-                <textarea id="blotterActivateNotes" class="form-control" rows="3"
-                          placeholder="e.g., Verified with complainant; proceeding with mediation…"></textarea>
-            </div>
-
-            <div id="blotterActivateError" style="display:none;font-size:13px;color:var(--crimson);
-                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
-                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
-
-            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;
-                        color:var(--text-subtle);background:#f8f9fb;border:1px solid var(--border);
-                        border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px">
-                <i class="fas fa-circle-info" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
-                <span>Sets the case to <strong style="color:var(--navy)">Active</strong> and makes it visible as a real case record in the Blotter section.</span>
-            </div>
-
-            <div style="display:flex;justify-content:flex-end;gap:10px">
-                <button type="button" onclick="closeBlotterActivateModal()" class="btn btn-secondary">Cancel</button>
-                <button type="button" id="blotterActivateSaveBtn" onclick="saveBlotterActivate()" class="btn btn-success">
-                    <i class="fas fa-shield-halved"></i> Activate Case
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- Blotter Status Modal --}}
-<div id="blotterStatusModal"
-     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
-            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
-     onclick="if(event.target===this)closeBlotterStatusModal()">
-    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:440px;
-                padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
-        <div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
-            <div style="display:flex;align-items:center;gap:10px">
-                <i class="fas fa-rotate" style="color:var(--gold);font-size:14px"></i>
-                <span style="font-size:14px;font-weight:700;color:#fff">Update Blotter Case Status</span>
-            </div>
-            <button onclick="closeBlotterStatusModal()"
-                    style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
-                           border-radius:var(--radius-sm);width:30px;height:30px;display:flex;
-                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer">
-                <i class="fas fa-xmark"></i>
-            </button>
-        </div>
-        <div style="padding:20px">
-            <p style="font-size:13px;color:var(--text-muted);margin-bottom:4px">
-                Case No.: <strong id="blotterStatusModalNum" style="color:var(--navy)"></strong>
-            </p>
-            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">
-                Complainant: <strong id="blotterStatusModalComplainant" style="color:var(--navy)"></strong>
-            </p>
-            <div class="form-group">
-                <label class="form-label">New Status <span style="color:var(--crimson)">*</span></label>
-                <select id="blotterStatusModalStatus" class="form-control">
-                    <option value="Pending">Pending</option>
-                    <option value="Active">Active</option>
-                    <option value="Under Investigation">Under Investigation</option>
-                    <option value="Mediated">Mediated</option>
-                    <option value="Settled">Settled</option>
-                    <option value="Closed">Closed</option>
-                    <option value="Referred to Higher Authority">Referred to Higher Authority</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Resolution Notes <span style="font-size:12px;color:var(--text-subtle);font-weight:400">(optional)</span></label>
-                <textarea id="blotterStatusModalNotes" class="form-control" rows="3"
-                          placeholder="e.g., Parties agreed to settle amicably…"></textarea>
-            </div>
-            <div id="blotterStatusError" style="display:none;font-size:13px;color:var(--crimson);
-                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
-                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
-            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
-                <button type="button" onclick="closeBlotterStatusModal()" class="btn btn-secondary">Cancel</button>
-                <button type="button" id="blotterStatusSaveBtn" onclick="saveBlotterStatus()" class="btn btn-primary">
-                    <i class="fas fa-floppy-disk"></i> Save Status
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- Issue Business Permit Modal --}}
+{{-- ══════════════════════════════════════════════════════════════
+     MODAL — Issue Business Permit
+═══════════════════════════════════════════════════════════════ --}}
 <div id="bizIssueModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
      onclick="if(event.target===this)closeBizIssueModal()">
     <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
                 box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
-        {{-- Header --}}
         <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
             <div style="display:flex;align-items:center;gap:9px">
                 <i class="fas fa-stamp" style="color:var(--gold);font-size:13px"></i>
@@ -587,11 +300,7 @@
                 <i class="fas fa-xmark"></i>
             </button>
         </div>
-
-        {{-- Body --}}
         <div style="padding:18px">
-
-            {{-- Appointment summary (read-only) --}}
             <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
                         border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px">
                 <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:10px;column-gap:16px">
@@ -613,112 +322,106 @@
                     </div>
                 </div>
             </div>
-
-            {{-- Permit dates --}}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
                 <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
-                        Permit Date <span style="color:var(--crimson)">*</span>
-                    </label>
+                    <label class="form-label" style="font-size:12.5px">Permit Date <span style="color:var(--crimson)">*</span></label>
                     <input type="date" id="bizIssuePermitDate" class="form-control">
                 </div>
                 <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
-                        Expiry Date <span style="color:var(--crimson)">*</span>
-                    </label>
+                    <label class="form-label" style="font-size:12.5px">Expiry Date <span style="color:var(--crimson)">*</span></label>
                     <input type="date" id="bizIssueExpiryDate" class="form-control">
                 </div>
             </div>
-
-            {{-- Fee & OR --}}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
                 <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
-                        Fee Paid (₱)
-                        <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span>
-                    </label>
+                    <label class="form-label" style="font-size:12.5px">Fee Paid (₱) <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span></label>
                     <input type="number" id="bizIssueFee" class="form-control" min="0" step="0.01" placeholder="0.00">
                 </div>
                 <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
-                        O.R. Number
-                        <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span>
-                    </label>
+                    <label class="form-label" style="font-size:12.5px">O.R. Number <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span></label>
                     <input type="text" id="bizIssueOR" class="form-control" placeholder="e.g. 2026-00123">
                 </div>
             </div>
-
             <div id="bizIssueError" style="display:none;font-size:13px;color:var(--crimson);
                  padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
                  border:1px solid var(--crimson-border);margin-bottom:12px"></div>
-
-            {{-- Info note --}}
             <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;
                         color:var(--text-subtle);background:#f8f9fb;border:1px solid var(--border);
                         border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px">
                 <i class="fas fa-circle-info" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
                 <span>Sets the permit to <strong style="color:var(--navy)">Active</strong> and makes it visible as a real permit record in the Business Permits section.</span>
             </div>
-
-            {{-- Actions --}}
             <div style="display:flex;justify-content:flex-end;gap:10px">
                 <button type="button" onclick="closeBizIssueModal()" class="btn btn-secondary">Cancel</button>
                 <button type="button" id="bizIssueSaveBtn" onclick="saveBizIssue()" class="btn btn-success">
                     <i class="fas fa-stamp"></i> Issue Permit
                 </button>
             </div>
-
         </div>
     </div>
 </div>
 
-{{-- Business Permit Status Modal --}}
-<div id="bizStatusModal"
+{{-- ══════════════════════════════════════════════════════════════
+     MODAL — Activate Blotter Case
+═══════════════════════════════════════════════════════════════ --}}
+<div id="blotterActivateModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
-     onclick="if(event.target===this)closeBizModal()">
-    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:440px;
-                padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
-        <div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
-            <div style="display:flex;align-items:center;gap:10px">
-                <i class="fas fa-rotate" style="color:var(--gold);font-size:14px"></i>
-                <span style="font-size:14px;font-weight:700;color:#fff">Update Business Permit Status</span>
+     onclick="if(event.target===this)closeBlotterActivateModal()">
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:460px;
+                box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
+        <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:9px">
+                <i class="fas fa-shield-halved" style="color:var(--gold);font-size:13px"></i>
+                <span style="font-size:13.5px;font-weight:700;color:#fff">Activate Blotter Case</span>
             </div>
-            <button onclick="closeBizModal()"
+            <button onclick="closeBlotterActivateModal()"
                     style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
-                           border-radius:var(--radius-sm);width:30px;height:30px;display:flex;
-                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer">
+                           border-radius:var(--radius-sm);width:28px;height:28px;display:flex;
+                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer;font-size:12px">
                 <i class="fas fa-xmark"></i>
             </button>
         </div>
-        <div style="padding:20px">
-            <p style="font-size:13px;color:var(--text-muted);margin-bottom:4px">
-                Permit No.: <strong id="bizModalNum" style="color:var(--navy)"></strong>
-            </p>
-            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">
-                Business: <strong id="bizModalBiz" style="color:var(--navy)"></strong>
-            </p>
-            <div class="form-group">
-                <label class="form-label">New Status <span style="color:var(--crimson)">*</span></label>
-                <select id="bizModalStatus" class="form-control">
-                    <option value="Pending">Pending</option>
-                    <option value="For Review">For Review</option>
-                    <option value="Active">Active</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
+        <div style="padding:18px">
+            <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
+                        border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:10px;column-gap:16px">
+                    <div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Case No.</div>
+                        <div id="blotterActivateNum" style="font-size:13px;font-weight:700;color:var(--navy);font-family:monospace"></div>
+                    </div>
+                    <div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Incident Type</div>
+                        <div id="blotterActivateType" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:10px">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Complainant</div>
+                        <div id="blotterActivateComplainant" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div style="grid-column:1/-1">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Incident Date</div>
+                        <div id="blotterActivateDate" style="font-size:13px;color:var(--text)"></div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Notes <span style="font-size:12px;color:var(--text-subtle);font-weight:400">(optional)</span></label>
-                <textarea id="bizModalNotes" class="form-control" rows="3"
-                          placeholder="e.g., Please bring your DTI registration…"></textarea>
+            <div class="form-group" style="margin-bottom:14px">
+                <label class="form-label" style="font-size:12.5px">Staff Notes <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span></label>
+                <textarea id="blotterActivateNotes" class="form-control" rows="3"
+                          placeholder="e.g., Verified with complainant; proceeding with mediation…"></textarea>
             </div>
-            <div id="bizStatusError" style="display:none;font-size:13px;color:var(--crimson);
+            <div id="blotterActivateError" style="display:none;font-size:13px;color:var(--crimson);
                  padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
                  border:1px solid var(--crimson-border);margin-bottom:12px"></div>
-            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
-                <button type="button" onclick="closeBizModal()" class="btn btn-secondary">Cancel</button>
-                <button type="button" id="bizStatusSaveBtn" onclick="saveBizStatus()" class="btn btn-primary">
-                    <i class="fas fa-floppy-disk"></i> Save Status
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;
+                        color:var(--text-subtle);background:#f8f9fb;border:1px solid var(--border);
+                        border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px">
+                <i class="fas fa-circle-info" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
+                <span>Sets the case to <strong style="color:var(--navy)">Active</strong> and makes it visible as a real case record in the Blotter section.</span>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:10px">
+                <button type="button" onclick="closeBlotterActivateModal()" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="blotterActivateSaveBtn" onclick="saveBlotterActivate()" class="btn btn-success">
+                    <i class="fas fa-shield-halved"></i> Activate Case
                 </button>
             </div>
         </div>
@@ -734,118 +437,231 @@
 @push('scripts')
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
+/* ── Page bg ── */
 .main-content { background: #F8F9FA; }
-.stat-card { background: #FFFFFF !important; box-shadow: 0 1px 4px rgba(13,33,68,0.07), 0 4px 16px rgba(13,33,68,0.04); }
-.stat-label { font-size: 12px; color: var(--text-subtle); font-weight: 500; letter-spacing: 0.02em; }
-.stat-number { font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1.1; }
+.stat-card { background:#fff!important; box-shadow:0 1px 4px rgba(13,33,68,.07),0 4px 16px rgba(13,33,68,.04); }
+.stat-label { font-size:12px; color:var(--text-subtle); font-weight:500; letter-spacing:.02em; }
+.stat-number { font-size:28px; font-weight:700; color:var(--navy); line-height:1.1; }
 
+/* ── Tab bar ── */
+.apt-tabbar-wrap {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+}
+.apt-tabbar {
+    display: flex;
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.apt-tabbar::-webkit-scrollbar { display: none; }
+.apt-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+    border-right: 1px solid var(--border);
+    position: relative;
+    transition: color .15s, background .15s;
+    font-family: 'Poppins', sans-serif;
+}
+.apt-tab::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: transparent;
+    transition: background .15s;
+}
+.apt-tab:hover { background: var(--surface2); color: var(--navy); }
+.apt-tab.active { color: var(--navy); font-weight: 600; background: #fff; }
+.apt-tab.active::after { background: var(--navy); }
+.apt-tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--navy);
+    color: #fff;
+}
+.apt-tab.active .apt-tab-badge {
+    background: var(--gold);
+    color: #fff;
+}
+.apt-tab-more {
+    flex-shrink: 0;
+    padding: 0 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    border-left: 1px solid var(--border);
+    font-size: 13px;
+    transition: background .15s;
+}
+.apt-tab-more:hover { background: var(--surface2); color: var(--navy); }
+
+/* ── Panel toolbar ── */
+.apt-panel {}
+.apt-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: #fafbfc;
+    flex-wrap: wrap;
+}
+.apt-search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-subtle);
+    font-size: 12px;
+    pointer-events: none;
+}
+.apt-search {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px 0 32px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+}
+.apt-search:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 2px rgba(13,33,68,.1); }
+.apt-select {
+    height: 36px;
+    padding: 0 28px 0 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    appearance: auto;
+}
+.apt-select:focus { outline: none; border-color: var(--navy); }
+
+/* ── DataTables ── */
 #appointmentsTable_wrapper .dataTables_length,
-#appointmentsTable_wrapper .dataTables_filter { display:none; }
-#appointmentsTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
-#appointmentsTable_wrapper .dataTables_paginate { padding:12px 20px; }
-#appointmentsTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
-#appointmentsTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
-#appointmentsTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
-
+#appointmentsTable_wrapper .dataTables_filter,
 #bizTable_wrapper .dataTables_length,
-#bizTable_wrapper .dataTables_filter { display:none; }
-#bizTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
-#bizTable_wrapper .dataTables_paginate { padding:12px 20px; }
-#bizTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
-#bizTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
-#bizTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
-
+#bizTable_wrapper .dataTables_filter,
 #blotterTable_wrapper .dataTables_length,
 #blotterTable_wrapper .dataTables_filter { display:none; }
+
+#appointmentsTable_wrapper .dataTables_info,
+#bizTable_wrapper .dataTables_info,
 #blotterTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
+
+#appointmentsTable_wrapper .dataTables_paginate,
+#bizTable_wrapper .dataTables_paginate,
 #blotterTable_wrapper .dataTables_paginate { padding:12px 20px; }
-#blotterTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
-#blotterTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
-#blotterTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
 
-.btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
-.btn-success:disabled { opacity:.65; cursor:not-allowed; }
-
-#filterPanel .select2-container,
-#bizFilterPanel .select2-container,
-#blotterFilterPanel .select2-container { width: 100% !important; }
-#filterPanel .select2-container--default .select2-selection--single,
-#filterPanel .select2-container--default .select2-selection--multiple,
-#bizFilterPanel .select2-container--default .select2-selection--single,
-#bizFilterPanel .select2-container--default .select2-selection--multiple,
-#blotterFilterPanel .select2-container--default .select2-selection--single,
-#blotterFilterPanel .select2-container--default .select2-selection--multiple {
-    border: 1px solid var(--border); border-radius: var(--radius-sm);
-    background: var(--surface); min-height: 38px;
+#appointmentsTable_wrapper .dataTables_paginate .paginate_button,
+#bizTable_wrapper .dataTables_paginate .paginate_button,
+#blotterTable_wrapper .dataTables_paginate .paginate_button {
+    padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;
+    border:1px solid var(--border)!important;background:white!important;color:var(--text)!important;margin:0 2px;
 }
-#filterPanel .select2-container--default .select2-selection--single,
-#bizFilterPanel .select2-container--default .select2-selection--single,
-#blotterFilterPanel .select2-container--default .select2-selection--single {
-    padding: 0 32px 0 10px; display: flex; align-items: center;
+#appointmentsTable_wrapper .dataTables_paginate .paginate_button.current,
+#bizTable_wrapper .dataTables_paginate .paginate_button.current,
+#blotterTable_wrapper .dataTables_paginate .paginate_button.current {
+    background:var(--navy)!important;color:white!important;border-color:var(--navy)!important;
 }
-#filterPanel .select2-container--default .select2-selection--single .select2-selection__rendered,
-#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__rendered,
-#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: var(--text); font-size: 13.5px; padding: 0;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal;
+#appointmentsTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current),
+#bizTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current),
+#blotterTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+    background:var(--navy-pale)!important;color:var(--navy)!important;
 }
-#filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder,
-#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder,
-#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
-#filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow,
-#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__arrow,
-#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
+.btn-success { background:#16a34a;color:#fff;border-color:#16a34a; }
+.btn-success:disabled { opacity:.65;cursor:not-allowed; }
 </style>
+
 <script>
 $(document).ready(function () {
 
-    /* ── Init Select2 for both filter panels ──────────────────────────── */
-    function initSelect2InPanel($panel) {
-        var $fp = $panel;
-        var _fpW = $fp.parent().width();
-        $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1', width: _fpW + 'px' });
-        const s2 = { dropdownParent: $('body'), allowClear: true, width: '100%',
-                     minimumResultsForSearch: 0, language: { noResults: () => 'No matches' } };
-        $panel.find('select').each(function () {
-            var placeholder = $(this).data('placeholder') || 'Select…';
-            $(this).select2($.extend({}, s2, { placeholder: placeholder }));
-        });
-        $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
+    /* ── Tab switching ──────────────────────────────────────────── */
+    var _activeTab = localStorage.getItem('apt_active_tab') || 'documents';
+    switchTab(_activeTab);
+    checkTabOverflow();
+
+    window.switchTab = function (tab) {
+        document.querySelectorAll('.apt-tab').forEach(t => t.classList.remove('active'));
+        var btn = document.querySelector('.apt-tab[data-tab="' + tab + '"]');
+        if (btn) btn.classList.add('active');
+        document.querySelectorAll('.apt-panel').forEach(p => p.style.display = 'none');
+        var cap = tab.charAt(0).toUpperCase() + tab.slice(1);
+        var panel = document.getElementById('panel' + cap);
+        if (panel) panel.style.display = '';
+        localStorage.setItem('apt_active_tab', tab);
+
+        // Adjust DataTables column widths when panel becomes visible
+        if (tab === 'documents' && docTable) docTable.columns.adjust();
+        if (tab === 'business'  && bizTable)  bizTable.columns.adjust();
+        if (tab === 'blotter'   && blotterTable) blotterTable.columns.adjust();
+    };
+
+    window.scrollTabBar = function () {
+        document.getElementById('aptTabBar').scrollBy({ left: 160, behavior: 'smooth' });
+    };
+
+    function checkTabOverflow() {
+        var bar = document.getElementById('aptTabBar');
+        var btn = document.getElementById('aptTabMore');
+        if (!bar || !btn) return;
+        btn.style.display = bar.scrollWidth > bar.clientWidth ? '' : 'none';
     }
+    window.addEventListener('resize', checkTabOverflow);
 
-    $('#statusFilter').data('placeholder', 'All statuses…');
-    $('#docTypeFilter').data('placeholder', 'All document types…');
-    $('#bizStatusFilter').data('placeholder', 'All statuses…');
-    $('#bizTypeFilter').data('placeholder', 'All types…');
-    $('#blotterStatusFilter').data('placeholder', 'All statuses…');
-    $('#blotterTypeFilter').data('placeholder', 'All types…');
+    /* ── Stat-card quick-filter (documents tab) ─────────────────── */
+    window.aptQuickStatus = function (status) {
+        var el = document.getElementById('docStatusFilter');
+        if (!el) return;
+        el.value = status;
+        if (docTable) docTable.ajax.reload();
+    };
 
-    initSelect2InPanel($('#filterPanel'));
-    initSelect2InPanel($('#bizFilterPanel'));
-    initSelect2InPanel($('#blotterFilterPanel'));
-
-    /* ─────────────────────────────────────────────────────────────────────
-     |  TABLE 1 — DOCUMENT APPOINTMENTS
-     |────────────────────────────────────────────────────────────────────── */
-    var table = $('#appointmentsTable').DataTable({
+    /* ── TABLE 1 — DOCUMENT REQUESTS ────────────────────────────── */
+    var docTable = $('#appointmentsTable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
             url: '{{ route('appointments.index') }}',
             data: function (d) {
-                d.status        = $('#statusFilter').val();
+                d.status        = $('#docStatusFilter').val();
                 d.document_type = $('#docTypeFilter').val();
-                d.search        = { value: $('#searchInput').val() };
+                d.search        = { value: $('#docSearch').val() };
             }
         },
         columns: [
-            { data: 'number_col',    name: 'appointment_number' },
-            { data: 'resident_col',  name: 'resident_name',    orderable: false },
-            { data: 'document_col',  name: 'document_type',    orderable: false },
-            { data: 'date_col',      name: 'preferred_date' },
-            { data: 'submitted_col', name: 'created_at' },
-            { data: 'status_col',    name: 'status' },
-            { data: 'actions',       name: 'actions', orderable: false, searchable: false },
+            { data: 'resident_col',  name: 'resident_name',  orderable: false },
+            { data: 'document_col',  name: 'document_type',  orderable: false },
+            { data: 'submitted_col', name: 'created_at',     width: '110px' },
+            { data: 'date_col',      name: 'pickup_date',    width: '130px' },
+            { data: 'status_col',    name: 'status',         width: '110px' },
+            { data: 'actions',       name: 'actions',        orderable: false, searchable: false, width: '110px' },
         ],
         order: [[3, 'asc']],
         pageLength: 15,
@@ -858,14 +674,22 @@ $(document).ready(function () {
         },
         language: {
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
-            emptyTable:  '<div class="empty-state"><i class="fas fa-file-lines"></i><p>No document appointments found.</p></div>',
-            zeroRecords: '<div class="empty-state"><i class="fas fa-search"></i><p>No appointments match your filters. <a href="#" onclick="document.getElementById(\'resetBtn\').click();return false" style="color:var(--navy);font-weight:600">Clear filters</a></p></div>',
+            emptyTable:  '<div class="empty-state"><i class="fas fa-file-lines"></i><p>No document requests found.</p></div>',
+            zeroRecords: '<div class="empty-state"><i class="fas fa-search"></i><p>No requests match your filters.</p></div>',
         }
     });
 
-    /* ─────────────────────────────────────────────────────────────────────
-     |  TABLE 2 — BUSINESS PERMIT APPOINTMENTS
-     |────────────────────────────────────────────────────────────────────── */
+    $('#docSearch').on('keyup', debounce(function () { docTable.ajax.reload(); }, 350));
+    $('#docStatusFilter, #docTypeFilter').on('change', function () { docTable.ajax.reload(); });
+
+    window.resetDocFilters = function () {
+        $('#docSearch').val('');
+        $('#docStatusFilter').val('');
+        $('#docTypeFilter').val('');
+        docTable.ajax.reload();
+    };
+
+    /* ── TABLE 2 — BUSINESS PERMIT APPOINTMENTS ─────────────────── */
     var bizTable = $('#bizTable').DataTable({
         processing: true,
         serverSide: true,
@@ -873,21 +697,19 @@ $(document).ready(function () {
             url: '{{ route('appointments.bizData') }}',
             data: function (d) {
                 d.status        = $('#bizStatusFilter').val();
-                d.business_type = $('#bizTypeFilter').val();
-                d.search        = { value: $('#bizSearchInput').val() };
+                d.search        = { value: $('#bizSearch').val() };
             }
         },
         columns: [
-            { data: 'number_col',    name: 'permit_number',  width: '130px' },
             { data: 'owner_col',     name: 'owner_name',     orderable: false },
             { data: 'biz_col',       name: 'business_name' },
-            { data: 'type_col',      name: 'business_type',  width: '120px', orderable: false },
+            { data: 'type_col',      name: 'business_type',  orderable: false, width: '120px' },
             { data: 'appt_date_col', name: 'preferred_date', width: '110px' },
             { data: 'submitted_col', name: 'created_at',     width: '100px' },
             { data: 'status_col',    name: 'status',         width: '100px' },
-            { data: 'actions',       name: 'actions', orderable: false, searchable: false, width: '140px' },
+            { data: 'actions',       name: 'actions',        orderable: false, searchable: false, width: '120px' },
         ],
-        order: [[4, 'asc']],
+        order: [[3, 'asc']],
         pageLength: 15,
         drawCallback: function () {
             if (typeof tippy !== 'undefined') {
@@ -899,34 +721,39 @@ $(document).ready(function () {
         language: {
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
             emptyTable:  '<div class="empty-state"><i class="fas fa-store"></i><p>No business permit appointments found.</p></div>',
-            zeroRecords: '<div class="empty-state"><i class="fas fa-search"></i><p>No appointments match your filters. <a href="#" onclick="document.getElementById(\'bizResetBtn\').click();return false" style="color:var(--navy);font-weight:600">Clear filters</a></p></div>',
+            zeroRecords: '<div class="empty-state"><i class="fas fa-search"></i><p>No appointments match your filters.</p></div>',
         }
     });
 
-    /* ─────────────────────────────────────────────────────────────────────
-     |  TABLE 3 — BLOTTER PORTAL REPORTS
-     |────────────────────────────────────────────────────────────────────── */
+    $('#bizSearch').on('keyup', debounce(function () { bizTable.ajax.reload(); }, 350));
+    $('#bizStatusFilter').on('change', function () { bizTable.ajax.reload(); });
+
+    window.resetBizFilters = function () {
+        $('#bizSearch').val('');
+        $('#bizStatusFilter').val('');
+        bizTable.ajax.reload();
+    };
+
+    /* ── TABLE 3 — BLOTTER PORTAL REPORTS ───────────────────────── */
     var blotterTable = $('#blotterTable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
             url: '{{ route('appointments.blotterData') }}',
             data: function (d) {
-                d.status        = $('#blotterStatusFilter').val();
-                d.incident_type = $('#blotterTypeFilter').val();
-                d.search        = { value: $('#blotterSearchInput').val() };
+                d.status   = $('#blotterStatusFilter').val();
+                d.search   = { value: $('#blotterSearch').val() };
             }
         },
         columns: [
-            { data: 'number_col',      name: 'case_number',     width: '140px' },
             { data: 'complainant_col', name: 'complainant_name', orderable: false },
-            { data: 'type_col',        name: 'incident_type',   width: '130px', orderable: false },
+            { data: 'type_col',        name: 'incident_type',    orderable: false, width: '130px' },
             { data: 'incident_col',    name: 'incident_location', orderable: false },
-            { data: 'submitted_col',   name: 'created_at',      width: '100px' },
-            { data: 'status_col',      name: 'status',          width: '110px' },
-            { data: 'actions',         name: 'actions', orderable: false, searchable: false, width: '160px' },
+            { data: 'submitted_col',   name: 'created_at',       width: '100px' },
+            { data: 'status_col',      name: 'status',           width: '110px' },
+            { data: 'actions',         name: 'actions',          orderable: false, searchable: false, width: '120px' },
         ],
-        order: [[4, 'desc']],
+        order: [[3, 'desc']],
         pageLength: 15,
         drawCallback: function () {
             if (typeof tippy !== 'undefined') {
@@ -938,88 +765,154 @@ $(document).ready(function () {
         language: {
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
             emptyTable:  '<div class="empty-state"><i class="fas fa-shield-halved"></i><p>No blotter reports from portal found.</p></div>',
-            zeroRecords: '<div class="empty-state"><i class="fas fa-search"></i><p>No reports match your filters. <a href="#" onclick="document.getElementById(\'blotterResetBtn\').click();return false" style="color:var(--navy);font-weight:600">Clear filters</a></p></div>',
+            zeroRecords: '<div class="empty-state"><i class="fas fa-search"></i><p>No reports match your filters.</p></div>',
         }
     });
 
-    /* ── Axios DELETE — Document ──────────────────────────────────────── */
-    $('#appointmentsTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
-        e.preventDefault(); e.stopImmediatePropagation();
-        const btn = $(this), form = btn.closest('form'), url = form.attr('action');
-        bmsConfirm({ title: form.data('confirm-title') || 'Delete Appointment', message: form.data('confirm'), ok: 'Delete' }, function () {
-            const icon = btn.find('i'), orig = icon.attr('class');
-            icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
-            btn.prop('disabled', true);
-            axios.delete(url)
-                .then(function (res) {
-                    table.row(form.closest('tr')).remove().draw(false);
-                    bmsStatDecrement('statApptTotal');
-                    bmsToast(res.data.message || 'Appointment deleted.', 'success');
-                })
-                .catch(function () {
-                    icon.attr('class', orig).css('color', '');
-                    btn.prop('disabled', false);
-                    bmsToast('Could not delete appointment.', 'error');
-                });
+    $('#blotterSearch').on('keyup', debounce(function () { blotterTable.ajax.reload(); }, 350));
+    $('#blotterStatusFilter').on('change', function () { blotterTable.ajax.reload(); });
+
+    window.resetBlotterFilters = function () {
+        $('#blotterSearch').val('');
+        $('#blotterStatusFilter').val('');
+        blotterTable.ajax.reload();
+    };
+
+    /* ── Debounce helper ────────────────────────────────────────── */
+    function debounce(fn, delay) {
+        var t;
+        return function () { clearTimeout(t); t = setTimeout(fn, delay); };
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+     | MODAL — Issue Document
+     ═══════════════════════════════════════════════════════════════ */
+    $('#appointmentsTable').on('click', '.apt-convert-btn', function () {
+        var $btn = $(this);
+        document.getElementById('cvtNum').textContent  = $btn.data('num');
+        document.getElementById('cvtName').textContent = $btn.data('name');
+        document.getElementById('cvtType').textContent = $btn.data('type');
+        var purpose    = $btn.data('purpose') || '';
+        var purposeRow = document.getElementById('cvtPurposeRow');
+        if (purpose) { document.getElementById('cvtPurpose').textContent = purpose; purposeRow.style.display = ''; }
+        else { purposeRow.style.display = 'none'; }
+        document.getElementById('cvtFee').value = '';
+        document.getElementById('cvtOR').value  = '';
+        document.getElementById('cvtError').style.display = 'none';
+        window._cvtUrl   = $btn.data('url');
+        window._cvtAptId = $btn.data('id');
+        document.getElementById('aptConvertModal').style.display = 'flex';
+    });
+
+    window.closeConvertModal = function () {
+        document.getElementById('aptConvertModal').style.display = 'none';
+    };
+
+    window.saveConvert = function () {
+        var btn = document.getElementById('cvtSaveBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Issuing…';
+        document.getElementById('cvtError').style.display = 'none';
+
+        axios.post(window._cvtUrl, {
+            fee_paid:  document.getElementById('cvtFee').value  || null,
+            or_number: document.getElementById('cvtOR').value   || null,
+            _token: '{{ csrf_token() }}',
+        })
+        .then(function (res) {
+            closeConvertModal();
+            docTable.ajax.reload(null, false);
+            bmsToast(res.data.message || 'Document issued.', 'success');
+            bmsStatDecrement('statApptTotal');
+        })
+        .catch(function (err) {
+            var msg = err.response?.data?.message || 'Failed to issue document.';
+            document.getElementById('cvtError').textContent = msg;
+            document.getElementById('cvtError').style.display = '';
+            if (err.response?.data?.view_url) {
+                bmsToast('Already issued. Redirecting…', 'info');
+                setTimeout(() => window.open(err.response.data.view_url, '_blank'), 1200);
+            }
+        })
+        .finally(function () {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-file-circle-check"></i> Issue Document';
         });
+    };
+
+    /* ═══════════════════════════════════════════════════════════════
+     | MODAL — Issue Business Permit
+     ═══════════════════════════════════════════════════════════════ */
+    $('#bizTable').on('click', '.biz-issue-btn', function () {
+        var $btn = $(this);
+        document.getElementById('bizIssueNum').textContent   = $btn.data('num');
+        document.getElementById('bizIssueBiz').textContent   = $btn.data('biz');
+        document.getElementById('bizIssueOwner').textContent = $btn.data('owner');
+        document.getElementById('bizIssueAppt').textContent  = $btn.data('appt');
+        var today    = new Date();
+        var nextYear = new Date(today);
+        nextYear.setFullYear(nextYear.getFullYear() + 1);
+        var fmt = function (d) { return d.toISOString().slice(0, 10); };
+        document.getElementById('bizIssuePermitDate').value  = fmt(today);
+        document.getElementById('bizIssueExpiryDate').value  = fmt(nextYear);
+        document.getElementById('bizIssueFee').value         = '';
+        document.getElementById('bizIssueOR').value          = '';
+        document.getElementById('bizIssueError').style.display = 'none';
+        window._bizIssueUrl = $btn.data('url');
+        document.getElementById('bizIssueModal').style.display = 'flex';
     });
 
-    /* ── Axios DELETE — Business ──────────────────────────────────────── */
-    $('#bizTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
-        e.preventDefault(); e.stopImmediatePropagation();
-        const btn = $(this), form = btn.closest('form'), url = form.attr('action');
-        bmsConfirm({ title: form.data('confirm-title') || 'Delete Business Appointment', message: form.data('confirm'), ok: 'Delete' }, function () {
-            const icon = btn.find('i'), orig = icon.attr('class');
-            icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
-            btn.prop('disabled', true);
-            axios.delete(url)
-                .then(function (res) {
-                    bizTable.row(form.closest('tr')).remove().draw(false);
-                    bmsToast(res.data.message || 'Business appointment deleted.', 'success');
-                })
-                .catch(function () {
-                    icon.attr('class', orig).css('color', '');
-                    btn.prop('disabled', false);
-                    bmsToast('Could not delete.', 'error');
-                });
+    window.closeBizIssueModal = function () {
+        document.getElementById('bizIssueModal').style.display = 'none';
+    };
+
+    window.saveBizIssue = function () {
+        var permitDate = document.getElementById('bizIssuePermitDate').value;
+        var expiryDate = document.getElementById('bizIssueExpiryDate').value;
+        var errEl = document.getElementById('bizIssueError');
+        if (!permitDate || !expiryDate) {
+            errEl.textContent = 'Please fill in both permit date and expiry date.';
+            errEl.style.display = '';
+            return;
+        }
+        var btn = document.getElementById('bizIssueSaveBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Issuing…';
+        errEl.style.display = 'none';
+
+        axios.post(window._bizIssueUrl, {
+            permit_date: permitDate,
+            expiry_date: expiryDate,
+            fee_paid:    document.getElementById('bizIssueFee').value  || null,
+            or_number:   document.getElementById('bizIssueOR').value   || null,
+            _token: '{{ csrf_token() }}',
+        })
+        .then(function (res) {
+            closeBizIssueModal();
+            bizTable.ajax.reload(null, false);
+            bmsToast(res.data.message || 'Permit issued.', 'success');
+            if (res.data.biz_pending !== undefined) {
+                document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
+            }
+        })
+        .catch(function (err) {
+            var msg = err.response?.data?.message || 'Failed to issue permit.';
+            errEl.textContent = msg;
+            errEl.style.display = '';
+            if (err.response?.data?.view_url) {
+                bmsToast('Already issued.', 'info');
+                setTimeout(() => window.open(err.response.data.view_url, '_blank'), 1200);
+            }
+        })
+        .finally(function () {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-stamp"></i> Issue Permit';
         });
-    });
+    };
 
-    /* ── Axios DELETE — Blotter ───────────────────────────────────────── */
-    $('#blotterTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
-        e.preventDefault(); e.stopImmediatePropagation();
-        const btn = $(this), form = btn.closest('form'), url = form.attr('action');
-        bmsConfirm({ title: form.data('confirm-title') || 'Delete Blotter Report', message: form.data('confirm'), ok: 'Delete' }, function () {
-            const icon = btn.find('i'), orig = icon.attr('class');
-            icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
-            btn.prop('disabled', true);
-            axios.delete(url)
-                .then(function (res) {
-                    blotterTable.row(form.closest('tr')).remove().draw(false);
-                    bmsToast(res.data.message || 'Blotter report deleted.', 'success');
-                })
-                .catch(function () {
-                    icon.attr('class', orig).css('color', '');
-                    btn.prop('disabled', false);
-                    bmsToast('Could not delete.', 'error');
-                });
-        });
-    });
-
-    /* ── Open blotter status modal ───────────────────────────────────── */
-    $('#blotterTable').on('click', '.blotter-status-btn', function () {
-        _blotterId        = $(this).data('id');
-        _blotterOldStatus = $(this).data('status');
-        document.getElementById('blotterStatusModalNum').textContent         = $(this).data('num');
-        document.getElementById('blotterStatusModalComplainant').textContent = $(this).data('complainant');
-        document.getElementById('blotterStatusModalStatus').value            = _blotterOldStatus;
-        document.getElementById('blotterStatusModalNotes').value             = '';
-        document.getElementById('blotterStatusError').style.display          = 'none';
-        window._blotterStatusUrl = $(this).data('url');
-        document.getElementById('blotterStatusModal').style.display          = 'flex';
-    });
-
-    /* ── Open blotter activate modal ──────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════════════
+     | MODAL — Activate Blotter Case
+     ═══════════════════════════════════════════════════════════════ */
     $('#blotterTable').on('click', '.blotter-activate-btn', function () {
         var $btn = $(this);
         document.getElementById('blotterActivateNum').textContent        = $btn.data('num');
@@ -1032,578 +925,43 @@ $(document).ready(function () {
         document.getElementById('blotterActivateModal').style.display    = 'flex';
     });
 
-    /* ── Open convert modal ───────────────────────────────────────────── */
-    $('#appointmentsTable').on('click', '.apt-convert-btn', function () {
-        var $btn = $(this);
-        document.getElementById('cvtNum').textContent  = $btn.data('num');
-        document.getElementById('cvtName').textContent = $btn.data('name');
-        document.getElementById('cvtType').textContent = $btn.data('type');
-        var purpose = $btn.data('purpose') || '';
-        var purposeRow = document.getElementById('cvtPurposeRow');
-        if (purpose) { document.getElementById('cvtPurpose').textContent = purpose; purposeRow.style.display = ''; }
-        else { purposeRow.style.display = 'none'; }
-        document.getElementById('cvtFee').value = '';
-        document.getElementById('cvtOR').value  = '';
-        document.getElementById('cvtError').style.display = 'none';
-        window._cvtUrl   = $btn.data('url');
-        window._cvtAptId = $btn.data('id');
-        document.getElementById('aptConvertModal').style.display = 'flex';
-    });
-
-    /* ── Open doc status modal ────────────────────────────────────────── */
-    $('#appointmentsTable').on('click', '.apt-status-btn', function () {
-        _aptId          = $(this).data('id');
-        _aptOldStatus   = $(this).data('status');
-        _aptPreferredDate = $(this).data('preferred-date') || '';
-        document.getElementById('aptModalNum').textContent    = $(this).data('num');
-        document.getElementById('aptModalStatus').value       = _aptOldStatus;
-        document.getElementById('aptModalNotes').value        = $(this).data('notes') || '';
-        document.getElementById('aptStatusError').style.display = 'none';
-        // Pre-fill pickup date: use existing pickup_date if set, else preferred_date
-        var existingPickup = $(this).data('pickup-date') || '';
-        document.getElementById('aptModalPickupDate').value   = existingPickup || _aptPreferredDate;
-        onAptStatusChange();
-        document.getElementById('aptStatusModal').style.display = 'flex';
-    });
-
-    /* ── Open biz issue modal ─────────────────────────────────────────── */
-    $('#bizTable').on('click', '.biz-issue-btn', function () {
-        var $btn = $(this);
-        document.getElementById('bizIssueNum').textContent   = $btn.data('num');
-        document.getElementById('bizIssueBiz').textContent   = $btn.data('biz');
-        document.getElementById('bizIssueOwner').textContent = $btn.data('owner');
-        document.getElementById('bizIssueAppt').textContent  = $btn.data('appt');
-
-        // Default permit date = today, expiry = +1 year
-        var today     = new Date();
-        var nextYear  = new Date(today);
-        nextYear.setFullYear(nextYear.getFullYear() + 1);
-        var fmt = function (d) { return d.toISOString().slice(0,10); };
-        document.getElementById('bizIssuePermitDate').value  = fmt(today);
-        document.getElementById('bizIssueExpiryDate').value  = fmt(nextYear);
-        document.getElementById('bizIssueFee').value         = '';
-        document.getElementById('bizIssueOR').value          = '';
-        document.getElementById('bizIssueError').style.display = 'none';
-
-        window._bizIssueUrl = $btn.data('url');
-        document.getElementById('bizIssueModal').style.display = 'flex';
-    });
-
-    /* ── Open biz status modal ────────────────────────────────────────── */
-    $('#bizTable').on('click', '.biz-apt-status-btn', function () {
-        _bizId        = $(this).data('id');
-        _bizOldStatus = $(this).data('status');
-        document.getElementById('bizModalNum').textContent     = $(this).data('num');
-        document.getElementById('bizModalBiz').textContent     = $(this).data('biz');
-        document.getElementById('bizModalStatus').value        = _bizOldStatus;
-        document.getElementById('bizModalNotes').value         = '';
-        document.getElementById('bizStatusError').style.display = 'none';
-        document.getElementById('bizStatusModal').style.display = 'flex';
-    });
-
-    /* ── URL persistence (doc table) ──────────────────────────────────── */
-    function saveToUrl() {
-        const url = new URL(window.location);
-        url.searchParams.delete('s');
-        url.searchParams.delete('status');
-        url.searchParams.delete('document_type');
-        if ($('#searchInput').val())  url.searchParams.set('s', $('#searchInput').val());
-        if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
-        if ($('#docTypeFilter').val()) url.searchParams.set('document_type', $('#docTypeFilter').val());
-        history.replaceState({}, '', url);
-        updateBadge();
-    }
-    function loadFromUrl() {
-        const p = new URLSearchParams(window.location.search);
-        let any = false;
-        if (p.get('s')) { $('#searchInput').val(p.get('s')); any = true; }
-        if (p.get('status')) { $('#statusFilter').val(p.get('status')).trigger('change.select2'); any = true; }
-        if (p.get('document_type')) { $('#docTypeFilter').val(p.get('document_type')).trigger('change.select2'); any = true; }
-        return any;
-    }
-    function updateBadge() {
-        let n = 0;
-        if ($('#searchInput').val())  n++;
-        if ($('#statusFilter').val()) n++;
-        if ($('#docTypeFilter').val()) n++;
-        const badge = document.getElementById('filterBadge');
-        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter' : ' filters') + ' active'; badge.style.display = ''; }
-        else { badge.style.display = 'none'; }
-    }
-    function updateBizBadge() {
-        let n = 0;
-        if ($('#bizSearchInput').val())  n++;
-        if ($('#bizStatusFilter').val()) n++;
-        if ($('#bizTypeFilter').val())   n++;
-        const badge = document.getElementById('bizFilterBadge');
-        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter' : ' filters') + ' active'; badge.style.display = ''; }
-        else { badge.style.display = 'none'; }
-    }
-
-    function updateBlotterBadge() {
-        let n = 0;
-        if ($('#blotterSearchInput').val())  n++;
-        if ($('#blotterStatusFilter').val()) n++;
-        if ($('#blotterTypeFilter').val())   n++;
-        const badge = document.getElementById('blotterFilterBadge');
-        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter' : ' filters') + ' active'; badge.style.display = ''; }
-        else { badge.style.display = 'none'; }
-    }
-
-    window.toggleFilters = function (key) {
-        if (key === 'biz') {
-            const panel  = document.getElementById('bizFilterPanel');
-            const isOpen = panel.style.display !== 'none';
-            panel.style.display = isOpen ? 'none' : 'block';
-            document.getElementById('bizFilterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
-            localStorage.setItem('fp_biz', isOpen ? '0' : '1');
-        } else if (key === 'blotter') {
-            const panel  = document.getElementById('blotterFilterPanel');
-            const isOpen = panel.style.display !== 'none';
-            panel.style.display = isOpen ? 'none' : 'block';
-            document.getElementById('blotterFilterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
-            localStorage.setItem('fp_blotter', isOpen ? '0' : '1');
-        } else {
-            const panel  = document.getElementById('filterPanel');
-            const isOpen = panel.style.display !== 'none';
-            panel.style.display = isOpen ? 'none' : 'block';
-            document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
-            localStorage.setItem('fp_appointments', isOpen ? '0' : '1');
-        }
+    window.closeBlotterActivateModal = function () {
+        document.getElementById('blotterActivateModal').style.display = 'none';
     };
 
-    const hasUrlFilters = loadFromUrl();
-    if (hasUrlFilters || localStorage.getItem('fp_appointments') === '1') {
-        document.getElementById('filterPanel').style.display = 'block';
-        document.getElementById('filterToggleText').textContent = 'Hide Filters';
-    }
-    if (localStorage.getItem('fp_biz') === '1') {
-        document.getElementById('bizFilterPanel').style.display = 'block';
-        document.getElementById('bizFilterToggleText').textContent = 'Hide Filters';
-    }
-    if (localStorage.getItem('fp_blotter') === '1') {
-        document.getElementById('blotterFilterPanel').style.display = 'block';
-        document.getElementById('blotterFilterToggleText').textContent = 'Hide Filters';
-    }
-    updateBadge();
-    updateBizBadge();
-    updateBlotterBadge();
+    window.saveBlotterActivate = function () {
+        var btn = document.getElementById('blotterActivateSaveBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Activating…';
+        document.getElementById('blotterActivateError').style.display = 'none';
 
-    /* ── Filters — doc ────────────────────────────────────────────────── */
-    let debounce;
-    $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380); });
-    $('#statusFilter, #docTypeFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
-    $('#resetBtn').on('click', function () {
-        $('#searchInput').val('');
-        $('#statusFilter, #docTypeFilter').val(null).trigger('change');
-        saveToUrl(); table.ajax.reload();
-    });
-
-    /* ── Filters — biz ────────────────────────────────────────────────── */
-    let bizDebounce;
-    $('#bizSearchInput').on('input', function () { clearTimeout(bizDebounce); bizDebounce = setTimeout(() => { updateBizBadge(); bizTable.ajax.reload(); }, 380); });
-    $('#bizStatusFilter, #bizTypeFilter').on('change', function () { updateBizBadge(); bizTable.ajax.reload(); });
-    $('#bizResetBtn').on('click', function () {
-        $('#bizSearchInput').val('');
-        $('#bizStatusFilter, #bizTypeFilter').val(null).trigger('change');
-        updateBizBadge(); bizTable.ajax.reload();
-    });
-
-    /* ── Filters — blotter ────────────────────────────────────────────── */
-    let blotterDebounce;
-    $('#blotterSearchInput').on('input', function () { clearTimeout(blotterDebounce); blotterDebounce = setTimeout(() => { updateBlotterBadge(); blotterTable.ajax.reload(); }, 380); });
-    $('#blotterStatusFilter, #blotterTypeFilter').on('change', function () { updateBlotterBadge(); blotterTable.ajax.reload(); });
-    $('#blotterResetBtn').on('click', function () {
-        $('#blotterSearchInput').val('');
-        $('#blotterStatusFilter, #blotterTypeFilter').val(null).trigger('change');
-        updateBlotterBadge(); blotterTable.ajax.reload();
-    });
-});
-
-window.aptQuickFilter = function (filterId, values) {
-    $('#' + filterId).val(values).trigger('change');
-    if (document.getElementById('filterPanel').style.display === 'none') {
-        document.getElementById('filterPanel').style.display = 'block';
-        document.getElementById('filterToggleText').textContent = 'Hide Filters';
-        localStorage.setItem('fp_appointments', '1');
-    }
-    $('#appointmentsTable').DataTable().ajax.reload();
-};
-
-window.blotterQuickFilter = function (filterId, values) {
-    $('#' + filterId).val(values).trigger('change');
-    if (document.getElementById('blotterFilterPanel').style.display === 'none') {
-        document.getElementById('blotterFilterPanel').style.display = 'block';
-        document.getElementById('blotterFilterToggleText').textContent = 'Hide Filters';
-        localStorage.setItem('fp_blotter', '1');
-    }
-    $('#blotterTable').DataTable().ajax.reload();
-};
-
-window.bizQuickFilter = function (filterId, values) {
-    $('#' + filterId).val(values).trigger('change');
-    if (document.getElementById('bizFilterPanel').style.display === 'none') {
-        document.getElementById('bizFilterPanel').style.display = 'block';
-        document.getElementById('bizFilterToggleText').textContent = 'Hide Filters';
-        localStorage.setItem('fp_biz', '1');
-    }
-    $('#bizTable').DataTable().ajax.reload();
-};
-
-/* ── Convert Modal ────────────────────────────────────────────────── */
-window._cvtUrl   = null;
-window._cvtAptId = null;
-
-function closeConvertModal() {
-    document.getElementById('aptConvertModal').style.display = 'none';
-    window._cvtUrl = null; window._cvtAptId = null;
-}
-
-function saveConvert() {
-    if (!window._cvtUrl) return;
-    var btn    = document.getElementById('cvtSaveBtn');
-    var errDiv = document.getElementById('cvtError');
-    var fee    = document.getElementById('cvtFee').value;
-    var or_num = document.getElementById('cvtOR').value;
-    errDiv.style.display = 'none';
-    btn.disabled  = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Issuing…';
-
-    axios.post(window._cvtUrl, { fee_paid: fee || null, or_number: or_num || null })
-        .then(function (res) {
-            closeConvertModal();
-            bmsToast(res.data.message, 'success');
-            $('#appointmentsTable').DataTable().ajax.reload(null, false);
-            setTimeout(function () {
-                bmsConfirm({ title: 'Document Issued', message: res.data.doc_number + ' has been created. Open the document record now?', ok: 'Open Document' }, function () {
-                    window.open(res.data.view_url, '_blank');
-                });
-            }, 400);
+        axios.post(window._blotterActivateUrl, {
+            notes: document.getElementById('blotterActivateNotes').value || null,
+            _token: '{{ csrf_token() }}',
         })
-        .catch(function (err) {
-            var data = err.response?.data;
-            var msg  = data?.errors ? Object.values(data.errors).flat().join(' ') : (data?.message || 'Failed to issue document.');
-            if (err.response?.status === 422 && data?.view_url) {
-                msg += ' <a href="' + data.view_url + '" target="_blank" style="color:var(--navy);font-weight:600">View it here →</a>';
-            }
-            errDiv.innerHTML = msg; errDiv.style.display = 'block';
-        })
-        .finally(function () {
-            btn.disabled = false; btn.innerHTML = '<i class="fas fa-file-circle-check"></i> Issue Document';
-        });
-}
-
-/* ── Doc Status Modal ─────────────────────────────────────────────── */
-var _aptId = null, _aptOldStatus = null, _aptPreferredDate = '';
-var _aptStatMap = { 'Pending': 'statAptPending', 'Ready': 'statAptReady', 'Released': 'statAptReleased' };
-
-function onAptStatusChange() {
-    var status = document.getElementById('aptModalStatus').value;
-    var group  = document.getElementById('aptPickupDateGroup');
-    group.style.display = (status === 'Ready') ? '' : 'none';
-}
-
-function closeAptModal() {
-    document.getElementById('aptStatusModal').style.display = 'none';
-    document.getElementById('aptPickupDateGroup').style.display = 'none';
-    _aptId = null; _aptOldStatus = null; _aptPreferredDate = '';
-}
-
-function saveAptStatus() {
-    if (!_aptId) return;
-    const btn = document.getElementById('aptStatusSaveBtn');
-    const errDiv = document.getElementById('aptStatusError');
-    const newStatus = document.getElementById('aptModalStatus').value;
-    const notes = document.getElementById('aptModalNotes').value;
-    const oldStatus = _aptOldStatus;
-    if (newStatus === oldStatus) { closeAptModal(); return; }
-
-    // Require pickup_date when setting to Ready
-    var pickupDate = null;
-    if (newStatus === 'Ready') {
-        pickupDate = document.getElementById('aptModalPickupDate').value;
-        if (!pickupDate) {
-            errDiv.textContent = 'Please set a Ready for Pick-up Date.';
-            errDiv.style.display = 'block';
-            document.getElementById('aptModalPickupDate').focus();
-            return;
-        }
-    }
-
-    errDiv.style.display = 'none';
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Saving…';
-
-    axios.patch('/appointments/' + _aptId + '/status', { status: newStatus, notes: notes, pickup_date: pickupDate })
-        .then(function (res) {
-            closeAptModal();
-            if (res.data.counts) {
-                Object.entries(res.data.counts).forEach(function ([s, n]) {
-                    var elId = _aptStatMap[s];
-                    if (!elId) return;
-                    var el = document.getElementById(elId);
-                    if (!el) return;
-                    var prev = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
-                    el.textContent = n.toLocaleString();
-                    if (n !== prev) { el.style.transition = 'color .15s'; el.style.color = n > prev ? 'var(--gold)' : 'var(--crimson)'; setTimeout(() => el.style.color = '', 800); }
-                });
-            }
-            bmsToast(res.data.message || 'Status updated.', 'success');
-            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
-            $('#appointmentsTable').DataTable().ajax.reload(null, false);
-        })
-        .catch(function (err) {
-            const data = err.response?.data;
-            errDiv.textContent = data?.errors ? Object.values(data.errors).flat().join(' ') : (data?.message || 'Failed.');
-            errDiv.style.display = 'block';
-        })
-        .finally(function () { btn.disabled = false; btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Status'; });
-}
-
-/* ── Blotter Activate Modal ───────────────────────────────────────── */
-window._blotterActivateUrl = null;
-
-function closeBlotterActivateModal() {
-    document.getElementById('blotterActivateModal').style.display = 'none';
-    window._blotterActivateUrl = null;
-}
-
-function saveBlotterActivate() {
-    if (!window._blotterActivateUrl) return;
-    var btn    = document.getElementById('blotterActivateSaveBtn');
-    var errDiv = document.getElementById('blotterActivateError');
-    var notes  = document.getElementById('blotterActivateNotes').value;
-
-    errDiv.style.display = 'none';
-    btn.disabled  = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Activating…';
-
-    axios.post(window._blotterActivateUrl, { notes: notes || null })
         .then(function (res) {
             closeBlotterActivateModal();
-            bmsToast(res.data.message, 'success');
-            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
-
-            // Sync blotter pending stat card
-            if (typeof res.data.blotter_pending !== 'undefined') {
-                var el = document.getElementById('statBlotterPending');
-                if (el) {
-                    var prev = parseInt(el.textContent.replace(/,/g,''), 10) || 0;
-                    el.textContent = res.data.blotter_pending.toLocaleString();
-                    if (res.data.blotter_pending !== prev) {
-                        el.style.transition = 'color .15s';
-                        el.style.color = 'var(--crimson)';
-                        setTimeout(() => el.style.color = '', 800);
-                    }
-                }
+            blotterTable.ajax.reload(null, false);
+            bmsToast(res.data.message || 'Case activated.', 'success');
+            if (res.data.blotter_pending !== undefined) {
+                document.getElementById('tabBadgeBlotter').textContent = res.data.blotter_pending;
             }
-
-            $('#blotterTable').DataTable().ajax.reload(null, false);
-
-            setTimeout(function () {
-                bmsConfirm({
-                    title:   'Case Activated',
-                    message: res.data.case_number + ' is now active. Open the case record now?',
-                    ok:      'Open Case',
-                }, function () {
-                    window.open(res.data.view_url, '_blank');
-                });
-            }, 400);
         })
         .catch(function (err) {
-            var data = err.response?.data;
-            var msg  = data?.errors
-                ? Object.values(data.errors).flat().join(' ')
-                : (data?.message || 'Failed to activate case.');
-            if (err.response?.status === 422 && data?.view_url) {
-                msg += ' <a href="' + data.view_url + '" target="_blank" style="color:var(--navy);font-weight:600">View it here →</a>';
+            var msg = err.response?.data?.message || 'Failed to activate case.';
+            document.getElementById('blotterActivateError').textContent = msg;
+            document.getElementById('blotterActivateError').style.display = '';
+            if (err.response?.data?.view_url) {
+                bmsToast('Already activated.', 'info');
+                setTimeout(() => window.open(err.response.data.view_url, '_blank'), 1200);
             }
-            errDiv.innerHTML     = msg;
-            errDiv.style.display = 'block';
         })
         .finally(function () {
-            btn.disabled  = false;
+            btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-shield-halved"></i> Activate Case';
         });
-}
+    };
 
-/* ── Blotter Status Modal ─────────────────────────────────────────── */
-var _blotterId = null, _blotterOldStatus = null;
-window._blotterStatusUrl = null;
-
-function closeBlotterStatusModal() {
-    document.getElementById('blotterStatusModal').style.display = 'none';
-    _blotterId = null; _blotterOldStatus = null;
-    window._blotterStatusUrl = null;
-}
-
-function saveBlotterStatus() {
-    if (!_blotterId) return;
-    const btn       = document.getElementById('blotterStatusSaveBtn');
-    const errDiv    = document.getElementById('blotterStatusError');
-    const newStatus = document.getElementById('blotterStatusModalStatus').value;
-    const notes     = document.getElementById('blotterStatusModalNotes').value;
-    const oldStatus = _blotterOldStatus;
-    if (newStatus === oldStatus) { closeBlotterStatusModal(); return; }
-    errDiv.style.display = 'none';
-    btn.disabled  = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Saving…';
-
-    axios.patch('/appointments/blotter/' + _blotterId + '/status', { status: newStatus, notes: notes })
-        .then(function (res) {
-            closeBlotterStatusModal();
-            // Sync blotter pending stat card
-            if (typeof res.data.blotter_pending !== 'undefined') {
-                var el = document.getElementById('statBlotterPending');
-                if (el) {
-                    var prev = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
-                    el.textContent = res.data.blotter_pending.toLocaleString();
-                    if (res.data.blotter_pending !== prev) {
-                        el.style.transition = 'color .15s';
-                        el.style.color = res.data.blotter_pending < prev ? 'var(--crimson)' : 'var(--gold)';
-                        setTimeout(() => el.style.color = '', 800);
-                    }
-                }
-            }
-            bmsToast(res.data.message || 'Status updated.', 'success');
-            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
-            $('#blotterTable').DataTable().ajax.reload(null, false);
-        })
-        .catch(function (err) {
-            const data = err.response?.data;
-            errDiv.textContent = data?.errors ? Object.values(data.errors).flat().join(' ') : (data?.message || 'Failed.');
-            errDiv.style.display = 'block';
-        })
-        .finally(function () { btn.disabled = false; btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Status'; });
-}
-
-/* ── Biz Issue Modal ──────────────────────────────────────────────── */
-window._bizIssueUrl = null;
-
-function closeBizIssueModal() {
-    document.getElementById('bizIssueModal').style.display = 'none';
-    window._bizIssueUrl = null;
-}
-
-function saveBizIssue() {
-    if (!window._bizIssueUrl) return;
-    var btn        = document.getElementById('bizIssueSaveBtn');
-    var errDiv     = document.getElementById('bizIssueError');
-    var permitDate = document.getElementById('bizIssuePermitDate').value;
-    var expiryDate = document.getElementById('bizIssueExpiryDate').value;
-    var fee        = document.getElementById('bizIssueFee').value;
-    var orNum      = document.getElementById('bizIssueOR').value;
-
-    errDiv.style.display = 'none';
-    btn.disabled  = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Issuing…';
-
-    axios.post(window._bizIssueUrl, {
-        permit_date: permitDate,
-        expiry_date: expiryDate,
-        fee_paid:    fee   || null,
-        or_number:   orNum || null,
-    })
-    .then(function (res) {
-        closeBizIssueModal();
-        bmsToast(res.data.message, 'success');
-        if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
-
-        // Sync biz pending stat card
-        if (typeof res.data.biz_pending !== 'undefined') {
-            var el = document.getElementById('statBizPending');
-            if (el) {
-                var prev = parseInt(el.textContent.replace(/,/g,''), 10) || 0;
-                el.textContent = res.data.biz_pending.toLocaleString();
-                if (res.data.biz_pending !== prev) {
-                    el.style.transition = 'color .15s';
-                    el.style.color = 'var(--crimson)';
-                    setTimeout(() => el.style.color = '', 800);
-                }
-            }
-        }
-
-        // Reload table so row now shows grey "View Permit"
-        $('#bizTable').DataTable().ajax.reload(null, false);
-
-        // Offer to open the permit record
-        setTimeout(function () {
-            bmsConfirm({
-                title:   'Permit Issued',
-                message: res.data.permit_num + ' is now active. Open the permit record now?',
-                ok:      'Open Permit',
-            }, function () {
-                window.open(res.data.view_url, '_blank');
-            });
-        }, 400);
-    })
-    .catch(function (err) {
-        var data = err.response?.data;
-        var msg  = data?.errors
-            ? Object.values(data.errors).flat().join(' ')
-            : (data?.message || 'Failed to issue permit.');
-        if (err.response?.status === 422 && data?.view_url) {
-            msg += ' <a href="' + data.view_url + '" target="_blank" style="color:var(--navy);font-weight:600">View it here →</a>';
-        }
-        errDiv.innerHTML     = msg;
-        errDiv.style.display = 'block';
-    })
-    .finally(function () {
-        btn.disabled  = false;
-        btn.innerHTML = '<i class="fas fa-stamp"></i> Issue Permit';
-    });
-}
-
-/* ── Biz Status Modal ─────────────────────────────────────────────── */
-var _bizId = null, _bizOldStatus = null;
-
-function closeBizModal() {
-    document.getElementById('bizStatusModal').style.display = 'none';
-    _bizId = null; _bizOldStatus = null;
-}
-
-function saveBizStatus() {
-    if (!_bizId) return;
-    const btn = document.getElementById('bizStatusSaveBtn');
-    const errDiv = document.getElementById('bizStatusError');
-    const newStatus = document.getElementById('bizModalStatus').value;
-    const notes = document.getElementById('bizModalNotes').value;
-    const oldStatus = _bizOldStatus;
-    if (newStatus === oldStatus) { closeBizModal(); return; }
-    errDiv.style.display = 'none';
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i> Saving…';
-
-    axios.patch('/appointments/biz/' + _bizId + '/status', { status: newStatus, notes: notes })
-        .then(function (res) {
-            closeBizModal();
-            // Update stat card
-            if (typeof res.data.biz_pending !== 'undefined') {
-                var el = document.getElementById('statBizPending');
-                if (el) {
-                    var prev = parseInt(el.textContent.replace(/,/g,''), 10) || 0;
-                    el.textContent = res.data.biz_pending.toLocaleString();
-                    if (res.data.biz_pending !== prev) {
-                        el.style.transition = 'color .15s';
-                        el.style.color = res.data.biz_pending < prev ? 'var(--crimson)' : 'var(--gold)';
-                        setTimeout(() => el.style.color = '', 800);
-                    }
-                }
-            }
-            bmsToast(res.data.message || 'Status updated.', 'success');
-            if (typeof window.refreshPortalBadges === 'function') window.refreshPortalBadges();
-            $('#bizTable').DataTable().ajax.reload(null, false);
-        })
-        .catch(function (err) {
-            const data = err.response?.data;
-            errDiv.textContent = data?.errors ? Object.values(data.errors).flat().join(' ') : (data?.message || 'Failed.');
-            errDiv.style.display = 'block';
-        })
-        .finally(function () { btn.disabled = false; btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Status'; });
-}
-
-document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { closeAptModal(); closeConvertModal(); closeBizModal(); closeBizIssueModal(); closeBlotterActivateModal(); closeBlotterStatusModal(); }
-});
+}); // end document.ready
 </script>
 @endpush
