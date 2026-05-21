@@ -1,59 +1,126 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Barangay New Era Management System (BMS)
+**Barangay New Era, District VI, Quezon City**
+Built with Laravel 12 · MySQL · Blade Templates · Vanilla JS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+## Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The Barangay New Era Management System is a full-stack web application designed to digitize and streamline the day-to-day administrative operations of a barangay. It replaces manual, paper-based processes with a centralized, role-secured digital system accessible to barangay staff.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+### 1. Dashboard
+The central hub for barangay staff. Displays real-time stat cards for residents, households, documents, blotter cases, and business permits. Features three tabs:
+- **Overview** — key metrics and birthday alerts for today's residents
+- **Analytics** — charts for resident demographics, document types, and monthly activity
+- **Appointments** — live tracker of portal-submitted document requests, business permit applications, and blotter reports
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Includes a **Quick Access Grid** for one-click navigation to common tasks and alert banners for expiring business permits.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+### 2. Resident Management
+Full CRUD for resident records. Each resident profile includes personal details, household assignment, civil status, and an optional photo upload. Supports a **Select2 AJAX search** for fast resident lookups across all forms in the system.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+### 3. Household Management
+Manages household records linked to residents. Tracks the number of household members and address information, giving staff a family-level view alongside individual resident profiles.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+### 4. Document Issuance
+Handles the issuance of official barangay documents such as Barangay Clearance, Certificate of Residency, Indigency Certificates, and more. Key features:
+- Auto-fills resident data (name, age, gender, civil status, birthdate) onto printable PDF certificates
+- Tracks document status (Pending → Released)
+- Supports PDF streaming directly in the browser for signing and printing
+- Integrates with the Resident Portal for online document requests
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+### 5. Blotter Case Management
+Records and tracks barangay blotter incidents. Each case captures complainant and respondent details, incident narrative, file attachments, and resolution notes. Status tracking moves cases from Pending through Active, Under Investigation, Mediated, Settled, or Referred to Higher Authority. Supports PDF and Excel export.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+### 6. Business Permits
+Manages barangay business permit applications with full lifecycle tracking:
+- Permit issuance with permit number, permit date, and expiry date
+- Color-coded expiry indicators: **Valid** (green), **Expiring Soon** (within 30 days, yellow), **Overdue** (red)
+- Dashboard alerts for expiring and overdue permits
+- Status management (Active, Expired, Suspended, Cancelled)
+- Integrates with the Resident Portal for online business permit applications
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+### 7. Officials & Staff
+Maintains a roster of elected and appointed barangay officials and staff members. Each record includes position, term, contact details, and a profile photo. Features a **printable digital ID card** that can be generated and exported as a PDF directly from the system.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+### 8. Committees
+Manages the barangay's 8 standing committees (Peace and Order, Health, Education, Environment, Finance, Women & Family, Senior Citizens, Youth). Each committee has its own tab with member listings and committee-specific records. The **Health Committee** includes a real-time medicine inventory with live stock adjustment and deletion via Axios — no page reload required.
+
+---
+
+### 9. Reports & Analytics
+Generates summary reports across all modules with visual charts powered by Chart.js. Reports include resident demographics breakdowns, document issuance history, blotter case summaries, and business permit statistics. All reports are exportable as **PDF** (via DomPDF) or **Excel** (via PhpSpreadsheet).
+
+---
+
+### 10. Activity Log
+Tracks every create, update, and delete action performed in the system. Logs the acting user, affected record, and a before/after snapshot of changed data. Includes weekly and monthly activity charts to visualize system usage over time.
+
+---
+
+### 11. Database Backup & Restore
+Allows authorized administrators to create and download a full MySQL database backup directly from the admin panel. Restore functionality is also available to roll back data when needed — no command-line access required.
+
+---
+
+### 12. Resident Portal (Public-Facing)
+A public web portal that allows barangay residents to submit requests without visiting the barangay hall:
+- **Request a Document** — submit a document request with preferred pick-up date
+- **Apply for a Business Permit** — submit a business permit application online
+- **Report an Incident** — file a blotter report online
+- **Track an Appointment** — look up the real-time status of any submitted request using a reference number
+- No login required. Personal info is saved to the browser for convenience on return visits.
+
+Staff process portal submissions from the **Appointments** admin page, where they can issue documents, activate blotter cases, issue business permits, and update statuses — all with instant sidebar badge notifications.
+
+---
+
+### 13. User Management
+Controls who can access the staff-side system. Administrators can create accounts, assign roles (Admin, Secretary, Committee), and verify or unverify user email addresses. Role-based access control restricts each user to only the modules relevant to their position.
+
+| Role | Access |
+|---|---|
+| Admin | Full access to all modules |
+| Secretary | Residents, Households, Documents, Blotter, Businesses, Officials, Reports, Activity Log |
+| Committee | Dashboard and Committees only |
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Laravel 12 |
+| Auth | Laravel Breeze |
+| Database | MySQL (Laragon) |
+| Frontend | Blade, Vanilla CSS, Vanilla JS |
+| Tables | Yajra DataTables (server-side) |
+| PDF Export | barryvdh/laravel-dompdf |
+| Excel Export | phpoffice/phpspreadsheet |
+| Charts | Chart.js |
+| Search/Select | Select2 (AJAX) |
+| HTTP Client | Axios |
+
+---
+
+## Punong Barangay
+**Robert S. Romano**
+Barangay New Era, District VI, Quezon City
