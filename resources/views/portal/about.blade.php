@@ -591,7 +591,7 @@
         </p>
         <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
             <a href="{{ route('portal.request') }}" class="btn btn-primary btn-lg">
-                <i class="fas fa-file-plus"></i> Request a Document
+                <i class="fas fa-file-arrow-up"></i> Request a Document
             </a>
             <a href="{{ route('portal.index') }}" class="btn btn-outline btn-lg">
                 <i class="fas fa-home"></i> Back to Portal

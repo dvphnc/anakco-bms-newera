@@ -119,7 +119,7 @@
     </div>
 
     <div class="page-hd">
-        <h2><i class="fas fa-file-plus" style="color:var(--gold)"></i>&nbsp; Request a Barangay Document</h2>
+        <h2><i class="fas fa-file-arrow-up" style="color:var(--gold)"></i>&nbsp; Request a Barangay Document</h2>
         <p>Fill in your details below. All fields marked with <span style="color:var(--crimson)">*</span> are required.</p>
     </div>
 
