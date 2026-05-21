@@ -153,7 +153,7 @@ class BusinessController extends Controller
                 ->make(true);
         }
 
-        $businessTypes = ['Sari-Sari Store', 'Restaurant / Carinderia', 'Salon / Barbershop', 'Repair Shop', 'Pharmacy / Drugstore', 'Laundry', 'Printing / Photocopy', 'Retail Store', 'Other'];
+        $businessTypes = ['Sari-Sari Store', 'Restaurant / Carinderia', 'Salon / Barbershop', 'Repair Shop', 'Pharmacy / Drugstore', 'Laundry', 'Printing / Photocopy', 'Retail Store', 'Online Selling / E-commerce', 'Other'];
         $summaryCounts = [
             'Active' => Business::where('status', 'Active')->count(),
             'Pending' => Business::whereIn('status', ['Pending', 'For Review'])->count(),
@@ -184,7 +184,7 @@ class BusinessController extends Controller
     public function create()
     {
         $residents = Resident::where('residency_status', 'Active')->orderBy('last_name')->get();
-        $businessTypes = ['Sari-Sari Store', 'Restaurant / Carinderia', 'Salon / Barbershop', 'Repair Shop', 'Pharmacy / Drugstore', 'Laundry', 'Printing / Photocopy', 'Retail Store', 'Other'];
+        $businessTypes = ['Sari-Sari Store', 'Restaurant / Carinderia', 'Salon / Barbershop', 'Repair Shop', 'Pharmacy / Drugstore', 'Laundry', 'Printing / Photocopy', 'Retail Store', 'Online Selling / E-commerce', 'Other'];
 
         return view('businesses.businesses-create', compact('residents', 'businessTypes'));
     }
@@ -254,7 +254,7 @@ class BusinessController extends Controller
     public function edit(Business $business)
     {
         $residents = Resident::where('residency_status', 'Active')->orderBy('last_name')->get();
-        $businessTypes = ['Sari-Sari Store', 'Restaurant / Carinderia', 'Salon / Barbershop', 'Repair Shop', 'Pharmacy / Drugstore', 'Laundry', 'Printing / Photocopy', 'Retail Store', 'Other'];
+        $businessTypes = ['Sari-Sari Store', 'Restaurant / Carinderia', 'Salon / Barbershop', 'Repair Shop', 'Pharmacy / Drugstore', 'Laundry', 'Printing / Photocopy', 'Retail Store', 'Online Selling / E-commerce', 'Other'];
 
         return view('businesses.businesses-edit', compact('business', 'residents', 'businessTypes'));
     }

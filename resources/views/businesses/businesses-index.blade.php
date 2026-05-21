@@ -541,7 +541,7 @@ function openBizPanel(url) {
                 : b.expiry_status === 'expiring_soon'
                     ? `<span class="badge badge-yellow"><i class="fas fa-clock"></i> Expiring in ${b.expiry_days ?? '?'} days</span>`
                     : '';
-            const statusCls = { Active: 'badge-green', Expired: 'badge-red', Suspended: 'badge-yellow', Cancelled: 'badge-gray' };
+            const statusCls = { Active: 'badge-green', Expired: 'badge-red', Suspended: 'badge-yellow', Cancelled: 'badge-gray', Pending: 'badge-yellow', 'For Review': 'badge-blue' };
 
             body.innerHTML = `
                 <div style="padding:18px 20px 14px;border-bottom:1px solid var(--border)">
