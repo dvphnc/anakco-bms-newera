@@ -66,6 +66,13 @@
             <div class="stat-label">Biz. Permit Pending</div>
         </div>
     </div>
+    <div class="stat-card" style="cursor:pointer" onclick="blotterQuickFilter('blotterStatusFilter','Pending')">
+        <div class="stat-icon" style="background:rgba(220,38,38,0.08);color:#dc2626"><i class="fas fa-shield-halved"></i></div>
+        <div class="stat-info">
+            <div class="stat-number" id="statBlotterPending">{{ number_format($blotterPending) }}</div>
+            <div class="stat-label">Blotter Pending</div>
+        </div>
+    </div>
 </div>
 
 {{-- ═══════════════════════════════════════════════════════════
@@ -205,6 +212,80 @@
                     <th>Business</th>
                     <th>Type</th>
                     <th>Appt. Date</th>
+                    <th>Submitted</th>
+                    <th>Status</th>
+                    <th style="text-align:right">Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+{{-- ═══════════════════════════════════════════════════════════
+     SECTION 3 — BLOTTER REPORTS FROM PORTAL
+════════════════════════════════════════════════════════════ --}}
+
+<div class="card mb-6">
+    <div class="card-header" style="cursor:pointer" onclick="toggleFilters('blotter')">
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="card-title"><i class="fas fa-shield-halved"></i> Blotter Reports from Portal</span>
+            <span id="blotterFilterBadge" class="badge badge-gold" style="display:none"></span>
+        </div>
+        <button type="button" class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleFilters('blotter')">
+            <i class="fas fa-sliders"></i>
+            <span id="blotterFilterToggleText">Show Filters</span>
+        </button>
+    </div>
+    <div id="blotterFilterPanel" style="display:none">
+        <div class="card-body" style="padding:20px 22px">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+                <div class="form-group" style="grid-column:1/-1">
+                    <label class="form-label">Search</label>
+                    <div style="position:relative">
+                        <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
+                        <input type="text" id="blotterSearchInput" class="form-control" style="padding-left:32px"
+                               placeholder="Complainant, case number, location…">
+                    </div>
+                </div>
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Status</label>
+                    <select id="blotterStatusFilter">
+                        <option value=""></option>
+                        <option value="Pending">Pending</option>
+                        <option value="Active">Active</option>
+                        <option value="Under Investigation">Under Investigation</option>
+                        <option value="Mediated">Mediated</option>
+                        <option value="Settled">Settled</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Incident Type</label>
+                    <select id="blotterTypeFilter">
+                        <option value=""></option>
+                        @foreach($incidentTypes as $it)
+                            <option value="{{ $it }}">{{ $it }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+                <button type="button" id="blotterResetBtn" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-xmark"></i> Reset Filters
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table id="blotterTable" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Case No.</th>
+                    <th>Complainant</th>
+                    <th>Incident Type</th>
+                    <th>Location / Date</th>
                     <th>Submitted</th>
                     <th>Status</th>
                     <th style="text-align:right">Actions</th>
