@@ -727,9 +727,12 @@ $(document).ready(function () {
     $('#docTypeFilter').data('placeholder', 'All document types…');
     $('#bizStatusFilter').data('placeholder', 'All statuses…');
     $('#bizTypeFilter').data('placeholder', 'All types…');
+    $('#blotterStatusFilter').data('placeholder', 'All statuses…');
+    $('#blotterTypeFilter').data('placeholder', 'All types…');
 
     initSelect2InPanel($('#filterPanel'));
     initSelect2InPanel($('#bizFilterPanel'));
+    initSelect2InPanel($('#blotterFilterPanel'));
 
     /* ─────────────────────────────────────────────────────────────────────
      |  TABLE 1 — DOCUMENT APPOINTMENTS
@@ -807,6 +810,45 @@ $(document).ready(function () {
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
             emptyTable:  '<div class="empty-state"><i class="fas fa-store"></i><p>No business permit appointments found.</p></div>',
             zeroRecords: '<div class="empty-state"><i class="fas fa-search"></i><p>No appointments match your filters. <a href="#" onclick="document.getElementById(\'bizResetBtn\').click();return false" style="color:var(--navy);font-weight:600">Clear filters</a></p></div>',
+        }
+    });
+
+    /* ─────────────────────────────────────────────────────────────────────
+     |  TABLE 3 — BLOTTER PORTAL REPORTS
+     |────────────────────────────────────────────────────────────────────── */
+    var blotterTable = $('#blotterTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ route('appointments.blotterData') }}',
+            data: function (d) {
+                d.status        = $('#blotterStatusFilter').val();
+                d.incident_type = $('#blotterTypeFilter').val();
+                d.search        = { value: $('#blotterSearchInput').val() };
+            }
+        },
+        columns: [
+            { data: 'number_col',      name: 'case_number',     width: '140px' },
+            { data: 'complainant_col', name: 'complainant_name', orderable: false },
+            { data: 'type_col',        name: 'incident_type',   width: '130px', orderable: false },
+            { data: 'incident_col',    name: 'incident_location', orderable: false },
+            { data: 'submitted_col',   name: 'created_at',      width: '100px' },
+            { data: 'status_col',      name: 'status',          width: '110px' },
+            { data: 'actions',         name: 'actions', orderable: false, searchable: false, width: '160px' },
+        ],
+        order: [[4, 'desc']],
+        pageLength: 15,
+        drawCallback: function () {
+            if (typeof tippy !== 'undefined') {
+                tippy('#blotterTable [data-tippy-content]', {
+                    theme: 'bms', placement: 'top', arrow: true, animation: 'shift-away', duration: [150, 100]
+                });
+            }
+        },
+        language: {
+            processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
+            emptyTable:  '<div class="empty-state"><i class="fas fa-shield-halved"></i><p>No blotter reports from portal found.</p></div>',
+            zeroRecords: '<div class="empty-state"><i class="fas fa-search"></i><p>No reports match your filters. <a href="#" onclick="document.getElementById(\'blotterResetBtn\').click();return false" style="color:var(--navy);font-weight:600">Clear filters</a></p></div>',
         }
     });
 
