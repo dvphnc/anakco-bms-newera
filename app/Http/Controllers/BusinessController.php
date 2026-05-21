@@ -121,10 +121,8 @@ class BusinessController extends Controller
                     $edit   = route('businesses.edit', $b);
                     $delete = route('businesses.destroy', $b);
 
-                    $statusBtn = '';
-                    if (in_array($b->status, ['Pending', 'For Review']) || $b->source === 'portal') {
-                        $statusBtn = '<button class="btn btn-primary btn-sm btn-icon biz-status-btn"
-                                    title="Update Status"
+                    $statusBtn = '<button class="btn btn-primary btn-sm btn-icon biz-status-btn"
+                                    data-tippy-content="Update Status"
                                     data-id="'.$b->id.'"
                                     data-num="'.e($b->permit_number).'"
                                     data-status="'.e($b->status).'"
@@ -133,7 +131,6 @@ class BusinessController extends Controller
                                     data-name="'.e($b->owner_name).'">
                                 <i class="fas fa-rotate"></i>
                             </button>';
-                    }
 
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
