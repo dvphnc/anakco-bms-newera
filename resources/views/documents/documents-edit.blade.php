@@ -149,60 +149,11 @@
 </style>
 <script>
 (function () {
-    var repCheck = document.getElementById('isRepCheck');
-    var repPanel = document.getElementById('repPanel');
-    var selfInfo = document.getElementById('selfPickupInfo');
-    var selfName = document.getElementById('selfPickupName');
-    var resSel   = document.getElementById('resident_id');
-
-    function syncToggle() {
-        var checked = repCheck.checked;
-        repPanel.style.display = checked ? '' : 'none';
-        selfInfo.style.display = checked ? 'none' : '';
-    }
-
-    function syncResidentLabel() {
-        if (!resSel) return;
-        var opt = resSel.options[resSel.selectedIndex];
-        if (opt && opt.value) {
-            selfName.textContent = opt.text.split('—')[0].trim();
-        } else {
-            selfName.textContent = 'the resident';
-        }
-    }
-
-    repCheck.addEventListener('change', syncToggle);
-
-    if (resSel) {
-        $(resSel).on('select2:select',   syncResidentLabel);
-        $(resSel).on('select2:unselect', function () { selfName.textContent = 'the resident'; });
-        // Populate label from pre-selected option on page load
-        syncResidentLabel();
-    }
-
-    $('#requestorRelationship').select2({
-        placeholder: 'Select relationship',
-        allowClear: true,
-        minimumResultsForSearch: Infinity,
-        width: '100%'
-    });
-
-    document.getElementById('docEditForm').addEventListener('submit', function (e) {
-        if (repCheck.checked) {
-            var rName = document.querySelector('[name="requestor_name"]').value.trim();
-            var rRel  = document.querySelector('[name="requestor_relationship"]').value;
-            if (!rName || !rRel) {
-                e.preventDefault();
-                return;
-            }
-        }
+    document.getElementById('docEditForm').addEventListener('submit', function () {
         document.getElementById('docEditLabel').style.display   = 'none';
         document.getElementById('docEditSpinner').style.display = '';
         document.getElementById('docEditSubmitBtn').disabled = true;
     });
-
-    // Init
-    syncToggle();
 })();
 </script>
 @endpush
