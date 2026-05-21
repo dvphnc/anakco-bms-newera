@@ -304,7 +304,7 @@
         </div>
     </div>
 
-    <form id="trackForm" method="POST" action="{{ route('track.post') }}">
+    <form id="trackForm" method="POST" action="{{ route('portal.track.post') }}">
         @csrf
         <div class="search-row">
             <input type="text" name="appointment_number" id="trackInput" class="form-control"
@@ -395,7 +395,7 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching…';
         resultDiv.style.display = 'none';
 
-        axios.get('/portal/track/lookup', { params: { number: number.toUpperCase() } })
+        axios.get('{{ route('portal.track.lookup') }}', { params: { number: number.toUpperCase() } })
             .then(function (res) {
                 resultDiv.innerHTML = renderResult(res.data);
                 resultDiv.style.display = 'block';

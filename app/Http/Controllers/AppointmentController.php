@@ -514,6 +514,8 @@ class AppointmentController extends Controller
                 $activateUrl = route('appointments.blotterActivate', $c);
                 $deleteUrl  = route('blotter.destroy', $c);
 
+                $statusUrl = route('appointments.blotterStatus', $c);
+
                 // Green = pending (not yet activated), Grey = already an active case
                 if ($c->status === 'Pending') {
                     $activateBtn = '<button class="btn btn-success btn-sm blotter-activate-btn"
@@ -531,7 +533,7 @@ class AppointmentController extends Controller
                     $activateBtn = '<a href="'.$viewUrl.'" target="_blank"
                                       class="btn btn-secondary btn-sm"
                                       style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                      data-tippy-content="View Blotter Case: '.e($c->case_number).'">
+                                      data-tippy-content="View Case: '.e($c->case_number).'">
                                         <i class="fas fa-shield-halved"></i> View Case
                                     </a>';
                 }
@@ -539,6 +541,15 @@ class AppointmentController extends Controller
                 return '
                     <div style="display:flex;justify-content:flex-end;gap:6px">
                         '.$activateBtn.'
+                        <button class="btn btn-primary btn-sm btn-icon blotter-status-btn"
+                                data-tippy-content="Update Status"
+                                data-id="'.e($c->id).'"
+                                data-num="'.e($c->case_number).'"
+                                data-complainant="'.e($c->complainant_name).'"
+                                data-status="'.e($c->status).'"
+                                data-url="'.$statusUrl.'">
+                            <i class="fas fa-rotate"></i>
+                        </button>
                         <form method="POST" action="'.$deleteUrl.'"
                               data-confirm="Delete blotter report '.e($c->case_number).'? This cannot be undone."
                               data-confirm-title="Delete Blotter Report"

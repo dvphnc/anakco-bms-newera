@@ -303,7 +303,7 @@
         </div>
     </div>
 
-    <form id="trackForm" method="POST" action="<?php echo e(route('track.post')); ?>">
+    <form id="trackForm" method="POST" action="<?php echo e(route('portal.track.post')); ?>">
         <?php echo csrf_field(); ?>
         <div class="search-row">
             <input type="text" name="appointment_number" id="trackInput" class="form-control"
@@ -403,7 +403,7 @@ unset($__errorArgs, $__bag); ?>
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching…';
         resultDiv.style.display = 'none';
 
-        axios.get('/portal/track/lookup', { params: { number: number.toUpperCase() } })
+        axios.get('<?php echo e(route('portal.track.lookup')); ?>', { params: { number: number.toUpperCase() } })
             .then(function (res) {
                 resultDiv.innerHTML = renderResult(res.data);
                 resultDiv.style.display = 'block';
