@@ -559,6 +559,18 @@
         /* ═══════════════════════════════════════════════════════
            GOVERNMENT STRIP
         ═══════════════════════════════════════════════════════ */
+        /* ── Scroll progress bar ──────────────────────────────────────── */
+        #scroll-progress {
+            position: fixed;
+            top: 0; left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
+            z-index: 9999;
+            transition: width .08s linear;
+            box-shadow: 0 0 8px rgba(200,134,26,.5);
+        }
+
         .gov-strip {
             background: #fff;
             border-bottom: 1px solid #e2e6ea;
@@ -900,6 +912,9 @@
             <img src="{{ asset('images/republika-seal.png') }}"
                  alt="Republika ng Pilipinas"
                  class="gov-strip-seal">
+            <img src="{{ asset('images/qc-seal.png') }}"
+                 alt="Quezon City"
+                 class="gov-strip-seal">
             <span class="gov-strip-name">Republika ng Pilipinas</span>
             <span class="gov-strip-divider" aria-hidden="true"></span>
             <span class="gov-strip-sub">Barangay New Era — Official Digital Services Portal</span>
@@ -1181,10 +1196,4 @@ document.addEventListener('DOMContentLoaded', function () {
     var splash = document.getElementById('splash');
     if (!splash) return;
     setTimeout(function () {
-        splash.classList.add('splash-hide');
-        setTimeout(function () { splash.remove(); }, 700);
-    }, 2800);
-})();
-</script>
-@stack('scripts')
-</bo
+        splash.classLis
