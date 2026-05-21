@@ -19,6 +19,8 @@ class BlotterController extends Controller
     {
         if ($request->ajax()) {
             $query = BlotterCase::select('blotter_cases.*')
+                // Portal submissions pending staff review live in Appointments, not here
+                ->where(fn ($q) => $q->where('source', '!=', 'portal')->orWhere('status', '!=', 'Pending'))
                 ->when($request->status, fn ($q) => $q->whereIn('status', (array) $request->status))
                 ->when($request->incident_type, fn ($q) => $q->whereIn('incident_type', (array) $request->incident_type))
                 ->when($request->date_from, fn ($q) => $q->whereDate('incident_date', '>=', $request->date_from))

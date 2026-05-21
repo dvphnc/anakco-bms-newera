@@ -466,6 +466,155 @@ class AppointmentController extends Controller
         ]);
     }
 
+    /* ─────────────────────────────────────────────────────────────────────
+     |  BLOTTER PORTAL APPOINTMENTS  (third table on same page)
+     |────────────────────────────────────────────────────────────────────── */
+
+    public function blotterAppointments(Request $request)
+    {
+        $query = BlotterCase::where('source', 'portal')
+            ->when($request->status, fn ($q) => $q->whereIn('status', (array) $request->status))
+            ->when($request->incident_type, fn ($q) => $q->whereIn('incident_type', (array) $request->incident_type));
+
+        return DataTables::of($query)
+            ->addColumn('number_col', function ($c) {
+                return '<span class="td-mono">'.e($c->case_number).'</span>
+                        <span class="badge badge-blue" style="font-size:10px;margin-left:4px">Portal</span>';
+            })
+            ->addColumn('complainant_col', function ($c) {
+                $contact = $c->complainant_contact
+                    ? '<div class="td-muted">'.e($c->complainant_contact).'</div>' : '';
+                return '<div style="font-weight:600;font-size:13px;color:var(--navy)">'.e($c->complainant_name).'</div>'.$contact;
+            })
+            ->addColumn('type_col', fn ($c) => '<span class="badge badge-navy">'.e($c->incident_type).'</span>')
+            ->addColumn('incident_col', function ($c) {
+                $date = $c->incident_date
+                    ? \Carbon\Carbon::parse($c->incident_date)->format('M d, Y') : '—';
+                return '<div style="font-size:13px">'.e($c->incident_location).'</div>
+                        <div class="td-muted" style="font-size:11.5px">'.$date.'</div>';
+            })
+            ->addColumn('submitted_col', fn ($c) => '<span class="td-muted">'.$c->created_at->format('M d, Y').'</span>')
+            ->addColumn('status_col', function ($c) {
+                $cls = match ($c->status) {
+                    'Pending'                      => 'badge-yellow',
+                    'Active'                       => 'badge-red',
+                    'Under Investigation'          => 'badge-yellow',
+                    'Mediated'                     => 'badge-blue',
+                    'Settled'                      => 'badge-green',
+                    'Closed'                       => 'badge-gray',
+                    'Referred to Higher Authority' => 'badge-orange',
+                    default                        => 'badge-gray',
+                };
+                return '<span class="badge '.$cls.'">'.e($c->status).'</span>';
+            })
+            ->addColumn('actions', function ($c) {
+                $viewUrl    = route('blotter.show', $c);
+                $activateUrl = route('appointments.blotterActivate', $c);
+                $deleteUrl  = route('blotter.destroy', $c);
+
+                // Green = pending (not yet activated), Grey = already an active case
+                if ($c->status === 'Pending') {
+                    $activateBtn = '<button class="btn btn-success btn-sm blotter-activate-btn"
+                                            style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
+                                            data-tippy-content="Activate as Blotter Case"
+                                            data-id="'.e($c->id).'"
+                                            data-num="'.e($c->case_number).'"
+                                            data-complainant="'.e($c->complainant_name).'"
+                                            data-type="'.e($c->incident_type).'"
+                                            data-date="'.($c->incident_date ? \Carbon\Carbon::parse($c->incident_date)->format('M d, Y') : '—').'"
+                                            data-url="'.$activateUrl.'">
+                                        <i class="fas fa-shield-halved"></i> Activate Case
+                                    </button>';
+                } else {
+                    $activateBtn = '<a href="'.$viewUrl.'" target="_blank"
+                                      class="btn btn-secondary btn-sm"
+                                      style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
+                                      data-tippy-content="View Blotter Case: '.e($c->case_number).'">
+                                        <i class="fas fa-shield-halved"></i> View Case
+                                    </a>';
+                }
+
+                return '
+                    <div style="display:flex;justify-content:flex-end;gap:6px">
+                        '.$activateBtn.'
+                        <form method="POST" action="'.$deleteUrl.'"
+                              data-confirm="Delete blotter report '.e($c->case_number).'? This cannot be undone."
+                              data-confirm-title="Delete Blotter Report"
+                              data-confirm-ok="Delete">
+                            <input type="hidden" name="_token" value="'.csrf_token().'">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </div>';
+            })
+            ->filter(function ($query) use ($request) {
+                if ($request->has('search') && $request->search['value']) {
+                    $s = $request->search['value'];
+                    $query->where(fn ($q) => $q
+                        ->where('complainant_name', 'like', "%$s%")
+                        ->orWhere('case_number', 'like', "%$s%")
+                        ->orWhere('incident_type', 'like', "%$s%")
+                        ->orWhere('incident_location', 'like', "%$s%"));
+                }
+            })
+            ->rawColumns(['number_col', 'complainant_col', 'type_col', 'incident_col', 'submitted_col', 'status_col', 'actions'])
+            ->make(true);
+    }
+
+    public function activateBlotter(Request $request, BlotterCase $blotterCase)
+    {
+        if ($blotterCase->status !== 'Pending') {
+            return response()->json([
+                'success'  => false,
+                'message'  => 'This blotter case has already been activated.',
+                'view_url' => route('blotter.show', $blotterCase),
+            ], 422);
+        }
+
+        $validated = $request->validate([
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $old = $blotterCase->toArray();
+
+        $blotterCase->update([
+            'status'    => 'Active',
+            'filed_by'  => auth()->id(),
+        ]);
+
+        if ($validated['notes'] ?? null) {
+            $blotterCase->update(['resolution_notes' => $validated['notes']]);
+        }
+
+        $this->logActivity('updated', $blotterCase, $old, $blotterCase->fresh()->toArray());
+
+        // Email notification
+        if ($blotterCase->email) {
+            try {
+                Mail::to($blotterCase->email)->send(new PortalStatusUpdated(
+                    type:          'blotter',
+                    requestNumber: $blotterCase->case_number,
+                    residentName:  $blotterCase->complainant_name,
+                    newStatus:     'Active',
+                    notes:         $validated['notes'] ?? 'Your blotter report has been received and filed as an official case.',
+                    preferredDate: null,
+                ));
+            } catch (\Exception $e) {
+                logger()->warning('Blotter activation email failed: '.$e->getMessage());
+            }
+        }
+
+        $blotterPending = BlotterCase::where('source', 'portal')->where('status', 'Pending')->count();
+
+        return response()->json([
+            'success'         => true,
+            'message'         => "Case {$blotterCase->case_number} activated successfully.",
+            'case_number'     => $blotterCase->case_number,
+            'view_url'        => route('blotter.show', $blotterCase),
+            'blotter_pending' => $blotterPending,
+        ]);
+    }
+
     public function destroy(Request $request, DocumentAppointment $appointment)
     {
         $num = $appointment->appointment_number;
