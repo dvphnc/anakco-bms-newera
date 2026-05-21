@@ -36,7 +36,20 @@ class AppointmentController extends Controller
                           .'<div class="td-muted">'.e($a->contact_number).'</div>';
                 })
                 ->addColumn('document_col', fn ($a) => '<span class="badge badge-navy" style="white-space:normal;line-height:1.4">'.e($a->document_type).'</span>')
-                ->addColumn('date_col', fn ($a) => '<span class="td-muted">'.($a->preferred_date ? \Carbon\Carbon::parse($a->preferred_date)->format('M d, Y') : '—').'</span>')
+                ->addColumn('date_col', function ($a) {
+                    if ($a->pickup_date) {
+                        return '<div style="font-size:12.5px;font-weight:600;color:#16a34a">'.
+                               '<i class="fas fa-calendar-check" style="font-size:10px;margin-right:3px"></i>'.
+                               \Carbon\Carbon::parse($a->pickup_date)->format('M d, Y').'</div>'.
+                               '<div style="font-size:10.5px;color:#9ca3af;margin-top:1px">Ready for Pick-up</div>';
+                    }
+                    if ($a->preferred_date) {
+                        return '<div style="font-size:12.5px;color:var(--text-muted)">'.
+                               \Carbon\Carbon::parse($a->preferred_date)->format('M d, Y').'</div>'.
+                               '<div style="font-size:10.5px;color:#9ca3af;margin-top:1px">Preferred</div>';
+                    }
+                    return '<span class="td-muted">—</span>';
+                })
                 ->addColumn('submitted_col', fn ($a) => '<span class="td-muted">'.$a->created_at->format('M d, Y').'</span>')
                 ->addColumn('status_col', function ($a) {
                     $cls = match ($a->status) {
@@ -128,11 +141,19 @@ class AppointmentController extends Controller
     public function updateStatus(Request $request, DocumentAppointment $appointment)
     {
         $validated = $request->validate([
-            'status' => 'required|in:' . implode(',', DocumentAppointment::$statuses),
-            'notes'  => 'nullable|string|max:500',
+            'status'      => 'required|in:' . implode(',', DocumentAppointment::$statuses),
+            'notes'       => 'nullable|string|max:500',
+            'pickup_date' => 'nullable|date',
         ]);
 
         $validated['processed_by'] = auth()->user()->name;
+
+        // Set pickup_date when marking Ready (clear it if status moves away from Ready)
+        if ($validated['status'] === 'Ready' && ! empty($validated['pickup_date'])) {
+            $validated['pickup_date'] = $validated['pickup_date'];
+        } elseif ($validated['status'] !== 'Ready') {
+            $validated['pickup_date'] = null;
+        }
 
         if ($validated['status'] === 'Released') {
             $validated['released_at'] = now();
