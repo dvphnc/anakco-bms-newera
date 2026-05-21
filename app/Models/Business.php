@@ -19,6 +19,7 @@ class Business extends Model
         'owner_contact',
         'owner_resident_id',
         'email',
+        'preferred_date',
         'permit_date',
         'expiry_date',
         'status',
@@ -28,8 +29,9 @@ class Business extends Model
     protected function casts(): array
     {
         return [
-            'permit_date' => 'date',
-            'expiry_date' => 'date',
+            'preferred_date' => 'date',
+            'permit_date'    => 'date',
+            'expiry_date'    => 'date',
         ];
     }
 
