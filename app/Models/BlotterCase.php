@@ -20,6 +20,7 @@ class BlotterCase extends Model
         'complainant_address',
         'complainant_contact',
         'complainant_resident_id',
+        'respondent_resident_id',
         'email',
         'respondent_name',
         'respondent_address',
@@ -45,6 +46,11 @@ class BlotterCase extends Model
     public function complainantResident()
     {
         return $this->belongsTo(Resident::class, 'complainant_resident_id');
+    }
+
+    public function respondentResident()
+    {
+        return $this->belongsTo(Resident::class, 'respondent_resident_id');
     }
 
     public function filedBy()

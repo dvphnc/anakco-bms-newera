@@ -16,6 +16,9 @@ class MedicineStockLog extends Model
         'stock_after',
         'reason',
         'performed_by',
+        'beneficiary_name',
+        'beneficiary_resident_id',
+        'purpose',
     ];
 
     protected $casts = [
@@ -27,5 +30,10 @@ class MedicineStockLog extends Model
     public function medicine()
     {
         return $this->belongsTo(MedicineInventory::class, 'medicine_id');
+    }
+
+    public function beneficiaryResident()
+    {
+        return $this->belongsTo(\App\Models\Resident::class, 'beneficiary_resident_id');
     }
 }
