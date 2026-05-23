@@ -68,8 +68,8 @@ class AppointmentController extends Controller
                 ->addColumn('actions', function ($a) {
                     $convertUrl = route('appointments.convert', $a);
 
-                    if ($a->document && $a->document->status !== 'Pending') {
-                        // Already issued — view link
+                    if ($a->document && $a->document->status === 'Released') {
+                        // Already released — show view link only
                         $viewUrl = route('documents.show', $a->document);
                         return '<div style="display:flex;justify-content:flex-end">
                                     <a href="'.$viewUrl.'" target="_blank"
@@ -78,7 +78,7 @@ class AppointmentController extends Controller
                                         <i class="fas fa-file-lines"></i> View Doc
                                     </a>
                                 </div>';
-                    } elseif ($a->status !== 'Cancelled') {
+                    } elseif ($a->status !== 'Cancelled' && $a->status !== 'Released') {
                         return '<div style="display:flex;justify-content:flex-end">
                                     <button class="btn btn-success btn-sm apt-convert-btn"
                                             style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
