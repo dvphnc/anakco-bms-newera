@@ -5,7 +5,7 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Portal Appointments</h1>
-        <p class="page-subtitle">Track pick-up dates and request statuses from the Resident Portal</p>
+        <p class="page-subtitle">Review and advance portal requests through the document issuance pipeline</p>
     </div>
     <div class="page-actions">
         <a href="{{ route('portal.index') }}" class="btn btn-secondary" target="_blank">
