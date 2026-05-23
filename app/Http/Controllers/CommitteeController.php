@@ -573,9 +573,12 @@ class CommitteeController extends Controller
         $medicine = MedicineInventory::findOrFail($id);
 
         $v = $request->validate([
-            'adjustment_type' => 'required|in:in,out,disposed',
-            'quantity'        => 'required|integer|min:1',
-            'reason'          => 'nullable|string|max:255',
+            'adjustment_type'        => 'required|in:in,out,disposed',
+            'quantity'               => 'required|integer|min:1',
+            'reason'                 => 'nullable|string|max:255',
+            'beneficiary_name'       => 'nullable|string|max:255',
+            'beneficiary_resident_id'=> 'nullable|exists:residents,id',
+            'purpose'                => 'nullable|string|max:255',
         ]);
 
         $qty        = (int) $v['quantity'];

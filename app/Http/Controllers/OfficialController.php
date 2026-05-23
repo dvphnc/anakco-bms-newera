@@ -37,15 +37,25 @@ class OfficialController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'full_name' => 'required|string|max:255',
-            'position' => 'required|string|max:100',
-            'committee' => 'nullable|string|max:100',
+            'resident_id'    => 'nullable|exists:residents,id',
+            'full_name'      => 'required|string|max:255',
+            'position'       => 'required|string|max:100',
+            'committee'      => 'nullable|string|max:100',
             'contact_number' => 'nullable|string|max:20',
-            'term_start' => 'required|date',
-            'term_end' => 'required|date|after:term_start',
-            'is_active' => 'boolean',
-            'photo_path' => 'nullable|image|max:2048',
+            'term_start'     => 'required|date',
+            'term_end'       => 'required|date|after:term_start',
+            'is_active'      => 'boolean',
+            'photo_path'     => 'nullable|image|max:2048',
         ]);
+
+        // Auto-fill from resident profile when linked
+        if (! empty($validated['resident_id'])) {
+            $resident = \App\Models\Resident::find($validated['resident_id']);
+            if ($resident) {
+                $validated['full_name']      = $resident->full_name;
+                $validated['contact_number'] = $validated['contact_number'] ?? $resident->contact_number;
+            }
+        }
 
         if ($request->hasFile('photo_path')) {
             $validated['photo_path'] = $request->file('photo_path')->store('officials', 'public');
@@ -75,15 +85,27 @@ class OfficialController extends Controller
     public function update(Request $request, Official $official)
     {
         $validated = $request->validate([
-            'full_name' => 'required|string|max:255',
-            'position' => 'required|string|max:100',
-            'committee' => 'nullable|string|max:100',
+            'resident_id'    => 'nullable|exists:residents,id',
+            'full_name'      => 'required|string|max:255',
+            'position'       => 'required|string|max:100',
+            'committee'      => 'nullable|string|max:100',
             'contact_number' => 'nullable|string|max:20',
-            'term_start' => 'required|date',
-            'term_end' => 'required|date|after:term_start',
-            'is_active' => 'boolean',
-            'photo_path' => 'nullable|image|max:2048',
+            'term_start'     => 'required|date',
+            'term_end'       => 'required|date|after:term_start',
+            'is_active'      => 'boolean',
+            'photo_path'     => 'nullable|image|max:2048',
         ]);
+
+        // Auto-fill from resident profile when linked
+        if (! empty($validated['resident_id'])) {
+            $resident = \App\Models\Resident::find($validated['resident_id']);
+            if ($resident) {
+                $validated['full_name'] = $resident->full_name;
+                if (empty($validated['contact_number'])) {
+                    $validated['contact_number'] = $resident->contact_number;
+                }
+            }
+        }
 
         if ($request->hasFile('photo_path')) {
             // Delete old photo before storing the new one
