@@ -108,14 +108,6 @@ class DocumentController extends Controller
                         <div style="display:flex;justify-content:flex-end;align-items:center;gap:6px">
                             '.$pipelineBtn.'
                             <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View"><i class="fas fa-eye"></i></a>
-                            <button class="btn btn-primary btn-sm btn-icon doc-status-btn"
-                                    title="Update Status (all options)"
-                                    data-id="'.$d->id.'"
-                                    data-num="'.e($d->doc_number).'"
-                                    data-status="'.e($d->status).'"
-                                    data-source="'.e($d->source).'">
-                                <i class="fas fa-rotate"></i>
-                            </button>
                             <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
                             <form method="POST" action="'.$delete.'"
                                   data-confirm="Delete document '.e($d->doc_number).'? This cannot be undone."
