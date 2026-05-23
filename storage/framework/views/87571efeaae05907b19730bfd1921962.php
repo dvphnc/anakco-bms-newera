@@ -89,7 +89,7 @@
                 <input type="text" id="docSearch" class="apt-search"
                        placeholder="Name, appt. no., document type…">
             </div>
-            <div style="min-width:150px">
+            <div style="width:160px;flex-shrink:0">
                 <select id="docStatusFilter">
                     <option value=""></option>
                     <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -97,7 +97,7 @@
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
-            <div style="min-width:185px">
+            <div style="width:210px;flex-shrink:0">
                 <select id="docTypeFilter">
                     <option value=""></option>
                     <?php $__currentLoopData = $documentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -113,6 +113,7 @@
             <table id="appointmentsTable" style="width:100%">
                 <thead>
                     <tr>
+                        <th>Appt. No.</th>
                         <th>Resident</th>
                         <th>Document Type</th>
                         <th>Date Requested</th>
@@ -134,7 +135,7 @@
                 <input type="text" id="bizSearch" class="apt-search"
                        placeholder="Business name, owner, permit no.…">
             </div>
-            <div style="min-width:150px">
+            <div style="width:160px;flex-shrink:0">
                 <select id="bizStatusFilter">
                     <option value=""></option>
                     <option value="Pending">Pending</option>
@@ -173,7 +174,7 @@
                 <input type="text" id="blotterSearch" class="apt-search"
                        placeholder="Complainant, case no., incident type…">
             </div>
-            <div style="min-width:150px">
+            <div style="width:160px;flex-shrink:0">
                 <select id="blotterStatusFilter">
                     <option value=""></option>
                     <option value="Pending">Pending</option>
@@ -721,6 +722,7 @@ $(document).ready(function () {
             }
         },
         columns: [
+            { data: 'number_col',    name: 'appointment_number', width: '130px' },
             { data: 'resident_col',  name: 'resident_name',  orderable: false },
             { data: 'document_col',  name: 'document_type',  orderable: false },
             { data: 'submitted_col', name: 'created_at',     width: '110px' },
@@ -728,7 +730,7 @@ $(document).ready(function () {
             { data: 'status_col',    name: 'status',         width: '110px' },
             { data: 'actions',       name: 'actions',        orderable: false, searchable: false, width: '110px' },
         ],
-        order: [[3, 'asc']],
+        order: [[4, 'asc']],
         pageLength: 15,
         drawCallback: function () {
             if (typeof tippy !== 'undefined') {

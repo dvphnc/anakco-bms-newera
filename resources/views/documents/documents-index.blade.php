@@ -5,19 +5,9 @@
 @section('content')
 
 <div class="page-header">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <div>
-            <h1 class="page-title">Document Issuance</h1>
-            <p class="page-subtitle">Barangay certificates and clearances</p>
-        </div>
-        <span id="headerFilterChip"
-              style="display:none;font-size:11px;font-weight:700;padding:3px 10px;
-                     border-radius:99px;background:var(--gold-pale);color:var(--gold);
-                     border:1px solid var(--gold-border);cursor:pointer"
-              onclick="toggleFilters('documents')"
-              title="Filters active — click to open">
-            <i class="fas fa-sliders"></i> <span id="headerFilterCount"></span> active
-        </span>
+    <div>
+        <h1 class="page-title">Document Issuance</h1>
+        <p class="page-subtitle">Barangay certificates and clearances</p>
     </div>
     <div class="page-actions">
         <a href="{{ route('export.pdf', 'documents') }}" class="btn btn-secondary" title="Export PDF">
@@ -67,6 +57,7 @@
         </div>
     </div>
 </div>
+
 {{-- Portal Queue notice (shown only when there are active portal submissions) --}}
 @if($portalPending > 0)
 <div class="alert-tray open no-print mb-6">
@@ -90,93 +81,85 @@
 </div>
 @endif
 
-{{-- Source Quick-Filter Chip Strip --}}
-<div class="no-print" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-    <span style="font-size:12px;font-weight:600;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.06em">Source:</span>
-    <button type="button" class="src-chip src-chip-active" data-src=""
-            style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
-                   border:1.5px solid var(--navy);background:var(--navy);color:#fff;transition:all .15s">
-        All
-    </button>
-    <button type="button" class="src-chip" data-src="portal"
-            style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
-                   border:1.5px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;transition:all .15s">
-        <i class="fas fa-globe" style="font-size:10px;margin-right:4px"></i>Portal
-        <span id="srcChipPortalCount" style="margin-left:5px;background:#1d4ed8;color:#fff;border-radius:99px;
-              padding:1px 7px;font-size:10px;font-weight:700">
-            {{ \App\Models\Document::where('source','portal')->whereNotIn('status',['Released','Cancelled'])->count() }}
-        </span>
-    </button>
-    <button type="button" class="src-chip" data-src="walk-in"
-            style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
-                   border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all .15s">
-        <i class="fas fa-walking" style="font-size:10px;margin-right:4px"></i>Walk-in
-    </button>
-</div>
-
-{{-- Collapsible Filter Bar --}}
-<div class="card mb-6">
-    <div class="card-header" style="cursor:pointer" onclick="toggleFilters('documents')">
-        <div style="display:flex;align-items:center;gap:10px">
-            <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
-            <span id="filterBadge" class="badge badge-gold" style="display:none"></span>
-        </div>
-        <button type="button" class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleFilters('documents')">
-            <i class="fas fa-sliders" id="filterToggleIcon"></i>
-            <span id="filterToggleText">Show Filters</span>
-        </button>
-    </div>
-    <div id="filterPanel" style="display:none">
-        <div class="card-body" style="padding:20px 22px">
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
-                <div class="form-group" style="grid-column:1/-1">
-                    <label class="form-label">Search</label>
-                    <div style="position:relative">
-                        <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
-                        <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
-                               placeholder="Document no., resident name…">
-                    </div>
-                </div>
-                <div class="form-group" style="grid-column:span 2">
-                    <label class="form-label">Document Type</label>
-                    <select id="typeFilter">
-                        <option value=""></option>
-                        @foreach($documentTypes as $t)
-                            <option value="{{ $t }}">{{ $t }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Status</label>
-                    <select id="statusFilter">
-                        <option value=""></option>
-                        @foreach(\App\Models\Document::$statuses as $s)
-                            <option value="{{ $s }}">{{ $s }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Source</label>
-                    <select id="sourceFilter">
-                        <option value=""></option>
-                        <option value="portal">Portal</option>
-                        <option value="walk-in">Walk-in</option>
-                    </select>
-                </div>
-            </div>
-            <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-                <button type="button" id="resetBtn" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-xmark"></i> Reset All Filters
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
+{{-- Document Records --}}
 <div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-file-lines"></i> Document Records</span>
     </div>
+
+    {{-- ── Inline toolbar — matches Appointments page pattern ── --}}
+    <div class="apt-toolbar">
+
+        {{-- Source chip strip --}}
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+            <button type="button" class="src-chip src-chip-active" data-src=""
+                    style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
+                           border:1.5px solid var(--navy);background:var(--navy);color:#fff;
+                           transition:all .15s;white-space:nowrap">
+                All
+            </button>
+            <button type="button" class="src-chip" data-src="portal"
+                    style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
+                           border:1.5px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;
+                           transition:all .15s;white-space:nowrap">
+                <i class="fas fa-globe" style="font-size:10px;margin-right:3px"></i>Portal
+                <span id="srcChipPortalCount"
+                      style="margin-left:5px;background:#1d4ed8;color:#fff;border-radius:99px;
+                             padding:1px 7px;font-size:10px;font-weight:700">
+                    {{ \App\Models\Document::where('source','portal')->whereNotIn('status',['Released','Cancelled'])->count() }}
+                </span>
+            </button>
+            <button type="button" class="src-chip" data-src="walk-in"
+                    style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
+                           border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);
+                           transition:all .15s;white-space:nowrap">
+                <i class="fas fa-walking" style="font-size:10px;margin-right:3px"></i>Walk-in
+            </button>
+        </div>
+
+        {{-- Vertical divider --}}
+        <div style="width:1px;height:24px;background:var(--border);flex-shrink:0;margin:0 2px"></div>
+
+        {{-- Search --}}
+        <div style="position:relative;flex:1;max-width:280px">
+            <i class="fas fa-search apt-search-icon"></i>
+            <input type="text" id="searchInput" class="apt-search"
+                   placeholder="Document no., resident name…">
+        </div>
+
+        {{-- Document type filter --}}
+        <div style="width:200px;flex-shrink:0">
+            <select id="typeFilter">
+                <option value=""></option>
+                @foreach($documentTypes as $t)
+                    <option value="{{ $t }}">{{ $t }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Status filter --}}
+        <div style="width:155px;flex-shrink:0">
+            <select id="statusFilter">
+                <option value=""></option>
+                @foreach(\App\Models\Document::$statuses as $s)
+                    <option value="{{ $s }}">{{ $s }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Reset --}}
+        <button type="button" id="resetBtn" class="btn btn-secondary btn-sm">
+            <i class="fas fa-xmark"></i> Reset
+        </button>
+    </div>
+
+    {{-- Hidden source select — backing value for chip logic + quickFilter() --}}
+    <select id="sourceFilter" style="display:none">
+        <option value=""></option>
+        <option value="portal">Portal</option>
+        <option value="walk-in">Walk-in</option>
+    </select>
+
     <div class="table-responsive">
         <table id="documentsTable" style="width:100%">
             <thead>
@@ -196,7 +179,9 @@
     </div>
 </div>
 
-{{-- Quick Status Update Modal --}}
+{{-- ══════════════════════════════════════════════════════════════
+     MODAL — Quick Status Update
+═══════════════════════════════════════════════════════════════ --}}
 <div id="docStatusModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -261,58 +246,122 @@
 @push('scripts')
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
-/* ── Spinner keyframe (status modal save button) ─────────────────── */
+/* ── Spinner keyframe ─────────────────────────────────────────────── */
 @keyframes doc-spin { to { transform: rotate(360deg); } }
 
-/* ── SaaS surface & stat card polish ──────────────────────────────── */
+/* ── Page & stat card polish ──────────────────────────────────────── */
 .main-content { background: #F8F9FA; }
 .stat-card { background: #FFFFFF !important; box-shadow: 0 1px 4px rgba(13,33,68,0.07), 0 4px 16px rgba(13,33,68,0.04); }
 .stat-label { font-size: 12px; color: var(--text-subtle); font-weight: 500; letter-spacing: 0.02em; }
 .stat-number { font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1.1; }
-#documentsTable_wrapper .dataTables_length,
-#documentsTable_wrapper .dataTables_filter { display:none; }
-#documentsTable_wrapper .dataTables_info { font-size:13px;color:var(--text-muted);padding:12px 20px; }
-#documentsTable_wrapper .dataTables_paginate { padding:12px 20px; }
-#documentsTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
-#documentsTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
-#documentsTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
 
-/* ── Filter Select2 — match residents blade ───────────────────── */
-#filterPanel .select2-container { width: 100% !important; }
-#filterPanel .select2-container--default .select2-selection--single,
-#filterPanel .select2-container--default .select2-selection--multiple {
-    border: 1px solid var(--border); border-radius: var(--radius-sm);
-    background: var(--surface); min-height: 38px;
+/* ── DataTables chrome ────────────────────────────────────────────── */
+#documentsTable_wrapper .dataTables_length,
+#documentsTable_wrapper .dataTables_filter { display: none; }
+#documentsTable_wrapper .dataTables_info { font-size: 13px; color: var(--text-muted); padding: 12px 20px; }
+#documentsTable_wrapper .dataTables_paginate { padding: 12px 20px; }
+#documentsTable_wrapper .dataTables_paginate .paginate_button {
+    padding: 4px 10px; border-radius: 6px; font-size: 13px; cursor: pointer;
+    border: 1px solid var(--border) !important; background: white !important;
+    color: var(--text) !important; margin: 0 2px;
 }
-#filterPanel .select2-container--default .select2-selection--single {
-    padding: 0 32px 0 10px; display: flex; align-items: center;
+#documentsTable_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--navy) !important; color: white !important; border-color: var(--navy) !important;
 }
-#filterPanel .select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: var(--text); font-size: 13.5px; padding: 0;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal;
+#documentsTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+    background: var(--navy-pale) !important; color: var(--navy) !important;
 }
-#filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
-#filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
+
+/* ── Toolbar (shared pattern with Appointments page) ─────────────── */
+.apt-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: #fafbfc;
+    flex-wrap: wrap;
+}
+.apt-search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-subtle);
+    font-size: 12px;
+    pointer-events: none;
+}
+.apt-search {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px 0 32px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+}
+.apt-search:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 2px rgba(13,33,68,.1); }
+
+/* ── Select2 inside toolbar ───────────────────────────────────────── */
+.apt-toolbar .select2-container { width: 100% !important; }
+.apt-toolbar .select2-container--default .select2-selection--single {
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    padding: 0 32px 0 10px;
+}
+.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    padding: 0;
+    line-height: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: var(--text-subtle);
+    font-size: 13px;
+}
+.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 34px;
+    top: 0;
+    right: 6px;
+}
+.apt-toolbar .select2-container--default.select2-container--open .select2-selection--single {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 2px rgba(13,33,68,.1);
+}
+.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__clear {
+    font-size: 16px;
+    line-height: 1;
+    color: var(--text-subtle);
+    margin-right: 4px;
+}
 </style>
+
 <script>
 $(document).ready(function () {
 
-    /* ── Select2 init ─────────────────────────────────────────────────── */
-    /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
-       The browser won't paint until after this synchronous block, so no visual flash. */
-    var $fp = $('#filterPanel');
-    var _fpW = $fp.parent().width();
-    $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1', width: _fpW + 'px' });
-
-    const s2Single = { dropdownParent: $('body'), allowClear: true,  width: '100%',
-                       minimumResultsForSearch: 0,
-                       language: { noResults: () => 'No matches' } };
-
-    $('#typeFilter').select2($.extend({}, s2Single, { placeholder: 'All document types…' }));
-    $('#statusFilter').select2($.extend({}, s2Single, { placeholder: 'All statuses…' }));
-    $('#sourceFilter').select2($.extend({}, s2Single, { placeholder: 'All sources…' }));
-
-    $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
+    /* ── Select2 filter init ─────────────────────────────────────────── */
+    function initS2($el, placeholder) {
+        $el.select2({
+            dropdownParent:          $('body'),
+            allowClear:              true,
+            placeholder:             placeholder,
+            width:                   '100%',
+            minimumResultsForSearch: Infinity,
+            language: { noResults: function () { return 'No matches'; } }
+        });
+    }
+    initS2($('#typeFilter'),   'All document types…');
+    initS2($('#statusFilter'), 'All statuses…');
 
     /* ── DataTable ────────────────────────────────────────────────────── */
     var table = $('#documentsTable').DataTable({
@@ -346,6 +395,32 @@ $(document).ready(function () {
         }
     });
 
+    /* ── Filter event handlers ───────────────────────────────────────── */
+    var _debounce;
+    $('#searchInput').on('input', function () {
+        clearTimeout(_debounce);
+        _debounce = setTimeout(function () { table.ajax.reload(); }, 380);
+    });
+    $('#typeFilter, #statusFilter, #sourceFilter').on('change', function () { table.ajax.reload(); });
+
+    $('#resetBtn').on('click', function () {
+        $('#searchInput').val('');
+        $('#typeFilter, #statusFilter').val(null).trigger('change');
+        // Reset chips + hidden source select
+        $('#sourceFilter').val(null).trigger('change');
+        $('.src-chip').each(function () { _updateChipStyle($(this), $(this).data('src') === ''); });
+    });
+
+    /* ── Quick filter — triggered by stat cards & portal alert button ── */
+    window.quickFilter = function (filterId, value) {
+        if (filterId === 'sourceFilter') {
+            $('#sourceFilter').val(value).trigger('change');
+            $('.src-chip').each(function () { _updateChipStyle($(this), $(this).data('src') === value); });
+        } else {
+            $('#' + filterId).val(value).trigger('change');
+        }
+    };
+
     /* ── Axios DELETE ─────────────────────────────────────────────────── */
     $('#documentsTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
         e.preventDefault();
@@ -378,104 +453,36 @@ $(document).ready(function () {
         });
     });
 
-    /* ── URL persistence ──────────────────────────────────────────────── */
-    function saveToUrl() {
-        const url = new URL(window.location);
-        ['s', 'status', 'document_type', 'source'].forEach(k => url.searchParams.delete(k));
-        if ($('#searchInput').val())  url.searchParams.set('s', $('#searchInput').val());
-        if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
-        if ($('#typeFilter').val())   url.searchParams.set('document_type', $('#typeFilter').val());
-        if ($('#sourceFilter').val()) url.searchParams.set('source', $('#sourceFilter').val());
-        history.replaceState({}, '', url);
-        updateBadge();
-    }
-    function loadFromUrl() {
-        const p = new URLSearchParams(window.location.search);
-        let any = false;
-        if (p.get('s'))             { $('#searchInput').val(p.get('s')); any = true; }
-        if (p.get('status'))        { $('#statusFilter').val(p.get('status')).trigger('change.select2'); any = true; }
-        if (p.get('document_type')) { $('#typeFilter').val(p.get('document_type')).trigger('change.select2'); any = true; }
-        if (p.get('source'))        { $('#sourceFilter').val(p.get('source')).trigger('change.select2'); any = true; }
-        return any;
-    }
-    function updateBadge() {
-        let n = 0;
-        if ($('#searchInput').val())  n++;
-        if ($('#typeFilter').val())   n++;
-        if ($('#statusFilter').val()) n++;
-        if ($('#sourceFilter').val()) n++;
-        const badge = document.getElementById('filterBadge');
-        const chip  = document.getElementById('headerFilterChip');
-        const chipN = document.getElementById('headerFilterCount');
-        if (n > 0) {
-            badge.textContent = n + (n === 1 ? ' filter active' : ' filters active');
-            badge.style.display = '';
-            chipN.textContent = n;
-            chip.style.display = '';
-        } else {
-            badge.style.display = 'none';
-            chip.style.display  = 'none';
-        }
-    }
-    window.toggleFilters = function (key) {
-        const panel  = document.getElementById('filterPanel');
-        const isOpen = panel.style.display !== 'none';
-        panel.style.display = isOpen ? 'none' : 'block';
-        document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
-        localStorage.setItem('fp_' + key, isOpen ? '0' : '1');
-    };
-    window.quickFilter = function (filterId, value) {
-        $('#' + filterId).val(value).trigger('change');
-        if (document.getElementById('filterPanel').style.display === 'none') {
-            document.getElementById('filterPanel').style.display = 'block';
-            document.getElementById('filterToggleText').textContent = 'Hide Filters';
-            localStorage.setItem('fp_documents', '1');
-        }
-        saveToUrl(); table.ajax.reload();
-    };
-    const hasUrlFilters = loadFromUrl();
-    if (hasUrlFilters || localStorage.getItem('fp_documents') === '1') {
-        document.getElementById('filterPanel').style.display = 'block';
-        document.getElementById('filterToggleText').textContent = 'Hide Filters';
-    }
-    updateBadge();
+}); // end document.ready
 
-    let debounce;
-    $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380); });
-    $('#typeFilter, #statusFilter, #sourceFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
-    $('#resetBtn').on('click', function () {
-        $('#searchInput').val('');
-        $('#typeFilter, #statusFilter, #sourceFilter').val(null).trigger('change');
-        saveToUrl(); table.ajax.reload();
-    });
-});
+/* ── Source chip helpers ──────────────────────────────────────────── */
+function _updateChipStyle($chip, isActive) {
+    var src = $chip.data('src');
+    $chip.toggleClass('src-chip-active', isActive);
+    if (src === '') {
+        $chip.css({ background: isActive ? 'var(--navy)'   : '#fff',
+                    color:      isActive ? '#fff'           : 'var(--text-muted)',
+                    borderColor:isActive ? 'var(--navy)'   : 'var(--border)' });
+    } else if (src === 'portal') {
+        $chip.css({ background: isActive ? '#1d4ed8'  : '#eff6ff',
+                    color:      isActive ? '#fff'      : '#1d4ed8',
+                    borderColor:isActive ? '#1d4ed8'  : '#bfdbfe' });
+    } else {
+        $chip.css({ background: isActive ? 'var(--navy)'   : 'var(--surface)',
+                    color:      isActive ? '#fff'           : 'var(--text-muted)',
+                    borderColor:isActive ? 'var(--navy)'   : 'var(--border)' });
+    }
+}
 
-/* ── Source chip strip ────────────────────────────────────────────── */
 $(document).on('click', '.src-chip', function () {
     var src = $(this).data('src');
-
-    // Update active chip visual
-    $('.src-chip').each(function () {
-        var isActive = $(this).data('src') === src;
-        $(this).toggleClass('src-chip-active', isActive);
-        if ($(this).data('src') === '') {
-            // "All" chip
-            $(this).css({ background: isActive ? 'var(--navy)' : '#fff', color: isActive ? '#fff' : 'var(--text-muted)', borderColor: isActive ? 'var(--navy)' : 'var(--border)' });
-        } else if ($(this).data('src') === 'portal') {
-            $(this).css({ background: isActive ? '#1d4ed8' : '#eff6ff', color: isActive ? '#fff' : '#1d4ed8', borderColor: isActive ? '#1d4ed8' : '#bfdbfe' });
-        } else {
-            $(this).css({ background: isActive ? 'var(--navy)' : 'var(--surface)', color: isActive ? '#fff' : 'var(--text-muted)', borderColor: isActive ? 'var(--navy)' : 'var(--border)' });
-        }
-    });
-
-    // Sync with the hidden source filter and reload table
+    $('.src-chip').each(function () { _updateChipStyle($(this), $(this).data('src') === src); });
     $('#sourceFilter').val(src || null).trigger('change');
 });
 
 /* ── Pipeline one-click advance button ───────────────────────────── */
 $(document).on('click', '#documentsTable .doc-pipeline-btn', function () {
     var $btn     = $(this);
-    var docId    = $btn.data('id');
     var next     = $btn.data('next');
     var url      = $btn.data('url');
     var isPortal = $btn.data('source') === 'portal';
@@ -485,7 +492,6 @@ $(document).on('click', '#documentsTable .doc-pipeline-btn', function () {
 
     axios.patch(url, { status: next })
         .then(function (res) {
-            // Update status badge in-place
             var $row = $btn.closest('tr');
             var statusBadge = $row.find('td .badge').filter(function () {
                 return !$(this).hasClass('badge-navy') && !$(this).is('[style*="10px"]');
@@ -493,16 +499,9 @@ $(document).on('click', '#documentsTable .doc-pipeline-btn', function () {
             statusBadge.removeClass(Object.values(DOC_STATUS_CLS).join(' '))
                        .addClass(DOC_STATUS_CLS[res.data.status] || 'badge-gray')
                        .text(res.data.status);
-
-            // Update the ↻ button's data-status so the modal opens with correct value
             $row.find('.doc-status-btn').data('status', res.data.status);
 
-            bmsToast(
-                (isPortal ? '📧 Email queued · ' : '') + res.data.message,
-                'success'
-            );
-
-            // Reload row so pipeline button advances to the next step
+            bmsToast((isPortal ? '📧 Email queued · ' : '') + res.data.message, 'success');
             $('#documentsTable').DataTable().ajax.reload(null, false);
         })
         .catch(function (err) {
@@ -512,7 +511,6 @@ $(document).on('click', '#documentsTable .doc-pipeline-btn', function () {
 });
 
 /* ── Quick Status Modal ───────────────────────────────────────────── */
-/* Identical badge-class map used in AppointmentController — single source of truth */
 const DOC_STATUS_CLS = {
     Pending:    'badge-yellow',
     Confirmed:  'badge-navy',
@@ -528,11 +526,11 @@ $(document).on('click', '#documentsTable .doc-status-btn', function () {
     _docStatusId = $(this).data('id');
     const isPortal = $(this).data('source') === 'portal';
 
-    document.getElementById('docStatusNum').textContent         = $(this).data('num') || ('Doc #' + _docStatusId);
-    document.getElementById('docStatusSelect').value            = $(this).data('status');
-    document.getElementById('docStatusError').style.display     = 'none';
-    document.getElementById('docPortalNote').style.display      = isPortal ? '' : 'none';
-    document.getElementById('docStatusModal').style.display     = 'flex';
+    document.getElementById('docStatusNum').textContent     = $(this).data('num') || ('Doc #' + _docStatusId);
+    document.getElementById('docStatusSelect').value        = $(this).data('status');
+    document.getElementById('docStatusError').style.display = 'none';
+    document.getElementById('docPortalNote').style.display  = isPortal ? '' : 'none';
+    document.getElementById('docStatusModal').style.display = 'flex';
 });
 
 function closeDocStatusModal() {
@@ -552,14 +550,13 @@ function saveDocStatus() {
     const errDiv  = document.getElementById('docStatusError');
     const status  = document.getElementById('docStatusSelect').value;
 
-    errDiv.style.display    = 'none';
-    btn.disabled            = true;
-    spinner.style.display   = '';
-    icon.style.display      = 'none';
+    errDiv.style.display  = 'none';
+    btn.disabled          = true;
+    spinner.style.display = '';
+    icon.style.display    = 'none';
 
     axios.patch('/documents/' + _docStatusId + '/status', { status: status })
         .then(function (res) {
-            // Inline badge update — no full table reload needed for the status cell
             const row = $('button.doc-status-btn[data-id="' + _docStatusId + '"]').closest('tr');
             row.find('.doc-status-btn').data('status', res.data.status);
             row.find('td .badge:not(.badge-navy):not(.badge-blue[style*="10px"])').first()
@@ -569,8 +566,6 @@ function saveDocStatus() {
 
             closeDocStatusModal();
             bmsToast(res.data.message, 'success');
-
-            // Full reload so the Appointments column also reflects the reverse-sync
             $('#documentsTable').DataTable().ajax.reload(null, false);
         })
         .catch(function (err) {
@@ -584,8 +579,5 @@ function saveDocStatus() {
             icon.style.display    = '';
         });
 }
-
-
-
 </script>
 @endpush
