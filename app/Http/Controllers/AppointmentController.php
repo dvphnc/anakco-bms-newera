@@ -8,6 +8,7 @@ use App\Models\BlotterCase;
 use App\Models\Business;
 use App\Models\Document;
 use App\Models\DocumentAppointment;
+use App\Services\DocumentQueueService;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -126,49 +127,18 @@ class AppointmentController extends Controller
             'pickup_date' => 'nullable|date',
         ]);
 
-        $validated['processed_by'] = auth()->user()->name;
-
-        // Set pickup_date when marking Ready (clear it if status moves away from Ready)
-        if ($validated['status'] === 'Ready' && ! empty($validated['pickup_date'])) {
-            $validated['pickup_date'] = $validated['pickup_date'];
-        } elseif ($validated['status'] !== 'Ready') {
-            $validated['pickup_date'] = null;
-        }
-
-        if ($validated['status'] === 'Released') {
-            $validated['released_at'] = now();
-        }
-
         $old = $appointment->toArray();
 
-        AppointmentStatusLog::create([
-            'appointment_id' => $appointment->id,
-            'from_status'    => $appointment->status,
-            'to_status'      => $validated['status'],
-            'changed_by'     => auth()->user()->name,
-            'note'           => $validated['notes'] ?? null,
-        ]);
+        // All sync + log + email delegated to DocumentQueueService
+        $appointment = app(DocumentQueueService::class)->advance(
+            appointment: $appointment,
+            newStatus:   $validated['status'],
+            notes:       $validated['notes'] ?? null,
+            pickupDate:  $validated['pickup_date'] ?? null,
+            changedBy:   auth()->user()->name,
+        );
 
-        $appointment->update($validated);
-
-        $this->logActivity('updated', $appointment, $old, $appointment->fresh()->toArray());
-
-        // Send email notification if the appointment has an email address
-        if ($appointment->email) {
-            try {
-                Mail::to($appointment->email)->send(new PortalStatusUpdated(
-                    type:          'document',
-                    requestNumber: $appointment->appointment_number,
-                    residentName:  $appointment->resident_name,
-                    newStatus:     $validated['status'],
-                    notes:         $validated['notes'] ?? null,
-                    preferredDate: $appointment->preferred_date?->format('Y-m-d'),
-                ));
-            } catch (\Exception $e) {
-                // Mail failure is non-fatal; log silently
-                logger()->warning('Portal email failed: ' . $e->getMessage());
-            }
-        }
+        $this->logActivity('updated', $appointment, $old, $appointment->toArray());
 
         if ($request->expectsJson()) {
             // Return fresh counts so the client can sync stat cards exactly
@@ -180,8 +150,8 @@ class AppointmentController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Status updated to {$validated['status']}.",
-                'status'  => $validated['status'],
+                'message' => "Status updated to {$appointment->status}.",
+                'status'  => $appointment->status,
                 'counts'  => [
                     'Pending'  => (int) $counts->pending,
                     'Ready'    => (int) $counts->ready,
@@ -190,7 +160,7 @@ class AppointmentController extends Controller
             ]);
         }
 
-        return back()->with('success', "Appointment status updated to {$validated['status']}.");
+        return back()->with('success', "Appointment status updated to {$appointment->status}.");
     }
 
     public function portalPendingCount()
@@ -407,7 +377,7 @@ class AppointmentController extends Controller
         // Notify applicant if email is available
         if ($business->email) {
             try {
-                Mail::to($business->email)->send(new PortalStatusUpdated(
+                Mail::to($business->email)->queue(new PortalStatusUpdated(
                     type:          'business',
                     requestNumber: $business->permit_number,
                     residentName:  $business->owner_name,
@@ -447,7 +417,7 @@ class AppointmentController extends Controller
         // Send email notification if available
         if ($business->email) {
             try {
-                Mail::to($business->email)->send(new PortalStatusUpdated(
+                Mail::to($business->email)->queue(new PortalStatusUpdated(
                     type:          'business',
                     requestNumber: $business->permit_number,
                     residentName:  $business->owner_name,
@@ -580,7 +550,7 @@ class AppointmentController extends Controller
         // Email notification
         if ($blotterCase->email) {
             try {
-                Mail::to($blotterCase->email)->send(new PortalStatusUpdated(
+                Mail::to($blotterCase->email)->queue(new PortalStatusUpdated(
                     type:          'blotter',
                     requestNumber: $blotterCase->case_number,
                     residentName:  $blotterCase->complainant_name,
@@ -623,7 +593,7 @@ class AppointmentController extends Controller
         // Send email notification if available
         if ($blotterCase->email) {
             try {
-                Mail::to($blotterCase->email)->send(new PortalStatusUpdated(
+                Mail::to($blotterCase->email)->queue(new PortalStatusUpdated(
                     type:          'blotter',
                     requestNumber: $blotterCase->case_number,
                     residentName:  $blotterCase->complainant_name,

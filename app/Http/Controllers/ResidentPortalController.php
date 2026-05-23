@@ -7,6 +7,7 @@ use App\Models\BlotterCase;
 use App\Models\Business;
 use App\Models\Document;
 use App\Models\DocumentAppointment;
+use App\Services\DocumentQueueService;
 use Illuminate\Http\Request;
 
 class ResidentPortalController extends Controller
@@ -65,8 +66,11 @@ class ResidentPortalController extends Controller
             'note'           => 'Request submitted via Resident Portal.',
         ]);
 
+        // Fire submission confirmation email (Step 1 of the 4-email lifecycle)
+        app(DocumentQueueService::class)->sendSubmissionConfirmation($appointment);
+
         // Create the mirrored Document record so this submission is visible
-        // in the Document Issuance module from day one. The Observer keeps
+        // in the Document Issuance module from day one. The service keeps
         // it in sync as the appointment status advances.
         Document::create([
             'appointment_id'       => $appointment->id,

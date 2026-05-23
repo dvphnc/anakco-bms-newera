@@ -90,6 +90,30 @@
 </div>
 @endif
 
+{{-- Source Quick-Filter Chip Strip --}}
+<div class="no-print" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <span style="font-size:12px;font-weight:600;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.06em">Source:</span>
+    <button type="button" class="src-chip src-chip-active" data-src=""
+            style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid var(--navy);background:var(--navy);color:#fff;transition:all .15s">
+        All
+    </button>
+    <button type="button" class="src-chip" data-src="portal"
+            style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;transition:all .15s">
+        <i class="fas fa-globe" style="font-size:10px;margin-right:4px"></i>Portal
+        <span id="srcChipPortalCount" style="margin-left:5px;background:#1d4ed8;color:#fff;border-radius:99px;
+              padding:1px 7px;font-size:10px;font-weight:700">
+            {{ \App\Models\Document::where('source','portal')->whereNotIn('status',['Released','Cancelled'])->count() }}
+        </span>
+    </button>
+    <button type="button" class="src-chip" data-src="walk-in"
+            style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all .15s">
+        <i class="fas fa-walking" style="font-size:10px;margin-right:4px"></i>Walk-in
+    </button>
+</div>
+
 {{-- Collapsible Filter Bar --}}
 <div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('documents')">
@@ -424,6 +448,67 @@ $(document).ready(function () {
         $('#typeFilter, #statusFilter, #sourceFilter').val(null).trigger('change');
         saveToUrl(); table.ajax.reload();
     });
+});
+
+/* ── Source chip strip ────────────────────────────────────────────── */
+$(document).on('click', '.src-chip', function () {
+    var src = $(this).data('src');
+
+    // Update active chip visual
+    $('.src-chip').each(function () {
+        var isActive = $(this).data('src') === src;
+        $(this).toggleClass('src-chip-active', isActive);
+        if ($(this).data('src') === '') {
+            // "All" chip
+            $(this).css({ background: isActive ? 'var(--navy)' : '#fff', color: isActive ? '#fff' : 'var(--text-muted)', borderColor: isActive ? 'var(--navy)' : 'var(--border)' });
+        } else if ($(this).data('src') === 'portal') {
+            $(this).css({ background: isActive ? '#1d4ed8' : '#eff6ff', color: isActive ? '#fff' : '#1d4ed8', borderColor: isActive ? '#1d4ed8' : '#bfdbfe' });
+        } else {
+            $(this).css({ background: isActive ? 'var(--navy)' : 'var(--surface)', color: isActive ? '#fff' : 'var(--text-muted)', borderColor: isActive ? 'var(--navy)' : 'var(--border)' });
+        }
+    });
+
+    // Sync with the hidden source filter and reload table
+    $('#sourceFilter').val(src || null).trigger('change');
+});
+
+/* ── Pipeline one-click advance button ───────────────────────────── */
+$(document).on('click', '#documentsTable .doc-pipeline-btn', function () {
+    var $btn     = $(this);
+    var docId    = $btn.data('id');
+    var next     = $btn.data('next');
+    var url      = $btn.data('url');
+    var isPortal = $btn.data('source') === 'portal';
+
+    var origHtml = $btn.html();
+    $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>');
+
+    axios.patch(url, { status: next })
+        .then(function (res) {
+            // Update status badge in-place
+            var $row = $btn.closest('tr');
+            var statusBadge = $row.find('td .badge').filter(function () {
+                return !$(this).hasClass('badge-navy') && !$(this).is('[style*="10px"]');
+            }).first();
+            statusBadge.removeClass(Object.values(DOC_STATUS_CLS).join(' '))
+                       .addClass(DOC_STATUS_CLS[res.data.status] || 'badge-gray')
+                       .text(res.data.status);
+
+            // Update the ↻ button's data-status so the modal opens with correct value
+            $row.find('.doc-status-btn').data('status', res.data.status);
+
+            bmsToast(
+                (isPortal ? '📧 Email queued · ' : '') + res.data.message,
+                'success'
+            );
+
+            // Reload row so pipeline button advances to the next step
+            $('#documentsTable').DataTable().ajax.reload(null, false);
+        })
+        .catch(function (err) {
+            $btn.prop('disabled', false).html(origHtml);
+            bmsToast(err.response?.data?.message || 'Failed to advance status.', 'error');
+        });
 });
 
 /* ── Quick Status Modal ───────────────────────────────────────────── */

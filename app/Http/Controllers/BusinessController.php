@@ -313,7 +313,7 @@ class BusinessController extends Controller
         // Email notification for portal-sourced business applications
         if ($business->source === 'portal' && $business->email) {
             try {
-                Mail::to($business->email)->send(new PortalStatusUpdated(
+                Mail::to($business->email)->queue(new PortalStatusUpdated(
                     type:          'business',
                     requestNumber: $business->permit_number,
                     residentName:  $business->owner_name,

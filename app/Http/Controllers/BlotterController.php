@@ -239,7 +239,7 @@ class BlotterController extends Controller
         // Email notification for portal-sourced blotter cases
         if ($blotter->source === 'portal' && $blotter->email) {
             try {
-                Mail::to($blotter->email)->send(new PortalStatusUpdated(
+                Mail::to($blotter->email)->queue(new PortalStatusUpdated(
                     type:          'blotter',
                     requestNumber: $blotter->case_number,
                     residentName:  $blotter->complainant_name,
