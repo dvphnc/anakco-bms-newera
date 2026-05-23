@@ -592,14 +592,24 @@ class CommitteeController extends Controller
 
         $medicine->save();
 
+        // Auto-fill beneficiary_name from linked resident if not manually typed
+        $beneficiaryName = $v['beneficiary_name'] ?? null;
+        if (! $beneficiaryName && ! empty($v['beneficiary_resident_id'])) {
+            $bRes = \App\Models\Resident::find($v['beneficiary_resident_id']);
+            $beneficiaryName = $bRes?->full_name;
+        }
+
         MedicineStockLog::create([
-            'medicine_id'     => $medicine->id,
-            'adjustment_type' => $v['adjustment_type'],
-            'quantity'        => $qty,
-            'stock_before'    => $stockBefore,
-            'stock_after'     => $medicine->current_stock,
-            'reason'          => $v['reason'] ?? null,
-            'performed_by'    => auth()->user()->name,
+            'medicine_id'              => $medicine->id,
+            'adjustment_type'          => $v['adjustment_type'],
+            'quantity'                 => $qty,
+            'stock_before'             => $stockBefore,
+            'stock_after'              => $medicine->current_stock,
+            'reason'                   => $v['reason'] ?? null,
+            'performed_by'             => auth()->user()->name,
+            'beneficiary_name'         => $beneficiaryName,
+            'beneficiary_resident_id'  => $v['beneficiary_resident_id'] ?? null,
+            'purpose'                  => $v['purpose'] ?? null,
         ]);
 
         $this->logActivity('adjusted stock', $medicine,
@@ -621,13 +631,15 @@ class CommitteeController extends Controller
                 'reorder_level' => $medicine->reorder_level,
                 'is_low_stock'  => $medicine->isLowStock(),
                 'log_entry'     => [
-                    'type'   => $v['adjustment_type'],
-                    'qty'    => $qty,
-                    'before' => $stockBefore,
-                    'after'  => $medicine->current_stock,
-                    'reason' => $v['reason'] ?? null,
-                    'by'     => auth()->user()->name,
-                    'date'   => now()->format('M d, Y h:i A'),
+                    'type'        => $v['adjustment_type'],
+                    'qty'         => $qty,
+                    'before'      => $stockBefore,
+                    'after'       => $medicine->current_stock,
+                    'reason'      => $v['reason'] ?? null,
+                    'beneficiary' => $beneficiaryName,
+                    'purpose'     => $v['purpose'] ?? null,
+                    'by'          => auth()->user()->name,
+                    'date'        => now()->format('M d, Y h:i A'),
                 ],
             ]);
         }
