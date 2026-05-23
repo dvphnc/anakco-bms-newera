@@ -5,7 +5,7 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Portal Appointments</h1>
-        <p class="page-subtitle">Review and advance portal requests through the document issuance pipeline</p>
+        <p class="page-subtitle">Track portal submissions and their document issuance status</p>
     </div>
     <div class="page-actions">
         <a href="{{ route('portal.index') }}" class="btn btn-secondary" target="_blank">
@@ -86,71 +86,6 @@
          PANEL 1 — DOCUMENT REQUESTS
     ═══════════════════════════════════════════════════════════ --}}
     <div id="panelDocuments" class="apt-panel">
-
-        {{-- ── Workflow pipeline guide ── --}}
-        <div style="display:flex;align-items:stretch;gap:0;background:#f0f4fb;border-bottom:1px solid #d0daea;
-                    padding:12px 20px;flex-wrap:wrap;gap:6px">
-            {{-- Step 1 --}}
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#fff;
-                        border:1px solid #d0daea;border-radius:var(--radius-sm);font-size:12.5px">
-                <span style="display:inline-flex;align-items:center;justify-content:center;
-                             width:20px;height:20px;border-radius:50%;background:#C8861A;
-                             color:#fff;font-size:10px;font-weight:700;flex-shrink:0">1</span>
-                <div>
-                    <div style="font-weight:700;color:var(--navy);line-height:1.2">Pending</div>
-                    <div style="font-size:11px;color:var(--text-muted)">New portal request received</div>
-                </div>
-            </div>
-            <div style="display:flex;align-items:center;color:#9ca3af;font-size:14px;padding:0 2px">
-                <i class="fas fa-arrow-right"></i>
-            </div>
-            {{-- Step 2 --}}
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#fff;
-                        border:1px solid #d0daea;border-radius:var(--radius-sm);font-size:12.5px">
-                <span style="display:inline-flex;align-items:center;justify-content:center;
-                             width:20px;height:20px;border-radius:50%;background:#1d4ed8;
-                             color:#fff;font-size:10px;font-weight:700;flex-shrink:0">2</span>
-                <div>
-                    <div style="font-weight:700;color:var(--navy);line-height:1.2">Processing</div>
-                    <div style="font-size:11px;color:var(--text-muted)">Document is being prepared</div>
-                </div>
-            </div>
-            <div style="display:flex;align-items:center;color:#9ca3af;font-size:14px;padding:0 2px">
-                <i class="fas fa-arrow-right"></i>
-            </div>
-            {{-- Step 3 --}}
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#fff;
-                        border:1px solid #d0daea;border-radius:var(--radius-sm);font-size:12.5px">
-                <span style="display:inline-flex;align-items:center;justify-content:center;
-                             width:20px;height:20px;border-radius:50%;background:#16a34a;
-                             color:#fff;font-size:10px;font-weight:700;flex-shrink:0">3</span>
-                <div>
-                    <div style="font-weight:700;color:var(--navy);line-height:1.2">Ready</div>
-                    <div style="font-size:11px;color:var(--text-muted)">Notify resident to pick up</div>
-                </div>
-            </div>
-            <div style="display:flex;align-items:center;color:#9ca3af;font-size:14px;padding:0 2px">
-                <i class="fas fa-arrow-right"></i>
-            </div>
-            {{-- Step 4 --}}
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#fff;
-                        border:1px solid #86efac;border-radius:var(--radius-sm);font-size:12.5px">
-                <span style="display:inline-flex;align-items:center;justify-content:center;
-                             width:20px;height:20px;border-radius:50%;background:#15803d;
-                             color:#fff;font-size:10px;font-weight:700;flex-shrink:0">4</span>
-                <div>
-                    <div style="font-weight:700;color:#15803d;line-height:1.2">Issue & Release</div>
-                    <div style="font-size:11px;color:var(--text-muted)">Resident picks up → click <strong>Issue</strong></div>
-                </div>
-            </div>
-            {{-- Note --}}
-            <div style="display:flex;align-items:center;gap:6px;margin-left:auto;font-size:11.5px;
-                        color:var(--text-muted);border-left:1px solid #d0daea;padding-left:14px;flex-shrink:0">
-                <i class="fas fa-circle-info" style="color:var(--navy);opacity:.5"></i>
-                <span>Use the <strong style="color:var(--navy)">▶ Process / ✓ Ready</strong> row buttons to advance each request.<br>
-                <strong style="color:var(--navy)">Issue</strong> creates the official document record in Document Issuance.</span>
-            </div>
-        </div>
 
         <div class="apt-toolbar">
             <div style="position:relative;flex:1;max-width:320px">
