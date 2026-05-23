@@ -136,18 +136,25 @@ class BackupController extends Controller
         }
 
         try {
-            $db = config('database.connections.mysql.database');
+            $db   = config('database.connections.mysql.database');
             $host = config('database.connections.mysql.host');
             $port = config('database.connections.mysql.port');
             $user = config('database.connections.mysql.username');
             $pass = config('database.connections.mysql.password');
 
-            $command = sprintf(
-                'mysql --host=%s --port=%s --user=%s --password=%s %s < %s 2>&1',
+            $mysql = $this->resolveMysqlBin('mysql');
+            if (! $mysql) {
+                return back()->with('error',
+                    'mysql client not found. Ensure Laragon MySQL bin is in PATH, or add MYSQL_PATH to your .env.');
+            }
+
+            $env     = PHP_OS_FAMILY === 'Windows' ? "set MYSQL_PWD={$pass} && " : "MYSQL_PWD={$pass} ";
+            $command = $env.sprintf(
+                '%s --host=%s --port=%s --user=%s %s < %s 2>&1',
+                escapeshellarg($mysql),
                 escapeshellarg($host),
                 escapeshellarg($port),
                 escapeshellarg($user),
-                escapeshellarg($pass),
                 escapeshellarg($db),
                 escapeshellarg($path)
             );
@@ -155,7 +162,7 @@ class BackupController extends Controller
             exec($command, $output, $returnCode);
 
             if ($returnCode !== 0) {
-                return back()->with('error', 'Restore failed: '.implode(' ', $output));
+                return back()->with('error', 'Restore failed: '.implode(' ', array_slice($output, 0, 5)));
             }
 
             return back()->with('success', "Database restored from: {$filename}");
@@ -184,6 +191,63 @@ class BackupController extends Controller
     // -------------------------------------------------------
     // HELPERS
     // -------------------------------------------------------
+
+    /**
+     * Resolve the full path to a MySQL binary (mysqldump or mysql).
+     *
+     * Priority:
+     *  1. MYSQLDUMP_PATH / MYSQL_PATH env override
+     *  2. System PATH (works on Linux/deployed servers)
+     *  3. Laragon default locations on Windows
+     */
+    private function resolveMysqlBin(string $binary): ?string
+    {
+        // 1. Explicit .env override
+        $envKey = strtoupper(str_replace('-', '_', $binary)).'_PATH';
+        if ($override = env($envKey)) {
+            return file_exists($override) ? $override : $binary; // trust the env value
+        }
+
+        // 2. Already in system PATH?
+        $which = PHP_OS_FAMILY === 'Windows' ? 'where' : 'which';
+        exec("{$which} {$binary} 2>&1", $out, $code);
+        if ($code === 0 && ! empty($out[0]) && file_exists(trim($out[0]))) {
+            return trim($out[0]);
+        }
+
+        // 3. Laragon glob search (Windows)
+        if (PHP_OS_FAMILY === 'Windows') {
+            $candidates = [
+                'C:\\laragon\\bin\\mysql\\mysql-*\\bin\\'.$binary.'.exe',
+                'D:\\laragon\\bin\\mysql\\mysql-*\\bin\\'.$binary.'.exe',
+                'C:\\laragon\\bin\\mysql\\*\\bin\\'.$binary.'.exe',
+            ];
+            foreach ($candidates as $pattern) {
+                $found = glob($pattern);
+                if (! empty($found)) {
+                    // Pick the newest version (sort descending)
+                    rsort($found);
+                    return $found[0];
+                }
+            }
+
+            // Also try XAMPP / WAMP paths as fallback
+            $fallbacks = [
+                'C:\\xampp\\mysql\\bin\\'.$binary.'.exe',
+                'C:\\wamp64\\bin\\mysql\\mysql*\\bin\\'.$binary.'.exe',
+            ];
+            foreach ($fallbacks as $pattern) {
+                $found = glob($pattern);
+                if (! empty($found)) {
+                    rsort($found);
+                    return $found[0];
+                }
+            }
+        }
+
+        return null;
+    }
+
     private function formatSize(int $bytes): string
     {
         if ($bytes >= 1048576) {
