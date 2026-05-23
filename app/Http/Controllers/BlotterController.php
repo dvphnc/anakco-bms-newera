@@ -178,14 +178,20 @@ class BlotterController extends Controller
     public function update(Request $request, BlotterCase $blotter)
     {
         $validated = $request->validate([
-            'incident_type' => 'required|string',
-            'incident_date' => 'required|date|before_or_equal:today',
-            'incident_location' => 'required|string|max:255',
-            'incident_details' => 'required|string',
-            'complainant_name' => 'required|string|max:255',
-            'respondent_name' => 'required|string|max:255',
-            'status' => 'required|in:Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
-            'resolution_notes' => 'nullable|string',
+            'incident_type'          => 'required|string',
+            'incident_date'          => 'required|date|before_or_equal:today',
+            'incident_location'      => 'required|string|max:255',
+            'incident_details'       => 'required|string',
+            'complainant_name'       => 'required|string|max:255',
+            'complainant_address'    => 'nullable|string|max:255',
+            'complainant_contact'    => 'nullable|string|max:20',
+            'complainant_resident_id'=> 'nullable|exists:residents,id',
+            'respondent_name'        => 'required|string|max:255',
+            'respondent_address'     => 'nullable|string|max:255',
+            'respondent_contact'     => 'nullable|string|max:20',
+            'respondent_resident_id' => 'nullable|exists:residents,id',
+            'status'                 => 'required|in:Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
+            'resolution_notes'       => 'nullable|string',
         ]);
         if (in_array($validated['status'], ['Settled', 'Closed']) && ! in_array($blotter->status, ['Settled', 'Closed'])) {
             $validated['settled_at'] = now();
