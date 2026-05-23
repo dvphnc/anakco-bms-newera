@@ -36,6 +36,23 @@ class Business extends Model
     }
 
     // -------------------------------------------------------
+    // Accessors — dynamic real-time computed values
+    // -------------------------------------------------------
+
+    /**
+     * Dynamically return 'Expired' whenever expiry_date has passed
+     * and the stored status is still 'Active', without any DB write.
+     */
+    public function getStatusAttribute(string $value): string
+    {
+        if ($value === 'Active' && $this->expiry_date && $this->expiry_date->isPast()) {
+            return 'Expired';
+        }
+
+        return $value;
+    }
+
+    // -------------------------------------------------------
     // Relationships
     // -------------------------------------------------------
 

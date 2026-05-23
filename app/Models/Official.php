@@ -10,6 +10,7 @@ class Official extends Model
     use HasFactory;
 
     protected $fillable = [
+        'resident_id',
         'full_name',
         'position',
         'committee',
