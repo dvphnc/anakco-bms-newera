@@ -866,35 +866,6 @@ $(document).ready(function () {
     }
 
     /* ═══════════════════════════════════════════════════════════════
-     | PIPELINE — Pending → Processing → Ready (one-click advance)
-     ═══════════════════════════════════════════════════════════════ */
-    $('#appointmentsTable').on('click', '.apt-pipeline-btn', function () {
-        var $btn     = $(this);
-        var next     = $btn.data('next');
-        var url      = $btn.data('url');
-        var origHtml = $btn.html();
-
-        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>');
-
-        axios.patch(url, { status: next })
-            .then(function (res) {
-                bmsToast(res.data.message || 'Status updated.', 'success');
-                // Sync stat card counts returned by the server
-                if (res.data.counts) {
-                    var c = res.data.counts;
-                    if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending;
-                    if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready;
-                    if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released;
-                }
-                docTable.ajax.reload(null, false);
-            })
-            .catch(function (err) {
-                $btn.prop('disabled', false).html(origHtml);
-                bmsToast(err.response?.data?.message || 'Failed to update status.', 'error');
-            });
-    });
-
-    /* ═══════════════════════════════════════════════════════════════
      | MODAL — Issue Document
      ═══════════════════════════════════════════════════════════════ */
     $('#appointmentsTable').on('click', '.apt-convert-btn', function () {
