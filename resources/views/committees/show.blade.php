@@ -2140,7 +2140,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     @csrf
                     <div style="margin-bottom:.9rem">
                         <label style="display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.45rem">Transaction Type</label>
-                        <select name="adjustment_type" style="width:100%;padding:.65rem .9rem;min-height:44px;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:14px">
+                        <select name="adjustment_type" id="adjTypeSelect" style="width:100%;padding:.65rem .9rem;min-height:44px;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:14px">
                             <option value="in">📦 Stock In — received new supply</option>
                             <option value="out">💊 Dispense / Issue Out</option>
                             <option value="disposed">🗑️ Disposed / Expired removal</option>
@@ -2150,6 +2150,32 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         <label style="display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.45rem">Quantity <span style="color:var(--crimson)">*</span></label>
                         <input type="number" name="quantity" min="1" value="1" style="width:100%;padding:.65rem .9rem;min-height:44px;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:14px" required>
                     </div>
+
+                    {{-- Beneficiary fields — shown only for "out" (dispense) --}}
+                    <div id="beneficiaryPanel" style="display:none;background:rgba(13,33,68,.04);border:1px solid rgba(13,33,68,.12);border-radius:8px;padding:.85rem;margin-bottom:.9rem">
+                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);margin-bottom:.7rem;display:flex;align-items:center;gap:6px">
+                            <i class="fas fa-user-check" style="color:var(--gold)"></i> Beneficiary (Dispensed To)
+                        </div>
+                        <div style="margin-bottom:.7rem">
+                            <label style="display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.4rem">Resident (optional — links to resident profile)</label>
+                            <select name="beneficiary_resident_id" id="beneficiaryResidentSel" style="width:100%">
+                                <option value="">Search resident…</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom:.7rem">
+                            <label style="display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.4rem">Beneficiary Name</label>
+                            <input type="text" name="beneficiary_name" id="beneficiaryName"
+                                   placeholder="Full name of recipient"
+                                   style="width:100%;padding:.6rem .85rem;min-height:40px;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:13px">
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.4rem">Purpose / Diagnosis</label>
+                            <input type="text" name="purpose" id="beneficiaryPurpose"
+                                   placeholder="e.g. Hypertension maintenance, cough & cold"
+                                   style="width:100%;padding:.6rem .85rem;min-height:40px;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:13px">
+                        </div>
+                    </div>
+
                     <div style="margin-bottom:1.25rem">
                         <label style="display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.45rem">Reason / Notes</label>
                         <input type="text" name="reason" placeholder="e.g. Monthly DOH supply, dispensed to patient…" style="width:100%;padding:.65rem .9rem;min-height:44px;border:1.5px solid #d1d5db;border-radius:6px;font-family:'Poppins',sans-serif;font-size:14px">
