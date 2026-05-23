@@ -4,9 +4,19 @@
 <?php $__env->startSection('content'); ?>
 
 <div class="page-header">
-    <div>
-        <h1 class="page-title">Document Issuance</h1>
-        <p class="page-subtitle">Barangay certificates and clearances</p>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div>
+            <h1 class="page-title">Document Issuance</h1>
+            <p class="page-subtitle">Barangay certificates and clearances</p>
+        </div>
+        <span id="headerFilterChip"
+              style="display:none;font-size:11px;font-weight:700;padding:3px 10px;
+                     border-radius:99px;background:var(--gold-pale);color:var(--gold);
+                     border:1px solid var(--gold-border);cursor:pointer"
+              onclick="toggleFilters('documents')"
+              title="Filters active — click to open">
+            <i class="fas fa-sliders"></i> <span id="headerFilterCount"></span> active
+        </span>
     </div>
     <div class="page-actions">
         <a href="<?php echo e(route('export.pdf', 'documents')); ?>" class="btn btn-secondary" title="Export PDF">
@@ -81,85 +91,92 @@
 <?php endif; ?>
 
 
+<div class="no-print" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <span style="font-size:12px;font-weight:600;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.06em">Source:</span>
+    <button type="button" class="src-chip src-chip-active" data-src=""
+            style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid var(--navy);background:var(--navy);color:#fff;transition:all .15s">
+        All
+    </button>
+    <button type="button" class="src-chip" data-src="portal"
+            style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;transition:all .15s">
+        <i class="fas fa-globe" style="font-size:10px;margin-right:4px"></i>Portal
+        <span id="srcChipPortalCount" style="margin-left:5px;background:#1d4ed8;color:#fff;border-radius:99px;
+              padding:1px 7px;font-size:10px;font-weight:700">
+            <?php echo e(\App\Models\Document::where('source','portal')->whereNotIn('status',['Released','Cancelled'])->count()); ?>
+
+        </span>
+    </button>
+    <button type="button" class="src-chip" data-src="walk-in"
+            style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all .15s">
+        <i class="fas fa-walking" style="font-size:10px;margin-right:4px"></i>Walk-in
+    </button>
+</div>
+
+
+<div class="card mb-6">
+    <div class="card-header" style="cursor:pointer" onclick="toggleFilters('documents')">
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="card-title"><i class="fas fa-sliders"></i> Filters</span>
+            <span id="filterBadge" class="badge badge-gold" style="display:none"></span>
+        </div>
+        <button type="button" class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleFilters('documents')">
+            <i class="fas fa-sliders" id="filterToggleIcon"></i>
+            <span id="filterToggleText">Show Filters</span>
+        </button>
+    </div>
+    <div id="filterPanel" style="display:none">
+        <div class="card-body" style="padding:20px 22px">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+                <div class="form-group" style="grid-column:1/-1">
+                    <label class="form-label">Search</label>
+                    <div style="position:relative">
+                        <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
+                        <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
+                               placeholder="Document no., resident name…">
+                    </div>
+                </div>
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Document Type</label>
+                    <select id="typeFilter">
+                        <option value=""></option>
+                        <?php $__currentLoopData = $documentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($t); ?>"><?php echo e($t); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                </div>
+                <div class="form-group" style="grid-column:span 2">
+                    <label class="form-label">Status</label>
+                    <select id="statusFilter">
+                        <option value=""></option>
+                        <?php $__currentLoopData = \App\Models\Document::$statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+                <button type="button" id="resetBtn" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-xmark"></i> Reset All Filters
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<select id="sourceFilter" style="display:none">
+    <option value=""></option>
+    <option value="portal">Portal</option>
+    <option value="walk-in">Walk-in</option>
+</select>
+
 <div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-file-lines"></i> Document Records</span>
     </div>
-
-    
-    <div class="apt-toolbar">
-
-        
-        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-            <button type="button" class="src-chip src-chip-active" data-src=""
-                    style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
-                           border:1.5px solid var(--navy);background:var(--navy);color:#fff;
-                           transition:all .15s;white-space:nowrap">
-                All
-            </button>
-            <button type="button" class="src-chip" data-src="portal"
-                    style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
-                           border:1.5px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;
-                           transition:all .15s;white-space:nowrap">
-                <i class="fas fa-globe" style="font-size:10px;margin-right:3px"></i>Portal
-                <span id="srcChipPortalCount"
-                      style="margin-left:5px;background:#1d4ed8;color:#fff;border-radius:99px;
-                             padding:1px 7px;font-size:10px;font-weight:700">
-                    <?php echo e(\App\Models\Document::where('source','portal')->whereNotIn('status',['Released','Cancelled'])->count()); ?>
-
-                </span>
-            </button>
-            <button type="button" class="src-chip" data-src="walk-in"
-                    style="height:28px;padding:0 12px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
-                           border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);
-                           transition:all .15s;white-space:nowrap">
-                <i class="fas fa-walking" style="font-size:10px;margin-right:3px"></i>Walk-in
-            </button>
-        </div>
-
-        
-        <div style="width:1px;height:24px;background:var(--border);flex-shrink:0;margin:0 2px"></div>
-
-        
-        <div style="position:relative;flex:1;max-width:280px">
-            <i class="fas fa-search apt-search-icon"></i>
-            <input type="text" id="searchInput" class="apt-search"
-                   placeholder="Document no., resident name…">
-        </div>
-
-        
-        <div style="width:200px;flex-shrink:0">
-            <select id="typeFilter">
-                <option value=""></option>
-                <?php $__currentLoopData = $documentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <option value="<?php echo e($t); ?>"><?php echo e($t); ?></option>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </select>
-        </div>
-
-        
-        <div style="width:155px;flex-shrink:0">
-            <select id="statusFilter">
-                <option value=""></option>
-                <?php $__currentLoopData = \App\Models\Document::$statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </select>
-        </div>
-
-        
-        <button type="button" id="resetBtn" class="btn btn-secondary btn-sm">
-            <i class="fas fa-xmark"></i> Reset
-        </button>
-    </div>
-
-    
-    <select id="sourceFilter" style="display:none">
-        <option value=""></option>
-        <option value="portal">Portal</option>
-        <option value="walk-in">Walk-in</option>
-    </select>
-
     <div class="table-responsive">
         <table id="documentsTable" style="width:100%">
             <thead>
@@ -270,96 +287,42 @@
     background: var(--navy-pale) !important; color: var(--navy) !important;
 }
 
-/* ── Toolbar (shared pattern with Appointments page) ─────────────── */
-.apt-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    background: #fafbfc;
-    flex-wrap: wrap;
+/* ── Filter panel Select2 — matches blotter / businesses ─────────── */
+#filterPanel .select2-container { width: 100% !important; }
+#filterPanel .select2-container--default .select2-selection--single,
+#filterPanel .select2-container--default .select2-selection--multiple {
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); min-height: 38px;
 }
-.apt-search-icon {
-    position: absolute;
-    left: 11px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-subtle);
-    font-size: 12px;
-    pointer-events: none;
+#filterPanel .select2-container--default .select2-selection--single {
+    padding: 0 32px 0 10px; display: flex; align-items: center;
 }
-.apt-search {
-    width: 100%;
-    height: 36px;
-    padding: 0 10px 0 32px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 13px;
-    font-family: 'Poppins', sans-serif;
+#filterPanel .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text); font-size: 13.5px; padding: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal;
 }
-.apt-search:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 2px rgba(13,33,68,.1); }
-
-/* ── Select2 inside toolbar ───────────────────────────────────────── */
-.apt-toolbar .select2-container { width: 100% !important; }
-.apt-toolbar .select2-container--default .select2-selection--single {
-    height: 36px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-    display: flex;
-    align-items: center;
-    padding: 0 32px 0 10px;
-}
-.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: var(--text);
-    font-size: 13px;
-    font-family: 'Poppins', sans-serif;
-    padding: 0;
-    line-height: normal;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__placeholder {
-    color: var(--text-subtle);
-    font-size: 13px;
-}
-.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 34px;
-    top: 0;
-    right: 6px;
-}
-.apt-toolbar .select2-container--default.select2-container--open .select2-selection--single {
-    border-color: var(--navy);
-    box-shadow: 0 0 0 2px rgba(13,33,68,.1);
-}
-.apt-toolbar .select2-container--default .select2-selection--single .select2-selection__clear {
-    font-size: 16px;
-    line-height: 1;
-    color: var(--text-subtle);
-    margin-right: 4px;
-}
+#filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
+#filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
 </style>
 
 <script>
 $(document).ready(function () {
 
-    /* ── Select2 filter init ─────────────────────────────────────────── */
-    function initS2($el, placeholder) {
-        $el.select2({
-            dropdownParent:          $('body'),
-            allowClear:              true,
-            placeholder:             placeholder,
-            width:                   '100%',
-            minimumResultsForSearch: Infinity,
-            language: { noResults: function () { return 'No matches'; } }
-        });
-    }
-    initS2($('#typeFilter'),   'All document types…');
-    initS2($('#statusFilter'), 'All statuses…');
+    /* ── Select2 init ─────────────────────────────────────────────────── */
+    /* Temporarily expose the hidden filter panel so Select2 measures real dimensions.
+       The browser won't paint until after this synchronous block, so no visual flash. */
+    var $fp = $('#filterPanel');
+    var _fpW = $fp.parent().width();
+    $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1', width: _fpW + 'px' });
+
+    const s2Single = { dropdownParent: $('body'), allowClear: true, width: '100%',
+                       minimumResultsForSearch: 0,
+                       language: { noResults: () => 'No matches' } };
+
+    $('#typeFilter').select2($.extend({}, s2Single, { placeholder: 'All document types…' }));
+    $('#statusFilter').select2($.extend({}, s2Single, { placeholder: 'All statuses…' }));
+
+    $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 
     /* ── DataTable ────────────────────────────────────────────────────── */
     var table = $('#documentsTable').DataTable({
@@ -393,32 +356,6 @@ $(document).ready(function () {
         }
     });
 
-    /* ── Filter event handlers ───────────────────────────────────────── */
-    var _debounce;
-    $('#searchInput').on('input', function () {
-        clearTimeout(_debounce);
-        _debounce = setTimeout(function () { table.ajax.reload(); }, 380);
-    });
-    $('#typeFilter, #statusFilter, #sourceFilter').on('change', function () { table.ajax.reload(); });
-
-    $('#resetBtn').on('click', function () {
-        $('#searchInput').val('');
-        $('#typeFilter, #statusFilter').val(null).trigger('change');
-        // Reset chips + hidden source select
-        $('#sourceFilter').val(null).trigger('change');
-        $('.src-chip').each(function () { _updateChipStyle($(this), $(this).data('src') === ''); });
-    });
-
-    /* ── Quick filter — triggered by stat cards & portal alert button ── */
-    window.quickFilter = function (filterId, value) {
-        if (filterId === 'sourceFilter') {
-            $('#sourceFilter').val(value).trigger('change');
-            $('.src-chip').each(function () { _updateChipStyle($(this), $(this).data('src') === value); });
-        } else {
-            $('#' + filterId).val(value).trigger('change');
-        }
-    };
-
     /* ── Axios DELETE ─────────────────────────────────────────────────── */
     $('#documentsTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
         e.preventDefault();
@@ -451,31 +388,135 @@ $(document).ready(function () {
         });
     });
 
+    /* ── URL persistence ──────────────────────────────────────────────── */
+    function saveToUrl() {
+        const url = new URL(window.location);
+        ['s', 'status', 'document_type', 'source'].forEach(k => url.searchParams.delete(k));
+        if ($('#searchInput').val())  url.searchParams.set('s', $('#searchInput').val());
+        if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
+        if ($('#typeFilter').val())   url.searchParams.set('document_type', $('#typeFilter').val());
+        if ($('#sourceFilter').val()) url.searchParams.set('source', $('#sourceFilter').val());
+        history.replaceState({}, '', url);
+        updateBadge();
+    }
+    function loadFromUrl() {
+        const p = new URLSearchParams(window.location.search);
+        let any = false;
+        if (p.get('s'))             { $('#searchInput').val(p.get('s')); any = true; }
+        if (p.get('status'))        { $('#statusFilter').val(p.get('status')).trigger('change.select2'); any = true; }
+        if (p.get('document_type')) { $('#typeFilter').val(p.get('document_type')).trigger('change.select2'); any = true; }
+        if (p.get('source'))        {
+            var src = p.get('source');
+            $('#sourceFilter').val(src);
+            $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === src); });
+            any = true;
+        }
+        return any;
+    }
+    function updateBadge() {
+        let n = 0;
+        if ($('#searchInput').val())  n++;
+        if ($('#typeFilter').val())   n++;
+        if ($('#statusFilter').val()) n++;
+        if ($('#sourceFilter').val()) n++;
+        const badge = document.getElementById('filterBadge');
+        const chip  = document.getElementById('headerFilterChip');
+        const chipN = document.getElementById('headerFilterCount');
+        if (n > 0) {
+            badge.textContent = n + (n === 1 ? ' filter active' : ' filters active');
+            badge.style.display = '';
+            chipN.textContent = n;
+            chip.style.display = '';
+        } else {
+            badge.style.display = 'none';
+            chip.style.display  = 'none';
+        }
+    }
+    window.toggleFilters = function (key) {
+        const panel  = document.getElementById('filterPanel');
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        document.getElementById('filterToggleText').textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+        localStorage.setItem('fp_' + key, isOpen ? '0' : '1');
+    };
+    window.quickFilter = function (filterId, value) {
+        if (filterId === 'sourceFilter') {
+            $('#sourceFilter').val(value);
+            $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === value); });
+        } else {
+            $('#' + filterId).val(value).trigger('change');
+        }
+        if (document.getElementById('filterPanel').style.display === 'none') {
+            document.getElementById('filterPanel').style.display = 'block';
+            document.getElementById('filterToggleText').textContent = 'Hide Filters';
+            localStorage.setItem('fp_documents', '1');
+        }
+        saveToUrl(); table.ajax.reload();
+    };
+
+    const hasUrlFilters = loadFromUrl();
+    if (hasUrlFilters || localStorage.getItem('fp_documents') === '1') {
+        document.getElementById('filterPanel').style.display = 'block';
+        document.getElementById('filterToggleText').textContent = 'Hide Filters';
+    }
+    updateBadge();
+
+    let debounce;
+    $('#searchInput').on('input', function () { clearTimeout(debounce); debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 380); });
+    $('#typeFilter, #statusFilter').on('change', function () { saveToUrl(); table.ajax.reload(); });
+    $('#resetBtn').on('click', function () {
+        $('#searchInput').val('');
+        $('#typeFilter, #statusFilter').val(null).trigger('change');
+        $('#sourceFilter').val(null);
+        $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === ''); });
+        saveToUrl(); table.ajax.reload();
+    });
+
 }); // end document.ready
 
 /* ── Source chip helpers ──────────────────────────────────────────── */
-function _updateChipStyle($chip, isActive) {
+function _syncChip($chip, isActive) {
     var src = $chip.data('src');
     $chip.toggleClass('src-chip-active', isActive);
     if (src === '') {
-        $chip.css({ background: isActive ? 'var(--navy)'   : '#fff',
-                    color:      isActive ? '#fff'           : 'var(--text-muted)',
-                    borderColor:isActive ? 'var(--navy)'   : 'var(--border)' });
+        $chip.css({ background: isActive ? 'var(--navy)'  : '#fff',
+                    color:       isActive ? '#fff'         : 'var(--text-muted)',
+                    borderColor: isActive ? 'var(--navy)'  : 'var(--border)' });
     } else if (src === 'portal') {
-        $chip.css({ background: isActive ? '#1d4ed8'  : '#eff6ff',
-                    color:      isActive ? '#fff'      : '#1d4ed8',
-                    borderColor:isActive ? '#1d4ed8'  : '#bfdbfe' });
+        $chip.css({ background: isActive ? '#1d4ed8' : '#eff6ff',
+                    color:       isActive ? '#fff'    : '#1d4ed8',
+                    borderColor: isActive ? '#1d4ed8' : '#bfdbfe' });
     } else {
         $chip.css({ background: isActive ? 'var(--navy)'   : 'var(--surface)',
-                    color:      isActive ? '#fff'           : 'var(--text-muted)',
-                    borderColor:isActive ? 'var(--navy)'   : 'var(--border)' });
+                    color:       isActive ? '#fff'          : 'var(--text-muted)',
+                    borderColor: isActive ? 'var(--navy)'   : 'var(--border)' });
     }
 }
 
 $(document).on('click', '.src-chip', function () {
     var src = $(this).data('src');
-    $('.src-chip').each(function () { _updateChipStyle($(this), $(this).data('src') === src); });
-    $('#sourceFilter').val(src || null).trigger('change');
+    $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === src); });
+    $('#sourceFilter').val(src || null);
+
+    // Persist to URL + reload table (same as other filter changes)
+    const url = new URL(window.location);
+    url.searchParams.delete('source');
+    if (src) url.searchParams.set('source', src);
+    history.replaceState({}, '', url);
+
+    // Update badge count
+    var n = 0;
+    if ($('#searchInput').val())  n++;
+    if ($('#typeFilter').val())   n++;
+    if ($('#statusFilter').val()) n++;
+    if (src) n++;
+    var badge = document.getElementById('filterBadge');
+    var chip  = document.getElementById('headerFilterChip');
+    var chipN = document.getElementById('headerFilterCount');
+    if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; chipN.textContent = n; chip.style.display = ''; }
+    else { badge.style.display = 'none'; chip.style.display = 'none'; }
+
+    $('#documentsTable').DataTable().ajax.reload();
 });
 
 /* ── Pipeline one-click advance button ───────────────────────────── */
