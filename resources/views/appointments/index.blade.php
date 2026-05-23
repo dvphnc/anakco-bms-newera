@@ -140,7 +140,7 @@
                 <input type="text" id="bizSearch" class="apt-search"
                        placeholder="Business name, owner, permit no.…">
             </div>
-            <div style="min-width:150px">
+            <div style="width:160px;flex-shrink:0">
                 <select id="bizStatusFilter">
                     <option value=""></option>
                     <option value="Pending">Pending</option>
@@ -181,7 +181,7 @@
                 <input type="text" id="blotterSearch" class="apt-search"
                        placeholder="Complainant, case no., incident type…">
             </div>
-            <div style="min-width:150px">
+            <div style="width:160px;flex-shrink:0">
                 <select id="blotterStatusFilter">
                     <option value=""></option>
                     <option value="Pending">Pending</option>
