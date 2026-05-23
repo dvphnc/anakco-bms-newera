@@ -66,70 +66,23 @@ class AppointmentController extends Controller
                     return '<span class="badge '.$cls.'">'.e($a->status).'</span>';
                 })
                 ->addColumn('actions', function ($a) {
-                    $convertUrl = route('appointments.convert',    $a);
-                    $statusUrl  = route('appointments.updateStatus', $a);
-
-                    // ── Released: view the issued document ──────────────────────
-                    if ($a->status === 'Released') {
-                        $viewUrl = $a->document ? route('documents.show', $a->document) : null;
-                        return '<div style="display:flex;justify-content:flex-end">'.
-                            ($viewUrl
-                                ? '<a href="'.$viewUrl.'" target="_blank"
+                    // Appointments is a read-only tracking view.
+                    // All status management happens in Document Issuance.
+                    if ($a->document) {
+                        $docUrl = route('documents.show', $a->document);
+                        return '<div style="display:flex;justify-content:flex-end">
+                                    <a href="'.$docUrl.'" target="_blank"
                                        class="btn btn-secondary btn-sm"
                                        style="font-size:12px;padding:0 10px;height:30px;
-                                              display:inline-flex;align-items:center;gap:5px">
-                                       <i class="fas fa-file-lines"></i> View Doc</a>'
-                                : '<span class="badge badge-gray" style="font-size:11px">Released</span>').
-                            '</div>';
-                    }
-
-                    // ── Cancelled ───────────────────────────────────────────────
-                    if ($a->status === 'Cancelled') {
-                        return '<div style="display:flex;justify-content:flex-end">
-                                    <span class="badge badge-red" style="font-size:11px">Cancelled</span>
+                                              display:inline-flex;align-items:center;gap:5px"
+                                       title="Open in Document Issuance">
+                                        <i class="fas fa-file-lines"></i> View Record
+                                    </a>
                                 </div>';
                     }
-
-                    // ── Single next-step pipeline button ────────────────────────
-                    $btn = match ($a->status) {
-                        'Pending' =>
-                            '<button class="btn apt-pipeline-btn btn-sm"
-                                     style="height:30px;padding:0 12px;font-size:12px;font-weight:600;
-                                            background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;
-                                            border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
-                                     title="Mark as Processing"
-                                     data-next="Processing" data-url="'.e($statusUrl).'">
-                                 <i class="fas fa-gear" style="font-size:11px;margin-right:5px"></i>Process
-                             </button>',
-
-                        'Processing' =>
-                            '<button class="btn apt-pipeline-btn btn-sm"
-                                     style="height:30px;padding:0 12px;font-size:12px;font-weight:600;
-                                            background:#f0fdf4;color:#15803d;border:1px solid #86efac;
-                                            border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
-                                     title="Mark as Ready for Pick-up"
-                                     data-next="Ready" data-url="'.e($statusUrl).'">
-                                 <i class="fas fa-bell" style="font-size:11px;margin-right:5px"></i>Mark Ready
-                             </button>',
-
-                        // Ready or Confirmed → Issue the document
-                        default =>
-                            '<button class="btn apt-convert-btn btn-sm"
-                                     style="height:30px;padding:0 12px;font-size:12px;font-weight:600;
-                                            background:#15803d;color:#fff;border:1px solid #15803d;
-                                            border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
-                                     title="Issue document & mark Released"
-                                     data-id="'.e($a->id).'"
-                                     data-num="'.e($a->appointment_number).'"
-                                     data-name="'.e($a->resident_name).'"
-                                     data-type="'.e($a->document_type).'"
-                                     data-purpose="'.e($a->purpose ?? '').'"
-                                     data-url="'.e($convertUrl).'">
-                                 <i class="fas fa-stamp" style="font-size:11px;margin-right:5px"></i>Issue
-                             </button>',
-                    };
-
-                    return '<div style="display:flex;justify-content:flex-end">'.$btn.'</div>';
+                    return '<div style="display:flex;justify-content:flex-end">
+                                <span style="font-size:12px;color:var(--text-muted)">—</span>
+                            </div>';
                 })
                 ->filter(function ($query) use ($request) {
                     if ($request->has('search') && $request->search['value']) {

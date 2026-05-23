@@ -93,9 +93,6 @@
                 <span class="card-title"><i class="fas fa-bolt"></i> Actions</span>
             </div>
             <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
-                <a href="{{ route('documents.edit', $document) }}" class="btn btn-secondary" style="justify-content:flex-start">
-                    <i class="fas fa-pen" style="color:var(--navy)"></i> Edit Document
-                </a>
                 @if(in_array($document->status, ['Pending', 'Confirmed', 'Processing', 'Ready']))
                 <form method="POST" action="{{ route('documents.update', $document) }}">
                     @csrf @method('PUT')
