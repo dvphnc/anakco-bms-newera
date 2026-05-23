@@ -153,6 +153,41 @@ $(function () {
     $('#s2Position').select2($.extend({}, s2, { placeholder: 'Select Position' }));
     $('#s2Committee').select2($.extend({}, s2, { placeholder: 'None / N/A', allowClear: true }));
 
+    // Resident link Select2 — AJAX sourced
+    $('#s2ResidentLink').select2({
+        dropdownParent: $('body'),
+        width: '100%',
+        allowClear: true,
+        placeholder: 'Search by name or contact number…',
+        minimumInputLength: 1,
+        ajax: {
+            url: '{{ route("select2.residents") }}',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) { return { q: params.term }; },
+            processResults: function (data) { return { results: data.results }; },
+        },
+        templateResult: function (r) {
+            if (r.loading) return 'Searching…';
+            return r.text;
+        },
+    });
+
+    // Auto-fill when a resident is selected
+    $('#s2ResidentLink').on('select2:select', function (e) {
+        var data = e.params.data;
+        $('#officialFullName').val(data.full_name || '').trigger('change')
+            .prop('readonly', true).css('background', 'var(--surface-alt, #f5f5f5)');
+        if (data.contact_number) {
+            $('#officialContact').val(data.contact_number).trigger('change');
+        }
+    });
+
+    // Unlock name field if resident link cleared
+    $('#s2ResidentLink').on('select2:clear', function () {
+        $('#officialFullName').prop('readonly', false).css('background', '');
+    });
+
     // Remove-photo checkbox: dim the preview and disable the file input
     var $cb      = $('#remove-photo-cb');
     var $preview = $('#current-photo-preview');

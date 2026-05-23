@@ -40,11 +40,17 @@ class BackupController extends Controller
     public function create()
     {
         try {
-            $db = config('database.connections.mysql.database');
+            $db   = config('database.connections.mysql.database');
             $host = config('database.connections.mysql.host');
             $port = config('database.connections.mysql.port');
             $user = config('database.connections.mysql.username');
             $pass = config('database.connections.mysql.password');
+
+            $dump = $this->resolveMysqlBin('mysqldump');
+            if (! $dump) {
+                return back()->with('error',
+                    'mysqldump not found. Ensure Laragon MySQL bin is in PATH, or add MYSQLDUMP_PATH to your .env.');
+            }
 
             $filename = 'backup_'.now()->format('Y-m-d_H-i-s').'.sql';
             $fullPath = storage_path('app/'.$this->backupPath.'/'.$filename);
@@ -54,13 +60,14 @@ class BackupController extends Controller
                 mkdir(storage_path('app/'.$this->backupPath), 0755, true);
             }
 
-            // Build mysqldump command
-            $command = sprintf(
-                'mysqldump --host=%s --port=%s --user=%s --password=%s --single-transaction --routines --triggers %s > %s 2>&1',
+            // Build mysqldump command (password via env var avoids shell-history exposure)
+            $env     = PHP_OS_FAMILY === 'Windows' ? "set MYSQL_PWD={$pass} && " : "MYSQL_PWD={$pass} ";
+            $command = $env.sprintf(
+                '%s --host=%s --port=%s --user=%s --single-transaction --routines --triggers %s > %s 2>&1',
+                escapeshellarg($dump),
                 escapeshellarg($host),
                 escapeshellarg($port),
                 escapeshellarg($user),
-                escapeshellarg($pass),
                 escapeshellarg($db),
                 escapeshellarg($fullPath)
             );
@@ -68,7 +75,8 @@ class BackupController extends Controller
             exec($command, $output, $returnCode);
 
             if ($returnCode !== 0 || ! file_exists($fullPath) || filesize($fullPath) < 100) {
-                return back()->with('error', 'Backup failed. Check mysqldump is in your PATH.');
+                $detail = ! empty($output) ? ' — '.implode(' ', array_slice($output, 0, 3)) : '';
+                return back()->with('error', 'Backup failed'.$detail);
             }
 
             // Keep only last 10 backups
