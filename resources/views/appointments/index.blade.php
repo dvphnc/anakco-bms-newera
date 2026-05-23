@@ -92,7 +92,7 @@
                 <input type="text" id="docSearch" class="apt-search"
                        placeholder="Name, appt. no., document type…">
             </div>
-            <div style="min-width:150px">
+            <div style="width:160px;flex-shrink:0">
                 <select id="docStatusFilter">
                     <option value=""></option>
                     @foreach($statuses as $s)
@@ -100,7 +100,7 @@
                     @endforeach
                 </select>
             </div>
-            <div style="min-width:185px">
+            <div style="width:210px;flex-shrink:0">
                 <select id="docTypeFilter">
                     <option value=""></option>
                     @foreach($documentTypes as $dt)
@@ -735,6 +735,7 @@ $(document).ready(function () {
             }
         },
         columns: [
+            { data: 'number_col',    name: 'appointment_number', width: '130px' },
             { data: 'resident_col',  name: 'resident_name',  orderable: false },
             { data: 'document_col',  name: 'document_type',  orderable: false },
             { data: 'submitted_col', name: 'created_at',     width: '110px' },
@@ -742,7 +743,7 @@ $(document).ready(function () {
             { data: 'status_col',    name: 'status',         width: '110px' },
             { data: 'actions',       name: 'actions',        orderable: false, searchable: false, width: '110px' },
         ],
-        order: [[3, 'asc']],
+        order: [[4, 'asc']],
         pageLength: 15,
         drawCallback: function () {
             if (typeof tippy !== 'undefined') {
