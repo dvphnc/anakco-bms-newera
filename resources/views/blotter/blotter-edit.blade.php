@@ -206,8 +206,66 @@ $('#respondent_resident_id').on('select2:clear', function() {
     $('#respondent_address').val('');
 });
 
-// File upload
-document.getElementById('dropZone').addEventListener('click', () => document.getElementById('fileInput').click());
+// File upload — click + full drag-and-drop support
+(function () {
+    var zone  = document.getElementById('dropZone');
+    var input = document.getElementById('fileInput');
+
+    zone.addEventListener('click', function () { input.click(); });
+
+    zone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        zone.style.borderColor    = 'var(--navy)';
+        zone.style.backgroundColor = 'rgba(13,33,68,.04)';
+    });
+
+    zone.addEventListener('dragleave', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        zone.style.borderColor     = '';
+        zone.style.backgroundColor = '';
+    });
+
+    zone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        zone.style.borderColor     = '';
+        zone.style.backgroundColor = '';
+
+        var files = e.dataTransfer.files;
+        if (files.length > 0) {
+            // Transfer the dropped file to the real <input type="file">
+            var dt = new DataTransfer();
+            dt.items.add(files[0]);
+            input.files = dt.files;
+
+            // Show file name feedback inside the drop zone
+            var label = zone.querySelector('.drop-feedback');
+            if (! label) {
+                label = document.createElement('div');
+                label.className = 'drop-feedback';
+                label.style.cssText = 'margin-top:8px;font-size:13px;font-weight:600;color:var(--navy)';
+                zone.appendChild(label);
+            }
+            label.textContent = '✔ ' + files[0].name;
+        }
+    });
+
+    // Also show file name when using the browse button
+    input.addEventListener('change', function () {
+        if (input.files.length > 0) {
+            var label = zone.querySelector('.drop-feedback');
+            if (! label) {
+                label = document.createElement('div');
+                label.className = 'drop-feedback';
+                label.style.cssText = 'margin-top:8px;font-size:13px;font-weight:600;color:var(--navy)';
+                zone.appendChild(label);
+            }
+            label.textContent = '✔ ' + input.files[0].name;
+        }
+    });
+}());
 </script>
 @endpush
 
