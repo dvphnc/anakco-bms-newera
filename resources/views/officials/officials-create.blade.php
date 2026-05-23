@@ -26,16 +26,29 @@
     <div class="card-body">
 
         <div class="form-section-title">Personal Details</div>
+
+        {{-- Resident Link (optional — auto-fills name & contact) --}}
+        <div class="form-group mb-6">
+            <label class="form-label">
+                Link to Resident Profile
+                <span style="font-size:12px;font-weight:400;color:var(--text-subtle);margin-left:6px">(optional — auto-fills name &amp; contact)</span>
+            </label>
+            <select name="resident_id" id="s2ResidentLink" class="form-control" style="width:100%">
+                <option value="">Search registered residents…</option>
+            </select>
+            <input type="hidden" id="residentLinkedFlag" value="0">
+        </div>
+
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label>
-                <input type="text" name="full_name" class="form-control @error('full_name') is-invalid @enderror"
+                <input type="text" name="full_name" id="officialFullName" class="form-control @error('full_name') is-invalid @enderror"
                        value="{{ old('full_name') }}" placeholder="e.g. Juan dela Cruz" required>
                 @error('full_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Contact Number</label>
-                <input type="text" name="contact_number" class="form-control @error('contact_number') is-invalid @enderror"
+                <input type="text" name="contact_number" id="officialContact" class="form-control @error('contact_number') is-invalid @enderror"
                        value="{{ old('contact_number') }}" placeholder="09XX XXX XXXX">
                 @error('contact_number')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
@@ -115,6 +128,44 @@ $(function () {
     const s2 = { dropdownParent: $('body'), width: '100%', allowClear: false };
     $('#s2Position').select2($.extend({}, s2, { placeholder: 'Select Position' }));
     $('#s2Committee').select2($.extend({}, s2, { placeholder: 'None / N/A', allowClear: true }));
+
+    // Resident link Select2 — AJAX sourced
+    $('#s2ResidentLink').select2({
+        dropdownParent: $('body'),
+        width: '100%',
+        allowClear: true,
+        placeholder: 'Search by name or contact number…',
+        minimumInputLength: 1,
+        ajax: {
+            url: '{{ route("select2.residents") }}',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) { return { q: params.term }; },
+            processResults: function (data) { return { results: data.results }; },
+        },
+        templateResult: function (r) {
+            if (r.loading) return 'Searching…';
+            return r.text;
+        },
+    });
+
+    // Auto-fill name & contact when a resident is selected
+    $('#s2ResidentLink').on('select2:select', function (e) {
+        var data = e.params.data;
+        $('#officialFullName').val(data.full_name || '').trigger('change');
+        if (data.contact_number) {
+            $('#officialContact').val(data.contact_number).trigger('change');
+        }
+        $('#residentLinkedFlag').val('1');
+        // Lock the name field to prevent accidental edits
+        $('#officialFullName').prop('readonly', true).css('background', 'var(--surface-alt, #f5f5f5)');
+    });
+
+    // Unlock if resident link is cleared
+    $('#s2ResidentLink').on('select2:clear', function () {
+        $('#officialFullName').prop('readonly', false).css('background', '');
+        $('#residentLinkedFlag').val('0');
+    });
 });
 </script>
 @endpush
