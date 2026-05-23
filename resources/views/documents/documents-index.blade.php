@@ -212,63 +212,6 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════════════════
-     MODAL — Quick Status Update
-═══════════════════════════════════════════════════════════════ --}}
-<div id="docStatusModal"
-     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
-            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
-     onclick="if(event.target===this)closeDocStatusModal()">
-    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:420px;
-                padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
-        <div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
-            <div style="display:flex;align-items:center;gap:10px">
-                <i class="fas fa-rotate" style="color:var(--gold);font-size:14px"></i>
-                <span style="font-size:14px;font-weight:700;color:#fff">Update Document Status</span>
-            </div>
-            <button onclick="closeDocStatusModal()"
-                    style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
-                           border-radius:var(--radius-sm);width:30px;height:30px;display:flex;
-                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer">
-                <i class="fas fa-xmark"></i>
-            </button>
-        </div>
-        <div style="padding:20px">
-            <p style="font-size:13px;color:var(--text-muted);margin-bottom:4px">Document</p>
-            <p id="docStatusNum" style="font-family:'Courier New',monospace;font-weight:700;
-                                        color:var(--navy);font-size:13px;margin-bottom:16px"></p>
-            <div id="docPortalNote"
-                 style="display:none;font-size:12px;color:#2563eb;margin-bottom:14px;
-                        padding:8px 12px;background:#eff6ff;border-radius:var(--radius-sm);
-                        border:1px solid #bfdbfe">
-                <i class="fas fa-link" style="margin-right:5px"></i>
-                Linked portal submission — the Appointment record will sync automatically.
-            </div>
-            <div class="form-group">
-                <label class="form-label">New Status <span style="color:var(--crimson)">*</span></label>
-                <select id="docStatusSelect" class="form-control">
-                    @foreach(\App\Models\Document::$statuses as $s)
-                        <option value="{{ $s }}">{{ $s }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div id="docStatusError" style="display:none;font-size:13px;color:var(--crimson);
-                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
-                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
-            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
-                <button type="button" onclick="closeDocStatusModal()" class="btn btn-secondary">Cancel</button>
-                <button type="button" id="docStatusSaveBtn" onclick="saveDocStatus()" class="btn btn-primary" style="min-width:120px">
-                    <span id="docStatusSpinner" style="display:none">
-                        <span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);
-                                     border-top-color:#fff;border-radius:50%;animation:doc-spin .7s linear infinite;
-                                     vertical-align:middle;margin-right:5px"></span>
-                    </span>
-                    <i class="fas fa-floppy-disk" id="docStatusSaveIcon"></i> Save Status
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
 @endsection
 
