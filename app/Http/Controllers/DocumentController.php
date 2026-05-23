@@ -25,10 +25,13 @@ class DocumentController extends Controller
 
             return DataTables::of($query)
                 ->addColumn('number_col', function ($d) {
+                    $show  = route('documents.show', $d);
                     $badge = $d->source === 'portal'
                         ? ' <span class="badge badge-blue" style="font-size:10px;margin-left:4px;vertical-align:middle">Portal</span>'
                         : '';
-                    return '<span class="td-mono">'.e($d->doc_number).'</span>'.$badge;
+                    return '<a href="'.$show.'" class="td-mono"
+                               style="color:var(--navy);font-weight:600;text-decoration:none"
+                               title="View document">'.e($d->doc_number).'</a>'.$badge;
                 })
                 ->addColumn('resident_col', function ($d) {
                     if ($d->source === 'portal') {
