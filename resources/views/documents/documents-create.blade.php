@@ -136,65 +136,12 @@
 </style>
 <script>
 (function () {
-    var repCheck  = document.getElementById('isRepCheck');
-    var repPanel  = document.getElementById('repPanel');
-    var selfInfo  = document.getElementById('selfPickupInfo');
-    var selfName  = document.getElementById('selfPickupName');
-    var resSel    = document.getElementById('resident_id');
-
-    /* ── Toggle rep panel ── */
-    function syncToggle() {
-        var checked = repCheck.checked;
-        repPanel.style.display = checked ? '' : 'none';
-        selfInfo.style.display = checked ? 'none' : '';
-    }
-
-    /* ── Keep "Will be picked up by" label in sync with resident picker ── */
-    function syncResidentLabel() {
-        if (!resSel) return;
-        var opt = resSel.options[resSel.selectedIndex];
-        if (opt && opt.value) {
-            // option text format: "Last, First — address"
-            selfName.textContent = opt.text.split('—')[0].trim();
-        } else {
-            selfName.textContent = 'the resident';
-        }
-    }
-
-    repCheck.addEventListener('change', syncToggle);
-
-    if (resSel) {
-        $(resSel).on('select2:select',   syncResidentLabel);
-        $(resSel).on('select2:unselect', function () { selfName.textContent = 'the resident'; });
-    }
-
-    /* ── Select2 for relationship dropdown ── */
-    $('#requestorRelationship').select2({
-        placeholder: 'Select relationship',
-        allowClear: true,
-        minimumResultsForSearch: Infinity,
-        width: '100%'
-    });
-
     /* ── Gold spinner on submit ── */
-    document.getElementById('docCreateForm').addEventListener('submit', function (e) {
-        // Client-side guard: rep panel visible but name empty
-        if (repCheck.checked) {
-            var rName = document.querySelector('[name="requestor_name"]').value.trim();
-            var rRel  = document.querySelector('[name="requestor_relationship"]').value;
-            if (!rName || !rRel) {
-                e.preventDefault();
-                return;
-            }
-        }
+    document.getElementById('docCreateForm').addEventListener('submit', function () {
         document.getElementById('docSubmitLabel').style.display  = 'none';
         document.getElementById('docSubmitSpinner').style.display = '';
         document.getElementById('docSubmitBtn').disabled = true;
     });
-
-    /* ── Init ── */
-    syncToggle();
-    syncResidentLabel();
 })();
 </script>
 @endpush
