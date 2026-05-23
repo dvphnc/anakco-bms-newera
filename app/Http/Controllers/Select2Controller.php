@@ -18,8 +18,10 @@ class Select2Controller extends Controller
             if ($resident) {
                 return response()->json([
                     'results' => [[
-                        'id' => $resident->id,
-                        'text' => $resident->last_name.', '.$resident->first_name.($resident->middle_name ? ' '.substr($resident->middle_name, 0, 1).'.' : '').' — '.$resident->address,
+                        'id'             => $resident->id,
+                        'text'           => $resident->last_name.', '.$resident->first_name.($resident->middle_name ? ' '.substr($resident->middle_name, 0, 1).'.' : '').' — '.$resident->address,
+                        'full_name'      => $resident->full_name,
+                        'contact_number' => $resident->contact_number,
                     ]],
                 ]);
             }
@@ -38,10 +40,12 @@ class Select2Controller extends Controller
             ->limit(30)
             ->get()
             ->map(fn ($r) => [
-                'id' => $r->id,
-                'text' => $r->last_name.', '.$r->first_name
-                        .($r->middle_name ? ' '.substr($r->middle_name, 0, 1).'.' : '')
-                        .' — '.$r->address,
+                'id'             => $r->id,
+                'text'           => $r->last_name.', '.$r->first_name
+                                  .($r->middle_name ? ' '.substr($r->middle_name, 0, 1).'.' : '')
+                                  .' — '.$r->address,
+                'full_name'      => $r->full_name,
+                'contact_number' => $r->contact_number,
             ]);
 
         return response()->json(['results' => $residents]);
