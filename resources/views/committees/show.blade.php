@@ -2260,11 +2260,12 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                                     <th style="text-align:right">Qty</th>
                                     <th style="text-align:right">Before</th>
                                     <th style="text-align:right">After</th>
+                                    <th>Beneficiary</th>
                                     <th>Reason / By</th>
                                 </tr>
                             </thead>
                             <tbody id="md-logs-tbody">
-                                <tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:20px">No history yet.</td></tr>
+                                <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:20px">No history yet.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -2369,13 +2370,15 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
             $logs = [];
             foreach ($m->stockLogs as $l) {
                 $logs[] = [
-                    'type'   => $l->adjustment_type,
-                    'qty'    => $l->quantity,
-                    'before' => $l->stock_before,
-                    'after'  => $l->stock_after,
-                    'reason' => $l->reason,
-                    'by'     => $l->performed_by,
-                    'date'   => $l->created_at->format('M d, Y h:i A'),
+                    'type'        => $l->adjustment_type,
+                    'qty'         => $l->quantity,
+                    'before'      => $l->stock_before,
+                    'after'       => $l->stock_after,
+                    'reason'      => $l->reason,
+                    'by'          => $l->performed_by,
+                    'date'        => $l->created_at->format('M d, Y h:i A'),
+                    'beneficiary' => $l->beneficiary_name,
+                    'purpose'     => $l->purpose,
                 ];
             }
             $medRegistry[$m->id] = [
