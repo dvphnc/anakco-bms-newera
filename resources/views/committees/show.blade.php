@@ -3149,18 +3149,23 @@ function openMedDetails(medId) {
     tbody.innerHTML = '';
     const logs = med.logs || [];
     if (logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:20px;font-size:13px">No transactions recorded yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:20px;font-size:13px">No transactions recorded yet.</td></tr>';
     } else {
         logs.forEach(function(log) {
             const typeMap = { in: '📦 Stock In', out: '💊 Dispensed', disposed: '🗑️ Disposed' };
             const clsMap  = { in: 'log-in', out: 'log-out', disposed: 'log-disposed' };
             const note = [log.reason, log.by ? ('by ' + log.by) : ''].filter(Boolean).join(' · ');
+            var benParts = [];
+            if (log.beneficiary) benParts.push('<strong>' + log.beneficiary + '</strong>');
+            if (log.purpose)     benParts.push('<span style="color:#9ca3af">' + log.purpose + '</span>');
+            const benCell = benParts.length ? benParts.join('<br>') : '—';
             tbody.innerHTML += '<tr>' +
                 '<td style="font-size:13px;color:#6b7280;white-space:nowrap">' + (log.date || '') + '</td>' +
                 '<td class="' + (clsMap[log.type] || '') + '" style="font-size:14px">' + (typeMap[log.type] || log.type) + '</td>' +
                 '<td style="text-align:right;font-size:14px;font-weight:700">' + log.qty + '</td>' +
                 '<td style="text-align:right;font-size:13px;color:#6b7280">' + log.before + '</td>' +
                 '<td style="text-align:right;font-size:14px;font-weight:700;color:var(--navy)">' + log.after + '</td>' +
+                '<td style="font-size:13px">' + benCell + '</td>' +
                 '<td style="font-size:13px;color:#6b7280">' + (note || '—') + '</td>' +
                 '</tr>';
         });
