@@ -73,19 +73,35 @@
 <div class="alert-tray open no-print mb-6">
     <div class="alert-tray-hdr" onclick="this.closest('.alert-tray').classList.toggle('open')">
         <i class="fas fa-globe tray-icon" style="color:var(--gold)"></i>
-        <span><strong>{{ $portalPending }}</strong> Portal Submission{{ $portalPending > 1 ? 's' : '' }} in Queue</span>
+        <span><strong>{{ $portalPending }}</strong> Portal Submission{{ $portalPending > 1 ? 's' : '' }} active — pending release</span>
         <i class="fas fa-chevron-down tray-caret"></i>
     </div>
     <div class="alert-tray-body">
-        <div class="alert-item" style="background:var(--navy-pale);border-color:var(--navy-border)">
-            <i class="fas fa-info-circle" style="color:var(--navy)"></i>
-            <span style="color:var(--navy)">
-                These are active portal document requests. Update their status here — the linked Appointment record syncs instantly.
-            </span>
-            <button class="alert-link" style="background:none;cursor:pointer;color:var(--navy);font-weight:600"
-                    onclick="quickFilter('sourceFilter','portal')">
-                <i class="fas fa-filter" style="font-size:11px;margin-right:4px"></i> Show Portal
-            </button>
+        {{-- How it works --}}
+        <div class="alert-item" style="background:var(--navy-pale);border-color:var(--navy-border);flex-direction:column;align-items:flex-start;gap:10px">
+            <div style="display:flex;align-items:flex-start;gap:10px;width:100%">
+                <i class="fas fa-route" style="color:var(--navy);margin-top:2px;flex-shrink:0"></i>
+                <div style="font-size:13px;color:var(--navy);line-height:1.6">
+                    <strong>How portal requests flow into Document Issuance:</strong><br>
+                    When a resident submits a request via the portal, it automatically appears here
+                    <em>and</em> in the <strong>Appointments</strong> module simultaneously.<br>
+                    <span style="color:var(--text-muted);font-size:12px">
+                        Use <strong style="color:var(--navy)">Appointments → Document Requests</strong> to advance
+                        the status (Pending → Processing → Ready). Once the resident picks up the document,
+                        click <strong style="color:var(--navy)">Issue</strong> there — it marks the record Released here automatically.
+                        You can also release it directly below using the <strong style="color:var(--navy)">Release</strong> row button.
+                    </span>
+                </div>
+            </div>
+            <div style="display:flex;gap:8px;padding-left:24px">
+                <a href="{{ route('appointments.index') }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-arrow-right"></i> Go to Appointments
+                </a>
+                <button class="btn btn-secondary btn-sm"
+                        onclick="quickFilter('sourceFilter','portal')">
+                    <i class="fas fa-filter" style="font-size:11px"></i> Show Portal Records
+                </button>
+            </div>
         </div>
     </div>
 </div>
