@@ -3034,6 +3034,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // ── Medicine inventory JS ────────────────────────────────────
 let _adjustMedId = null;
+// Initialise beneficiary resident Select2 (once jQuery is ready)
+$(function () {
+    $('#beneficiaryResidentSel').select2({
+        dropdownParent: $('#stockAdjustModal'),
+        width: '100%',
+        allowClear: true,
+        placeholder: 'Search resident…',
+        minimumInputLength: 1,
+        ajax: {
+            url: '{{ route("select2.residents") }}',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) { return { q: params.term }; },
+            processResults: function (data) { return { results: data.results }; },
+        },
+        templateResult: function (r) { return r.loading ? 'Searching…' : r.text; },
+    });
+
+    // Auto-fill beneficiary name when a resident is chosen
+    $('#beneficiaryResidentSel').on('select2:select', function (e) {
+        var d = e.params.data;
+        if (d.full_name) {
+            document.getElementById('beneficiaryName').value = d.full_name;
+        }
+    });
+    $('#beneficiaryResidentSel').on('select2:clear', function () {
+        document.getElementById('beneficiaryName').value = '';
+    });
+});
+
+// Show/hide beneficiary panel based on transaction type
+document.getElementById('adjTypeSelect')?.addEventListener('change', function () {
+    var panel = document.getElementById('beneficiaryPanel');
+    if (panel) panel.style.display = (this.value === 'out') ? '' : 'none';
+});
+
 function openStockModal(medId, medName, currentStock) {
     _adjustMedId = medId;
     document.getElementById('stockMedicineName').innerHTML =
@@ -3042,6 +3078,13 @@ function openStockModal(medId, medName, currentStock) {
         'Current stock: <strong>' + currentStock + '</strong>';
     document.getElementById('stockAdjustError').style.display = 'none';
     document.getElementById('stockAdjustForm').reset();
+    // Reset beneficiary panel visibility (default type is "in")
+    var panel = document.getElementById('beneficiaryPanel');
+    if (panel) panel.style.display = 'none';
+    // Reset Select2 for beneficiary resident
+    if (typeof $ !== 'undefined') {
+        $('#beneficiaryResidentSel').val(null).trigger('change');
+    }
     document.getElementById('stockAdjustModal').style.display = 'flex';
 }
 document.getElementById('stockAdjustModal')?.addEventListener('click', function(e) {
