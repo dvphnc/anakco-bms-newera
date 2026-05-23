@@ -110,7 +110,6 @@ class DocumentController extends Controller
                     return '
                         <div style="display:flex;justify-content:flex-end;align-items:center;gap:6px">
                             '.$pipelineBtn.'
-                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View"><i class="fas fa-eye"></i></a>
                             <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
                             <form method="POST" action="'.$delete.'"
                                   data-confirm="Delete document '.e($d->doc_number).'? This cannot be undone."
