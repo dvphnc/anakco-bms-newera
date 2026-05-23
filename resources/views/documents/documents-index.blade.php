@@ -510,7 +510,7 @@ $(document).on('click', '#documentsTable .doc-pipeline-btn', function () {
         });
 });
 
-/* ── Quick Status Modal ───────────────────────────────────────────── */
+/* ── Status badge class map (used by pipeline button handler) ────── */
 const DOC_STATUS_CLS = {
     Pending:    'badge-yellow',
     Confirmed:  'badge-navy',
@@ -519,65 +519,5 @@ const DOC_STATUS_CLS = {
     Released:   'badge-gray',
     Cancelled:  'badge-red',
 };
-
-var _docStatusId = null;
-
-$(document).on('click', '#documentsTable .doc-status-btn', function () {
-    _docStatusId = $(this).data('id');
-    const isPortal = $(this).data('source') === 'portal';
-
-    document.getElementById('docStatusNum').textContent     = $(this).data('num') || ('Doc #' + _docStatusId);
-    document.getElementById('docStatusSelect').value        = $(this).data('status');
-    document.getElementById('docStatusError').style.display = 'none';
-    document.getElementById('docPortalNote').style.display  = isPortal ? '' : 'none';
-    document.getElementById('docStatusModal').style.display = 'flex';
-});
-
-function closeDocStatusModal() {
-    document.getElementById('docStatusModal').style.display = 'none';
-    _docStatusId = null;
-}
-document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeDocStatusModal();
-});
-
-function saveDocStatus() {
-    if (!_docStatusId) return;
-
-    const btn     = document.getElementById('docStatusSaveBtn');
-    const spinner = document.getElementById('docStatusSpinner');
-    const icon    = document.getElementById('docStatusSaveIcon');
-    const errDiv  = document.getElementById('docStatusError');
-    const status  = document.getElementById('docStatusSelect').value;
-
-    errDiv.style.display  = 'none';
-    btn.disabled          = true;
-    spinner.style.display = '';
-    icon.style.display    = 'none';
-
-    axios.patch('/documents/' + _docStatusId + '/status', { status: status })
-        .then(function (res) {
-            const row = $('button.doc-status-btn[data-id="' + _docStatusId + '"]').closest('tr');
-            row.find('.doc-status-btn').data('status', res.data.status);
-            row.find('td .badge:not(.badge-navy):not(.badge-blue[style*="10px"])').first()
-               .removeClass(Object.values(DOC_STATUS_CLS).join(' '))
-               .addClass(DOC_STATUS_CLS[res.data.status] || 'badge-gray')
-               .text(res.data.status);
-
-            closeDocStatusModal();
-            bmsToast(res.data.message, 'success');
-            $('#documentsTable').DataTable().ajax.reload(null, false);
-        })
-        .catch(function (err) {
-            const msg = err.response?.data?.message || 'Failed to update status.';
-            errDiv.textContent   = msg;
-            errDiv.style.display = 'block';
-        })
-        .finally(function () {
-            btn.disabled          = false;
-            spinner.style.display = 'none';
-            icon.style.display    = '';
-        });
-}
 </script>
 @endpush
