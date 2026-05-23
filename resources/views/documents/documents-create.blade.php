@@ -54,62 +54,6 @@
         {{-- ── Requestor / Processed By ── --}}
         <div class="form-section-title">Requestor / Processed By</div>
 
-        {{-- Representative toggle --}}
-        <div class="form-group mb-3">
-            <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer" onclick="document.getElementById('isRepCheck').click()">
-                <input type="hidden" name="is_representative" value="0">
-                <input type="checkbox" name="is_representative" id="isRepCheck" value="1"
-                       style="width:17px;height:17px;accent-color:var(--navy);cursor:pointer;flex-shrink:0;pointer-events:none"
-                       {{ old('is_representative') ? 'checked' : '' }}>
-                <div style="pointer-events:none">
-                    <div style="font-size:14px;font-weight:500;color:var(--text)">A <strong>representative</strong> is picking up / requesting this document</div>
-                    <div style="font-size:12px;color:var(--text-muted);margin-top:1px">Check this if someone other than the resident will collect the document (e.g. child, spouse, attorney).</div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Self-pickup info pill --}}
-        <div id="selfPickupInfo" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(200,134,26,0.08);border:1px solid rgba(200,134,26,0.25);border-radius:var(--radius);margin-bottom:20px">
-            <i class="fas fa-circle-check" style="color:var(--navy);font-size:14px"></i>
-            <span style="font-size:13px;color:var(--navy)">Will be picked up by: <strong id="selfPickupName">the resident</strong></span>
-        </div>
-
-        {{-- Representative fields --}}
-        <div id="repPanel" style="display:none;margin-bottom:8px">
-            <div class="form-grid-2 mb-2" style="margin-top:16px">
-                <div class="form-group">
-                    <label class="form-label">Representative Name <span style="color:var(--crimson)">*</span></label>
-                    <input type="text" name="requestor_name" id="requestorName"
-                           class="form-control @error('requestor_name') is-invalid @enderror"
-                           value="{{ old('requestor_name') }}"
-                           placeholder="Full name of the person picking up">
-                    @error('requestor_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Relationship to Resident <span style="color:var(--crimson)">*</span></label>
-                    <select name="requestor_relationship" id="requestorRelationship"
-                            class="form-control select2-rel @error('requestor_relationship') is-invalid @enderror">
-                        <option value="">Select Relationship</option>
-                        @foreach($relationships as $rel)
-                            <option value="{{ $rel }}" {{ old('requestor_relationship') === $rel ? 'selected' : '' }}>{{ $rel }}</option>
-                        @endforeach
-                    </select>
-                    @error('requestor_relationship')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-                </div>
-                <div class="form-group">
-                    <label class="form-label">
-                        Representative Contact
-                        <span class="help-icon" data-tippy-content="Optional — phone or email to notify the representative when the document is ready.">?</span>
-                    </label>
-                    <input type="text" name="requestor_contact"
-                           class="form-control @error('requestor_contact') is-invalid @enderror"
-                           value="{{ old('requestor_contact') }}"
-                           placeholder="Phone or email (optional)">
-                    @error('requestor_contact')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-                </div>
-            </div>
-        </div>
-
         {{-- ── Request Details ── --}}
         <div class="form-section-title">Request Details</div>
         <div class="form-grid-2 mb-6">

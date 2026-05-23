@@ -420,3 +420,32 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+function copyRef() {
+    var text = document.getElementById('bizRefNum').textContent.trim();
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function () { flashCopy(); });
+    } else {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        flashCopy();
+    }
+}
+function flashCopy() {
+    var btn = document.getElementById('copyRefBtn');
+    btn.innerHTML = '<i class="fas fa-check" style="margin-right:5px"></i> Copied!';
+    btn.style.background = 'rgba(72,199,142,0.25)';
+    btn.style.borderColor = 'rgba(72,199,142,0.5)';
+    btn.style.color = '#48c78e';
+    setTimeout(function () {
+        btn.innerHTML = '<i class="fas fa-copy" style="margin-right:5px"></i> Copy';
+        btn.style.background = '';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+    }, 2000);
+}
+</script>
+@endpush
