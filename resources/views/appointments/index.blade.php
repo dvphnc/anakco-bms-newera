@@ -116,6 +116,7 @@
             <table id="appointmentsTable" style="width:100%">
                 <thead>
                     <tr>
+                        <th>Appt. No.</th>
                         <th>Resident</th>
                         <th>Document Type</th>
                         <th>Date Requested</th>
