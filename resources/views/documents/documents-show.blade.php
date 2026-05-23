@@ -22,6 +22,20 @@
     </div>
 </div>
 
+{{-- Copyable Reference Number --}}
+<div class="no-print" style="display:flex;align-items:center;gap:12px;background:var(--navy);border-radius:var(--radius);padding:12px 18px;margin-bottom:20px">
+    <i class="fas fa-hashtag" style="color:var(--gold-light,#e0a830);font-size:16px;flex-shrink:0"></i>
+    <div style="flex:1;min-width:0">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.5);margin-bottom:2px">Document Number</div>
+        <div id="docRefNum" style="font-size:17px;font-weight:700;color:#fff;font-family:'Courier New',monospace;letter-spacing:0.05em">{{ $document->doc_number }}</div>
+    </div>
+    <button type="button" id="copyRefBtn" onclick="copyRef()"
+            style="flex-shrink:0;background:rgba(200,134,26,0.2);border:1px solid rgba(200,134,26,0.4);color:var(--gold-light,#e0a830);border-radius:var(--radius-sm);padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s"
+            title="Copy document number">
+        <i class="fas fa-copy" style="margin-right:5px"></i> Copy
+    </button>
+</div>
+
 {{-- Screen View --}}
 <div class="no-print" style="display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start">
 
