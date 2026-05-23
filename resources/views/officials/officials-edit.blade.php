@@ -26,16 +26,35 @@
     <div class="card-body">
 
         <div class="form-section-title">Personal Details</div>
+
+        {{-- Resident Link (optional — auto-fills name & contact) --}}
+        <div class="form-group mb-6">
+            <label class="form-label">
+                Link to Resident Profile
+                <span style="font-size:12px;font-weight:400;color:var(--text-subtle);margin-left:6px">(optional — auto-fills name &amp; contact)</span>
+            </label>
+            <select name="resident_id" id="s2ResidentLink" class="form-control" style="width:100%">
+                @if($official->resident_id && $official->resident)
+                    <option value="{{ $official->resident_id }}" selected>
+                        {{ $official->resident->last_name }}, {{ $official->resident->first_name }}{{ $official->resident->middle_name ? ' '.substr($official->resident->middle_name,0,1).'.' : '' }} — {{ $official->resident->address }}
+                    </option>
+                @else
+                    <option value="">Search registered residents…</option>
+                @endif
+            </select>
+        </div>
+
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Full Name <span style="color:var(--crimson)">*</span></label>
-                <input type="text" name="full_name" class="form-control @error('full_name') is-invalid @enderror"
-                       value="{{ old('full_name', $official->full_name) }}" required>
+                <input type="text" name="full_name" id="officialFullName" class="form-control @error('full_name') is-invalid @enderror"
+                       value="{{ old('full_name', $official->full_name) }}"
+                       @if($official->resident_id) readonly style="background:var(--surface-alt,#f5f5f5)" @endif required>
                 @error('full_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
                 <label class="form-label">Contact Number</label>
-                <input type="text" name="contact_number" class="form-control @error('contact_number') is-invalid @enderror"
+                <input type="text" name="contact_number" id="officialContact" class="form-control @error('contact_number') is-invalid @enderror"
                        value="{{ old('contact_number', $official->contact_number) }}">
                 @error('contact_number')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
