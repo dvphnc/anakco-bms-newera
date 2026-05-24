@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'BMS') — Barangay New Era</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title><?php echo $__env->yieldContent('title', 'BMS'); ?> — Barangay New Era</title>
+    <link rel="icon" type="image/x-icon" href="<?php echo e(asset('favicon.ico')); ?>">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -170,7 +170,7 @@
         .main-wrapper { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; height:100vh; overflow:hidden; position:relative; }
         .watermark {
             position:fixed; bottom:-50px; right:-50px; width:440px; height:440px;
-            background-image:url("{{ asset('images/bne-logo.png') }}");
+            background-image:url("<?php echo e(asset('images/bne-logo.png')); ?>");
             background-size:contain; background-repeat:no-repeat; background-position:center;
             opacity:0.04; pointer-events:none; z-index:0;
         }
@@ -660,18 +660,18 @@
 
     </style>
 
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body>
 
-    @include('partials._sidebar')
+    <?php echo $__env->make('partials._sidebar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
     <div class="main-wrapper">
         <div class="watermark"></div>
-        @include('partials._topbar')
+        <?php echo $__env->make('partials._topbar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         <main class="main-content">
-            @include('partials._alerts')
-            @yield('content')
+            <?php echo $__env->make('partials._alerts', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+            <?php echo $__env->yieldContent('content'); ?>
         </main>
     </div>
 
@@ -837,9 +837,9 @@
     .tippy-box[data-theme~='bms'] .tippy-content { padding: 8px 12px; }
     </style>
 
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 
-    {{-- ── Global Confirmation Modal ──────────────────────────────────── --}}
+    
     <div id="bmsConfirmModal"
          style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9990;
                 align-items:center;justify-content:center;backdrop-filter:blur(2px)">
@@ -896,7 +896,7 @@
 
             // ② When the body is FormData, replace any stale _token field.
             //    Laravel reads _token from the body BEFORE the header, so a
-            //    baked-in @csrf value from page-load will win if not refreshed.
+            //    baked-in <?php echo csrf_field(); ?> value from page-load will win if not refreshed.
             if (token && config.data instanceof FormData) {
                 config.data.delete('_token');
                 config.data.append('_token', token);
@@ -908,7 +908,7 @@
         // ── RESPONSE interceptor — redirect on session expiry ────────────
         axios.interceptors.response.use(null, function (error) {
             if (error.response && (error.response.status === 401 || error.response.status === 419)) {
-                window.location.href = '{{ route('login') }}';
+                window.location.href = '<?php echo e(route('login')); ?>';
             }
             return Promise.reject(error);
         });
@@ -923,11 +923,11 @@
     // window.location navigation always works — regardless of whether the
     // session token is fresh or stale.
     function bmsLogout() {
-        window.location.href = '{{ route('signout') }}';
+        window.location.href = '<?php echo e(route('signout')); ?>';
     }
 
     // ── Refresh _token in plain HTML forms before submission ────────────
-    // Guards against stale @csrf values in non-Axios (regular) form posts.
+    // Guards against stale <?php echo csrf_field(); ?> values in non-Axios (regular) form posts.
     document.addEventListener('submit', function (e) {
         var meta = document.querySelector('meta[name="csrf-token"]');
         if (!meta) return;
@@ -1140,9 +1140,7 @@
     .alert-warning { background:var(--gold-pale); border:1px solid var(--gold-border); color:#78450a; }
     </style>
 
-    {{-- ══════════════════════════════════════════════════════════════════
-         Ctrl+K COMMAND PALETTE
-    ══════════════════════════════════════════════════════════════════ --}}
+    
     <div id="cmdPalette"
          role="dialog" aria-modal="true" aria-label="Command palette"
          style="display:none;position:fixed;inset:0;z-index:10500;
@@ -1155,7 +1153,7 @@
                     box-shadow:0 32px 80px rgba(0,0,0,0.32);overflow:hidden;
                     animation:cmdSlideDown .18s ease">
 
-            {{-- Search input row --}}
+            
             <div style="display:flex;align-items:center;gap:12px;
                         padding:16px 20px;border-bottom:1px solid var(--border)">
                 <i id="cmdSpinner" class="fas fa-search"
@@ -1173,10 +1171,10 @@
                      onclick="closeCmdPalette()">Esc</kbd>
             </div>
 
-            {{-- Results area --}}
+            
             <div id="cmdResults" style="max-height:420px;overflow-y:auto"></div>
 
-            {{-- Footer --}}
+            
             <div style="padding:9px 18px;border-top:1px solid var(--border);
                         background:var(--surface2);display:flex;flex-wrap:wrap;
                         gap:14px;align-items:center">
@@ -1263,15 +1261,15 @@
 
         // ── Quick actions shown when palette opens with empty input ──────
         const quickActions = [
-            @auth
-            { title:'Add New Resident',  sub:'Create a resident record',    url:'{{ route("residents.create") }}',   icon:'fa-user-plus',   color:'var(--navy)' },
-            { title:'Issue Document',    sub:'Barangay clearance, indigency…',url:'{{ route("documents.create") }}',  icon:'fa-file-circle-plus',color:'var(--gold)' },
-            { title:'File Blotter Case', sub:'Record an incident or complaint',url:'{{ route("blotter.create") }}',   icon:'fa-gavel',       color:'#9B1C1C' },
-            { title:'Register Business', sub:'Add a business permit record',  url:'{{ route("businesses.create") }}', icon:'fa-store',       color:'#166534' },
-            { title:'View Dashboard',    sub:'Overview, analytics, appointments',url:'{{ route("dashboard") }}',      icon:'fa-gauge-high',  color:'var(--navy)' },
-            { title:'Reports & Analytics',sub:'Population, demographics, services',url:'{{ route("reports.index") }}',icon:'fa-chart-bar',   color:'var(--gold)' },
-            { title:'Manage Users',      sub:'Accounts, roles, access control',url:'{{ route("users.index") }}',      icon:'fa-users-gear',  color:'var(--navy)' },
-            @endauth
+            <?php if(auth()->guard()->check()): ?>
+            { title:'Add New Resident',  sub:'Create a resident record',    url:'<?php echo e(route("residents.create")); ?>',   icon:'fa-user-plus',   color:'var(--navy)' },
+            { title:'Issue Document',    sub:'Barangay clearance, indigency…',url:'<?php echo e(route("documents.create")); ?>',  icon:'fa-file-circle-plus',color:'var(--gold)' },
+            { title:'File Blotter Case', sub:'Record an incident or complaint',url:'<?php echo e(route("blotter.create")); ?>',   icon:'fa-gavel',       color:'#9B1C1C' },
+            { title:'Register Business', sub:'Add a business permit record',  url:'<?php echo e(route("businesses.create")); ?>', icon:'fa-store',       color:'#166534' },
+            { title:'View Dashboard',    sub:'Overview, analytics, appointments',url:'<?php echo e(route("dashboard")); ?>',      icon:'fa-gauge-high',  color:'var(--navy)' },
+            { title:'Reports & Analytics',sub:'Population, demographics, services',url:'<?php echo e(route("reports.index")); ?>',icon:'fa-chart-bar',   color:'var(--gold)' },
+            { title:'Manage Users',      sub:'Accounts, roles, access control',url:'<?php echo e(route("users.index")); ?>',      icon:'fa-users-gear',  color:'var(--navy)' },
+            <?php endif; ?>
         ];
 
         window.openCmdPalette = function () {
@@ -1418,4 +1416,4 @@
     })();
     </script>
 </body>
-</html>
+</html><?php /**PATH D:\laragon\www\anakco_bms\resources\views/layouts/app.blade.php ENDPATH**/ ?>
