@@ -299,10 +299,15 @@ class ExportController extends Controller
     // -------------------------------------------------------
     public function pdf(Request $request, string $module)
     {
-        $filters = $request->only(['status', 'gender', 'purok_id', 'document_type', 'incident_type', 'business_type']);
-        $date = now()->format('Y-m-d');
-        $generatedAt = now()->format('F d, Y \a\t h:i A');
-        $generatedBy = auth()->user()->name;
+        $filters = $request->only([
+            'status', 'gender', 'purok_id',
+            'document_type', 'incident_type', 'business_type',
+            'expiry_filter', 'date_from', 'date_to', 'source', 'voter', 's',
+        ]);
+        $date         = now()->format('Y-m-d');
+        $generatedAt  = now()->format('F d, Y \a\t h:i A');
+        $generatedBy  = auth()->user()->name;
+        $activeFilters = $this->filterLabel($filters);
         $officialName = \App\Models\Official::where('position', 'Punong Barangay')
             ->where('is_active', true)->first()?->full_name ?? 'ROBERT S. ROMANO';
         $secretaryName = \App\Models\Official::where('position', 'Barangay Secretary')
@@ -316,39 +321,57 @@ class ExportController extends Controller
                     ->when($filters['purok_id'] ?? null, fn ($q, $v) => $q->where('purok_id', $v))
                     ->orderBy('last_name')->get();
 
-                return Pdf::loadView('exports.pdf.residents', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters'))
+                return Pdf::loadView('exports.pdf.residents', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters', 'activeFilters'))
                     ->setPaper('a4', 'landscape')->stream("residents-{$date}.pdf");
 
             case 'households':
-                $data = Household::with(['purok', 'residents'])->orderBy('household_number')->get();
+                $data = Household::with(['purok', 'residents'])
+                    ->when($filters['purok_id'] ?? null, fn ($q, $v) => $q->where('purok_id', $v))
+                    ->when(($filters['voter'] ?? null) === 'yes', fn ($q) => $q->where('is_voter_household', true))
+                    ->when(($filters['voter'] ?? null) === 'no',  fn ($q) => $q->where('is_voter_household', false))
+                    ->when($filters['s'] ?? null, fn ($q, $v) => $q->where(fn ($q2) => $q2
+                        ->where('household_number', 'like', "%{$v}%")
+                        ->orWhere('household_head', 'like', "%{$v}%")))
+                    ->orderBy('household_number')->get();
 
-                return Pdf::loadView('exports.pdf.households', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName'))
+                return Pdf::loadView('exports.pdf.households', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters', 'activeFilters'))
                     ->setPaper('a4', 'landscape')->stream("households-{$date}.pdf");
 
             case 'documents':
                 $data = Document::with(['resident', 'issuedBy'])
                     ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
                     ->when($filters['document_type'] ?? null, fn ($q, $v) => $q->where('document_type', $v))
+                    ->when($filters['source'] ?? null, fn ($q, $v) => $q->where('source', $v))
                     ->orderBy('created_at', 'desc')->get();
 
-                return Pdf::loadView('exports.pdf.documents', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters'))
+                return Pdf::loadView('exports.pdf.documents', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters', 'activeFilters'))
                     ->setPaper('a4', 'landscape')->stream("documents-{$date}.pdf");
 
             case 'blotter':
                 $data = BlotterCase::with(['filedBy'])
                     ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
                     ->when($filters['incident_type'] ?? null, fn ($q, $v) => $q->where('incident_type', $v))
+                    ->when($filters['date_from'] ?? null, fn ($q, $v) => $q->whereDate('incident_date', '>=', $v))
+                    ->when($filters['date_to'] ?? null, fn ($q, $v) => $q->whereDate('incident_date', '<=', $v))
+                    ->when($filters['source'] ?? null, fn ($q, $v) => $q->where('source', $v))
                     ->orderBy('incident_date', 'desc')->get();
 
-                return Pdf::loadView('exports.pdf.blotter', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters'))
+                return Pdf::loadView('exports.pdf.blotter', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters', 'activeFilters'))
                     ->setPaper('a4', 'landscape')->stream("blotter-cases-{$date}.pdf");
 
             case 'businesses':
                 $data = Business::with(['issuedBy'])
                     ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
+                    ->when($filters['business_type'] ?? null, fn ($q, $v) => $q->where('business_type', $v))
+                    ->when($filters['source'] ?? null, fn ($q, $v) => $q->where('source', $v))
+                    ->when($filters['expiry_filter'] ?? null, function ($q, $v) {
+                        if ($v === 'expired')           $q->where('expiry_date', '<', now())->where('status', 'Active');
+                        elseif ($v === 'expiring_soon') $q->whereBetween('expiry_date', [now(), now()->addDays(30)])->where('status', 'Active');
+                        elseif ($v === 'valid')         $q->where('expiry_date', '>', now()->addDays(30))->where('status', 'Active');
+                    })
                     ->orderBy('business_name')->get();
 
-                return Pdf::loadView('exports.pdf.businesses', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters'))
+                return Pdf::loadView('exports.pdf.businesses', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters', 'activeFilters'))
                     ->setPaper('a4', 'landscape')->stream("businesses-{$date}.pdf");
 
             case 'committees':
