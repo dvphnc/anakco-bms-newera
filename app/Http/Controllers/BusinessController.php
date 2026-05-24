@@ -138,17 +138,18 @@ class BusinessController extends Controller
 
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
-                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon biz-qv-btn" title="Quick View" data-url="'.$show.'"><i class="fas fa-eye"></i></a>
+                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon biz-qv-btn"
+                               data-tippy-content="Quick View" data-url="'.$show.'"><i class="fas fa-eye"></i></a>
                             '.$statusBtn.'
-                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
-                            <form method="POST" action="'.$delete.'"
-                                  data-confirm="Delete permit '.e($b->permit_number).'? This cannot be undone."
-                                  data-confirm-title="Delete Business Permit"
-                                  data-confirm-ok="Delete">
-                                <input type="hidden" name="_token" value="'.csrf_token().'">
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
-                            </form>
+                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon"
+                               data-tippy-content="Edit"><i class="fas fa-pen"></i></a>
+                            <button class="btn btn-danger btn-sm btn-icon biz-delete-btn"
+                                    data-tippy-content="Delete Permit"
+                                    data-url="'.e($delete).'"
+                                    data-num="'.e($b->permit_number).'"
+                                    data-name="'.e($b->business_name).'">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>';
                 })
                 ->filter(function ($query) use ($request) {

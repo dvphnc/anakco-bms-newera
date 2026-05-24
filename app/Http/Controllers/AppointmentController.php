@@ -636,7 +636,7 @@ class AppointmentController extends Controller
                 $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon blotter-delete-btn"
                                       style="height:30px;width:30px;padding:0;flex-shrink:0;
                                              display:inline-flex;align-items:center;justify-content:center"
-                                      title="Delete Report"
+                                      data-tippy-content="Delete Report"
                                       data-num="'.e($c->case_number).'"
                                       data-name="'.e($c->complainant_name).'"
                                       data-url="'.e($deleteUrl).'">
