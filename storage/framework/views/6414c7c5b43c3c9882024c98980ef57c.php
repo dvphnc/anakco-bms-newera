@@ -121,7 +121,17 @@ unset($__errorArgs, $__bag); ?>
                     Status
                     <span class="help-icon" data-tippy-content="'Pending' = not yet processed. 'Processing' = being prepared. 'Released' = given to the resident. 'Cancelled' = request withdrawn.">?</span>
                 </label>
-                <select name="status" class="form-control <?php $__errorArgs = ['status'];
+                <?php if($document->status === 'Released'): ?>
+                    
+                    <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);
+                                border-radius:var(--radius-sm);font-size:13.5px;color:var(--text-muted);
+                                display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-lock" style="font-size:11px;color:#9ca3af"></i>
+                        Released — <span style="font-style:italic;font-size:12px">status is locked after release</span>
+                    </div>
+                    <input type="hidden" name="status" value="Released">
+                <?php else: ?>
+                    <select name="status" class="form-control <?php $__errorArgs = ['status'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -129,10 +139,13 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>">
-                    <?php $__currentLoopData = \App\Models\Document::$statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($s); ?>" <?php echo e(old('status', $document->status) === $s ? 'selected' : ''); ?>><?php echo e($s); ?></option>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </select>
+                        <?php $__currentLoopData = \App\Models\Document::$statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php if($s !== 'Released' || $document->status === 'Released'): ?>
+                                <option value="<?php echo e($s); ?>" <?php echo e(old('status', $document->status) === $s ? 'selected' : ''); ?>><?php echo e($s); ?></option>
+                            <?php endif; ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                <?php endif; ?>
                 <?php $__errorArgs = ['status'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
