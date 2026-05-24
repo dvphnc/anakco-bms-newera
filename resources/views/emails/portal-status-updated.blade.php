@@ -153,6 +153,14 @@
         <span class="detail-value">{{ \Carbon\Carbon::parse($preferredDate)->format('F d, Y') }}</span>
       </div>
       @endif
+      @if($newStatus === 'Ready' && isset($feePaid))
+      <div class="detail-row">
+        <span class="detail-label">Document Fee</span>
+        <span class="detail-value" style="color:#15803d;font-weight:700">
+          {{ $feePaid > 0 ? '₱' . number_format($feePaid, 2) : 'Free' }}
+        </span>
+      </div>
+      @endif
       <div class="detail-row">
         <span class="detail-label">Date Updated</span>
         <span class="detail-value">{{ now()->format('F d, Y \a\t h:i A') }}</span>
@@ -182,6 +190,11 @@
       Bring at least <strong>one (1) valid government-issued ID</strong>.
       @if($preferredDate)
         Your scheduled pick-up date is <strong>{{ \Carbon\Carbon::parse($preferredDate)->format('F d, Y') }}</strong>.
+      @endif
+      @if(isset($feePaid) && $feePaid > 0)
+        <br>Please prepare the document fee of <strong style="color:#15803d">₱{{ number_format($feePaid, 2) }}</strong>.
+      @elseif(isset($feePaid) && $feePaid == 0)
+        <br>This document is issued <strong>free of charge</strong>.
       @endif
     </div>
     @endif
