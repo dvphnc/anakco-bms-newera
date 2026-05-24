@@ -508,6 +508,47 @@ $(document).ready(function () {
     });
 });
 
+/* ── Source chip helpers ──────────────────────────────────────────── */
+function _syncChip($chip, isActive) {
+    var src = $chip.data('src');
+    $chip.toggleClass('src-chip-active', isActive);
+    if (src === '') {
+        $chip.css({ background: isActive ? 'var(--navy)' : '#fff',
+                    color:       isActive ? '#fff'        : 'var(--text-muted)',
+                    borderColor: isActive ? 'var(--navy)' : 'var(--border)' });
+    } else if (src === 'portal') {
+        $chip.css({ background: isActive ? '#1d4ed8' : '#eff6ff',
+                    color:       isActive ? '#fff'    : '#1d4ed8',
+                    borderColor: isActive ? '#1d4ed8' : '#bfdbfe' });
+    } else {
+        $chip.css({ background: isActive ? 'var(--navy)'  : 'var(--surface)',
+                    color:       isActive ? '#fff'         : 'var(--text-muted)',
+                    borderColor: isActive ? 'var(--navy)'  : 'var(--border)' });
+    }
+}
+
+$(document).on('click', '.src-chip', function () {
+    var src = $(this).data('src');
+    $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === src); });
+    $('#sourceFilter').val(src || null);
+    const url = new URL(window.location);
+    url.searchParams.delete('source');
+    if (src) url.searchParams.set('source', src);
+    history.replaceState({}, '', url);
+    var n = 0;
+    if ($('#searchInput').val())                    n++;
+    if ($('#typeFilter').val())                     n++;
+    if ($('#statusFilter').val())                   n++;
+    if ($('#dateFrom').val() || $('#dateTo').val()) n++;
+    if (src) n++;
+    var badge = document.getElementById('filterBadge');
+    var chip  = document.getElementById('headerFilterChip');
+    var chipN = document.getElementById('headerFilterCount');
+    if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; chipN.textContent = n; chip.style.display = ''; }
+    else { badge.style.display = 'none'; chip.style.display = 'none'; }
+    $('#blotterTable').DataTable().ajax.reload();
+});
+
 /* ── Activate Case Modal (portal submissions) ────────────────────── */
 $('#blotterTable').on('click', '.blotter-activate-btn', function () {
     var $btn = $(this);
