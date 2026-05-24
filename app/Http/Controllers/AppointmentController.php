@@ -431,15 +431,27 @@ class AppointmentController extends Controller
                 $viewUrl      = route('businesses.show', $b);
                 $issueUrl     = route('appointments.bizIssue', $b);
                 $statusUrl    = route('appointments.bizStatus', $b);
+                $deleteUrl    = route('appointments.bizDestroy', $b);
                 $apptDateFmt  = $b->preferred_date ? \Carbon\Carbon::parse($b->preferred_date)->format('M d, Y') : '—';
 
+                $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon biz-delete-btn"
+                                      style="height:30px;width:30px;padding:0;flex-shrink:0;
+                                             display:inline-flex;align-items:center;justify-content:center"
+                                      title="Delete Application"
+                                      data-num="'.e($b->permit_number).'"
+                                      data-name="'.e($b->owner_name).'"
+                                      data-url="'.e($deleteUrl).'">
+                                  <i class="fas fa-trash" style="font-size:11px"></i>
+                              </button>';
+
                 if ($b->permit_date) {
-                    return '<div style="display:flex;justify-content:flex-end">
+                    return '<div style="display:flex;justify-content:flex-end;gap:6px">
                                 <a href="'.$viewUrl.'" target="_blank"
                                    class="btn btn-secondary btn-sm"
                                    style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px">
                                     <i class="fas fa-stamp"></i> View Permit
                                 </a>
+                                '.$deleteBtn.'
                             </div>';
                 }
 
@@ -454,17 +466,18 @@ class AppointmentController extends Controller
                               data-issue-url="'.e($issueUrl).'"';
 
                 if (in_array($b->status, ['Pending', 'For Review'])) {
-                    return '<div style="display:flex;justify-content:flex-end">
+                    return '<div style="display:flex;justify-content:flex-end;gap:6px">
                                 <button class="btn btn-success btn-sm biz-issue-btn"
                                         style="font-size:12px;padding:0 12px;height:30px;
                                                display:inline-flex;align-items:center;gap:5px"
                                         '.$dataAttrs.'>
                                     <i class="fas fa-stamp"></i> Issue Permit
                                 </button>
+                                '.$deleteBtn.'
                             </div>';
                 }
 
-                return '';
+                return '<div style="display:flex;justify-content:flex-end">'.$deleteBtn.'</div>';
             })
             ->filter(function ($query) use ($request) {
                 if ($request->has('search') && $request->search['value']) {
