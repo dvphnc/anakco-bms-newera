@@ -20,10 +20,10 @@
         </span>
     </div>
     <div class="page-actions">
-        <a href="{{ route('export.pdf', 'blotter') }}" class="btn btn-secondary" title="Export PDF">
+        <a id="btnExportPdf" href="{{ route('export.pdf', 'blotter') }}" class="btn btn-secondary" title="Export PDF">
             <i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF
         </a>
-        <a href="{{ route('export.excel', 'blotter') }}" class="btn btn-secondary" title="Export Excel">
+        <a id="btnExportExcel" href="{{ route('export.excel', 'blotter') }}" class="btn btn-secondary" title="Export Excel">
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
         <a href="{{ route('blotter.create') }}" class="btn btn-primary">
@@ -322,6 +322,7 @@
 }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
+.btn-export-filtered { border-color: var(--gold) !important; box-shadow: 0 0 0 2px rgba(200,134,26,0.18) !important; }
 </style>
 <script>
 $(document).ready(function () {
