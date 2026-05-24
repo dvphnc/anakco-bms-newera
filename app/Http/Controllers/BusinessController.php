@@ -79,32 +79,31 @@ class BusinessController extends Controller
                     if (! $b->expiry_date) {
                         return '<span class="td-muted">—</span>';
                     }
-                    $expiry = Carbon::parse($b->expiry_date);
-                    $now = now();
+                    $expiryDay = Carbon::parse($b->expiry_date->format('Y-m-d'));
+                    $today     = Carbon::today();
 
                     if ($b->status !== 'Active') {
-                        return '<span class="td-muted">'.$expiry->format('M d, Y').'</span>';
+                        return '<span class="td-muted">'.$expiryDay->format('M d, Y').'</span>';
                     }
 
-                    if ($expiry->isPast()) {
-                        $daysAgo = (int) floor($now->floatDiffInDays($expiry));
+                    $isOverdue = $expiryDay->lt($today);
+                    $daysLeft  = (int) $today->diffInDays($expiryDay); // always positive
+
+                    if ($isOverdue) {
+                        $daysAgo = (int) $today->diffInDays($expiryDay);
 
                         return '<div>
-                            <span style="color:var(--crimson);font-weight:700;font-size:12.5px">'.$expiry->format('M d, Y').'</span>
+                            <span style="color:var(--crimson);font-weight:700;font-size:12.5px">'.$expiryDay->format('M d, Y').'</span>
                             <div style="font-size:10.5px;color:var(--crimson);margin-top:1px"><i class="fas fa-triangle-exclamation"></i> '.$daysAgo.' day'.($daysAgo != 1 ? 's' : '').' overdue</div>
                         </div>';
-                    } elseif ($expiry->diffInDays($now) <= 30) {
-                        $daysLeft = (int) ceil($now->floatDiffInDays($expiry));
-
+                    } elseif ($daysLeft <= 30) {
                         return '<div>
-                            <span style="color:#b45309;font-weight:600;font-size:12.5px">'.$expiry->format('M d, Y').'</span>
+                            <span style="color:#b45309;font-weight:600;font-size:12.5px">'.$expiryDay->format('M d, Y').'</span>
                             <div style="font-size:10.5px;color:#b45309;margin-top:1px"><i class="fas fa-clock"></i> '.$daysLeft.' day'.($daysLeft != 1 ? 's' : '').' left</div>
                         </div>';
                     } else {
-                        $daysLeft = (int) ceil($now->floatDiffInDays($expiry));
-
                         return '<div>
-                            <span style="color:var(--text-muted);font-size:12.5px">'.$expiry->format('M d, Y').'</span>
+                            <span style="color:var(--text-muted);font-size:12.5px">'.$expiryDay->format('M d, Y').'</span>
                             <div style="font-size:10.5px;color:#16a34a;margin-top:1px"><i class="fas fa-circle-check"></i> '.$daysLeft.' days left</div>
                         </div>';
                     }
