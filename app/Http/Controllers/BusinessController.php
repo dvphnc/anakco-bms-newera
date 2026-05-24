@@ -41,12 +41,17 @@ class BusinessController extends Controller
                     return '<span class="td-mono">'.e($b->permit_number).'</span>'.$badge;
                 })
                 ->addColumn('name_col', function ($b) {
-                    $expiry = $b->expiry_date ? Carbon::parse($b->expiry_date) : null;
                     $tag = '';
-                    if ($expiry && $b->status === 'Active') {
-                        if ($expiry->isPast()) {
+                    if ($b->expiry_date && $b->status === 'Active') {
+                        // Parse to a clean calendar-day Carbon to avoid time-component drift
+                        $expiryDay = Carbon::parse($b->expiry_date->format('Y-m-d'));
+                        $today     = Carbon::today();
+                        $daysLeft  = (int) $today->diffInDays($expiryDay); // absolute
+                        $isOverdue = $expiryDay->lt($today);
+
+                        if ($isOverdue) {
                             $tag = '<span style="display:inline-block;font-size:9px;font-weight:700;background:#fee2e2;color:#991b1b;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle">OVERDUE</span>';
-                        } elseif ($expiry->diffInDays(now()) <= 30 && $expiry->isFuture()) {
+                        } elseif ($daysLeft <= 30) {
                             $tag = '<span style="display:inline-block;font-size:9px;font-weight:700;background:#fef3c7;color:#92400e;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle">EXPIRING SOON</span>';
                         }
                     }
