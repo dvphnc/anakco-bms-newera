@@ -83,13 +83,13 @@ tbody td:last-child { border-right:none; }
             <td style="text-align:center;color:#888">{{ $i+1 }}</td>
             <td><strong>{{ $b->case_number }}</strong></td>
             <td>{{ $b->incident_type }}</td>
-            <td>{{ $b->incident_date ? \Carbon\Carbon::parse($b->incident_date)->format('M d, Y') : '—' }}</td>
+            <td>{{ $b->incident_date ? \Carbon\Carbon::parse($b->incident_date)->format('m/d/Y') : '—' }}</td>
             <td>{{ $b->incident_location ?? '—' }}</td>
             <td>{{ $b->complainant_name ?? '—' }}</td>
             <td>{{ $b->respondent_name ?? '—' }}</td>
             <td><span class="badge {{ $cls }}">{{ $b->status }}</span></td>
             <td>{{ $b->filedBy->name ?? '—' }}</td>
-            <td>{{ $b->created_at->format('M d, Y') }}</td>
+            <td>{{ $b->created_at->format('m/d/Y') }}</td>
         </tr>
         @endforeach
     </tbody>

@@ -88,8 +88,8 @@ tbody td:last-child { border-right:none; }
             <td>{{ $d->fee_paid > 0 ? '₱'.number_format($d->fee_paid,2) : 'Free' }}</td>
             <td>{{ $d->or_number ?? '—' }}</td>
             <td><span class="badge {{ $cls }}">{{ $d->status }}</span></td>
-            <td>{{ $d->created_at->format('M d, Y') }}</td>
-            <td>{{ $d->released_at?->format('M d, Y') ?? '—' }}</td>
+            <td>{{ $d->created_at->format('m/d/Y') }}</td>
+            <td>{{ $d->released_at?->format('m/d/Y') ?? '—' }}</td>
         </tr>
         @endforeach
     </tbody>
