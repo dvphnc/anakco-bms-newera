@@ -1,4 +1,6 @@
 <?php $__env->startSection('title', $committee['name']); ?>
+<?php $__env->startSection('topbar-title', $committee['name']); ?>
+<?php $__env->startSection('topbar-subtitle', 'Chairperson: ' . $committee['chair']); ?>
 
 <?php $__env->startPush('styles'); ?>
 <style>

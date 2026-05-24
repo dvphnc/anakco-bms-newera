@@ -17,8 +17,8 @@
             <i class="fas fa-bars"></i>
         </button>
         <div>
-            <div class="topbar-title">Barangay New Era</div>
-            <div class="topbar-subtitle">Management System</div>
+            <div class="topbar-title"><?php echo $__env->yieldContent('topbar-title', 'Barangay New Era'); ?></div>
+            <div class="topbar-subtitle"><?php echo $__env->yieldContent('topbar-subtitle', 'Management System'); ?></div>
         </div>
     </div>
 
