@@ -42,7 +42,6 @@ class DocumentAppointment extends Model
      */
     public static array $statuses = [
         'Pending',
-        'Confirmed',
         'Processing',
         'Ready',
         'Released',

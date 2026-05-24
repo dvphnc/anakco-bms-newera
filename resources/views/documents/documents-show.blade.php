@@ -51,7 +51,6 @@
                 @php
                     $cls = match($document->status) {
                         'Pending'    => 'badge-yellow',
-                        'Confirmed'  => 'badge-navy',
                         'Processing' => 'badge-blue',
                         'Ready'      => 'badge-green',
                         'Released'   => 'badge-gray',
@@ -93,7 +92,7 @@
                 <span class="card-title"><i class="fas fa-bolt"></i> Actions</span>
             </div>
             <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
-                @if(in_array($document->status, ['Pending', 'Confirmed', 'Processing', 'Ready']))
+                @if(in_array($document->status, ['Pending', 'Processing', 'Ready']))
                 <form method="POST" action="{{ route('documents.update', $document) }}">
                     @csrf @method('PUT')
                     <input type="hidden" name="status" value="Released">
