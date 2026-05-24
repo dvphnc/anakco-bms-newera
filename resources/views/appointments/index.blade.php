@@ -359,32 +359,33 @@
 
         {{-- Form --}}
         <div style="padding:14px 18px">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;align-items:start">
                 <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
-                        Fee Paid (₱)
-                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— optional</span>
+                    <label class="form-label" style="font-size:12px;font-weight:600;margin-bottom:5px;display:block">
+                        Fee Paid <span style="color:var(--text-subtle);font-size:11px">(₱) — optional</span>
                     </label>
-                    <input type="number" id="cvtFee" class="form-control" min="0" step="0.01" placeholder="0.00">
+                    <input type="number" id="cvtFee" class="form-control" min="0" step="0.01" placeholder="0.00"
+                           style="font-size:13.5px">
                 </div>
                 <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
+                    <label class="form-label" style="font-size:12px;font-weight:600;margin-bottom:5px;display:block;white-space:nowrap">
                         O.R. Number
-                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px;display:block;margin-top:1px">
-                            auto-generated if fee &gt; 0
-                        </span>
                     </label>
                     <input type="text" id="cvtOR" class="form-control"
-                           placeholder="Leave blank to auto-generate">
+                           placeholder="Auto-generated if fee > 0"
+                           style="font-size:13px">
+                    <div style="font-size:10.5px;color:var(--text-subtle);margin-top:4px;line-height:1.3">
+                        Leave blank to auto-generate
+                    </div>
                 </div>
             </div>
             <div class="form-group" style="margin-bottom:12px">
-                <label class="form-label" style="font-size:12.5px">
-                    Note to Resident
-                    <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— included in email</span>
+                <label class="form-label" style="font-size:12px;font-weight:600;margin-bottom:5px;display:block">
+                    Note to Resident <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— included in email</span>
                 </label>
                 <input type="text" id="cvtNote" class="form-control"
-                       placeholder="e.g. Please bring valid ID when picking up.">
+                       placeholder="e.g. Please bring valid ID when picking up."
+                       style="font-size:13px">
             </div>
             <div id="cvtError" style="display:none;font-size:13px;color:var(--crimson);
                  padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
