@@ -95,11 +95,6 @@ class CommitteeController extends Controller
     {
         $committee = $this->committees[$slug] ?? abort(404);
 
-        // Set chairperson from officials table
-        $chair = \App\Models\Official::where('committee', $committee['name'])
-            ->where('is_active', true)->first();
-        $committee['chair'] = $chair?->full_name ?? 'Not Assigned';
-
         // Generic tabs data
         $photos = CommitteeRecord::where('committee_slug', $slug)->where('record_type', 'Photo')->latest()->get();
         $reports = CommitteeRecord::where('committee_slug', $slug)->where('record_type', 'Report')->latest()->get();
