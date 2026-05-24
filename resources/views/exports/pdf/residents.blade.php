@@ -144,7 +144,13 @@ tbody td:last-child { border-right: none; }
     As of {{ now()->format('F d, Y') }}
     @if(!empty($filters['gender'])) &nbsp;·&nbsp; Gender: <strong>{{ $filters['gender'] }}</strong> @endif
     @if(!empty($filters['status'])) &nbsp;·&nbsp; Status: <strong>{{ $filters['status'] }}</strong> @endif
+    @if(!empty($filters['purok_id'])) &nbsp;·&nbsp; Purok ID: <strong>{{ $filters['purok_id'] }}</strong> @endif
 </div>
+@if(isset($activeFilters) && $activeFilters !== 'None (all records)')
+<div style="background:#fef9c3;border:1px solid #fde68a;border-radius:3px;padding:4px 10px;margin-bottom:8px;font-size:7pt;color:#92400e;text-align:center">
+    <strong>Filtered Export:</strong> {{ $activeFilters }}
+</div>
+@endif
 
 <div class="meta-bar">
     <span>Total Records: <strong>{{ $data->count() }}</strong></span>
