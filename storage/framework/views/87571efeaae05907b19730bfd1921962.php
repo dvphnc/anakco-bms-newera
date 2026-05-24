@@ -1232,6 +1232,94 @@ $(document).ready(function () {
         });
     };
 
+    /* ═══════════════════════════════════════════════════════════════
+     | DELETE — Document Appointment
+     ═══════════════════════════════════════════════════════════════ */
+    $('#appointmentsTable').on('click', '.apt-delete-btn', function () {
+        var $btn = $(this);
+        var num  = $btn.data('num');
+        var name = $btn.data('name');
+        var url  = $btn.data('url');
+        bmsConfirm({
+            title:   'Delete Appointment',
+            message: 'Delete appointment ' + num + ' for ' + name + '? This cannot be undone.',
+            ok:      'Delete',
+        }, function () {
+            axios.delete(url, { data: { _token: '<?php echo e(csrf_token()); ?>' } })
+            .then(function (res) {
+                docTable.ajax.reload(null, false);
+                bmsToast(res.data.message || 'Appointment deleted.', 'success');
+                if (res.data.total !== undefined) {
+                    document.getElementById('statApptTotal').textContent = res.data.total;
+                    document.getElementById('tabBadgeDocs').textContent  = res.data.total;
+                }
+                if (res.data.counts) {
+                    var c = res.data.counts;
+                    if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending  ?? 0;
+                    if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
+                    if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
+                }
+            })
+            .catch(function () {
+                bmsToast('Failed to delete appointment.', 'error');
+            });
+        });
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+     | DELETE — Business Application
+     ═══════════════════════════════════════════════════════════════ */
+    $('#bizTable').on('click', '.biz-delete-btn', function () {
+        var $btn = $(this);
+        var num  = $btn.data('num');
+        var name = $btn.data('name');
+        var url  = $btn.data('url');
+        bmsConfirm({
+            title:   'Delete Business Application',
+            message: 'Delete business permit application ' + num + ' from ' + name + '? This cannot be undone.',
+            ok:      'Delete',
+        }, function () {
+            axios.delete(url, { data: { _token: '<?php echo e(csrf_token()); ?>' } })
+            .then(function (res) {
+                bizTable.ajax.reload(null, false);
+                bmsToast(res.data.message || 'Application deleted.', 'success');
+                if (res.data.biz_pending !== undefined) {
+                    document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
+                }
+            })
+            .catch(function () {
+                bmsToast('Failed to delete application.', 'error');
+            });
+        });
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+     | DELETE — Blotter Report
+     ═══════════════════════════════════════════════════════════════ */
+    $('#blotterTable').on('click', '.blotter-delete-btn', function () {
+        var $btn = $(this);
+        var num  = $btn.data('num');
+        var name = $btn.data('name');
+        var url  = $btn.data('url');
+        bmsConfirm({
+            title:   'Delete Blotter Report',
+            message: 'Delete blotter report ' + num + ' from ' + name + '? This cannot be undone.',
+            ok:      'Delete',
+        }, function () {
+            axios.delete(url, { data: { _token: '<?php echo e(csrf_token()); ?>' } })
+            .then(function (res) {
+                blotterTable.ajax.reload(null, false);
+                bmsToast(res.data.message || 'Report deleted.', 'success');
+                if (res.data.blotter_pending !== undefined) {
+                    document.getElementById('tabBadgeBlotter').textContent = res.data.blotter_pending;
+                }
+            })
+            .catch(function () {
+                bmsToast('Failed to delete report.', 'error');
+            });
+        });
+    });
+
 }); // end document.ready
 </script>
 <?php $__env->stopPush(); ?>
