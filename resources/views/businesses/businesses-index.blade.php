@@ -574,13 +574,14 @@ $(document).ready(function () {
     /* ── URL persistence ──────────────────────────────────────────────── */
     function saveToUrl() {
         const url = new URL(window.location);
-        ['s','expiry_filter'].forEach(k => url.searchParams.delete(k));
+        ['s','expiry_filter','source'].forEach(k => url.searchParams.delete(k));
         url.searchParams.delete('business_type');
         url.searchParams.delete('status');
         if ($('#searchInput').val())  url.searchParams.set('s', $('#searchInput').val());
         if ($('#expiryFilter').val()) url.searchParams.set('expiry_filter', $('#expiryFilter').val());
         if ($('#typeFilter').val())   url.searchParams.set('business_type', $('#typeFilter').val());
         if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
+        if ($('#sourceFilter').val()) url.searchParams.set('source', $('#sourceFilter').val());
         history.replaceState({}, '', url);
         updateBadge();
     }
@@ -592,14 +593,21 @@ $(document).ready(function () {
         const type = p.get('business_type'), status = p.get('status');
         if (type)   { $('#typeFilter').val(type).trigger('change.select2'); any = true; }
         if (status) { $('#statusFilter').val(status).trigger('change.select2'); any = true; }
+        if (p.get('source')) {
+            var src = p.get('source');
+            $('#sourceFilter').val(src);
+            $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === src); });
+            any = true;
+        }
         return any;
     }
     function updateBadge() {
         let n = 0;
-        if ($('#searchInput').val())                 n++;
+        if ($('#searchInput').val())  n++;
         if ($('#typeFilter').val())   n++;
         if ($('#statusFilter').val()) n++;
-        if ($('#expiryFilter').val())                n++;
+        if ($('#expiryFilter').val()) n++;
+        if ($('#sourceFilter').val()) n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');
         const chipN = document.getElementById('headerFilterCount');
@@ -621,13 +629,18 @@ $(document).ready(function () {
         localStorage.setItem('fp_' + key, isOpen ? '0' : '1');
     };
     window.quickFilter = function (filterId, value) {
-        if (value === null)          { $('#' + filterId).val(null).trigger('change'); }
-        else if (Array.isArray(value)) { $('#' + filterId).val(value).trigger('change'); }
-        else                         { $('#' + filterId).val(value).trigger('change'); }
-        if (document.getElementById('filterPanel').style.display === 'none') {
-            document.getElementById('filterPanel').style.display = 'block';
-            document.getElementById('filterToggleText').textContent = 'Hide Filters';
-            localStorage.setItem('fp_businesses', '1');
+        if (filterId === 'sourceFilter') {
+            $('#sourceFilter').val(value);
+            $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === value); });
+        } else {
+            if (value === null)            { $('#' + filterId).val(null).trigger('change'); }
+            else if (Array.isArray(value)) { $('#' + filterId).val(value).trigger('change'); }
+            else                           { $('#' + filterId).val(value).trigger('change'); }
+            if (document.getElementById('filterPanel').style.display === 'none') {
+                document.getElementById('filterPanel').style.display = 'block';
+                document.getElementById('filterToggleText').textContent = 'Hide Filters';
+                localStorage.setItem('fp_businesses', '1');
+            }
         }
         saveToUrl(); table.ajax.reload();
     };
@@ -645,8 +658,51 @@ $(document).ready(function () {
         $('#searchInput').val('');
         $('#typeFilter, #statusFilter').val(null).trigger('change');
         $('#expiryFilter').val(null).trigger('change');
+        $('#sourceFilter').val(null);
+        $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === ''); });
         saveToUrl(); table.ajax.reload();
     });
+});
+
+/* ── Source chip helpers ──────────────────────────────────────────── */
+function _syncChip($chip, isActive) {
+    var src = $chip.data('src');
+    $chip.toggleClass('src-chip-active', isActive);
+    if (src === '') {
+        $chip.css({ background: isActive ? 'var(--navy)' : '#fff',
+                    color:       isActive ? '#fff'        : 'var(--text-muted)',
+                    borderColor: isActive ? 'var(--navy)' : 'var(--border)' });
+    } else if (src === 'portal') {
+        $chip.css({ background: isActive ? '#1d4ed8' : '#eff6ff',
+                    color:       isActive ? '#fff'    : '#1d4ed8',
+                    borderColor: isActive ? '#1d4ed8' : '#bfdbfe' });
+    } else {
+        $chip.css({ background: isActive ? 'var(--navy)'  : 'var(--surface)',
+                    color:       isActive ? '#fff'         : 'var(--text-muted)',
+                    borderColor: isActive ? 'var(--navy)'  : 'var(--border)' });
+    }
+}
+
+$(document).on('click', '.src-chip', function () {
+    var src = $(this).data('src');
+    $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === src); });
+    $('#sourceFilter').val(src || null);
+    const url = new URL(window.location);
+    url.searchParams.delete('source');
+    if (src) url.searchParams.set('source', src);
+    history.replaceState({}, '', url);
+    var n = 0;
+    if ($('#searchInput').val())  n++;
+    if ($('#typeFilter').val())   n++;
+    if ($('#statusFilter').val()) n++;
+    if ($('#expiryFilter').val()) n++;
+    if (src) n++;
+    var badge = document.getElementById('filterBadge');
+    var chip  = document.getElementById('headerFilterChip');
+    var chipN = document.getElementById('headerFilterCount');
+    if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; chipN.textContent = n; chip.style.display = ''; }
+    else { badge.style.display = 'none'; chip.style.display = 'none'; }
+    $('#businessesTable').DataTable().ajax.reload();
 });
 
 /* ── Issue Permit Modal (portal) ─────────────────────────────────── */
