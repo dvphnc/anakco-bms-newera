@@ -272,6 +272,23 @@
 @push('scripts')
 <script>
 $(function () {
+    /* ── Photo remove/upload mutual exclusion ── */
+    var $removeCb   = $('#remove-photo-cb');
+    var $photoInput = $('#photo-upload');
+    if ($removeCb.length && $photoInput.length) {
+        $removeCb.on('change', function () {
+            if (this.checked) {
+                $photoInput.val('');   // clear selected file
+                $('#current-photo-preview').css('opacity', '0.35');
+            } else {
+                $('#current-photo-preview').css('opacity', '1');
+            }
+        });
+        $photoInput.on('change', function () {
+            if (this.value) $removeCb.prop('checked', false).trigger('change');
+        });
+    }
+
     const s2 = { dropdownParent: $('body'), width: '100%' };
 
     $('#s2Gender').select2($.extend({}, s2, { placeholder: 'Select Gender', allowClear: false }));
