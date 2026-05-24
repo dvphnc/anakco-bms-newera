@@ -1121,9 +1121,8 @@
     <style>
     @keyframes alertShrink    { from { width:100%; } to { width:0%; } }
     @keyframes alertSlideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes bmsToastIn     { from { opacity:0; transform:translateY(-12px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } }
-    @keyframes bmsToastOut    { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(-10px); } }
-    @keyframes bmsToastBar    { from { width:100%; } to { width:0%; } }
+    @keyframes bmsToastIn  { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes bmsToastBar { from { width:100%; } to { width:0%; } }
     .alert-warning { background:var(--gold-pale); border:1px solid var(--gold-border); color:#78450a; }
     </style>
 

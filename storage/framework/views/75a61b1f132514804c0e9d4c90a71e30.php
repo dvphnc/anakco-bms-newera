@@ -954,62 +954,49 @@
         }, 5000);
     }
 
-    // ── Toast notification — floating, fixed top-right, never disrupts scroll ──
-    (function () {
-        var _stack = document.createElement('div');
-        _stack.id  = 'bmsToastStack';
-        _stack.style.cssText =
-            'position:fixed;top:74px;left:50%;transform:translateX(-50%);z-index:9999;' +
-            'display:flex;flex-direction:column;gap:10px;pointer-events:none;' +
-            'width:420px;max-width:calc(100vw - 48px)';
-        document.body.appendChild(_stack);
-
-        window.bmsToast = function (message, type) {
-            type = type || 'success';
-            var map = {
-                success: { bg:'#f0fdf4', border:'#86efac', color:'#166534', icon:'fa-circle-check' },
-                error:   { bg:'#fff1f2', border:'#fda4af', color:'#be123c', icon:'fa-circle-exclamation' },
-                warning: { bg:'#fffbeb', border:'#fcd34d', color:'#92400e', icon:'fa-triangle-exclamation' },
-            };
-            var m = map[type] || map.success;
-            var el = document.createElement('div');
-            el.style.cssText =
-                'display:flex;align-items:flex-start;gap:11px;padding:13px 15px;' +
-                'background:' + m.bg + ';border:1px solid ' + m.border + ';border-radius:10px;' +
-                'box-shadow:0 4px 18px rgba(0,0,0,.12);pointer-events:all;' +
-                'animation:bmsToastIn .22s cubic-bezier(.34,1.56,.64,1) forwards;' +
-                'font-size:13.5px;line-height:1.5;font-family:inherit;color:' + m.color;
-            el.innerHTML =
-                '<i class="fas ' + m.icon + '" style="font-size:15px;flex-shrink:0;margin-top:1px"></i>' +
-                '<span style="flex:1;color:#1a1a2e">' + message + '</span>' +
-                '<button onclick="bmsToastDismiss(this.closest(\'[data-bms-toast]\'))" ' +
-                    'style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:14px;' +
-                    'padding:0;flex-shrink:0;line-height:1;margin-top:1px">' +
-                    '<i class="fas fa-xmark"></i></button>';
-            el.setAttribute('data-bms-toast', '1');
-            // Progress bar
-            var bar = document.createElement('div');
-            bar.style.cssText =
-                'position:absolute;bottom:0;left:0;height:2px;border-radius:0 0 10px 10px;' +
-                'background:' + m.border + ';width:100%;transform-origin:left;' +
-                'animation:bmsToastBar ' + (type === 'error' ? '8' : '5') + 's linear forwards';
-            el.style.position = 'relative';
-            el.style.overflow = 'hidden';
-            el.appendChild(bar);
-            _stack.appendChild(el);
-            // Auto-dismiss
-            var delay = type === 'error' ? 8000 : 5000;
-            var tid = setTimeout(function () { bmsToastDismiss(el); }, delay);
-            el._toastTimer = tid;
+    // ── Toast notification — inline at top of .main-content ────────────
+    window.bmsToast = function (message, type) {
+        type = type || 'success';
+        var map = {
+            success: { bg:'#f0fdf4', border:'#86efac', color:'#166534', icon:'fa-circle-check' },
+            error:   { bg:'#fff1f2', border:'#fda4af', color:'#be123c', icon:'fa-circle-exclamation' },
+            warning: { bg:'#fffbeb', border:'#fcd34d', color:'#92400e', icon:'fa-triangle-exclamation' },
         };
-
-        window.bmsToastDismiss = function (el) {
-            if (!el || !el.parentNode) return;
-            clearTimeout(el._toastTimer);
-            el.style.animation = 'bmsToastOut .2s ease forwards';
-            setTimeout(function () { if (el.parentNode) el.remove(); }, 210);
-        };
-    })();
+        var m = map[type] || map.success;
+        var el = document.createElement('div');
+        el.style.cssText =
+            'display:flex;align-items:center;gap:11px;padding:13px 16px;margin-bottom:20px;' +
+            'background:' + m.bg + ';border:1px solid ' + m.border + ';border-radius:var(--radius);' +
+            'font-size:13.5px;line-height:1.5;font-family:inherit;position:relative;overflow:hidden;' +
+            'animation:bmsToastIn .22s ease forwards';
+        el.innerHTML =
+            '<i class="fas ' + m.icon + '" style="font-size:15px;flex-shrink:0;color:' + m.color + '"></i>' +
+            '<span style="flex:1;color:var(--text)">' + message + '</span>' +
+            '<button onclick="this.closest(\'[data-bms-toast]\').remove()" ' +
+                'style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:15px;' +
+                'padding:0 2px;flex-shrink:0;line-height:1">' +
+                '<i class="fas fa-xmark"></i></button>';
+        el.setAttribute('data-bms-toast', '1');
+        // Progress bar
+        var bar = document.createElement('div');
+        bar.style.cssText =
+            'position:absolute;bottom:0;left:0;height:3px;border-radius:0 0 var(--radius) var(--radius);' +
+            'background:' + m.border + ';width:100%;transform-origin:left;' +
+            'animation:bmsToastBar ' + (type === 'error' ? '8' : '5') + 's linear forwards';
+        el.appendChild(bar);
+        var container = document.querySelector('.main-content');
+        if (container) container.insertBefore(el, container.firstChild);
+        else document.body.insertBefore(el, document.body.firstChild);
+        // Auto-dismiss
+        var delay = type === 'error' ? 8000 : 5000;
+        setTimeout(function () {
+            if (!el.parentNode) return;
+            el.style.transition = 'opacity .35s, max-height .35s, margin .35s, padding .35s';
+            el.style.opacity = '0'; el.style.maxHeight = '0';
+            el.style.marginBottom = '0'; el.style.paddingTop = '0'; el.style.paddingBottom = '0';
+            setTimeout(function () { if (el.parentNode) el.remove(); }, 380);
+        }, delay);
+    };
 
     // ── Stat card decrement after Axios delete ───────────────────────────
     function bmsStatDecrement(id) {
@@ -1134,9 +1121,8 @@
     <style>
     @keyframes alertShrink    { from { width:100%; } to { width:0%; } }
     @keyframes alertSlideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes bmsToastIn     { from { opacity:0; transform:translateY(-12px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } }
-    @keyframes bmsToastOut    { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(-10px); } }
-    @keyframes bmsToastBar    { from { width:100%; } to { width:0%; } }
+    @keyframes bmsToastIn  { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes bmsToastBar { from { width:100%; } to { width:0%; } }
     .alert-warning { background:var(--gold-pale); border:1px solid var(--gold-border); color:#78450a; }
     </style>
 
