@@ -1,54 +1,5 @@
 <?php $__env->startSection('title', 'Generate Reports'); ?>
 
-<?php
-    $currentYear  = date('Y');
-    $currentMonth = date('n');
-
-    $monthlyDocs = [];
-    $monthlyBlotter = [];
-    for ($m = 1; $m <= 12; $m++) {
-        $monthlyDocs[]    = \App\Models\Document::whereYear('created_at', $currentYear)->whereMonth('created_at', $m)->count();
-        $monthlyBlotter[] = \App\Models\BlotterCase::whereYear('created_at', $currentYear)->whereMonth('created_at', $m)->count();
-    }
-
-    $docsByType    = \App\Models\Document::whereYear('created_at', $currentYear)->selectRaw('document_type, count(*) as total')->groupBy('document_type')->pluck('total','document_type');
-    $blotterByType = \App\Models\BlotterCase::whereYear('created_at', $currentYear)->selectRaw('incident_type, count(*) as total')->groupBy('incident_type')->pluck('total','incident_type');
-    $puroks        = \App\Models\Purok::withCount(['residents' => fn($q) => $q->where('residency_status','Active')])->orderByDesc('residents_count')->get();
-
-    $totalResidents  = \App\Models\Resident::count();
-    $activeResidents = \App\Models\Resident::where('residency_status','Active')->count();
-    $totalDocs       = \App\Models\Document::whereYear('created_at', $currentYear)->count();
-    $totalBlotter    = \App\Models\BlotterCase::whereYear('created_at', $currentYear)->count();
-    $totalBusinesses = \App\Models\Business::where('status','Active')->count();
-    $totalHouseholds = \App\Models\Household::count();
-    $totalMale       = \App\Models\Resident::where('gender','Male')->count();
-    $totalFemale     = \App\Models\Resident::where('gender','Female')->count();
-    $totalVoters     = \App\Models\Resident::where('is_voter',true)->count();
-    $totalSeniors    = \App\Models\Resident::where('is_senior',true)->count();
-    $totalPwd        = \App\Models\Resident::where('is_pwd',true)->count();
-    $totalSoloParent = \App\Models\Resident::where('is_solo_parent',true)->count();
-    $total4ps        = \App\Models\Resident::where('is_4ps',true)->count();
-
-    $genderTotal = $totalMale + $totalFemale ?: 1;
-    $malePct     = round(($totalMale / $genderTotal) * 100);
-    $femalePct   = 100 - $malePct;
-
-    $todayDocs      = \App\Models\Document::whereDate('created_at', today())->count();
-    $todayResidents = \App\Models\Resident::whereDate('created_at', today())->count();
-    $todayBlotter   = \App\Models\BlotterCase::whereDate('created_at', today())->count();
-    $thisMonthDocs  = \App\Models\Document::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
-    $thisMonthBlt   = \App\Models\BlotterCase::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
-    $thisMonthRes   = \App\Models\Resident::whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
-
-    $quick = [
-        ['label' => 'This Month · Summary',   'short' => 'Summary',   'icon' => 'fa-chart-pie',    'type' => 'monthly',   'module' => 'summary',   'month' => date('n'), 'year' => date('Y')],
-        ['label' => 'This Month · Documents',  'short' => 'Documents', 'icon' => 'fa-file-alt',     'type' => 'monthly',   'module' => 'documents', 'month' => date('n'), 'year' => date('Y')],
-        ['label' => 'This Month · Blotter',    'short' => 'Blotter',   'icon' => 'fa-gavel',        'type' => 'monthly',   'module' => 'blotter',   'month' => date('n'), 'year' => date('Y')],
-        ['label' => 'This Quarter · Summary',  'short' => 'Quarterly', 'icon' => 'fa-calendar-week','type' => 'quarterly', 'module' => 'summary',   'quarter' => (int)ceil(date('n')/3), 'year' => date('Y')],
-        ['label' => date('Y').' Annual',       'short' => 'Annual',    'icon' => 'fa-calendar',     'type' => 'annual',    'module' => 'summary',   'year' => date('Y')],
-    ];
-?>
-
 <?php $__env->startSection('content'); ?>
 
 <div class="page-header">
@@ -57,6 +8,11 @@
         <p class="page-subtitle">Monthly, quarterly, and annual — Barangay New Era <?php echo e($currentYear); ?></p>
     </div>
     <div class="page-actions">
+        <span style="font-size:13px;color:var(--text-muted);padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm)">
+            <i class="fas fa-clock" style="color:var(--gold);margin-right:6px"></i>
+            As of <?php echo e($snapshotAt->format('F d, Y · h:i A')); ?>
+
+        </span>
         <a href="<?php echo e(route('reports.index')); ?>" class="btn btn-secondary">
             <i class="fas fa-chart-bar"></i> Analytics
         </a>
@@ -176,8 +132,8 @@
                     <div class="form-group" style="margin-bottom:14px">
                         <label class="form-label" style="font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle)">Year</label>
                         <select name="year" id="reportYear" class="form-control" required>
-                            <?php for($y = date('Y'); $y >= 2020; $y--): ?>
-                                <option value="<?php echo e($y); ?>" <?php echo e($y == date('Y') ? 'selected' : ''); ?>><?php echo e($y); ?></option>
+                            <?php for($y = $currentYear; $y >= 2020; $y--): ?>
+                                <option value="<?php echo e($y); ?>" <?php echo e($y == $currentYear ? 'selected' : ''); ?>><?php echo e($y); ?></option>
                             <?php endfor; ?>
                         </select>
                     </div>
@@ -187,7 +143,7 @@
                         <label class="form-label" style="font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle)">Month</label>
                         <select name="month" id="reportMonth" class="form-control">
                             <?php $__currentLoopData = ['January','February','March','April','May','June','July','August','September','October','November','December']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $mon): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <option value="<?php echo e($i + 1); ?>" <?php echo e(($i + 1) == date('n') ? 'selected' : ''); ?>><?php echo e($mon); ?></option>
+                                <option value="<?php echo e($i + 1); ?>" <?php echo e(($i + 1) == $currentMonth ? 'selected' : ''); ?>><?php echo e($mon); ?></option>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
                     </div>

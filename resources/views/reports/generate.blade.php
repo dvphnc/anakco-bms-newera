@@ -143,7 +143,7 @@
                         <label class="form-label" style="font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle)">Month</label>
                         <select name="month" id="reportMonth" class="form-control">
                             @foreach(['January','February','March','April','May','June','July','August','September','October','November','December'] as $i => $mon)
-                                <option value="{{ $i + 1 }}" {{ ($i + 1) == date('n') ? 'selected' : '' }}>{{ $mon }}</option>
+                                <option value="{{ $i + 1 }}" {{ ($i + 1) == $currentMonth ? 'selected' : '' }}>{{ $mon }}</option>
                             @endforeach
                         </select>
                     </div>
