@@ -180,32 +180,54 @@
 
 <div id="pipelineModal" style="display:none;position:fixed;inset:0;z-index:1050;background:rgba(0,0,0,.45);
      align-items:center;justify-content:center;padding:20px">
-    <div style="background:#fff;border-radius:var(--radius-lg);max-width:480px;width:100%;
+    <div style="background:#fff;border-radius:var(--radius-lg);max-width:500px;width:100%;
                 box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden">
+
         
-        <div style="padding:18px 22px;border-bottom:1px solid var(--border);
+        <div style="background:var(--navy);padding:18px 22px;
                     display:flex;align-items:center;justify-content:space-between">
-            <div style="display:flex;align-items:center;gap:10px">
-                <span id="pmIcon" style="width:34px;height:34px;border-radius:50%;
-                      display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"></span>
+            <div style="display:flex;align-items:center;gap:12px">
+                <span id="pmIcon" style="width:40px;height:40px;border-radius:50%;
+                      display:flex;align-items:center;justify-content:center;
+                      font-size:15px;flex-shrink:0"></span>
                 <div>
-                    <div id="pmTitle" style="font-weight:700;font-size:15px;color:var(--navy)"></div>
-                    <div id="pmDocNum" style="font-size:12px;color:var(--text-muted);margin-top:1px"></div>
+                    <div id="pmTitle" style="font-weight:700;font-size:15px;color:#fff;line-height:1.2"></div>
+                    <div style="font-size:11.5px;color:rgba(255,255,255,.6);margin-top:2px">
+                        Document Issuance Pipeline
+                    </div>
                 </div>
             </div>
             <button type="button" onclick="closePipelineModal()"
-                    style="background:none;border:none;cursor:pointer;color:var(--text-muted);
-                           font-size:18px;line-height:1;padding:4px">
+                    style="background:rgba(255,255,255,.12);border:none;cursor:pointer;color:#fff;
+                           font-size:15px;line-height:1;padding:7px 9px;border-radius:6px">
                 <i class="fas fa-xmark"></i>
             </button>
         </div>
+
         
-        <div style="padding:20px 22px">
+        <div style="background:#f8fafc;border-bottom:1px solid var(--border);
+                    padding:12px 22px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+                <div style="font-size:10.5px;font-weight:700;color:var(--text-subtle);
+                             letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px">Document</div>
+                <div id="pmInfoDocNum" style="font-weight:700;font-family:monospace;
+                                              font-size:13px;color:var(--navy)"></div>
+            </div>
+            <div>
+                <div style="font-size:10.5px;font-weight:700;color:var(--text-subtle);
+                             letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px">Resident</div>
+                <div id="pmInfoResident" style="font-weight:600;font-size:13px;color:var(--text)"></div>
+            </div>
+        </div>
+
+        
+        <div style="padding:20px 22px;display:flex;flex-direction:column;gap:15px">
+
             
-            <div id="pmReleasedToRow" style="display:none;margin-bottom:16px">
-                <label style="font-size:13px;font-weight:600;color:var(--navy);display:block;margin-bottom:6px">
+            <div id="pmReleasedToRow" style="display:none">
+                <label style="font-size:12px;font-weight:600;color:var(--text);display:block;margin-bottom:5px">
                     Released To <span style="color:var(--crimson)">*</span>
-                    <span style="font-weight:400;color:var(--text-muted);margin-left:4px">— who physically received the document?</span>
+                    <span style="font-weight:400;color:var(--text-subtle);margin-left:3px">— who physically received the document?</span>
                 </label>
                 <input type="text" id="pmReleasedTo"
                        style="width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);
@@ -213,29 +235,59 @@
                               background:var(--surface);box-sizing:border-box"
                        placeholder="Full name of recipient…">
             </div>
+
             
-            <label style="font-size:13px;font-weight:600;color:var(--navy);display:block;margin-bottom:6px">
-                Staff Remark <span style="font-weight:400;color:var(--text-muted)">(optional)</span>
-            </label>
-            <textarea id="pmNote" rows="3"
-                      style="width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);
-                             padding:9px 12px;font-size:13.5px;font-family:inherit;resize:vertical;
-                             color:var(--text);background:var(--surface);box-sizing:border-box"
-                      placeholder="e.g. Verified with GSIS ID. Processing priority request."></textarea>
-            <p style="font-size:11.5px;color:var(--text-subtle);margin-top:6px;line-height:1.5">
-                <i class="fas fa-circle-info" style="margin-right:3px"></i>
-                Remarks are saved to the audit log and visible in the document's history.
-            </p>
+            <div id="pmPickupDateRow" style="display:none">
+                <label style="font-size:12px;font-weight:600;color:var(--text);display:block;margin-bottom:5px">
+                    Estimated Pick-up Date
+                    <span style="font-weight:400;color:var(--text-subtle);margin-left:3px">(notified to resident via email)</span>
+                </label>
+                <input type="date" id="pmPickupDate"
+                       style="width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);
+                              padding:9px 12px;font-size:13.5px;font-family:inherit;color:var(--text);
+                              background:var(--surface);box-sizing:border-box">
+            </div>
+
+            
+            <div>
+                <label style="font-size:12px;font-weight:600;color:var(--text);display:block;margin-bottom:5px">
+                    Note to Resident
+                    <span style="font-weight:400;color:var(--text-subtle);margin-left:3px">(optional · sent via email)</span>
+                </label>
+                <textarea id="pmResidentNote" rows="2"
+                          style="width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);
+                                 padding:9px 12px;font-size:13.5px;font-family:inherit;resize:vertical;
+                                 color:var(--text);background:var(--surface);box-sizing:border-box"
+                          placeholder="e.g. Please bring a valid ID and original documents."></textarea>
+            </div>
+
+            
+            <div>
+                <label style="font-size:12px;font-weight:600;color:var(--text);display:block;margin-bottom:5px">
+                    Staff Remark
+                    <span style="font-weight:400;color:var(--text-subtle);margin-left:3px">(optional · audit log only)</span>
+                </label>
+                <textarea id="pmNote" rows="2"
+                          style="width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);
+                                 padding:9px 12px;font-size:13.5px;font-family:inherit;resize:vertical;
+                                 color:var(--text);background:var(--surface);box-sizing:border-box"
+                          placeholder="e.g. Verified with GSIS ID. Priority request."></textarea>
+            </div>
+
         </div>
+
         
-        <div style="padding:14px 22px;border-top:1px solid var(--border);
+        <div style="padding:14px 22px;border-top:1px solid var(--border);background:#f8fafc;
                     display:flex;justify-content:flex-end;gap:8px">
             <button type="button" class="btn btn-secondary btn-sm" onclick="closePipelineModal()">Cancel</button>
             <button type="button" id="pmConfirmBtn" class="btn btn-primary btn-sm" onclick="confirmPipelineAdvance()">
                 <span id="pmConfirmLabel"></span>
-                <span id="pmConfirmSpinner" style="display:none"><i class="fas fa-spinner fa-spin" style="margin-right:4px"></i>Saving…</span>
+                <span id="pmConfirmSpinner" style="display:none">
+                    <i class="fas fa-spinner fa-spin" style="margin-right:4px"></i>Saving…
+                </span>
             </button>
         </div>
+
     </div>
 </div>
 
@@ -537,13 +589,22 @@ const DOC_STATUS_CLS = {
     Cancelled:  'badge-red',
 };
 
-/* ── Pipeline remarks modal state ────────────────────────────────── */
+/* ── Pipeline status modal state ─────────────────────────────────── */
 var _pm = { url: null, next: null, isPortal: false, $btn: null, origHtml: null };
 
 const PM_META = {
-    Processing: { icon: '⚙️',  bg: '#f0f4ff', color: '#1d4ed8', label: 'Start Processing', title: 'Advance to Processing' },
-    Ready:      { icon: '🔔',  bg: '#f0fdf4', color: '#15803d', label: 'Mark as Ready',     title: 'Mark Ready for Pick-up' },
-    Released:   { icon: '✅',  bg: '#ecfdf5', color: '#166534', label: 'Confirm Release',   title: 'Confirm Document Release' },
+    Processing: {
+        iconCls: 'fas fa-gear',   iconBg: 'rgba(37,99,235,.18)',   iconColor: '#93c5fd',
+        label: 'Start Processing', title: 'Advance to Processing',
+    },
+    Ready: {
+        iconCls: 'fas fa-bell',   iconBg: 'rgba(22,163,74,.18)',   iconColor: '#86efac',
+        label: 'Mark as Ready',    title: 'Mark Ready for Pick-up',
+    },
+    Released: {
+        iconCls: 'fas fa-flag-checkered', iconBg: 'rgba(255,255,255,.15)', iconColor: '#fff',
+        label: 'Confirm Release',  title: 'Confirm Document Release',
+    },
 };
 
 /* Open modal when pipeline button clicked */
@@ -552,36 +613,62 @@ $(document).on('click', '#documentsTable .doc-pipeline-btn', function () {
     var next     = $btn.data('next');
     var url      = $btn.data('url');
     var isPortal = $btn.data('source') === 'portal';
-    var docNum   = $btn.closest('tr').find('.td-mono').first().text().trim();
-    var meta     = PM_META[next] || { icon: '➡️', bg: '#f8fafc', color: 'var(--navy)', label: 'Confirm', title: 'Update Status' };
+    var $row     = $btn.closest('tr');
+    var docNum   = $row.find('.td-mono').first().text().trim();
+    var resident = $row.find('td:nth-child(2) div:first-child').text().trim();
+    var meta     = PM_META[next] || {
+        iconCls: 'fas fa-arrow-right', iconBg: 'rgba(255,255,255,.15)', iconColor: '#fff',
+        label: 'Confirm', title: 'Update Status',
+    };
 
     /* Stash context */
     _pm = { url: url, next: next, isPortal: isPortal, $btn: $btn, origHtml: $btn.html() };
 
-    /* Populate modal */
+    /* ── Populate header ── */
     var $icon = $('#pmIcon');
-    $icon.text(meta.icon).css({ background: meta.bg, color: meta.color });
+    $icon.html('<i class="' + meta.iconCls + '"></i>')
+         .css({ background: meta.iconBg, color: meta.iconColor });
     $('#pmTitle').text(meta.title);
-    $('#pmDocNum').text(docNum || '');
+
+    /* ── Info strip ── */
+    $('#pmInfoDocNum').text(docNum || '—');
+    $('#pmInfoResident').text(resident || '—');
+
+    /* ── Reset fields ── */
     $('#pmNote').val('');
+    $('#pmResidentNote').val('');
     $('#pmConfirmLabel').text(meta.label);
     $('#pmConfirmSpinner').hide();
     $('#pmConfirmBtn').prop('disabled', false).show();
 
-    /* Released-to field: show & pre-fill with resident name from row.
-       Read only the first div (name) — not the sub-div (Purok / "Portal Submission"). */
+    /* Released-to: show & pre-fill for Release step */
     if (next === 'Released') {
-        var residentCell = $btn.closest('tr').find('td:nth-child(2) div:first-child').text().trim();
-        $('#pmReleasedTo').val(residentCell || '');
+        $('#pmReleasedTo').val(resident || '');
         $('#pmReleasedToRow').show();
     } else {
         $('#pmReleasedToRow').hide();
         $('#pmReleasedTo').val('');
     }
 
+    /* Pickup Date: show & default to tomorrow for Ready step */
+    if (next === 'Ready') {
+        var tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        $('#pmPickupDate').val(tomorrow.toISOString().split('T')[0]);
+        $('#pmPickupDateRow').show();
+    } else {
+        $('#pmPickupDateRow').hide();
+        $('#pmPickupDate').val('');
+    }
+
     /* Show modal */
     $('#pipelineModal').css('display', 'flex');
-    setTimeout(() => $('#pmNote').focus(), 80);
+    /* Focus first interactive field */
+    setTimeout(function () {
+        if (next === 'Released') $('#pmReleasedTo').focus();
+        else if (next === 'Ready') $('#pmPickupDate').focus();
+        else $('#pmResidentNote').focus();
+    }, 80);
 });
 
 /* Close modal */
@@ -604,8 +691,10 @@ $('#pipelineModal').on('click', function (e) {
 window.confirmPipelineAdvance = function () {
     if (!_pm.url) return;
 
-    var note       = $('#pmNote').val().trim();
-    var releasedTo = $('#pmReleasedTo').val().trim();
+    var note         = $('#pmNote').val().trim();
+    var residentNote = $('#pmResidentNote').val().trim();
+    var releasedTo   = $('#pmReleasedTo').val().trim();
+    var pickupDate   = $('#pmPickupDate').val().trim();
 
     /* Validate Released-to when releasing */
     if (_pm.next === 'Released' && !releasedTo) {
@@ -621,12 +710,15 @@ window.confirmPipelineAdvance = function () {
     if (_pm.$btn) _pm.$btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>');
 
     var payload = { status: _pm.next };
-    if (note)       payload.note        = note;
-    if (releasedTo) payload.released_to = releasedTo;
+    if (note)         payload.note          = note;
+    if (residentNote) payload.resident_note = residentNote;
+    if (releasedTo)   payload.released_to   = releasedTo;
+    if (pickupDate)   payload.pickup_date   = pickupDate;
 
     var next     = _pm.next;
     var isPortal = _pm.isPortal;
     var $btn     = _pm.$btn;
+    var origHtml = _pm.origHtml;
 
     axios.patch(_pm.url, payload)
         .then(function (res) {
@@ -640,7 +732,7 @@ window.confirmPipelineAdvance = function () {
             $('#pmConfirmLabel').show();
             $('#pmConfirmSpinner').hide();
             $('#pmConfirmBtn').prop('disabled', false);
-            if ($btn) $btn.prop('disabled', false).html(_pm.origHtml || '');
+            if ($btn) $btn.prop('disabled', false).html(origHtml || '');
             bmsToast(err.response?.data?.message || 'Failed to advance status.', 'error');
         });
 };
