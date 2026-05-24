@@ -77,6 +77,24 @@ class Document extends Model
     // Helpers
     // -------------------------------------------------------
 
+    /**
+     * Generate a sequential Official Receipt number: OR-YYYY-NNNNN
+     * Only called when fee_paid > 0 and no OR number was manually supplied.
+     */
+    public static function generateOrNumber(): string
+    {
+        $year   = date('Y');
+        $prefix = 'OR-'.$year.'-';
+
+        $max = self::where('or_number', 'like', $prefix.'%')
+            ->selectRaw('MAX(CAST(SUBSTRING(or_number, ?) AS UNSIGNED)) as max_seq', [strlen($prefix) + 1])
+            ->value('max_seq');
+
+        $next = ($max ?? 0) + 1;
+
+        return $prefix.str_pad($next, 5, '0', STR_PAD_LEFT);
+    }
+
     public static function generateDocNumber(): string
     {
         $year   = date('Y');

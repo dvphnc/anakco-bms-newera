@@ -208,9 +208,10 @@ class AppointmentController extends Controller
         }
 
         $validated = $request->validate([
-            'fee_paid'  => 'nullable|numeric|min:0',
-            'or_number' => 'nullable|string|max:100',
-            'notes'     => 'nullable|string|max:500',
+            'fee_paid'    => 'nullable|numeric|min:0',
+            'or_number'   => 'nullable|string|max:100',
+            'notes'       => 'nullable|string|max:500',
+            'resident_id' => 'nullable|integer|exists:residents,id',
         ]);
 
         if ($existingDoc) {
