@@ -233,12 +233,22 @@
             <div style="flex-shrink:0">
                 <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em">Current Photo</div>
                 <img src="{{ asset('storage/'.$resident->photo_path) }}"
+                     id="current-photo-preview"
                      style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border)">
+                <div style="margin-top:10px">
+                    <label style="display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+                                  font-size:13px;color:var(--danger,#c0392b);user-select:none">
+                        <input type="checkbox" name="remove_photo" value="1" id="remove-photo-cb"
+                               style="accent-color:var(--danger,#c0392b);width:15px;height:15px;cursor:pointer"
+                               {{ old('remove_photo') ? 'checked' : '' }}>
+                        Remove photo
+                    </label>
+                </div>
             </div>
             @endif
             <div class="form-group" style="flex:1">
                 <label class="form-label">Upload New Photo</label>
-                <input type="file" name="photo_path" class="form-control" accept="image/*">
+                <input type="file" name="photo_path" id="photo-upload" class="form-control" accept="image/*">
                 <div style="font-size:13px;color:var(--text-subtle);margin-top:4px">
                     <i class="fas fa-circle-info" style="color:var(--navy);opacity:0.5"></i> Leave blank to keep the current photo.
                 </div>
