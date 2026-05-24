@@ -19,10 +19,10 @@
         </span>
     </div>
     <div class="page-actions">
-        <a href="<?php echo e(route('export.pdf', 'documents')); ?>" class="btn btn-secondary" title="Export PDF">
+        <a id="btnExportPdf" href="<?php echo e(route('export.pdf', 'documents')); ?>" class="btn btn-secondary" title="Export PDF">
             <i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF
         </a>
-        <a href="<?php echo e(route('export.excel', 'documents')); ?>" class="btn btn-secondary" title="Export Excel">
+        <a id="btnExportExcel" href="<?php echo e(route('export.excel', 'documents')); ?>" class="btn btn-secondary" title="Export Excel">
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
         <a href="<?php echo e(route('documents.create')); ?>" class="btn btn-primary">
@@ -250,6 +250,7 @@
 }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
 #filterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
+.btn-export-filtered { border-color: var(--gold) !important; box-shadow: 0 0 0 2px rgba(200,134,26,0.18) !important; }
 </style>
 
 <script>
@@ -366,6 +367,23 @@ $(document).ready(function () {
         }
         return any;
     }
+    var _pdfBase  = '<?php echo e(route('export.pdf',   'documents')); ?>';
+    var _xlsxBase = '<?php echo e(route('export.excel', 'documents')); ?>';
+
+    function _syncExportUrls() {
+        var p = {};
+        var s  = $('#searchInput').val();   if (s)  p.s = s;
+        var st = $('#statusFilter').val();  if (st) p.status = st;
+        var tp = $('#typeFilter').val();    if (tp) p.document_type = tp;
+        var sc = $('#sourceFilter').val();  if (sc) p.source = sc;
+        var qs = Object.keys(p).length ? '?' + $.param(p) : '';
+        $('#btnExportPdf').attr('href', _pdfBase + qs)
+            .attr('title', qs ? 'Export filtered results' : 'Export PDF');
+        $('#btnExportExcel').attr('href', _xlsxBase + qs)
+            .attr('title', qs ? 'Export filtered results' : 'Export Excel');
+        $('#btnExportPdf, #btnExportExcel').toggleClass('btn-export-filtered', Object.keys(p).length > 0);
+    }
+
     function updateBadge() {
         let n = 0;
         if ($('#searchInput').val())  n++;
@@ -384,6 +402,7 @@ $(document).ready(function () {
             badge.style.display = 'none';
             chip.style.display  = 'none';
         }
+        _syncExportUrls();
     }
     window.toggleFilters = function (key) {
         const panel  = document.getElementById('filterPanel');

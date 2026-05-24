@@ -602,6 +602,24 @@ $(document).ready(function () {
         }
         return any;
     }
+    var _pdfBase  = '{{ route('export.pdf',   'businesses') }}';
+    var _xlsxBase = '{{ route('export.excel', 'businesses') }}';
+
+    function _syncExportUrls() {
+        var p = {};
+        var s  = $('#searchInput').val();   if (s)  p.s = s;
+        var st = $('#statusFilter').val();  if (st) p.status = st;
+        var tp = $('#typeFilter').val();    if (tp) p.business_type = tp;
+        var ex = $('#expiryFilter').val();  if (ex) p.expiry_filter = ex;
+        var sc = $('#sourceFilter').val();  if (sc) p.source = sc;
+        var qs = Object.keys(p).length ? '?' + $.param(p) : '';
+        $('#btnExportPdf').attr('href', _pdfBase + qs)
+            .attr('title', qs ? 'Export filtered results' : 'Export PDF');
+        $('#btnExportExcel').attr('href', _xlsxBase + qs)
+            .attr('title', qs ? 'Export filtered results' : 'Export Excel');
+        $('#btnExportPdf, #btnExportExcel').toggleClass('btn-export-filtered', Object.keys(p).length > 0);
+    }
+
     function updateBadge() {
         let n = 0;
         if ($('#searchInput').val())  n++;
@@ -621,6 +639,7 @@ $(document).ready(function () {
             badge.style.display = 'none';
             chip.style.display  = 'none';
         }
+        _syncExportUrls();
     }
     window.toggleFilters = function (key) {
         const panel  = document.getElementById('filterPanel');
