@@ -965,11 +965,85 @@ $(document).ready(function () {
     /* ═══════════════════════════════════════════════════════════════
      | MODAL — Issue Document  (single action: any Pending/Processing/Ready → Released)
      ═══════════════════════════════════════════════════════════════ */
+
+    var _cvtVerifiedResidentId = null;   // set after successful AJAX verification
+
+    function setCvtVerifyBox(html, borderColor, bgColor) {
+        var box = document.getElementById('cvtVerifyBox');
+        box.style.background  = bgColor    || '#f8f9fb';
+        box.style.borderColor = borderColor || 'var(--border)';
+        box.innerHTML = html;
+    }
+
+    function runResidentVerification(name, docType) {
+        _cvtVerifiedResidentId = null;
+        setCvtVerifyBox(
+            '<i class="fas fa-spinner fa-spin" style="color:var(--text-subtle);flex-shrink:0;font-size:12px"></i>' +
+            '<span style="color:var(--text-muted)">Checking resident database…</span>'
+        );
+
+        axios.get('{{ route('appointments.verifyResident') }}', { params: { name: name } })
+            .then(function (res) {
+                if (res.data.found) {
+                    _cvtVerifiedResidentId = res.data.id;
+                    var purok = res.data.purok ? ' · ' + res.data.purok : '';
+                    setCvtVerifyBox(
+                        '<i class="fas fa-circle-check" style="color:#16a34a;flex-shrink:0;margin-top:1px;font-size:13px"></i>' +
+                        '<div style="line-height:1.5">' +
+                            '<strong style="color:#14532d;font-size:13px">Verified Resident of Barangay New Era</strong>' +
+                            '<div style="font-size:12px;color:#166534;margin-top:2px">' +
+                                res.data.name + purok +
+                                (res.data.address ? '<br>' + res.data.address : '') +
+                            '</div>' +
+                        '</div>',
+                        '#86efac', '#f0fdf4'
+                    );
+                } else {
+                    // Not found — check if it's a Certificate of Residency for a possible new resident
+                    var isResidency = docType && docType.toLowerCase().indexOf('residency') !== -1;
+                    if (isResidency) {
+                        setCvtVerifyBox(
+                            '<i class="fas fa-circle-info" style="color:#b45309;flex-shrink:0;margin-top:1px;font-size:13px"></i>' +
+                            '<div style="line-height:1.5">' +
+                                '<strong style="color:#92400e;font-size:13px">Not found in resident database</strong>' +
+                                '<div style="font-size:12px;color:#b45309;margin-top:2px">' +
+                                    'This appears to be a <strong>new resident</strong> applying for their first Certificate of Residency. ' +
+                                    'You may proceed with issuance — please add them to the resident registry separately afterwards.' +
+                                '</div>' +
+                            '</div>',
+                            '#fcd34d', '#fffbeb'
+                        );
+                    } else {
+                        setCvtVerifyBox(
+                            '<i class="fas fa-triangle-exclamation" style="color:#b45309;flex-shrink:0;margin-top:1px;font-size:13px"></i>' +
+                            '<div style="line-height:1.5">' +
+                                '<strong style="color:#92400e;font-size:13px">Name not found in resident database</strong>' +
+                                '<div style="font-size:12px;color:#b45309;margin-top:2px">' +
+                                    'Please verify the applicant\'s identity and confirm they are a resident of Barangay New Era before issuing.' +
+                                '</div>' +
+                            '</div>',
+                            '#fcd34d', '#fffbeb'
+                        );
+                    }
+                }
+            })
+            .catch(function () {
+                setCvtVerifyBox(
+                    '<i class="fas fa-circle-exclamation" style="color:var(--crimson);flex-shrink:0;font-size:12px"></i>' +
+                    '<span style="color:var(--crimson)">Could not verify — check manually.</span>',
+                    'var(--crimson-border)', 'var(--crimson-pale)'
+                );
+            });
+    }
+
     $('#appointmentsTable').on('click', '.apt-issue-btn', function () {
-        var $btn = $(this);
+        var $btn  = $(this);
+        var name  = $btn.data('name') || '';
+        var type  = $btn.data('type') || '';
+
         document.getElementById('cvtNum').textContent  = $btn.data('num')  || '';
-        document.getElementById('cvtName').textContent = $btn.data('name') || '';
-        document.getElementById('cvtType').textContent = $btn.data('type') || '';
+        document.getElementById('cvtName').textContent = name;
+        document.getElementById('cvtType').textContent = type;
         document.getElementById('cvtDate').textContent = $btn.data('date') || '—';
 
         // Pre-fill fee/OR if already set on linked document
@@ -979,13 +1053,20 @@ $(document).ready(function () {
         document.getElementById('cvtError').style.display = 'none';
 
         window._cvtUrl = $btn.data('url');
+        _cvtVerifiedResidentId = null;
+
         document.getElementById('aptConvertModal').style.display = 'flex';
-        setTimeout(function () { document.getElementById('cvtFee').focus(); }, 80);
+
+        // Kick off resident verification immediately
+        runResidentVerification(name, type);
+
+        setTimeout(function () { document.getElementById('cvtFee').focus(); }, 120);
     });
 
     window.closeConvertModal = function () {
         document.getElementById('aptConvertModal').style.display = 'none';
         window._cvtUrl = null;
+        _cvtVerifiedResidentId = null;
     };
 
     window.saveConvert = function () {
@@ -994,12 +1075,17 @@ $(document).ready(function () {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Issuing…';
         document.getElementById('cvtError').style.display = 'none';
 
-        axios.post(window._cvtUrl, {
-            fee_paid:  document.getElementById('cvtFee').value.trim()  || null,
-            or_number: document.getElementById('cvtOR').value.trim()   || null,
-            notes:     document.getElementById('cvtNote').value.trim() || null,
-            _token:    '{{ csrf_token() }}',
-        })
+        var payload = {
+            fee_paid:    document.getElementById('cvtFee').value.trim()  || null,
+            or_number:   document.getElementById('cvtOR').value.trim()   || null,
+            notes:       document.getElementById('cvtNote').value.trim() || null,
+            _token:      '{{ csrf_token() }}',
+        };
+        if (_cvtVerifiedResidentId) {
+            payload.resident_id = _cvtVerifiedResidentId;
+        }
+
+        axios.post(window._cvtUrl, payload)
         .then(function (res) {
             closeConvertModal();
             docTable.ajax.reload(null, false);
