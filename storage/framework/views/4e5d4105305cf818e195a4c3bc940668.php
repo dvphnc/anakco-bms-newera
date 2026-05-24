@@ -277,6 +277,13 @@ $(document).ready(function () {
         ],
         order: [[6, 'desc']],
         pageLength: 15,
+        drawCallback: function () {
+            if (typeof tippy !== 'undefined') {
+                tippy('#blotterTable [data-tippy-content]', {
+                    theme: 'bms', placement: 'top', arrow: true, animation: 'shift-away', duration: [150, 100]
+                });
+            }
+        },
         language: {
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
             emptyTable:  '<div class="empty-state"><i class="fas fa-gavel"></i><p>No blotter cases found.</p></div>',
@@ -285,32 +292,31 @@ $(document).ready(function () {
     });
 
     /* ── Axios DELETE ─────────────────────────────────────────────────── */
-    $('#blotterTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        const btn  = $(this);
-        const form = btn.closest('form');
-        const url  = form.attr('action');
+    $('#blotterTable').on('click', '.blotter-delete-btn', function () {
+        const $btn = $(this);
+        const url  = $btn.data('url');
+        const num  = $btn.data('num');
+        const name = $btn.data('name');
 
         bmsConfirm({
-            title:   form.data('confirm-title') || 'Delete Case',
-            message: form.data('confirm'),
-            ok:      form.data('confirm-ok')    || 'Delete',
+            title:   'Delete Blotter Case',
+            message: 'Delete case ' + num + ' — ' + name + '? This will permanently remove the record and any attachments.',
+            ok:      'Delete',
         }, function () {
-            const icon = btn.find('i');
+            const icon = $btn.find('i');
             const orig = icon.attr('class');
-            icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
-            btn.prop('disabled', true);
+            icon.attr('class', 'fas fa-spinner fa-spin');
+            $btn.prop('disabled', true);
 
-            axios.delete(url)
+            axios.delete(url, { data: { _token: '<?php echo e(csrf_token()); ?>' } })
                 .then(function (res) {
-                    table.row(form.closest('tr')).remove().draw(false);
+                    table.row($btn.closest('tr')).remove().draw(false);
                     bmsStatDecrement('statBlotTotal');
                     bmsToast(res.data.message || 'Case deleted.', 'success');
                 })
                 .catch(function () {
-                    icon.attr('class', orig).css('color', '');
-                    btn.prop('disabled', false);
+                    icon.attr('class', orig);
+                    $btn.prop('disabled', false);
                     bmsToast('Could not delete case.', 'error');
                 });
         });
