@@ -87,31 +87,58 @@
     ═══════════════════════════════════════════════════════════ --}}
     <div id="panelDocuments" class="apt-panel">
 
-        <div class="apt-toolbar">
-            <div style="position:relative;flex:1;max-width:320px">
-                <i class="fas fa-search apt-search-icon"></i>
-                <input type="text" id="docSearch" class="apt-search"
-                       placeholder="Name, appt. no., document type…">
+        {{-- Collapsible Filter Card --}}
+        <div style="border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;justify-content:space-between;
+                        padding:12px 20px;cursor:pointer;background:#fafbfc"
+                 onclick="toggleAptFilter('doc')">
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span style="font-size:13px;font-weight:600;color:var(--navy)">
+                        <i class="fas fa-sliders" style="margin-right:6px"></i>Filters
+                    </span>
+                    <span id="docFilterBadge" class="badge badge-gold" style="display:none"></span>
+                </div>
+                <button type="button" class="btn btn-gold btn-sm"
+                        onclick="event.stopPropagation();toggleAptFilter('doc')">
+                    <i class="fas fa-sliders" id="docFilterToggleIcon"></i>
+                    <span id="docFilterToggleText">Show Filters</span>
+                </button>
             </div>
-            <div style="width:160px;flex-shrink:0">
-                <select id="docStatusFilter">
-                    <option value=""></option>
-                    @foreach($statuses as $s)
-                        <option value="{{ $s }}">{{ $s }}</option>
-                    @endforeach
-                </select>
+            <div id="docFilterPanel" style="display:none;padding:16px 20px;border-top:1px solid var(--border);background:#fff">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+                    <div class="form-group" style="grid-column:1/-1;margin:0">
+                        <label class="form-label">Search</label>
+                        <div style="position:relative">
+                            <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
+                            <input type="text" id="docSearch" class="form-control" style="padding-left:32px"
+                                   placeholder="Name, appt. no., document type…">
+                        </div>
+                    </div>
+                    <div class="form-group" style="grid-column:span 2;margin:0">
+                        <label class="form-label">Document Type</label>
+                        <select id="docTypeFilter">
+                            <option value=""></option>
+                            @foreach($documentTypes as $dt)
+                                <option value="{{ $dt }}">{{ $dt }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column:span 2;margin:0">
+                        <label class="form-label">Status</label>
+                        <select id="docStatusFilter">
+                            <option value=""></option>
+                            @foreach($statuses as $s)
+                                <option value="{{ $s }}">{{ $s }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="resetDocFilters()">
+                        <i class="fas fa-xmark"></i> Reset All Filters
+                    </button>
+                </div>
             </div>
-            <div style="width:210px;flex-shrink:0">
-                <select id="docTypeFilter">
-                    <option value=""></option>
-                    @foreach($documentTypes as $dt)
-                        <option value="{{ $dt }}">{{ $dt }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="resetDocFilters()">
-                <i class="fas fa-xmark"></i> Reset
-            </button>
         </div>
         <div class="table-responsive">
             <table id="appointmentsTable" style="width:100%">
