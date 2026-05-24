@@ -71,7 +71,8 @@
       "Bash(xargs grep -l \"PortalStatusUpdated\")",
       "Bash(php -l app/Http/Controllers/AppointmentController.php)",
       "Bash(php -l app/Mail/PortalStatusUpdated.php)",
-      "Bash(xargs grep -l \"portal-status\\\\|PortalStatus\\\\|Request Received\\\\|BARANGAY NEW ERA\")"
+      "Bash(xargs grep -l \"portal-status\\\\|PortalStatus\\\\|Request Received\\\\|BARANGAY NEW ERA\")",
+      "Bash(findstr appointments *)"
     ]
   }
 }
