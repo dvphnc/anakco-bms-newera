@@ -948,176 +948,77 @@ $(document).ready(function () {
     }
 
     /* ═══════════════════════════════════════════════════════════════
-     | PIPELINE — Process button (Pending → Processing, no modal)
+     | MODAL — Issue Document  (single action: any Pending/Processing/Ready → Released)
      ═══════════════════════════════════════════════════════════════ */
-    $('#appointmentsTable').on('click', '.apt-pipeline-btn', function () {
-        var $btn    = $(this);
-        var url     = $btn.data('url');
-        var origHtml = $btn.html();
-        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>');
-
-        axios.patch(url, { status: 'Processing', _token: '{{ csrf_token() }}' })
-            .then(function (res) {
-                bmsToast(res.data.message || 'Status updated to Processing.', 'success');
-                docTable.ajax.reload(null, false);
-                // Update stat cards if counts returned
-                if (res.data.counts) {
-                    var c = res.data.counts;
-                    if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending  ?? 0;
-                    if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
-                    if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
-                }
-            })
-            .catch(function (err) {
-                $btn.prop('disabled', false).html(origHtml);
-                bmsToast(err.response?.data?.message || 'Failed to advance status.', 'error');
-            });
-    });
-
-    /* ═══════════════════════════════════════════════════════════════
-     | PIPELINE — Mark Ready button (Processing → modal)
-     ═══════════════════════════════════════════════════════════════ */
-    var _rdyUrl = null;
-
-    $('#appointmentsTable').on('click', '.apt-ready-btn', function () {
+    $('#appointmentsTable').on('click', '.apt-issue-btn', function () {
         var $btn = $(this);
-        _rdyUrl  = $btn.data('url');
+        document.getElementById('cvtNum').textContent  = $btn.data('num')  || '';
+        document.getElementById('cvtName').textContent = $btn.data('name') || '';
+        document.getElementById('cvtType').textContent = $btn.data('type') || '';
+        document.getElementById('cvtDate').textContent = $btn.data('date') || '—';
 
-        document.getElementById('rdyNum').textContent  = $btn.data('num')  || '';
-        document.getElementById('rdyName').textContent = $btn.data('name') || '';
-        document.getElementById('rdyType').textContent = $btn.data('type') || '';
-
-        // Pre-fill if fee/OR already on the linked document
-        document.getElementById('rdyFee').value      = $btn.data('fee') || '';
-        document.getElementById('rdyOR').value       = $btn.data('or')  || '';
-        document.getElementById('rdyNote').value     = '';
-        document.getElementById('rdyError').style.display = 'none';
-
-        // Default pickup date to tomorrow
-        var tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        document.getElementById('rdyPickupDate').value = tomorrow.toISOString().slice(0, 10);
-
-        document.getElementById('aptReadyModal').style.display = 'flex';
-        setTimeout(function () { document.getElementById('rdyPickupDate').focus(); }, 80);
-    });
-
-    window.closeReadyModal = function () {
-        document.getElementById('aptReadyModal').style.display = 'none';
-        _rdyUrl = null;
-    };
-
-    window.saveReady = function () {
-        var pickupDate = document.getElementById('rdyPickupDate').value;
-        var errEl      = document.getElementById('rdyError');
-
-        if (!pickupDate) {
-            errEl.textContent      = 'Please set a pick-up date.';
-            errEl.style.display    = '';
-            document.getElementById('rdyPickupDate').focus();
-            return;
-        }
-        errEl.style.display = 'none';
-
-        var btn = document.getElementById('rdySaveBtn');
-        btn.disabled    = true;
-        btn.innerHTML   = '<i class="fas fa-spinner fa-spin"></i> Saving…';
-
-        var payload = {
-            status:      'Ready',
-            pickup_date: pickupDate,
-            _token: '{{ csrf_token() }}',
-        };
-        var fee  = document.getElementById('rdyFee').value.trim();
-        var or_  = document.getElementById('rdyOR').value.trim();
-        var note = document.getElementById('rdyNote').value.trim();
-        if (fee)  payload.fee_paid   = fee;
-        if (or_)  payload.or_number  = or_;
-        if (note) payload.notes      = note;
-
-        axios.patch(_rdyUrl, payload)
-            .then(function (res) {
-                closeReadyModal();
-                docTable.ajax.reload(null, false);
-                bmsToast('📧 ' + (res.data.message || 'Marked as Ready. Email sent to resident.'), 'success');
-                if (res.data.counts) {
-                    var c = res.data.counts;
-                    if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending  ?? 0;
-                    if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
-                    if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
-                }
-            })
-            .catch(function (err) {
-                errEl.textContent   = err.response?.data?.message || 'Failed to mark as ready.';
-                errEl.style.display = '';
-            })
-            .finally(function () {
-                btn.disabled  = false;
-                btn.innerHTML = '<i class="fas fa-bell"></i> Mark as Ready';
-            });
-    };
-
-    $(document).on('keydown', function (e) {
-        if (e.key === 'Escape' && document.getElementById('aptReadyModal').style.display === 'flex') {
-            closeReadyModal();
-        }
-    });
-
-    /* ═══════════════════════════════════════════════════════════════
-     | MODAL — Issue Document
-     ═══════════════════════════════════════════════════════════════ */
-    $('#appointmentsTable').on('click', '.apt-convert-btn', function () {
-        var $btn = $(this);
-        document.getElementById('cvtNum').textContent  = $btn.data('num');
-        document.getElementById('cvtName').textContent = $btn.data('name');
-        document.getElementById('cvtType').textContent = $btn.data('type');
-        var purpose    = $btn.data('purpose') || '';
-        var purposeRow = document.getElementById('cvtPurposeRow');
-        if (purpose) { document.getElementById('cvtPurpose').textContent = purpose; purposeRow.style.display = ''; }
-        else { purposeRow.style.display = 'none'; }
-        document.getElementById('cvtFee').value = '';
-        document.getElementById('cvtOR').value  = '';
+        // Pre-fill fee/OR if already set on linked document
+        document.getElementById('cvtFee').value  = $btn.data('fee') || '';
+        document.getElementById('cvtOR').value   = $btn.data('or')  || '';
+        document.getElementById('cvtNote').value = '';
         document.getElementById('cvtError').style.display = 'none';
-        window._cvtUrl   = $btn.data('url');
-        window._cvtAptId = $btn.data('id');
+
+        window._cvtUrl = $btn.data('url');
         document.getElementById('aptConvertModal').style.display = 'flex';
+        setTimeout(function () { document.getElementById('cvtFee').focus(); }, 80);
     });
 
     window.closeConvertModal = function () {
         document.getElementById('aptConvertModal').style.display = 'none';
+        window._cvtUrl = null;
     };
 
     window.saveConvert = function () {
         var btn = document.getElementById('cvtSaveBtn');
-        btn.disabled = true;
+        btn.disabled  = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Issuing…';
         document.getElementById('cvtError').style.display = 'none';
 
         axios.post(window._cvtUrl, {
-            fee_paid:  document.getElementById('cvtFee').value  || null,
-            or_number: document.getElementById('cvtOR').value   || null,
-            _token: '{{ csrf_token() }}',
+            fee_paid:  document.getElementById('cvtFee').value.trim()  || null,
+            or_number: document.getElementById('cvtOR').value.trim()   || null,
+            notes:     document.getElementById('cvtNote').value.trim() || null,
+            _token:    '{{ csrf_token() }}',
         })
         .then(function (res) {
             closeConvertModal();
             docTable.ajax.reload(null, false);
-            bmsToast(res.data.message || 'Document issued.', 'success');
-            bmsStatDecrement('statApptTotal');
+            bmsToast('📧 ' + (res.data.message || 'Document issued successfully.'), 'success');
+            // Update stat cards
+            if (res.data.counts) {
+                var c = res.data.counts;
+                if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending  ?? 0;
+                if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
+                if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
+            }
         })
         .catch(function (err) {
             var msg = err.response?.data?.message || 'Failed to issue document.';
-            document.getElementById('cvtError').textContent = msg;
-            document.getElementById('cvtError').style.display = '';
+            document.getElementById('cvtError').textContent    = msg;
+            document.getElementById('cvtError').style.display  = '';
+            // If already issued — offer to open the existing record
             if (err.response?.data?.view_url) {
-                bmsToast('Already issued. Redirecting…', 'info');
-                setTimeout(() => window.open(err.response.data.view_url, '_blank'), 1200);
+                bmsToast('Document already issued.', 'info');
+                setTimeout(function () { window.open(err.response.data.view_url, '_blank'); }, 1200);
+                closeConvertModal();
             }
         })
         .finally(function () {
-            btn.disabled = false;
+            btn.disabled  = false;
             btn.innerHTML = '<i class="fas fa-file-circle-check"></i> Issue Document';
         });
     };
+
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape' && document.getElementById('aptConvertModal').style.display === 'flex') {
+            closeConvertModal();
+        }
+    });
 
     /* ═══════════════════════════════════════════════════════════════
      | MODAL — Issue Business Permit
