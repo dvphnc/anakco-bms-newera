@@ -27,6 +27,7 @@ class PortalStatusUpdated extends Mailable
         public readonly string  $newStatus,
         public readonly ?string $notes = null,
         public readonly ?string $preferredDate = null,
+        public readonly ?float  $feePaid = null,
     ) {}
 
     public function envelope(): Envelope
