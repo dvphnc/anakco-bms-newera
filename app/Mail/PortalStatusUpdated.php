@@ -32,14 +32,23 @@ class PortalStatusUpdated extends Mailable
 
     public function envelope(): Envelope
     {
-        $subjects = [
-            'document' => 'Your Document Request — Status Updated',
-            'blotter'  => 'Your Blotter Report — Status Updated',
-            'business' => 'Your Business Permit Request — Status Updated',
-        ];
+        $statusLabel = match($this->newStatus) {
+            'Submitted'  => 'Request Received',
+            'Processing' => 'Now Processing',
+            'Ready'      => 'Ready for Pick-up',
+            'Released'   => 'Released ✔',
+            'Cancelled'  => 'Request Cancelled',
+            default      => 'Status Updated',
+        };
+
+        $typeLabel = match($this->type) {
+            'blotter'  => 'Blotter Report',
+            'business' => 'Business Permit',
+            default    => 'Document Request',
+        };
 
         return new Envelope(
-            subject: $subjects[$this->type] ?? 'Your Portal Request — Status Updated',
+            subject: '[Barangay New Era] '.$typeLabel.' — '.$statusLabel.' ('.$this->requestNumber.')',
             from: config('mail.from.address', 'noreply@barangaynewera.gov.ph'),
         );
     }
