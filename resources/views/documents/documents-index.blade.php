@@ -70,39 +70,27 @@
 
 {{-- Portal Queue notice (shown only when there are active portal submissions) --}}
 @if($portalPending > 0)
-<div class="alert-tray open no-print mb-6">
-    <div class="alert-tray-hdr" onclick="this.closest('.alert-tray').classList.toggle('open')">
-        <i class="fas fa-globe tray-icon" style="color:var(--gold)"></i>
-        <span><strong>{{ $portalPending }}</strong> Portal Submission{{ $portalPending > 1 ? 's' : '' }} active — pending release</span>
-        <i class="fas fa-chevron-down tray-caret"></i>
-    </div>
-    <div class="alert-tray-body">
-        {{-- How it works --}}
-        <div class="alert-item" style="background:var(--navy-pale);border-color:var(--navy-border);flex-direction:column;align-items:flex-start;gap:10px">
-            <div style="display:flex;align-items:flex-start;gap:10px;width:100%">
-                <i class="fas fa-route" style="color:var(--navy);margin-top:2px;flex-shrink:0"></i>
-                <div style="font-size:13px;color:var(--navy);line-height:1.6">
-                    <strong>How portal requests flow into Document Issuance:</strong><br>
-                    When a resident submits a request via the portal, it automatically appears here
-                    <em>and</em> in the <strong>Appointments</strong> module simultaneously.<br>
-                    <span style="color:var(--text-muted);font-size:12px">
-                        Use <strong style="color:var(--navy)">Appointments → Document Requests</strong> to advance
-                        the status (Pending → Processing → Ready). Once the resident picks up the document,
-                        click <strong style="color:var(--navy)">Issue</strong> there — it marks the record Released here automatically.
-                        You can also release it directly below using the <strong style="color:var(--navy)">Release</strong> row button.
-                    </span>
-                </div>
-            </div>
-            <div style="display:flex;gap:8px;padding-left:24px">
-                <a href="{{ route('appointments.index') }}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-arrow-right"></i> Go to Appointments
-                </a>
-                <button class="btn btn-secondary btn-sm"
-                        onclick="quickFilter('sourceFilter','portal')">
-                    <i class="fas fa-filter" style="font-size:11px"></i> Show Portal Records
-                </button>
-            </div>
-        </div>
+<div class="no-print mb-4"
+     style="display:flex;align-items:center;gap:10px;padding:10px 16px;
+            background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius);
+            font-size:13px;color:#1e40af">
+    <i class="fas fa-globe" style="font-size:13px;color:#3b82f6;flex-shrink:0"></i>
+    <span>
+        <strong>{{ $portalPending }}</strong> portal request{{ $portalPending > 1 ? 's' : '' }} pending release
+    </span>
+    <div style="display:flex;gap:8px;margin-left:auto;flex-shrink:0">
+        <button type="button"
+                onclick="quickFilter('sourceFilter','portal')"
+                style="height:28px;padding:0 12px;font-size:12px;font-weight:600;cursor:pointer;
+                       background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd;border-radius:var(--radius-sm)">
+            <i class="fas fa-filter" style="font-size:10px;margin-right:4px"></i>Filter Portal
+        </button>
+        <a href="{{ route('appointments.index') }}"
+           style="height:28px;padding:0 12px;font-size:12px;font-weight:600;
+                  background:var(--navy);color:#fff;border:1px solid var(--navy);border-radius:var(--radius-sm);
+                  display:inline-flex;align-items:center;gap:5px;text-decoration:none">
+            <i class="fas fa-calendar-check" style="font-size:10px"></i>Appointments
+        </a>
     </div>
 </div>
 @endif
