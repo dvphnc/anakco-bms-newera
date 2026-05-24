@@ -218,6 +218,103 @@
 
 
 {{-- ══════════════════════════════════════════════════════════════
+     MODAL — Mark Ready for Pick-up (fee + OR capture)
+═══════════════════════════════════════════════════════════════ --}}
+<div id="aptReadyModal"
+     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
+            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
+     onclick="if(event.target===this)closeReadyModal()">
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
+                box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
+        {{-- Header --}}
+        <div style="background:linear-gradient(135deg,#15803d,#16a34a);padding:14px 18px;
+                    display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:9px">
+                <i class="fas fa-bell" style="color:#bbf7d0;font-size:13px"></i>
+                <span style="font-size:13.5px;font-weight:700;color:#fff">Mark Ready for Pick-up</span>
+            </div>
+            <button onclick="closeReadyModal()"
+                    style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);
+                           border-radius:var(--radius-sm);width:28px;height:28px;display:flex;
+                           align-items:center;justify-content:center;color:rgba(255,255,255,.8);cursor:pointer;font-size:12px">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        {{-- Info strip --}}
+        <div style="padding:14px 18px 0">
+            <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:var(--radius-sm);
+                        padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div>
+                    <div style="font-size:10.5px;font-weight:600;color:#6b7280;text-transform:uppercase;
+                                letter-spacing:.06em;margin-bottom:2px">Appointment No.</div>
+                    <div id="rdyNum" style="font-size:13px;font-weight:700;color:#15803d;font-family:monospace"></div>
+                </div>
+                <div>
+                    <div style="font-size:10.5px;font-weight:600;color:#6b7280;text-transform:uppercase;
+                                letter-spacing:.06em;margin-bottom:2px">Document Type</div>
+                    <div id="rdyType" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                </div>
+                <div style="grid-column:1/-1;border-top:1px solid #bbf7d0;padding-top:8px">
+                    <div style="font-size:10.5px;font-weight:600;color:#6b7280;text-transform:uppercase;
+                                letter-spacing:.06em;margin-bottom:2px">Resident</div>
+                    <div id="rdyName" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                </div>
+            </div>
+        </div>
+        {{-- Form fields --}}
+        <div style="padding:16px 18px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                <div class="form-group" style="margin:0">
+                    <label class="form-label" style="font-size:12.5px">
+                        Pick-up Date <span style="color:var(--crimson)">*</span>
+                    </label>
+                    <input type="date" id="rdyPickupDate" class="form-control">
+                </div>
+                <div class="form-group" style="margin:0">
+                    <label class="form-label" style="font-size:12.5px">
+                        Document Fee (₱)
+                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— optional</span>
+                    </label>
+                    <input type="number" id="rdyFee" class="form-control" min="0" step="0.01" placeholder="0.00">
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                <div class="form-group" style="margin:0">
+                    <label class="form-label" style="font-size:12.5px">
+                        OR Number
+                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— optional</span>
+                    </label>
+                    <input type="text" id="rdyOR" class="form-control" placeholder="e.g. OR-2026-00123">
+                </div>
+                <div class="form-group" style="margin:0">
+                    <label class="form-label" style="font-size:12.5px">
+                        Note to Resident
+                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— in email</span>
+                    </label>
+                    <input type="text" id="rdyNote" class="form-control" placeholder="e.g. Bring valid ID">
+                </div>
+            </div>
+            <div id="rdyError" style="display:none;font-size:13px;color:var(--crimson);
+                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
+                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-subtle);
+                        background:#f8f9fb;border:1px solid var(--border);border-radius:var(--radius-sm);
+                        padding:10px 12px;margin-bottom:14px">
+                <i class="fas fa-paper-plane" style="color:#16a34a;margin-top:1px;flex-shrink:0"></i>
+                <span>An email will be sent to the resident with the pick-up date and fee amount (if provided).</span>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:10px">
+                <button type="button" onclick="closeReadyModal()" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="rdySaveBtn" onclick="saveReady()" class="btn"
+                        style="background:#16a34a;color:#fff;border-color:#16a34a">
+                    <i class="fas fa-bell"></i> Mark as Ready
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ══════════════════════════════════════════════════════════════
      MODAL — Issue Document
 ═══════════════════════════════════════════════════════════════ --}}
 <div id="aptConvertModal"
