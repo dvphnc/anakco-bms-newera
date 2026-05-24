@@ -7,6 +7,7 @@ use App\Models\Business;
 use App\Models\Document;
 use App\Models\Household;
 use App\Models\Official;
+use App\Models\Purok;
 use App\Models\Resident;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
