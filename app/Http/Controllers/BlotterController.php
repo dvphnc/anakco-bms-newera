@@ -63,33 +63,40 @@ class BlotterController extends Controller
                 })
                 ->addColumn('actions', function ($c) {
                     $show   = route('blotter.show', $c);
-                    $edit   = route('blotter.edit', $c);
                     $delete = route('blotter.destroy', $c);
 
-                    return '
-                        <div style="display:flex;justify-content:flex-end;gap:6px">
-                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon"
-                               data-tippy-content="View Case"><i class="fas fa-eye"></i></a>
-                            <button class="btn btn-primary btn-sm btn-icon blotter-status-btn"
-                                    data-tippy-content="Update Status"
-                                    data-id="'.$c->id.'"
-                                    data-num="'.e($c->case_number).'"
-                                    data-status="'.e($c->status).'"
-                                    data-notes="'.e($c->resolution_notes ?? '').'"
-                                    data-email="'.e($c->email ?? '').'"
-                                    data-name="'.e($c->complainant_name ?? '').'">
-                                <i class="fas fa-rotate"></i>
-                            </button>
-                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon"
-                               data-tippy-content="Edit"><i class="fas fa-pen"></i></a>
-                            <button class="btn btn-danger btn-sm btn-icon blotter-delete-btn"
-                                    data-tippy-content="Delete Case"
-                                    data-url="'.e($delete).'"
-                                    data-num="'.e($c->case_number).'"
-                                    data-name="'.e($c->complainant_name ?? '').'">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>';
+                    $viewBtn = '<a href="'.e($show).'" class="btn btn-secondary btn-sm btn-icon"
+                                   data-tippy-content="View Case"><i class="fas fa-eye"></i></a>';
+
+                    $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon blotter-delete-btn"
+                                          data-tippy-content="Delete Case"
+                                          data-url="'.e($delete).'"
+                                          data-num="'.e($c->case_number).'"
+                                          data-name="'.e($c->complainant_name ?? '').'">
+                                     <i class="fas fa-trash"></i>
+                                 </button>';
+
+                    // Portal + Pending: show Activate button (3rd action)
+                    $portalBtn = '';
+                    if ($c->source === 'portal' && $c->status === 'Pending') {
+                        $activateUrl  = route('appointments.blotterActivate', $c);
+                        $incidentDate = $c->incident_date
+                            ? \Carbon\Carbon::parse($c->incident_date)->format('M d, Y') : '—';
+                        $portalBtn = '<button class="btn btn-success btn-sm blotter-activate-btn"
+                                              style="font-size:12px;padding:0 10px;height:30px;
+                                                     display:inline-flex;align-items:center;gap:5px;white-space:nowrap"
+                                              data-tippy-content="Activate Case"
+                                              data-num="'.e($c->case_number).'"
+                                              data-complainant="'.e($c->complainant_name ?? '').'"
+                                              data-type="'.e($c->incident_type).'"
+                                              data-date="'.e($incidentDate).'"
+                                              data-url="'.e($activateUrl).'">
+                                         <i class="fas fa-shield-halved" style="font-size:11px"></i> Activate
+                                     </button>';
+                    }
+
+                    return '<div style="display:flex;justify-content:flex-end;gap:6px">'.
+                           $portalBtn.$viewBtn.$deleteBtn.'</div>';
                 })
                 ->filter(function ($query) use ($request) {
                     if ($request->has('search') && $request->search['value']) {
