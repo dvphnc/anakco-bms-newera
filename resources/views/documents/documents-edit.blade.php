@@ -27,13 +27,29 @@
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Resident <span style="color:var(--crimson)">*</span></label>
-                <select name="resident_id" id="resident_id" class="select2-resident @error('resident_id') is-invalid @enderror" required style="width:100%" data-placeholder="Search resident by name...">
-                    @if($document->resident)
-                        <option value="{{ $document->resident_id }}" selected>
-                            {{ $document->resident->last_name }}, {{ $document->resident->first_name }} — {{ $document->resident->address }}
+                @php
+                    $preResident = $document->resident ?? $suggestedResident ?? null;
+                    $preResidentId = $document->resident ? $document->resident_id : ($suggestedResident?->id);
+                @endphp
+                <select name="resident_id" id="resident_id"
+                        class="select2-resident @error('resident_id') is-invalid @enderror"
+                        required style="width:100%"
+                        data-placeholder="Search resident by name..."
+                        data-initial-id="{{ $preResidentId }}"
+                        data-initial-text="{{ $preResident ? $preResident->last_name.', '.$preResident->first_name.' — '.($preResident->address ?? '') : '' }}">
+                    @if($preResident && $preResidentId)
+                        <option value="{{ $preResidentId }}" selected>
+                            {{ $preResident->last_name }}, {{ $preResident->first_name }}
+                            @if($preResident->address) — {{ $preResident->address }} @endif
                         </option>
                     @endif
                 </select>
+                @if($suggestedResident && !$document->resident)
+                    <div style="font-size:11.5px;color:#b45309;margin-top:5px;display:flex;align-items:center;gap:5px">
+                        <i class="fas fa-circle-info"></i>
+                        Auto-matched from portal name "<strong>{{ $document->resident_name_portal }}</strong>" — please verify before saving.
+                    </div>
+                @endif
                 @error('resident_id')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
@@ -120,12 +136,22 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Document Number</label>
-                <div style="display:flex;align-items:center;
+                <div style="display:flex;align-items:center;gap:10px;
                             padding:10px 14px;min-height:58px;
                             background:var(--surface2);border:1px solid var(--border);
-                            border-radius:var(--radius);font-size:14px;
-                            font-family:monospace;font-weight:600;color:var(--navy)">
-                    {{ $document->doc_number }}
+                            border-radius:var(--radius);font-size:13.5px">
+                    <div style="width:34px;height:34px;border-radius:50%;
+                                background:rgba(200,134,26,0.12);border:1.5px solid rgba(200,134,26,0.35);
+                                display:flex;align-items:center;justify-content:center;
+                                font-size:14px;flex-shrink:0;color:var(--gold)">
+                        <i class="fas fa-hashtag"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:700;font-family:monospace;color:var(--navy);font-size:14px;letter-spacing:.03em">
+                            {{ $document->doc_number }}
+                        </div>
+                        <div class="td-muted">{{ $document->document_type }} · {{ $document->created_at->format('M d, Y') }}</div>
+                    </div>
                 </div>
             </div>
         </div>
