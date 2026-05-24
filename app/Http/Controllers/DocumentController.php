@@ -203,7 +203,7 @@ class DocumentController extends Controller
 
     public function show(Document $document)
     {
-        $document->load(['resident.purok', 'issuedBy']);
+        $document->load(['resident.purok', 'issuedBy', 'releasedBy']);
 
         return view('documents.documents-show', compact('document'));
     }
@@ -266,16 +266,21 @@ class DocumentController extends Controller
     public function quickStatus(Request $request, Document $document)
     {
         $validated = $request->validate([
-            'status' => 'required|in:' . implode(',', Document::$statuses),
+            'status'      => 'required|in:' . implode(',', Document::$statuses),
+            'note'        => 'nullable|string|max:500',
+            'released_to' => 'nullable|string|max:255',
         ]);
 
         $old = $document->getOriginal();
 
         // All sync + reverse-mirror + email delegated to DocumentQueueService
         $document = app(DocumentQueueService::class)->reverseAdvance(
-            document:   $document,
-            newStatus:  $validated['status'],
-            changedBy:  auth()->user()->name,
+            document:    $document,
+            newStatus:   $validated['status'],
+            changedBy:   auth()->user()->name,
+            note:        $validated['note'] ?? null,
+            releasedTo:  $validated['released_to'] ?? null,
+            releasedBy:  auth()->id(),
         );
 
         $this->logActivity('updated', $document, $old, $document->toArray());

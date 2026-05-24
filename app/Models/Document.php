@@ -34,6 +34,8 @@ class Document extends Model
         'status',
         'issued_by',
         'released_at',
+        'released_to',
+        'released_by_user_id',
     ];
 
     protected function casts(): array
@@ -56,6 +58,11 @@ class Document extends Model
     public function issuedBy()
     {
         return $this->belongsTo(User::class, 'issued_by');
+    }
+
+    public function releasedBy()
+    {
+        return $this->belongsTo(User::class, 'released_by_user_id');
     }
 
     /**

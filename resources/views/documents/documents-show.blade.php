@@ -137,6 +137,12 @@
                     $relDisplay   = $document->requestor_relationship ?? '—';
                     $contDisplay  = $document->requestor_contact ?? '—';
 
+                    // released_to — who physically received the document (set via Release modal)
+                    $releasedToDisplay = $document->released_to
+                        ?? ($document->requestor_name ?: ($resFullName ?: '—'));
+                    $releasedByDisplay = $document->releasedBy?->name
+                        ?? ($document->issuedBy?->name ?? '—');
+
                     $details = [
                         ['label'=>'Document No.',     'value'=>$document->doc_number],
                         ['label'=>'Document Type',    'value'=>$document->document_type],
@@ -147,8 +153,9 @@
                         ['label'=>'Issued By',        'value'=>$document->issuedBy->name ?? '—'],
                         ['label'=>'Date Requested',   'value'=>$document->created_at->format('F d, Y')],
                         ['label'=>'Date Released',    'value'=>$document->released_at?->format('F d, Y') ?? '—'],
-                        ['label'=>'Received By',      'value'=>$reqDisplay.($isRepDoc ? '' : ' (resident)')],
-                        ['label'=>'Relationship',     'value'=>$isRepDoc ? $relDisplay : '—'],
+                        ['label'=>'Released To',      'value'=>$document->status === 'Released' ? $releasedToDisplay : '—'],
+                        ['label'=>'Released By',      'value'=>$document->status === 'Released' ? $releasedByDisplay : '—'],
+                        ['label'=>'Rep. Relationship','value'=>$isRepDoc ? $relDisplay : '—'],
                         ['label'=>'Rep. Contact',     'value'=>$isRepDoc ? $contDisplay : '—'],
                     ];
                 @endphp

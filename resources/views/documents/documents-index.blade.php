@@ -189,6 +189,68 @@
     <option value="walk-in">Walk-in</option>
 </select>
 
+{{-- ── Pipeline Remarks Modal ───────────────────────────────────────────── --}}
+<div id="pipelineModal" style="display:none;position:fixed;inset:0;z-index:1050;background:rgba(0,0,0,.45);
+     align-items:center;justify-content:center;padding:20px">
+    <div style="background:#fff;border-radius:var(--radius-lg);max-width:480px;width:100%;
+                box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden">
+        {{-- Header --}}
+        <div style="padding:18px 22px;border-bottom:1px solid var(--border);
+                    display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:10px">
+                <span id="pmIcon" style="width:34px;height:34px;border-radius:50%;
+                      display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"></span>
+                <div>
+                    <div id="pmTitle" style="font-weight:700;font-size:15px;color:var(--navy)"></div>
+                    <div id="pmDocNum" style="font-size:12px;color:var(--text-muted);margin-top:1px"></div>
+                </div>
+            </div>
+            <button type="button" onclick="closePipelineModal()"
+                    style="background:none;border:none;cursor:pointer;color:var(--text-muted);
+                           font-size:18px;line-height:1;padding:4px">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        {{-- Body --}}
+        <div style="padding:20px 22px">
+            {{-- Released-to field (only shown for Release action) --}}
+            <div id="pmReleasedToRow" style="display:none;margin-bottom:16px">
+                <label style="font-size:13px;font-weight:600;color:var(--navy);display:block;margin-bottom:6px">
+                    Released To <span style="color:var(--crimson)">*</span>
+                    <span style="font-weight:400;color:var(--text-muted);margin-left:4px">— who physically received the document?</span>
+                </label>
+                <input type="text" id="pmReleasedTo"
+                       style="width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);
+                              padding:9px 12px;font-size:13.5px;font-family:inherit;color:var(--text);
+                              background:var(--surface);box-sizing:border-box"
+                       placeholder="Full name of recipient…">
+            </div>
+            {{-- Note / Remark --}}
+            <label style="font-size:13px;font-weight:600;color:var(--navy);display:block;margin-bottom:6px">
+                Staff Remark <span style="font-weight:400;color:var(--text-muted)">(optional)</span>
+            </label>
+            <textarea id="pmNote" rows="3"
+                      style="width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);
+                             padding:9px 12px;font-size:13.5px;font-family:inherit;resize:vertical;
+                             color:var(--text);background:var(--surface);box-sizing:border-box"
+                      placeholder="e.g. Verified with GSIS ID. Processing priority request."></textarea>
+            <p style="font-size:11.5px;color:var(--text-subtle);margin-top:6px;line-height:1.5">
+                <i class="fas fa-circle-info" style="margin-right:3px"></i>
+                Remarks are saved to the audit log and visible in the document's history.
+            </p>
+        </div>
+        {{-- Footer --}}
+        <div style="padding:14px 22px;border-top:1px solid var(--border);
+                    display:flex;justify-content:flex-end;gap:8px">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closePipelineModal()">Cancel</button>
+            <button type="button" id="pmConfirmBtn" class="btn btn-primary btn-sm" onclick="confirmPipelineAdvance()">
+                <span id="pmConfirmLabel"></span>
+                <span id="pmConfirmSpinner" style="display:none"><i class="fas fa-spinner fa-spin" style="margin-right:4px"></i>Saving…</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-file-lines"></i> Document Records</span>
@@ -477,37 +539,7 @@ $(document).on('click', '.src-chip', function () {
     $('#documentsTable').DataTable().ajax.reload();
 });
 
-/* ── Pipeline one-click advance button ───────────────────────────── */
-$(document).on('click', '#documentsTable .doc-pipeline-btn', function () {
-    var $btn     = $(this);
-    var next     = $btn.data('next');
-    var url      = $btn.data('url');
-    var isPortal = $btn.data('source') === 'portal';
-
-    var origHtml = $btn.html();
-    $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>');
-
-    axios.patch(url, { status: next })
-        .then(function (res) {
-            var $row = $btn.closest('tr');
-            var statusBadge = $row.find('td .badge').filter(function () {
-                return !$(this).hasClass('badge-navy') && !$(this).is('[style*="10px"]');
-            }).first();
-            statusBadge.removeClass(Object.values(DOC_STATUS_CLS).join(' '))
-                       .addClass(DOC_STATUS_CLS[res.data.status] || 'badge-gray')
-                       .text(res.data.status);
-            $row.find('.doc-status-btn').data('status', res.data.status);
-
-            bmsToast((isPortal ? '📧 Email queued · ' : '') + res.data.message, 'success');
-            $('#documentsTable').DataTable().ajax.reload(null, false);
-        })
-        .catch(function (err) {
-            $btn.prop('disabled', false).html(origHtml);
-            bmsToast(err.response?.data?.message || 'Failed to advance status.', 'error');
-        });
-});
-
-/* ── Status badge class map (used by pipeline button handler) ────── */
+/* ── Status badge class map ───────────────────────────────────────── */
 const DOC_STATUS_CLS = {
     Pending:    'badge-yellow',
     Confirmed:  'badge-navy',
@@ -515,6 +547,113 @@ const DOC_STATUS_CLS = {
     Ready:      'badge-green',
     Released:   'badge-gray',
     Cancelled:  'badge-red',
+};
+
+/* ── Pipeline remarks modal state ────────────────────────────────── */
+var _pm = { url: null, next: null, isPortal: false, $btn: null, origHtml: null };
+
+const PM_META = {
+    Processing: { icon: '⚙️',  bg: '#f0f4ff', color: '#1d4ed8', label: 'Start Processing', title: 'Advance to Processing' },
+    Ready:      { icon: '🔔',  bg: '#f0fdf4', color: '#15803d', label: 'Mark as Ready',     title: 'Mark Ready for Pick-up' },
+    Released:   { icon: '✅',  bg: '#ecfdf5', color: '#166534', label: 'Confirm Release',   title: 'Confirm Document Release' },
+};
+
+/* Open modal when pipeline button clicked */
+$(document).on('click', '#documentsTable .doc-pipeline-btn', function () {
+    var $btn     = $(this);
+    var next     = $btn.data('next');
+    var url      = $btn.data('url');
+    var isPortal = $btn.data('source') === 'portal';
+    var docNum   = $btn.closest('tr').find('.td-mono').first().text().trim();
+    var meta     = PM_META[next] || { icon: '➡️', bg: '#f8fafc', color: 'var(--navy)', label: 'Confirm', title: 'Update Status' };
+
+    /* Stash context */
+    _pm = { url: url, next: next, isPortal: isPortal, $btn: $btn, origHtml: $btn.html() };
+
+    /* Populate modal */
+    var $icon = $('#pmIcon');
+    $icon.text(meta.icon).css({ background: meta.bg, color: meta.color });
+    $('#pmTitle').text(meta.title);
+    $('#pmDocNum').text(docNum || '');
+    $('#pmNote').val('');
+    $('#pmConfirmLabel').text(meta.label);
+    $('#pmConfirmSpinner').hide();
+    $('#pmConfirmBtn').prop('disabled', false).show();
+
+    /* Released-to field: show & pre-fill with resident name from row */
+    if (next === 'Released') {
+        var residentCell = $btn.closest('tr').find('td:nth-child(2)').text().trim().split('\n')[0].trim();
+        $('#pmReleasedTo').val(residentCell || '');
+        $('#pmReleasedToRow').show();
+    } else {
+        $('#pmReleasedToRow').hide();
+        $('#pmReleasedTo').val('');
+    }
+
+    /* Show modal */
+    $('#pipelineModal').css('display', 'flex');
+    setTimeout(() => $('#pmNote').focus(), 80);
+});
+
+/* Close modal */
+window.closePipelineModal = function () {
+    $('#pipelineModal').hide();
+    if (_pm.$btn) _pm.$btn.prop('disabled', false).html(_pm.origHtml);
+    _pm = { url: null, next: null, isPortal: false, $btn: null, origHtml: null };
+};
+
+/* ESC closes modal */
+$(document).on('keydown', function (e) {
+    if (e.key === 'Escape' && $('#pipelineModal').is(':visible')) closePipelineModal();
+});
+/* Click outside modal panel closes it */
+$('#pipelineModal').on('click', function (e) {
+    if (e.target === this) closePipelineModal();
+});
+
+/* Confirm & send PATCH */
+window.confirmPipelineAdvance = function () {
+    if (!_pm.url) return;
+
+    var note       = $('#pmNote').val().trim();
+    var releasedTo = $('#pmReleasedTo').val().trim();
+
+    /* Validate Released-to when releasing */
+    if (_pm.next === 'Released' && !releasedTo) {
+        $('#pmReleasedTo').css('border-color', 'var(--crimson)').focus();
+        return;
+    }
+    $('#pmReleasedTo').css('border-color', '');
+
+    /* Show spinner */
+    $('#pmConfirmLabel').hide();
+    $('#pmConfirmSpinner').show();
+    $('#pmConfirmBtn').prop('disabled', true);
+    if (_pm.$btn) _pm.$btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>');
+
+    var payload = { status: _pm.next };
+    if (note)       payload.note        = note;
+    if (releasedTo) payload.released_to = releasedTo;
+
+    var next     = _pm.next;
+    var isPortal = _pm.isPortal;
+    var $btn     = _pm.$btn;
+
+    axios.patch(_pm.url, payload)
+        .then(function (res) {
+            $('#pipelineModal').hide();
+            _pm = { url: null, next: null, isPortal: false, $btn: null, origHtml: null };
+
+            bmsToast((isPortal ? '📧 Email queued · ' : '') + res.data.message, 'success');
+            $('#documentsTable').DataTable().ajax.reload(null, false);
+        })
+        .catch(function (err) {
+            $('#pmConfirmLabel').show();
+            $('#pmConfirmSpinner').hide();
+            $('#pmConfirmBtn').prop('disabled', false);
+            if ($btn) $btn.prop('disabled', false).html(_pm.origHtml || '');
+            bmsToast(err.response?.data?.message || 'Failed to advance status.', 'error');
+        });
 };
 </script>
 @endpush

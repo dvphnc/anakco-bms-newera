@@ -115,15 +115,23 @@ class DocumentQueueService
      *  3. Appends AppointmentStatusLog if a linked appointment exists
      *  4. Queues email if source=portal and email address exists
      */
-    public function reverseAdvance(Document $document, string $newStatus, string $changedBy): Document
-    {
+    public function reverseAdvance(
+        Document $document,
+        string   $newStatus,
+        string   $changedBy,
+        ?string  $note       = null,
+        ?string  $releasedTo = null,
+        ?int     $releasedBy = null,
+    ): Document {
         $fromStatus = $document->status;
 
-        DB::transaction(function () use ($document, $newStatus, $changedBy, $fromStatus) {
+        DB::transaction(function () use ($document, $newStatus, $changedBy, $fromStatus, $note, $releasedTo, $releasedBy) {
 
             $docUpdate = ['status' => $newStatus];
             if ($newStatus === 'Released' && $document->status !== 'Released') {
-                $docUpdate['released_at'] = now();
+                $docUpdate['released_at']          = now();
+                $docUpdate['released_to']          = $releasedTo;
+                $docUpdate['released_by_user_id']  = $releasedBy;
             }
             $document->update($docUpdate);
 
@@ -139,12 +147,16 @@ class DocumentQueueService
                 // Audit log on the appointment side too
                 $appointment = DocumentAppointment::find($document->appointment_id);
                 if ($appointment) {
+                    $logNote = 'Status updated from Document Issuance module.';
+                    if ($note) {
+                        $logNote = $note;
+                    }
                     AppointmentStatusLog::create([
                         'appointment_id' => $appointment->id,
                         'from_status'    => $fromStatus,
                         'to_status'      => $newStatus,
                         'changed_by'     => $changedBy,
-                        'note'           => 'Status updated from Document Issuance module.',
+                        'note'           => $logNote,
                     ]);
                 }
             }
@@ -186,6 +198,11 @@ class DocumentQueueService
     public function sendSubmissionConfirmation(DocumentAppointment $appointment): void
     {
         if (! $appointment->email) {
+            return;
+        }
+
+        // Guard: silently skip when SMTP is not configured
+        if (blank(config('mail.mailers.smtp.host'))) {
             return;
         }
 
@@ -248,6 +265,11 @@ class DocumentQueueService
         ?string $fromStatus,
         string  $contextKey,
     ): void {
+        // Guard: silently skip when SMTP is not configured (dev/staging without mail)
+        if (blank(config('mail.mailers.smtp.host'))) {
+            return;
+        }
+
         // Skip sending for 'Submitted' (handled by sendSubmissionConfirmation)
         // and suppress 'Confirmed' — keep only the 4 meaningful user-facing statuses
         if (in_array($newStatus, ['Confirmed'])) {
