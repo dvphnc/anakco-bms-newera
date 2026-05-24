@@ -8,7 +8,7 @@
         <p class="page-subtitle">{{ $document->doc_number }} — {{ $document->document_type }}</p>
     </div>
     <div class="page-actions">
-        <a href="{{ route('documents.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to List</a>
+        <a href="{{ route('documents.show', $document) }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 </div>
 
