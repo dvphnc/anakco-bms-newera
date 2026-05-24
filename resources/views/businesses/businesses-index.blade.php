@@ -451,6 +451,7 @@
     top: 0 !important;
     right: 8px !important;
 }
+.btn-export-filtered { border-color: var(--gold) !important; box-shadow: 0 0 0 2px rgba(200,134,26,0.18) !important; }
 </style>
 <script>
 $(document).ready(function () {
