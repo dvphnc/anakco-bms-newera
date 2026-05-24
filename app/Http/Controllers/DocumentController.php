@@ -55,7 +55,7 @@ class DocumentController extends Controller
                         ? '<span style="font-weight:600;color:var(--navy)">₱'.number_format($fee, 2).'</span>'
                         : '<span class="badge badge-green">Free</span>';
                 })
-                ->addColumn('date_col', fn ($d) => '<span class="td-muted">'.$d->created_at->format('M d, Y').'</span>')
+                ->addColumn('date_col', fn ($d) => '<span class="td-muted">'.$d->created_at->format('m/d/Y').'</span>')
                 ->addColumn('status_col', function ($d) {
                     // Identical CSS classes to AppointmentController — single source of truth
                     $cls = match ($d->status) {
