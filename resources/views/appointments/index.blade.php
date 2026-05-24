@@ -862,14 +862,10 @@ $(document).ready(function () {
     switchTab(_activeTab);
     checkTabOverflow();
 
-    /* ── Select2 filters ────────────────────────────────────────── */
-    // Helper: temporarily reveal hidden panel so Select2 can measure width
-    function initS2(panelId, $el, placeholder) {
-        var $panel = $('#' + panelId);
-        var wasHidden = $panel.css('display') === 'none';
-        if (wasHidden) {
-            $panel.css({ visibility: 'hidden', display: '' });
-        }
+    /* ── Select2 init — hidden-panel trick so width measures correctly ── */
+    function initS2inPanel(panelId, filterId, $el, placeholder) {
+        var $fp = $('#' + filterId);
+        $fp.css({ display: 'block', visibility: 'hidden', position: 'absolute', 'z-index': '-1', width: ($('#' + panelId).width() || 600) + 'px' });
         $el.select2({
             dropdownParent: $('body'),
             allowClear:     true,
@@ -878,15 +874,58 @@ $(document).ready(function () {
             minimumResultsForSearch: Infinity,
             language: { noResults: function () { return 'No matches'; } }
         });
-        if (wasHidden) {
-            $panel.css({ visibility: '', display: 'none' });
-        }
+        $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
     }
 
-    initS2('panelDocuments', $('#docStatusFilter'), 'All statuses…');
-    initS2('panelDocuments', $('#docTypeFilter'),   'All document types…');
-    initS2('panelBusiness',  $('#bizStatusFilter'), 'All statuses…');
-    initS2('panelBlotter',   $('#blotterStatusFilter'), 'All statuses…');
+    initS2inPanel('panelDocuments', 'docFilterPanel',     $('#docStatusFilter'),     'All statuses…');
+    initS2inPanel('panelDocuments', 'docFilterPanel',     $('#docTypeFilter'),       'All document types…');
+    initS2inPanel('panelBusiness',  'bizFilterPanel',     $('#bizStatusFilter'),     'All statuses…');
+    initS2inPanel('panelBlotter',   'blotterFilterPanel', $('#blotterStatusFilter'), 'All statuses…');
+
+    /* ── Filter toggle + badge helpers ──────────────────────────── */
+    var filterConfig = {
+        doc:     { panel: 'docFilterPanel',     text: 'docFilterToggleText',     badge: 'docFilterBadge',     key: 'apt_fp_doc' },
+        biz:     { panel: 'bizFilterPanel',     text: 'bizFilterToggleText',     badge: 'bizFilterBadge',     key: 'apt_fp_biz' },
+        blotter: { panel: 'blotterFilterPanel', text: 'blotterFilterToggleText', badge: 'blotterFilterBadge', key: 'apt_fp_blotter' },
+    };
+
+    window.toggleAptFilter = function (prefix) {
+        var cfg   = filterConfig[prefix];
+        var panel = document.getElementById(cfg.panel);
+        var isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        document.getElementById(cfg.text).textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+        localStorage.setItem(cfg.key, isOpen ? '0' : '1');
+    };
+
+    function updateAptBadge(prefix) {
+        var cfg = filterConfig[prefix];
+        var n = 0;
+        if (prefix === 'doc') {
+            if ($('#docSearch').val())       n++;
+            if ($('#docTypeFilter').val())   n++;
+            if ($('#docStatusFilter').val()) n++;
+        } else if (prefix === 'biz') {
+            if ($('#bizSearch').val())       n++;
+            if ($('#bizStatusFilter').val()) n++;
+        } else if (prefix === 'blotter') {
+            if ($('#blotterSearch').val())       n++;
+            if ($('#blotterStatusFilter').val()) n++;
+        }
+        var badge = document.getElementById(cfg.badge);
+        if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; }
+        else        { badge.style.display = 'none'; }
+    }
+
+    // Restore open/closed state from localStorage
+    ['doc', 'biz', 'blotter'].forEach(function (prefix) {
+        var cfg = filterConfig[prefix];
+        if (localStorage.getItem(cfg.key) === '1') {
+            document.getElementById(cfg.panel).style.display = 'block';
+            document.getElementById(cfg.text).textContent = 'Hide Filters';
+        }
+        updateAptBadge(prefix);
+    });
 
     /* ── DataTable vars — declared early so switchTab typeof checks work ── */
     var docTable, bizTable, blotterTable;
