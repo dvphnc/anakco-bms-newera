@@ -413,32 +413,31 @@ $(document).ready(function () {
     });
 
     /* ── Axios DELETE ─────────────────────────────────────────────────── */
-    $('#businessesTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        const btn  = $(this);
-        const form = btn.closest('form');
-        const url  = form.attr('action');
+    $('#businessesTable').on('click', '.biz-delete-btn', function () {
+        const $btn = $(this);
+        const url  = $btn.data('url');
+        const num  = $btn.data('num');
+        const name = $btn.data('name');
 
         bmsConfirm({
-            title:   form.data('confirm-title') || 'Delete Permit',
-            message: form.data('confirm'),
-            ok:      form.data('confirm-ok')    || 'Delete',
+            title:   'Delete Business Permit',
+            message: 'Delete permit ' + num + ' for ' + name + '? This cannot be undone.',
+            ok:      'Delete',
         }, function () {
-            const icon = btn.find('i');
+            const icon = $btn.find('i');
             const orig = icon.attr('class');
-            icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
-            btn.prop('disabled', true);
+            icon.attr('class', 'fas fa-spinner fa-spin');
+            $btn.prop('disabled', true);
 
-            axios.delete(url)
+            axios.delete(url, { data: { _token: '{{ csrf_token() }}' } })
                 .then(function (res) {
-                    table.row(form.closest('tr')).remove().draw(false);
+                    table.row($btn.closest('tr')).remove().draw(false);
                     bmsStatDecrement('statBizTotal');
                     bmsToast(res.data.message || 'Permit deleted.', 'success');
                 })
                 .catch(function () {
-                    icon.attr('class', orig).css('color', '');
-                    btn.prop('disabled', false);
+                    icon.attr('class', orig);
+                    $btn.prop('disabled', false);
                     bmsToast('Could not delete permit.', 'error');
                 });
         });
