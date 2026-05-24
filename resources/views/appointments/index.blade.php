@@ -162,24 +162,49 @@
          PANEL 2 — BUSINESS PERMITS
     ═══════════════════════════════════════════════════════════ --}}
     <div id="panelBusiness" class="apt-panel" style="display:none">
-        <div class="apt-toolbar">
-            <div style="position:relative;flex:1;max-width:320px">
-                <i class="fas fa-search apt-search-icon"></i>
-                <input type="text" id="bizSearch" class="apt-search"
-                       placeholder="Business name, owner, permit no.…">
+        <div style="border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;justify-content:space-between;
+                        padding:12px 20px;cursor:pointer;background:#fafbfc"
+                 onclick="toggleAptFilter('biz')">
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span style="font-size:13px;font-weight:600;color:var(--navy)">
+                        <i class="fas fa-sliders" style="margin-right:6px"></i>Filters
+                    </span>
+                    <span id="bizFilterBadge" class="badge badge-gold" style="display:none"></span>
+                </div>
+                <button type="button" class="btn btn-gold btn-sm"
+                        onclick="event.stopPropagation();toggleAptFilter('biz')">
+                    <i class="fas fa-sliders"></i>
+                    <span id="bizFilterToggleText">Show Filters</span>
+                </button>
             </div>
-            <div style="width:160px;flex-shrink:0">
-                <select id="bizStatusFilter">
-                    <option value=""></option>
-                    <option value="Pending">Pending</option>
-                    <option value="For Review">For Review</option>
-                    <option value="Active">Active</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
+            <div id="bizFilterPanel" style="display:none;padding:16px 20px;border-top:1px solid var(--border);background:#fff">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+                    <div class="form-group" style="grid-column:1/-1;margin:0">
+                        <label class="form-label">Search</label>
+                        <div style="position:relative">
+                            <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
+                            <input type="text" id="bizSearch" class="form-control" style="padding-left:32px"
+                                   placeholder="Business name, owner, permit no.…">
+                        </div>
+                    </div>
+                    <div class="form-group" style="grid-column:span 2;margin:0">
+                        <label class="form-label">Status</label>
+                        <select id="bizStatusFilter">
+                            <option value=""></option>
+                            <option value="Pending">Pending</option>
+                            <option value="For Review">For Review</option>
+                            <option value="Active">Active</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="resetBizFilters()">
+                        <i class="fas fa-xmark"></i> Reset All Filters
+                    </button>
+                </div>
             </div>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="resetBizFilters()">
-                <i class="fas fa-xmark"></i> Reset
-            </button>
         </div>
         <div class="table-responsive">
             <table id="bizTable" style="width:100%">
@@ -203,26 +228,51 @@
          PANEL 3 — BLOTTER REPORTS
     ═══════════════════════════════════════════════════════════ --}}
     <div id="panelBlotter" class="apt-panel" style="display:none">
-        <div class="apt-toolbar">
-            <div style="position:relative;flex:1;max-width:320px">
-                <i class="fas fa-search apt-search-icon"></i>
-                <input type="text" id="blotterSearch" class="apt-search"
-                       placeholder="Complainant, case no., incident type…">
+        <div style="border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;justify-content:space-between;
+                        padding:12px 20px;cursor:pointer;background:#fafbfc"
+                 onclick="toggleAptFilter('blotter')">
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span style="font-size:13px;font-weight:600;color:var(--navy)">
+                        <i class="fas fa-sliders" style="margin-right:6px"></i>Filters
+                    </span>
+                    <span id="blotterFilterBadge" class="badge badge-gold" style="display:none"></span>
+                </div>
+                <button type="button" class="btn btn-gold btn-sm"
+                        onclick="event.stopPropagation();toggleAptFilter('blotter')">
+                    <i class="fas fa-sliders"></i>
+                    <span id="blotterFilterToggleText">Show Filters</span>
+                </button>
             </div>
-            <div style="width:160px;flex-shrink:0">
-                <select id="blotterStatusFilter">
-                    <option value=""></option>
-                    <option value="Pending">Pending</option>
-                    <option value="Active">Active</option>
-                    <option value="Under Investigation">Under Investigation</option>
-                    <option value="Mediated">Mediated</option>
-                    <option value="Settled">Settled</option>
-                    <option value="Closed">Closed</option>
-                </select>
+            <div id="blotterFilterPanel" style="display:none;padding:16px 20px;border-top:1px solid var(--border);background:#fff">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+                    <div class="form-group" style="grid-column:1/-1;margin:0">
+                        <label class="form-label">Search</label>
+                        <div style="position:relative">
+                            <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
+                            <input type="text" id="blotterSearch" class="form-control" style="padding-left:32px"
+                                   placeholder="Complainant, case no., incident type…">
+                        </div>
+                    </div>
+                    <div class="form-group" style="grid-column:span 2;margin:0">
+                        <label class="form-label">Status</label>
+                        <select id="blotterStatusFilter">
+                            <option value=""></option>
+                            <option value="Pending">Pending</option>
+                            <option value="Active">Active</option>
+                            <option value="Under Investigation">Under Investigation</option>
+                            <option value="Mediated">Mediated</option>
+                            <option value="Settled">Settled</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="resetBlotterFilters()">
+                        <i class="fas fa-xmark"></i> Reset All Filters
+                    </button>
+                </div>
             </div>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="resetBlotterFilters()">
-                <i class="fas fa-xmark"></i> Reset
-            </button>
         </div>
         <div class="table-responsive">
             <table id="blotterTable" style="width:100%">
