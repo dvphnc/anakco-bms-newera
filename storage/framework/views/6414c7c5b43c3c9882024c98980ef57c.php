@@ -7,7 +7,7 @@
         <p class="page-subtitle"><?php echo e($document->doc_number); ?> — <?php echo e($document->document_type); ?></p>
     </div>
     <div class="page-actions">
-        <a href="<?php echo e(route('documents.index')); ?>" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to List</a>
+        <a href="<?php echo e(route('documents.show', $document)); ?>" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 </div>
 
@@ -199,8 +199,14 @@ unset($__errorArgs, $__bag); ?>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Issuing Officer</label>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);font-size:13.5px">
-                    <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px;flex-shrink:0">
+                <div style="display:flex;align-items:center;gap:10px;
+                            padding:10px 14px;min-height:58px;
+                            background:var(--surface2);border:1px solid var(--border);
+                            border-radius:var(--radius);font-size:13.5px">
+                    <div style="width:34px;height:34px;border-radius:50%;
+                                background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+                                display:flex;align-items:center;justify-content:center;
+                                font-weight:700;color:#fff;font-size:13px;flex-shrink:0">
                         <?php echo e(strtoupper(substr(auth()->user()->name, 0, 1))); ?>
 
                     </div>
@@ -213,7 +219,11 @@ unset($__errorArgs, $__bag); ?>
             </div>
             <div class="form-group">
                 <label class="form-label">Document Number</label>
-                <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);font-size:13.5px;font-family:monospace;color:var(--text-muted)">
+                <div style="display:flex;align-items:center;
+                            padding:10px 14px;min-height:58px;
+                            background:var(--surface2);border:1px solid var(--border);
+                            border-radius:var(--radius);font-size:14px;
+                            font-family:monospace;font-weight:600;color:var(--navy)">
                     <?php echo e($document->doc_number); ?>
 
                 </div>
@@ -248,10 +258,25 @@ unset($__errorArgs, $__bag); ?>
 </style>
 <script>
 (function () {
+    // ── Submit spinner ────────────────────────────────────────────
     document.getElementById('docEditForm').addEventListener('submit', function () {
         document.getElementById('docEditLabel').style.display   = 'none';
         document.getElementById('docEditSpinner').style.display = '';
         document.getElementById('docEditSubmitBtn').disabled = true;
+    });
+
+    // ── Resident Select2 pre-selection ────────────────────────────
+    // The global init (app.blade.php) runs on $(document).ready.
+    // We use a short setTimeout(0) to queue AFTER it, then trigger
+    // change so Select2 renders the pre-populated <option selected>.
+    $(document).ready(function () {
+        setTimeout(function () {
+            var $sel = $('#resident_id');
+            // Only force-render if there is already a selected value
+            if ($sel.val()) {
+                $sel.trigger('change.select2');
+            }
+        }, 0);
     });
 })();
 </script>
