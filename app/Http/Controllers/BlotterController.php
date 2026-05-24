@@ -68,9 +68,10 @@ class BlotterController extends Controller
 
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
-                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View Case"><i class="fas fa-eye"></i></a>
+                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon"
+                               data-tippy-content="View Case"><i class="fas fa-eye"></i></a>
                             <button class="btn btn-primary btn-sm btn-icon blotter-status-btn"
-                                    title="Update Status"
+                                    data-tippy-content="Update Status"
                                     data-id="'.$c->id.'"
                                     data-num="'.e($c->case_number).'"
                                     data-status="'.e($c->status).'"
@@ -79,15 +80,15 @@ class BlotterController extends Controller
                                     data-name="'.e($c->complainant_name ?? '').'">
                                 <i class="fas fa-rotate"></i>
                             </button>
-                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
-                            <form method="POST" action="'.$delete.'"
-                                  data-confirm="Delete Case '.e($c->case_number).'? This will permanently remove the record and any attachments."
-                                  data-confirm-title="Delete Blotter Case"
-                                  data-confirm-ok="Delete Case">
-                                <input type="hidden" name="_token" value="'.csrf_token().'">
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
-                            </form>
+                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon"
+                               data-tippy-content="Edit"><i class="fas fa-pen"></i></a>
+                            <button class="btn btn-danger btn-sm btn-icon blotter-delete-btn"
+                                    data-tippy-content="Delete Case"
+                                    data-url="'.e($delete).'"
+                                    data-num="'.e($c->case_number).'"
+                                    data-name="'.e($c->complainant_name ?? '').'">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>';
                 })
                 ->filter(function ($query) use ($request) {
