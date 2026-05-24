@@ -958,7 +958,7 @@
     window.bmsToast = function (message, type) {
         type = type || 'success';
         var map = {
-            success: { bg:'#f0fdf4', border:'#86efac', color:'#166534', icon:'fa-circle-check' },
+            success: { bg:'rgba(22,101,52,0.07)', border:'rgba(22,101,52,0.18)', color:'#14532D', icon:'fa-circle-check' },
             error:   { bg:'#fff1f2', border:'#fda4af', color:'#be123c', icon:'fa-circle-exclamation' },
             warning: { bg:'#fffbeb', border:'#fcd34d', color:'#92400e', icon:'fa-triangle-exclamation' },
         };
