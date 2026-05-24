@@ -449,18 +449,37 @@
 
     function renderStepper(d) {
         if (!d.steps || !d.steps.length || d.cancelled) return '';
+
+        // Per-step custom colors for current state
+        var stepColors = {
+            'Pending':    { bg: '#C8861A', border: '#C8861A', shadow: 'rgba(200,134,26,.25)' },
+            'Processing': { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
+            'Ready':      { bg: '#16a34a', border: '#16a34a', shadow: 'rgba(22,163,74,.25)' },
+            'Released':   { bg: '#0D2144', border: '#0D2144', shadow: 'rgba(13,33,68,.25)' },
+        };
+
         var dots = d.steps.map(function (step, i) {
             var isDone    = d.step_index !== -1 && i < d.step_index;
-            var isCurrent = d.status === step;
+            var isCurrent = d.status === step ||
+                            (d.step_index !== -1 && i === d.step_index && !d.steps.includes(d.status));
             var cls  = isDone ? 'done' : (isCurrent ? 'current' : '');
             var icon = isDone
                 ? '<i class="fas fa-check"></i>'
                 : (isCurrent ? '<i class="fas fa-circle-dot"></i>' : (i + 1));
+
+            var dotStyle = '';
+            if (isCurrent && stepColors[step]) {
+                var c = stepColors[step];
+                dotStyle = ' style="background:' + c.bg + ';border-color:' + c.border +
+                           ';box-shadow:0 0 0 4px ' + c.shadow + ';color:#fff"';
+            }
+
             return '<div class="prog-step ' + cls + '">' +
-                '<div class="prog-dot">' + icon + '</div>' +
+                '<div class="prog-dot"' + dotStyle + '>' + icon + '</div>' +
                 '<div class="prog-label">' + esc(step) + '</div>' +
                 '</div>';
         }).join('');
+
         return '<div class="progress-section">' +
             '<div class="ps-title"><i class="fas fa-route"></i>&nbsp; Progress</div>' +
             '<div class="progress-steps">' + dots + '</div>' +
