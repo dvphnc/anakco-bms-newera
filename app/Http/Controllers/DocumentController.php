@@ -107,9 +107,10 @@ class DocumentController extends Controller
                         default      => '',
                     };
 
-                    // Print button — only for Released docs (certificate is ready); show eye icon otherwise
+                    // Print button — only for Released docs (opens in new tab, auto-triggers print dialog)
+                    // Eye button for all other statuses
                     $printBtn = $d->status === 'Released'
-                        ? '<a href="'.$show.'" target="_blank"
+                        ? '<a href="'.$show.'?print=1" target="_blank"
                               class="btn btn-primary btn-sm btn-icon"
                               title="Print Certificate"
                               style="background:var(--navy);border-color:var(--navy)">
