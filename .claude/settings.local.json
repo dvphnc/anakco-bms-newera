@@ -64,7 +64,10 @@
       "Bash(php -l D:/laragon/www/anakco_bms/resources/views/portal/index.blade.php)",
       "Bash(php D:/laragon/www/anakco_bms/artisan config:clear)",
       "Bash(php D:/laragon/www/anakco_bms/artisan optimize:clear)",
-      "Bash(mkdir -p D:/laragon/www/anakco_bms/storage/framework/views 2>&1 && php D:/laragon/www/anakco_bms/artisan config:clear 2>&1 && php D:/laragon/www/anakco_bms/artisan view:clear 2>&1 && php D:/laragon/www/anakco_bms/artisan optimize:clear 2>&1)"
+      "Bash(mkdir -p D:/laragon/www/anakco_bms/storage/framework/views 2>&1 && php D:/laragon/www/anakco_bms/artisan config:clear 2>&1 && php D:/laragon/www/anakco_bms/artisan view:clear 2>&1 && php D:/laragon/www/anakco_bms/artisan optimize:clear 2>&1)",
+      "Bash(php -l app/Services/DocumentQueueService.php)",
+      "Bash(php -l app/Http/Controllers/DocumentController.php)",
+      "Bash(php -l app/Models/Document.php)"
     ]
   }
 }
