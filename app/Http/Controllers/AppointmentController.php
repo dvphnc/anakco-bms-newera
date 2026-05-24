@@ -67,29 +67,38 @@ class AppointmentController extends Controller
                 })
                 ->addColumn('actions', function ($a) {
                     $convertUrl = route('appointments.convert', $a);
+                    $deleteUrl  = route('appointments.destroy', $a);
+                    $deleteBtn  = '<button class="btn btn-danger btn-sm btn-icon apt-delete-btn"
+                                           style="height:30px;width:30px;padding:0;flex-shrink:0;
+                                                  display:inline-flex;align-items:center;justify-content:center"
+                                           title="Delete Appointment"
+                                           data-num="'.e($a->appointment_number).'"
+                                           data-name="'.e($a->resident_name).'"
+                                           data-url="'.e($deleteUrl).'">
+                                       <i class="fas fa-trash" style="font-size:11px"></i>
+                                   </button>';
 
-                    // ── Already released: show View Record link ──
+                    // ── Already released: show View Record link + delete ──
                     if ($a->status === 'Released') {
                         $viewUrl = $a->document ? route('documents.show', $a->document) : null;
-                        return $viewUrl
-                            ? '<div style="display:flex;justify-content:flex-end">
-                                   <a href="'.e($viewUrl).'" target="_blank"
-                                      class="btn btn-secondary btn-sm"
-                                      style="font-size:12px;padding:0 10px;height:30px;
-                                             display:inline-flex;align-items:center;gap:5px">
-                                       <i class="fas fa-file-lines"></i> View Record
-                                   </a>
-                               </div>'
+                        $viewBtn = $viewUrl
+                            ? '<a href="'.e($viewUrl).'" target="_blank"
+                                  class="btn btn-secondary btn-sm"
+                                  style="font-size:12px;padding:0 10px;height:30px;
+                                         display:inline-flex;align-items:center;gap:5px">
+                                   <i class="fas fa-file-lines"></i> View Record
+                               </a>'
                             : '';
+                        return '<div style="display:flex;justify-content:flex-end;gap:6px">'.$viewBtn.$deleteBtn.'</div>';
                     }
 
-                    // ── Cancelled: nothing ──
+                    // ── Cancelled: just delete ──
                     if ($a->status === 'Cancelled') {
-                        return '';
+                        return '<div style="display:flex;justify-content:flex-end">'.$deleteBtn.'</div>';
                     }
 
-                    // ── Pending / Processing / Ready: single Issue Document button ──
-                    return '<div style="display:flex;justify-content:flex-end">
+                    // ── Pending / Processing / Ready: Issue Document + delete ──
+                    return '<div style="display:flex;justify-content:flex-end;gap:6px">
                                 <button class="btn btn-sm apt-issue-btn"
                                         style="height:30px;padding:0 12px;font-size:12px;font-weight:600;
                                                background:var(--navy);color:#fff;border:1px solid var(--navy);
@@ -105,6 +114,7 @@ class AppointmentController extends Controller
                                         data-or="'.e($a->document?->or_number ?? '').'">
                                     <i class="fas fa-file-circle-check" style="font-size:11px"></i> Issue Document
                                 </button>
+                                '.$deleteBtn.'
                             </div>';
                 })
                 ->filter(function ($query) use ($request) {
