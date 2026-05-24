@@ -71,7 +71,6 @@ class DocumentController extends Controller
                 })
                 ->addColumn('actions', function ($d) {
                     $show      = route('documents.show', $d);
-                    $edit      = route('documents.edit', $d);
                     $delete    = route('documents.destroy', $d);
                     $statusUrl = route('documents.quickStatus', $d);
 
