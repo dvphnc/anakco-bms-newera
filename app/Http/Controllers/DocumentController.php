@@ -300,21 +300,25 @@ class DocumentController extends Controller
     public function quickStatus(Request $request, Document $document)
     {
         $validated = $request->validate([
-            'status'      => 'required|in:' . implode(',', Document::$statuses),
-            'note'        => 'nullable|string|max:500',
-            'released_to' => 'nullable|string|max:255',
+            'status'        => 'required|in:' . implode(',', Document::$statuses),
+            'note'          => 'nullable|string|max:500',
+            'resident_note' => 'nullable|string|max:500',
+            'released_to'   => 'nullable|string|max:255',
+            'pickup_date'   => 'nullable|date',
         ]);
 
         $old = $document->getOriginal();
 
         // All sync + reverse-mirror + email delegated to DocumentQueueService
         $document = app(DocumentQueueService::class)->reverseAdvance(
-            document:    $document,
-            newStatus:   $validated['status'],
-            changedBy:   auth()->user()->name,
-            note:        $validated['note'] ?? null,
-            releasedTo:  $validated['released_to'] ?? null,
-            releasedBy:  auth()->id(),
+            document:      $document,
+            newStatus:     $validated['status'],
+            changedBy:     auth()->user()->name,
+            note:          $validated['note']          ?? null,
+            residentNote:  $validated['resident_note'] ?? null,
+            pickupDate:    $validated['pickup_date']   ?? null,
+            releasedTo:    $validated['released_to']   ?? null,
+            releasedBy:    auth()->id(),
         );
 
         $this->logActivity('updated', $document, $old, $document->toArray());

@@ -128,13 +128,15 @@ class DocumentQueueService
         Document $document,
         string   $newStatus,
         string   $changedBy,
-        ?string  $note       = null,
-        ?string  $releasedTo = null,
-        ?int     $releasedBy = null,
+        ?string  $note         = null,
+        ?string  $residentNote = null,
+        ?string  $pickupDate   = null,
+        ?string  $releasedTo   = null,
+        ?int     $releasedBy   = null,
     ): Document {
         $fromStatus = $document->status;
 
-        DB::transaction(function () use ($document, $newStatus, $changedBy, $fromStatus, $note, $releasedTo, $releasedBy) {
+        DB::transaction(function () use ($document, $newStatus, $changedBy, $fromStatus, $note, $residentNote, $pickupDate, $releasedTo, $releasedBy) {
 
             $docUpdate = ['status' => $newStatus];
             if ($newStatus === 'Released' && $document->status !== 'Released') {
@@ -147,19 +149,30 @@ class DocumentQueueService
             // Reverse-mirror to linked appointment, raw query to prevent event loop
             if ($document->appointment_id) {
                 $aptUpdate = ['status' => $newStatus, 'processed_by' => $changedBy];
+
+                // Store pickup date on the appointment when marking Ready
+                if ($newStatus === 'Ready' && $pickupDate) {
+                    $aptUpdate['pickup_date'] = $pickupDate;
+                } elseif ($newStatus !== 'Ready') {
+                    $aptUpdate['pickup_date'] = null;
+                }
+
                 if ($newStatus === 'Released') {
                     $aptUpdate['released_at'] = now();
                 }
+
+                // Store resident note on the appointment (surfaced in portal tracker)
+                if ($residentNote) {
+                    $aptUpdate['notes'] = $residentNote;
+                }
+
                 DocumentAppointment::where('id', $document->appointment_id)
                     ->update($aptUpdate);
 
                 // Audit log on the appointment side too
                 $appointment = DocumentAppointment::find($document->appointment_id);
                 if ($appointment) {
-                    $logNote = 'Status updated from Document Issuance module.';
-                    if ($note) {
-                        $logNote = $note;
-                    }
+                    $logNote = $note ?: 'Status updated from Document Issuance module.';
                     AppointmentStatusLog::create([
                         'appointment_id' => $appointment->id,
                         'from_status'    => $fromStatus,
@@ -171,16 +184,17 @@ class DocumentQueueService
             }
         });
 
-        // Queue email for portal-sourced documents (previously this path was silent)
+        // Queue email for portal-sourced documents
         if ($document->source === 'portal') {
             $appointment = $document->appointment_id
                 ? DocumentAppointment::find($document->appointment_id)
                 : null;
 
-            $email    = $appointment?->email;
-            $name     = $appointment?->resident_name ?? $document->resident_name_portal;
-            $refNum   = $appointment?->appointment_number ?? $document->doc_number;
-            $pickup   = $appointment?->pickup_date?->format('Y-m-d');
+            $email  = $appointment?->email;
+            $name   = $appointment?->resident_name ?? $document->resident_name_portal;
+            $refNum = $appointment?->appointment_number ?? $document->doc_number;
+            // Prefer the newly supplied pickup date; fall back to whatever's on record
+            $pickup = $pickupDate ?? $appointment?->pickup_date?->format('Y-m-d');
 
             if ($email) {
                 $this->dispatchMail(
@@ -188,7 +202,7 @@ class DocumentQueueService
                     name:        $name ?? '—',
                     refNum:      $refNum,
                     newStatus:   $newStatus,
-                    notes:       null,
+                    notes:       $residentNote,  // resident-facing note goes in email
                     pickupDate:  $pickup,
                     fromStatus:  $fromStatus,
                     contextKey:  'doc-' . $document->id,
