@@ -1,6 +1,5 @@
-@extends('layouts.app')
-@section('title', 'Portal Appointments')
-@section('content')
+<?php $__env->startSection('title', 'Portal Appointments'); ?>
+<?php $__env->startSection('content'); ?>
 
 <div class="page-header">
     <div>
@@ -8,73 +7,73 @@
         <p class="page-subtitle">Track portal submissions and their document issuance status</p>
     </div>
     <div class="page-actions">
-        <a href="{{ route('portal.index') }}" class="btn btn-secondary" target="_blank">
+        <a href="<?php echo e(route('portal.index')); ?>" class="btn btn-secondary" target="_blank">
             <i class="fas fa-external-link-alt"></i> View Portal
         </a>
     </div>
 </div>
 
-@php
+<?php
     $pendingCount   = \App\Models\DocumentAppointment::where('status', 'Pending')->count();
     $readyCount     = \App\Models\DocumentAppointment::where('status', 'Ready')->count();
     $releasedCount  = \App\Models\DocumentAppointment::where('status', 'Released')->count();
     $totalCount     = \App\Models\DocumentAppointment::count();
     $bizPending     = \App\Models\Business::where('source', 'portal')->whereIn('status', ['Pending', 'For Review'])->count();
     $blotterPending = \App\Models\BlotterCase::where('source', 'portal')->where('status', 'Pending')->count();
-@endphp
+?>
 
-{{-- Stat cards --}}
+
 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-file-lines"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statApptTotal">{{ number_format($totalCount) }}</div>
+            <div class="stat-number" id="statApptTotal"><?php echo e(number_format($totalCount)); ?></div>
             <div class="stat-label">Document Requests</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="switchTab('documents');aptQuickStatus('Pending')">
         <div class="stat-icon" style="background:rgba(200,134,26,0.10);color:var(--gold)"><i class="fas fa-hourglass-half"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statAptPending">{{ number_format($pendingCount) }}</div>
+            <div class="stat-number" id="statAptPending"><?php echo e(number_format($pendingCount)); ?></div>
             <div class="stat-label">Pending</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="switchTab('documents');aptQuickStatus('Ready')">
         <div class="stat-icon" style="background:rgba(22,163,74,0.10);color:#16a34a"><i class="fas fa-box-open"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statAptReady">{{ number_format($readyCount) }}</div>
+            <div class="stat-number" id="statAptReady"><?php echo e(number_format($readyCount)); ?></div>
             <div class="stat-label">Ready for Pick-up</div>
         </div>
     </div>
     <div class="stat-card" style="cursor:pointer" onclick="switchTab('documents');aptQuickStatus('Released')">
         <div class="stat-icon" style="background:rgba(13,33,68,0.08);color:var(--navy)"><i class="fas fa-circle-check"></i></div>
         <div class="stat-info">
-            <div class="stat-number" id="statAptReleased">{{ number_format($releasedCount) }}</div>
+            <div class="stat-number" id="statAptReleased"><?php echo e(number_format($releasedCount)); ?></div>
             <div class="stat-label">Released</div>
         </div>
     </div>
 </div>
 
-{{-- Tabbed card --}}
+
 <div class="card" style="overflow:hidden">
 
-    {{-- ── Tab bar ── --}}
+    
     <div class="apt-tabbar-wrap">
         <div class="apt-tabbar" id="aptTabBar">
             <button class="apt-tab active" data-tab="documents" onclick="switchTab('documents')">
                 <i class="fas fa-file-lines"></i>
                 Document Requests
-                <span class="apt-tab-badge" id="tabBadgeDocs">{{ $totalCount }}</span>
+                <span class="apt-tab-badge" id="tabBadgeDocs"><?php echo e($totalCount); ?></span>
             </button>
             <button class="apt-tab" data-tab="business" onclick="switchTab('business')">
                 <i class="fas fa-store"></i>
                 Business Permits
-                <span class="apt-tab-badge" id="tabBadgeBiz">{{ $bizPending }}</span>
+                <span class="apt-tab-badge" id="tabBadgeBiz"><?php echo e($bizPending); ?></span>
             </button>
             <button class="apt-tab" data-tab="blotter" onclick="switchTab('blotter')">
                 <i class="fas fa-shield-halved"></i>
                 Blotter Reports
-                <span class="apt-tab-badge" id="tabBadgeBlotter">{{ $blotterPending }}</span>
+                <span class="apt-tab-badge" id="tabBadgeBlotter"><?php echo e($blotterPending); ?></span>
             </button>
         </div>
         <button class="apt-tab-more" id="aptTabMore" onclick="scrollTabBar()" title="Scroll tabs">
@@ -82,12 +81,10 @@
         </button>
     </div>
 
-    {{-- ══════════════════════════════════════════════════════════
-         PANEL 1 — DOCUMENT REQUESTS
-    ═══════════════════════════════════════════════════════════ --}}
+    
     <div id="panelDocuments" class="apt-panel">
 
-        {{-- Collapsible Filter Card --}}
+        
         <div style="border-bottom:1px solid var(--border)">
             <div style="display:flex;align-items:center;justify-content:space-between;
                         padding:12px 20px;cursor:pointer;background:#fafbfc"
@@ -118,18 +115,18 @@
                         <label class="form-label">Document Type</label>
                         <select id="docTypeFilter">
                             <option value=""></option>
-                            @foreach($documentTypes as $dt)
-                                <option value="{{ $dt }}">{{ $dt }}</option>
-                            @endforeach
+                            <?php $__currentLoopData = $documentTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($dt); ?>"><?php echo e($dt); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
                     </div>
                     <div class="form-group" style="grid-column:span 2;margin:0">
                         <label class="form-label">Status</label>
                         <select id="docStatusFilter">
                             <option value=""></option>
-                            @foreach($statuses as $s)
-                                <option value="{{ $s }}">{{ $s }}</option>
-                            @endforeach
+                            <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($s); ?>"><?php echo e($s); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
                     </div>
                 </div>
@@ -158,9 +155,7 @@
         </div>
     </div>
 
-    {{-- ══════════════════════════════════════════════════════════
-         PANEL 2 — BUSINESS PERMITS
-    ═══════════════════════════════════════════════════════════ --}}
+    
     <div id="panelBusiness" class="apt-panel" style="display:none">
         <div style="border-bottom:1px solid var(--border)">
             <div style="display:flex;align-items:center;justify-content:space-between;
@@ -224,9 +219,7 @@
         </div>
     </div>
 
-    {{-- ══════════════════════════════════════════════════════════
-         PANEL 3 — BLOTTER REPORTS
-    ═══════════════════════════════════════════════════════════ --}}
+    
     <div id="panelBlotter" class="apt-panel" style="display:none">
         <div style="border-bottom:1px solid var(--border)">
             <div style="display:flex;align-items:center;justify-content:space-between;
@@ -291,19 +284,17 @@
         </div>
     </div>
 
-</div>{{-- /card --}}
+</div>
 
 
-{{-- ══════════════════════════════════════════════════════════════
-     MODAL — Mark Ready for Pick-up (fee + OR capture)
-═══════════════════════════════════════════════════════════════ --}}
+
 <div id="aptReadyModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
      onclick="if(event.target===this)closeReadyModal()">
     <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
                 box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
-        {{-- Header --}}
+        
         <div style="background:linear-gradient(135deg,#15803d,#16a34a);padding:14px 18px;
                     display:flex;align-items:center;justify-content:space-between">
             <div style="display:flex;align-items:center;gap:9px">
@@ -317,7 +308,7 @@
                 <i class="fas fa-xmark"></i>
             </button>
         </div>
-        {{-- Info strip --}}
+        
         <div style="padding:14px 18px 0">
             <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:var(--radius-sm);
                         padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -338,7 +329,7 @@
                 </div>
             </div>
         </div>
-        {{-- Form fields --}}
+        
         <div style="padding:16px 18px">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
                 <div class="form-group" style="margin:0">
@@ -391,9 +382,7 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════════════════
-     MODAL — Issue Document
-═══════════════════════════════════════════════════════════════ --}}
+
 <div id="aptConvertModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -463,9 +452,7 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════════════════
-     MODAL — Issue Business Permit
-═══════════════════════════════════════════════════════════════ --}}
+
 <div id="bizIssueModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -545,9 +532,7 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════════════════
-     MODAL — Activate Blotter Case
-═══════════════════════════════════════════════════════════════ --}}
+
 <div id="blotterActivateModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -612,13 +597,13 @@
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
 /* ── Page bg ── */
@@ -880,7 +865,7 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route('appointments.index') }}',
+            url: '<?php echo e(route('appointments.index')); ?>',
             data: function (d) {
                 d.status        = $('#docStatusFilter').val();
                 d.document_type = $('#docTypeFilter').val();
@@ -928,7 +913,7 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route('appointments.bizData') }}',
+            url: '<?php echo e(route('appointments.bizData')); ?>',
             data: function (d) {
                 d.status        = $('#bizStatusFilter').val();
                 d.search        = { value: $('#bizSearch').val() };
@@ -974,7 +959,7 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route('appointments.blotterData') }}',
+            url: '<?php echo e(route('appointments.blotterData')); ?>',
             data: function (d) {
                 d.status   = $('#blotterStatusFilter').val();
                 d.search   = { value: $('#blotterSearch').val() };
@@ -1029,7 +1014,7 @@ $(document).ready(function () {
         var origHtml = $btn.html();
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>');
 
-        axios.patch(url, { status: 'Processing', _token: '{{ csrf_token() }}' })
+        axios.patch(url, { status: 'Processing', _token: '<?php echo e(csrf_token()); ?>' })
             .then(function (res) {
                 bmsToast(res.data.message || 'Status updated to Processing.', 'success');
                 docTable.ajax.reload(null, false);
@@ -1099,7 +1084,7 @@ $(document).ready(function () {
         var payload = {
             status:      'Ready',
             pickup_date: pickupDate,
-            _token: '{{ csrf_token() }}',
+            _token: '<?php echo e(csrf_token()); ?>',
         };
         var fee  = document.getElementById('rdyFee').value.trim();
         var or_  = document.getElementById('rdyOR').value.trim();
@@ -1169,7 +1154,7 @@ $(document).ready(function () {
         axios.post(window._cvtUrl, {
             fee_paid:  document.getElementById('cvtFee').value  || null,
             or_number: document.getElementById('cvtOR').value   || null,
-            _token: '{{ csrf_token() }}',
+            _token: '<?php echo e(csrf_token()); ?>',
         })
         .then(function (res) {
             closeConvertModal();
@@ -1237,7 +1222,7 @@ $(document).ready(function () {
             expiry_date: expiryDate,
             fee_paid:    document.getElementById('bizIssueFee').value  || null,
             or_number:   document.getElementById('bizIssueOR').value   || null,
-            _token: '{{ csrf_token() }}',
+            _token: '<?php echo e(csrf_token()); ?>',
         })
         .then(function (res) {
             closeBizIssueModal();
@@ -1289,7 +1274,7 @@ $(document).ready(function () {
 
         axios.post(window._blotterActivateUrl, {
             notes: document.getElementById('blotterActivateNotes').value || null,
-            _token: '{{ csrf_token() }}',
+            _token: '<?php echo e(csrf_token()); ?>',
         })
         .then(function (res) {
             closeBlotterActivateModal();
@@ -1316,4 +1301,6 @@ $(document).ready(function () {
 
 }); // end document.ready
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\anakco_bms\resources\views\appointments\index.blade.php ENDPATH**/ ?>
