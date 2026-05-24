@@ -517,10 +517,24 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Quick View ───────────────────────────────────────────────────── */
-    $('#businessesTable').on('click', 'a.biz-qv-btn', function (e) {
-        e.preventDefault();
-        openBizPanel($(this).data('url'));
+        /* ── Issue Permit (portal submissions) ──────────────────────────── */
+    $('#businessesTable').on('click', '.biz-issue-btn', function () {
+        const $btn = $(this);
+        document.getElementById('bizIssueNum').textContent   = $btn.data('num');
+        document.getElementById('bizIssueBiz').textContent   = $btn.data('biz');
+        document.getElementById('bizIssueOwner').textContent = $btn.data('owner');
+        document.getElementById('bizIssueAppt').textContent  = $btn.data('appt');
+        const today    = new Date();
+        const nextYear = new Date(today);
+        nextYear.setFullYear(nextYear.getFullYear() + 1);
+        const fmt = d => d.toISOString().slice(0, 10);
+        document.getElementById('bizIssuePermitDate').value  = fmt(today);
+        document.getElementById('bizIssueExpiryDate').value  = fmt(nextYear);
+        document.getElementById('bizIssueFee').value         = '';
+        document.getElementById('bizIssueOR').value          = '';
+        document.getElementById('bizIssueError').style.display = 'none';
+        window._bizIssueUrl = $btn.data('issue-url');
+        document.getElementById('bizIssueModal').style.display = 'flex';
     });
 
     /* ── URL persistence ──────────────────────────────────────────────── */
@@ -599,6 +613,56 @@ $(document).ready(function () {
         $('#expiryFilter').val(null).trigger('change');
         saveToUrl(); table.ajax.reload();
     });
+});
+
+/* ── Issue Permit Modal (portal) ─────────────────────────────────── */
+window.closeBizIssueModal = function () {
+    document.getElementById('bizIssueModal').style.display = 'none';
+    window._bizIssueUrl = null;
+};
+
+window.saveBizIssue = function () {
+    const permitDate = document.getElementById('bizIssuePermitDate').value;
+    const expiryDate = document.getElementById('bizIssueExpiryDate').value;
+    const errEl      = document.getElementById('bizIssueError');
+    if (!permitDate || !expiryDate) {
+        errEl.textContent   = 'Please fill in both permit date and expiry date.';
+        errEl.style.display = '';
+        return;
+    }
+    const btn    = document.getElementById('bizIssueSaveBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Issuing…';
+    errEl.style.display = 'none';
+
+    axios.post(window._bizIssueUrl, {
+        permit_date: permitDate,
+        expiry_date: expiryDate,
+        fee_paid:    document.getElementById('bizIssueFee').value  || null,
+        or_number:   document.getElementById('bizIssueOR').value   || null,
+        _token:      '{{ csrf_token() }}',
+    })
+    .then(function (res) {
+        closeBizIssueModal();
+        $(document).ready(function () { $('.biz-table-ref').DataTable().ajax.reload(null, false); });
+        // Reload the table — we need a reference to `table`
+        if (typeof table !== 'undefined') table.ajax.reload(null, false);
+        bmsToast(res.data.message || 'Permit issued.', 'success');
+    })
+    .catch(function (err) {
+        errEl.textContent   = err.response?.data?.message || 'Failed to issue permit.';
+        errEl.style.display = '';
+    })
+    .finally(function () {
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fas fa-stamp"></i> Issue Permit';
+    });
+};
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && document.getElementById('bizIssueModal').style.display === 'flex') {
+        closeBizIssueModal();
+    }
 });
 
 /* ── Business Quick View Panel ────────────────────────────────────── */
