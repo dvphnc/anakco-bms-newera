@@ -373,34 +373,11 @@ class AppointmentController extends Controller
                               data-status-url="'.e($statusUrl).'"
                               data-issue-url="'.e($issueUrl).'"';
 
-                if ($b->status === 'Pending') {
-                    return '<div style="display:flex;justify-content:flex-end;gap:6px">
-                                <button class="btn btn-sm biz-status-btn"
-                                        style="height:30px;padding:0 10px;font-size:12px;font-weight:600;
-                                               background:#f0f4ff;color:#1d4ed8;border:1px solid #bfdbfe;
-                                               border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
-                                        '.$dataAttrs.'>
-                                    <i class="fas fa-pen-to-square" style="font-size:11px;margin-right:3px"></i>Update Status
-                                </button>
+                if (in_array($b->status, ['Pending', 'For Review'])) {
+                    return '<div style="display:flex;justify-content:flex-end">
                                 <button class="btn btn-success btn-sm biz-issue-btn"
-                                        style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                        '.$dataAttrs.'>
-                                    <i class="fas fa-stamp"></i> Issue
-                                </button>
-                            </div>';
-                }
-
-                if ($b->status === 'For Review') {
-                    return '<div style="display:flex;justify-content:flex-end;gap:6px">
-                                <button class="btn btn-sm biz-status-btn"
-                                        style="height:30px;padding:0 10px;font-size:12px;font-weight:600;
-                                               background:#f0f4ff;color:#1d4ed8;border:1px solid #bfdbfe;
-                                               border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
-                                        '.$dataAttrs.'>
-                                    <i class="fas fa-pen-to-square" style="font-size:11px;margin-right:3px"></i>Update
-                                </button>
-                                <button class="btn btn-success btn-sm biz-issue-btn"
-                                        style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
+                                        style="font-size:12px;padding:0 12px;height:30px;
+                                               display:inline-flex;align-items:center;gap:5px"
                                         '.$dataAttrs.'>
                                     <i class="fas fa-stamp"></i> Issue Permit
                                 </button>
