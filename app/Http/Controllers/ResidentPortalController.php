@@ -259,8 +259,18 @@ class ResidentPortalController extends Controller
 
     private function trackDocumentPayload(DocumentAppointment $a): array
     {
-        $steps     = ['Pending', 'Processing', 'Ready', 'Released'];
-        $stepIndex = array_search($a->status, $steps);
+        $steps = ['Pending', 'Processing', 'Ready', 'Released'];
+
+        if ($a->status === 'Cancelled') {
+            // Find which step the request was at when it was cancelled
+            // by looking at the from_status of the most recent log entry
+            $cancelLog  = $a->statusLogs->last();
+            $fromStatus = $cancelLog?->from_status;
+            $prevIdx    = $fromStatus ? array_search($fromStatus, $steps) : false;
+            $stepIndex  = $prevIdx !== false ? (int) $prevIdx : 0;
+        } else {
+            $stepIndex = array_search($a->status, $steps);
+        }
 
         $logs = $a->statusLogs->map(fn ($l) => [
             'from' => $l->from_status,

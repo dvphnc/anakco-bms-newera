@@ -167,7 +167,9 @@
 }
 .prog-step.cancelled .prog-dot {
     background: #dc2626; color: #fff; border-color: #dc2626;
+    box-shadow: 0 0 0 4px rgba(220,38,38,.2);
 }
+.prog-step.cancelled .prog-label { color: #dc2626; font-weight: 700; }
 .prog-label {
     font-size: .63rem; color: #9ca3af; font-weight: 500; line-height: 1.2;
 }
