@@ -589,13 +589,22 @@ const DOC_STATUS_CLS = {
     Cancelled:  'badge-red',
 };
 
-/* ── Pipeline remarks modal state ────────────────────────────────── */
+/* ── Pipeline status modal state ─────────────────────────────────── */
 var _pm = { url: null, next: null, isPortal: false, $btn: null, origHtml: null };
 
 const PM_META = {
-    Processing: { icon: '⚙️',  bg: '#f0f4ff', color: '#1d4ed8', label: 'Start Processing', title: 'Advance to Processing' },
-    Ready:      { icon: '🔔',  bg: '#f0fdf4', color: '#15803d', label: 'Mark as Ready',     title: 'Mark Ready for Pick-up' },
-    Released:   { icon: '✅',  bg: '#ecfdf5', color: '#166534', label: 'Confirm Release',   title: 'Confirm Document Release' },
+    Processing: {
+        iconCls: 'fas fa-gear',   iconBg: 'rgba(37,99,235,.18)',   iconColor: '#93c5fd',
+        label: 'Start Processing', title: 'Advance to Processing',
+    },
+    Ready: {
+        iconCls: 'fas fa-bell',   iconBg: 'rgba(22,163,74,.18)',   iconColor: '#86efac',
+        label: 'Mark as Ready',    title: 'Mark Ready for Pick-up',
+    },
+    Released: {
+        iconCls: 'fas fa-flag-checkered', iconBg: 'rgba(255,255,255,.15)', iconColor: '#fff',
+        label: 'Confirm Release',  title: 'Confirm Document Release',
+    },
 };
 
 /* Open modal when pipeline button clicked */
@@ -604,36 +613,62 @@ $(document).on('click', '#documentsTable .doc-pipeline-btn', function () {
     var next     = $btn.data('next');
     var url      = $btn.data('url');
     var isPortal = $btn.data('source') === 'portal';
-    var docNum   = $btn.closest('tr').find('.td-mono').first().text().trim();
-    var meta     = PM_META[next] || { icon: '➡️', bg: '#f8fafc', color: 'var(--navy)', label: 'Confirm', title: 'Update Status' };
+    var $row     = $btn.closest('tr');
+    var docNum   = $row.find('.td-mono').first().text().trim();
+    var resident = $row.find('td:nth-child(2) div:first-child').text().trim();
+    var meta     = PM_META[next] || {
+        iconCls: 'fas fa-arrow-right', iconBg: 'rgba(255,255,255,.15)', iconColor: '#fff',
+        label: 'Confirm', title: 'Update Status',
+    };
 
     /* Stash context */
     _pm = { url: url, next: next, isPortal: isPortal, $btn: $btn, origHtml: $btn.html() };
 
-    /* Populate modal */
+    /* ── Populate header ── */
     var $icon = $('#pmIcon');
-    $icon.text(meta.icon).css({ background: meta.bg, color: meta.color });
+    $icon.html('<i class="' + meta.iconCls + '"></i>')
+         .css({ background: meta.iconBg, color: meta.iconColor });
     $('#pmTitle').text(meta.title);
-    $('#pmDocNum').text(docNum || '');
+
+    /* ── Info strip ── */
+    $('#pmInfoDocNum').text(docNum || '—');
+    $('#pmInfoResident').text(resident || '—');
+
+    /* ── Reset fields ── */
     $('#pmNote').val('');
+    $('#pmResidentNote').val('');
     $('#pmConfirmLabel').text(meta.label);
     $('#pmConfirmSpinner').hide();
     $('#pmConfirmBtn').prop('disabled', false).show();
 
-    /* Released-to field: show & pre-fill with resident name from row.
-       Read only the first div (name) — not the sub-div (Purok / "Portal Submission"). */
+    /* Released-to: show & pre-fill for Release step */
     if (next === 'Released') {
-        var residentCell = $btn.closest('tr').find('td:nth-child(2) div:first-child').text().trim();
-        $('#pmReleasedTo').val(residentCell || '');
+        $('#pmReleasedTo').val(resident || '');
         $('#pmReleasedToRow').show();
     } else {
         $('#pmReleasedToRow').hide();
         $('#pmReleasedTo').val('');
     }
 
+    /* Pickup Date: show & default to tomorrow for Ready step */
+    if (next === 'Ready') {
+        var tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        $('#pmPickupDate').val(tomorrow.toISOString().split('T')[0]);
+        $('#pmPickupDateRow').show();
+    } else {
+        $('#pmPickupDateRow').hide();
+        $('#pmPickupDate').val('');
+    }
+
     /* Show modal */
     $('#pipelineModal').css('display', 'flex');
-    setTimeout(() => $('#pmNote').focus(), 80);
+    /* Focus first interactive field */
+    setTimeout(function () {
+        if (next === 'Released') $('#pmReleasedTo').focus();
+        else if (next === 'Ready') $('#pmPickupDate').focus();
+        else $('#pmResidentNote').focus();
+    }, 80);
 });
 
 /* Close modal */
@@ -656,8 +691,10 @@ $('#pipelineModal').on('click', function (e) {
 window.confirmPipelineAdvance = function () {
     if (!_pm.url) return;
 
-    var note       = $('#pmNote').val().trim();
-    var releasedTo = $('#pmReleasedTo').val().trim();
+    var note         = $('#pmNote').val().trim();
+    var residentNote = $('#pmResidentNote').val().trim();
+    var releasedTo   = $('#pmReleasedTo').val().trim();
+    var pickupDate   = $('#pmPickupDate').val().trim();
 
     /* Validate Released-to when releasing */
     if (_pm.next === 'Released' && !releasedTo) {
@@ -673,12 +710,15 @@ window.confirmPipelineAdvance = function () {
     if (_pm.$btn) _pm.$btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>');
 
     var payload = { status: _pm.next };
-    if (note)       payload.note        = note;
-    if (releasedTo) payload.released_to = releasedTo;
+    if (note)         payload.note          = note;
+    if (residentNote) payload.resident_note = residentNote;
+    if (releasedTo)   payload.released_to   = releasedTo;
+    if (pickupDate)   payload.pickup_date   = pickupDate;
 
     var next     = _pm.next;
     var isPortal = _pm.isPortal;
     var $btn     = _pm.$btn;
+    var origHtml = _pm.origHtml;
 
     axios.patch(_pm.url, payload)
         .then(function (res) {
@@ -692,7 +732,7 @@ window.confirmPipelineAdvance = function () {
             $('#pmConfirmLabel').show();
             $('#pmConfirmSpinner').hide();
             $('#pmConfirmBtn').prop('disabled', false);
-            if ($btn) $btn.prop('disabled', false).html(_pm.origHtml || '');
+            if ($btn) $btn.prop('disabled', false).html(origHtml || '');
             bmsToast(err.response?.data?.message || 'Failed to advance status.', 'error');
         });
 };
