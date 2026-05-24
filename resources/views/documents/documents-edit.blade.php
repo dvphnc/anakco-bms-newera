@@ -79,11 +79,24 @@
                     Status
                     <span class="help-icon" data-tippy-content="'Pending' = not yet processed. 'Processing' = being prepared. 'Released' = given to the resident. 'Cancelled' = request withdrawn.">?</span>
                 </label>
-                <select name="status" class="form-control @error('status') is-invalid @enderror">
-                    @foreach(\App\Models\Document::$statuses as $s)
-                        <option value="{{ $s }}" {{ old('status', $document->status) === $s ? 'selected' : '' }}>{{ $s }}</option>
-                    @endforeach
-                </select>
+                @if($document->status === 'Released')
+                    {{-- Released documents are immutable — lock the status field --}}
+                    <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);
+                                border-radius:var(--radius-sm);font-size:13.5px;color:var(--text-muted);
+                                display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-lock" style="font-size:11px;color:#9ca3af"></i>
+                        Released — <span style="font-style:italic;font-size:12px">status is locked after release</span>
+                    </div>
+                    <input type="hidden" name="status" value="Released">
+                @else
+                    <select name="status" class="form-control @error('status') is-invalid @enderror">
+                        @foreach(\App\Models\Document::$statuses as $s)
+                            @if($s !== 'Released' || $document->status === 'Released')
+                                <option value="{{ $s }}" {{ old('status', $document->status) === $s ? 'selected' : '' }}>{{ $s }}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                @endif
                 @error('status')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
