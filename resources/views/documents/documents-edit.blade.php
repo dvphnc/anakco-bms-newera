@@ -192,17 +192,17 @@
     });
 
     // ── Resident Select2 pre-selection ────────────────────────────
-    // The global init (app.blade.php) runs on $(document).ready.
-    // We use a short setTimeout(0) to queue AFTER it, then trigger
-    // change so Select2 renders the pre-populated <option selected>.
+    // Global init (app.blade.php) runs in $(document).ready.
+    // We wait for it to finish, then call val().trigger('change')
+    // so Select2 renders the pre-populated <option selected>.
     $(document).ready(function () {
         setTimeout(function () {
             var $sel = $('#resident_id');
-            // Only force-render if there is already a selected value
-            if ($sel.val()) {
-                $sel.trigger('change.select2');
+            var preId = $sel.data('initial-id');
+            if (preId && $sel.find('option[value="' + preId + '"]').length) {
+                $sel.val(String(preId)).trigger('change');
             }
-        }, 0);
+        }, 80);
     });
 })();
 </script>

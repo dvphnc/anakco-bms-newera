@@ -26,21 +26,37 @@
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Resident <span style="color:var(--crimson)">*</span></label>
-                <select name="resident_id" id="resident_id" class="select2-resident <?php $__errorArgs = ['resident_id'];
+                <?php
+                    $preResident = $document->resident ?? $suggestedResident ?? null;
+                    $preResidentId = $document->resident ? $document->resident_id : ($suggestedResident?->id);
+                ?>
+                <select name="resident_id" id="resident_id"
+                        class="select2-resident <?php $__errorArgs = ['resident_id'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" required style="width:100%" data-placeholder="Search resident by name...">
-                    <?php if($document->resident): ?>
-                        <option value="<?php echo e($document->resident_id); ?>" selected>
-                            <?php echo e($document->resident->last_name); ?>, <?php echo e($document->resident->first_name); ?> — <?php echo e($document->resident->address); ?>
+unset($__errorArgs, $__bag); ?>"
+                        required style="width:100%"
+                        data-placeholder="Search resident by name..."
+                        data-initial-id="<?php echo e($preResidentId); ?>"
+                        data-initial-text="<?php echo e($preResident ? $preResident->last_name.', '.$preResident->first_name.' — '.($preResident->address ?? '') : ''); ?>">
+                    <?php if($preResident && $preResidentId): ?>
+                        <option value="<?php echo e($preResidentId); ?>" selected>
+                            <?php echo e($preResident->last_name); ?>, <?php echo e($preResident->first_name); ?>
 
+                            <?php if($preResident->address): ?> — <?php echo e($preResident->address); ?> <?php endif; ?>
                         </option>
                     <?php endif; ?>
                 </select>
+                <?php if($suggestedResident && !$document->resident): ?>
+                    <div style="font-size:11.5px;color:#b45309;margin-top:5px;display:flex;align-items:center;gap:5px">
+                        <i class="fas fa-circle-info"></i>
+                        Auto-matched from portal name "<strong><?php echo e($document->resident_name_portal); ?></strong>" — please verify before saving.
+                    </div>
+                <?php endif; ?>
                 <?php $__errorArgs = ['resident_id'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -219,13 +235,23 @@ unset($__errorArgs, $__bag); ?>
             </div>
             <div class="form-group">
                 <label class="form-label">Document Number</label>
-                <div style="display:flex;align-items:center;
+                <div style="display:flex;align-items:center;gap:10px;
                             padding:10px 14px;min-height:58px;
                             background:var(--surface2);border:1px solid var(--border);
-                            border-radius:var(--radius);font-size:14px;
-                            font-family:monospace;font-weight:600;color:var(--navy)">
-                    <?php echo e($document->doc_number); ?>
+                            border-radius:var(--radius);font-size:13.5px">
+                    <div style="width:34px;height:34px;border-radius:50%;
+                                background:rgba(200,134,26,0.12);border:1.5px solid rgba(200,134,26,0.35);
+                                display:flex;align-items:center;justify-content:center;
+                                font-size:14px;flex-shrink:0;color:var(--gold)">
+                        <i class="fas fa-hashtag"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:700;font-family:monospace;color:var(--navy);font-size:14px;letter-spacing:.03em">
+                            <?php echo e($document->doc_number); ?>
 
+                        </div>
+                        <div class="td-muted"><?php echo e($document->document_type); ?> · <?php echo e($document->created_at->format('M d, Y')); ?></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -266,17 +292,17 @@ unset($__errorArgs, $__bag); ?>
     });
 
     // ── Resident Select2 pre-selection ────────────────────────────
-    // The global init (app.blade.php) runs on $(document).ready.
-    // We use a short setTimeout(0) to queue AFTER it, then trigger
-    // change so Select2 renders the pre-populated <option selected>.
+    // Global init (app.blade.php) runs in $(document).ready.
+    // We wait for it to finish, then call val().trigger('change')
+    // so Select2 renders the pre-populated <option selected>.
     $(document).ready(function () {
         setTimeout(function () {
             var $sel = $('#resident_id');
-            // Only force-render if there is already a selected value
-            if ($sel.val()) {
-                $sel.trigger('change.select2');
+            var preId = $sel.data('initial-id');
+            if (preId && $sel.find('option[value="' + preId + '"]').length) {
+                $sel.val(String(preId)).trigger('change');
             }
-        }, 0);
+        }, 80);
     });
 })();
 </script>
