@@ -69,68 +69,22 @@ class DocumentController extends Controller
                     return '<span class="badge '.$cls.'">'.$d->status.'</span>';
                 })
                 ->addColumn('actions', function ($d) {
-                    $show      = route('documents.show', $d);
-                    $delete    = route('documents.destroy', $d);
-                    $statusUrl = route('documents.quickStatus', $d);
+                    $show   = route('documents.show', $d);
+                    $delete = route('documents.destroy', $d);
 
-                    // Context-aware pipeline button: show only the single next valid step
-                    $pipelineBtn = match ($d->status) {
-                        'Pending'    => '<button class="btn doc-pipeline-btn btn-sm"
-                                                 style="height:28px;padding:0 10px;font-size:12px;font-weight:600;
-                                                        background:#f0f4ff;color:#1d4ed8;border:1px solid #bfdbfe;
-                                                        border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
-                                                 title="Advance to Processing"
-                                                 data-id="'.e($d->id).'" data-next="Processing" data-url="'.$statusUrl.'"
-                                                 data-source="'.e($d->source).'">
-                                                <i class="fas fa-gear" style="font-size:11px;margin-right:4px"></i>Process
-                                        </button>',
-                        'Processing' => '<button class="btn doc-pipeline-btn btn-sm"
-                                                 style="height:28px;padding:0 10px;font-size:12px;font-weight:600;
-                                                        background:#f0fdf4;color:#15803d;border:1px solid #86efac;
-                                                        border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
-                                                 title="Mark as Ready for Pick-up"
-                                                 data-id="'.e($d->id).'" data-next="Ready" data-url="'.$statusUrl.'"
-                                                 data-source="'.e($d->source).'">
-                                                <i class="fas fa-bell" style="font-size:11px;margin-right:4px"></i>Ready
-                                        </button>',
-                        'Ready'      => '<button class="btn doc-pipeline-btn btn-sm"
-                                                 style="height:28px;padding:0 10px;font-size:12px;font-weight:600;
-                                                        background:#ecfdf5;color:#166534;border:1px solid #6ee7b7;
-                                                        border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
-                                                 title="Mark as Released"
-                                                 data-id="'.e($d->id).'" data-next="Released" data-url="'.$statusUrl.'"
-                                                 data-source="'.e($d->source).'">
-                                                <i class="fas fa-flag-checkered" style="font-size:11px;margin-right:4px"></i>Release
-                                        </button>',
-                        default      => '',
-                    };
+                    $viewBtn = '<a href="'.e($show).'" class="btn btn-secondary btn-sm btn-icon"
+                                   data-tippy-content="View Document"><i class="fas fa-eye"></i></a>';
 
-                    // Print button — only for Released docs (opens in new tab, auto-triggers print dialog)
-                    // Eye button for all other statuses
-                    $printBtn = $d->status === 'Released'
-                        ? '<a href="'.$show.'?print=1" target="_blank"
-                              class="btn btn-primary btn-sm btn-icon"
-                              data-tippy-content="Print Certificate"
-                              style="background:var(--navy);border-color:var(--navy)">
-                               <i class="fas fa-print"></i>
-                           </a>'
-                        : '<a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon"
-                               data-tippy-content="View Document">
-                               <i class="fas fa-eye"></i>
-                           </a>';
+                    $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon doc-delete-btn"
+                                          data-tippy-content="Delete Document"
+                                          data-url="'.e($delete).'"
+                                          data-num="'.e($d->doc_number).'"
+                                          data-name="'.e($d->resident ? $d->resident->full_name : ($d->resident_name_portal ?? 'this document')).'">
+                                     <i class="fas fa-trash"></i>
+                                 </button>';
 
-                    return '
-                        <div style="display:flex;justify-content:flex-end;align-items:center;gap:6px">
-                            '.$pipelineBtn.'
-                            '.$printBtn.'
-                            <button class="btn btn-danger btn-sm btn-icon doc-delete-btn"
-                                    data-tippy-content="Delete Document"
-                                    data-url="'.e($delete).'"
-                                    data-num="'.e($d->doc_number).'"
-                                    data-name="'.e($d->resident ? $d->resident->full_name : ($d->resident_name_portal ?? 'this document')).'">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>';
+                    return '<div style="display:flex;justify-content:flex-end;align-items:center;gap:6px">'.
+                           $viewBtn.$deleteBtn.'</div>';
                 })
                 ->filter(function ($query) use ($request) {
                     if ($request->has('search') && $request->search['value']) {
