@@ -259,8 +259,12 @@ class ResidentPortalController extends Controller
 
     private function trackDocumentPayload(DocumentAppointment $a): array
     {
-        $steps     = ['Pending', 'Confirmed', 'Processing', 'Ready', 'Released'];
-        $stepIndex = array_search($a->status, $steps);
+        $steps     = ['Pending', 'Processing', 'Released'];
+        // Map statuses that no longer appear as steps to their nearest equivalent
+        $stepMap   = ['Confirmed' => 1, 'Ready' => 1];
+        $stepIndex = array_key_exists($a->status, $stepMap)
+            ? $stepMap[$a->status]
+            : array_search($a->status, $steps);
 
         $logs = $a->statusLogs->map(fn ($l) => [
             'from' => $l->from_status,

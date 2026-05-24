@@ -288,111 +288,18 @@
 
 
 
-<div id="aptReadyModal"
-     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
-            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
-     onclick="if(event.target===this)closeReadyModal()">
-    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
-                box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
-        
-        <div style="background:linear-gradient(135deg,#15803d,#16a34a);padding:14px 18px;
-                    display:flex;align-items:center;justify-content:space-between">
-            <div style="display:flex;align-items:center;gap:9px">
-                <i class="fas fa-bell" style="color:#bbf7d0;font-size:13px"></i>
-                <span style="font-size:13.5px;font-weight:700;color:#fff">Mark Ready for Pick-up</span>
-            </div>
-            <button onclick="closeReadyModal()"
-                    style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);
-                           border-radius:var(--radius-sm);width:28px;height:28px;display:flex;
-                           align-items:center;justify-content:center;color:rgba(255,255,255,.8);cursor:pointer;font-size:12px">
-                <i class="fas fa-xmark"></i>
-            </button>
-        </div>
-        
-        <div style="padding:14px 18px 0">
-            <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:var(--radius-sm);
-                        padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
-                <div>
-                    <div style="font-size:10.5px;font-weight:600;color:#6b7280;text-transform:uppercase;
-                                letter-spacing:.06em;margin-bottom:2px">Appointment No.</div>
-                    <div id="rdyNum" style="font-size:13px;font-weight:700;color:#15803d;font-family:monospace"></div>
-                </div>
-                <div>
-                    <div style="font-size:10.5px;font-weight:600;color:#6b7280;text-transform:uppercase;
-                                letter-spacing:.06em;margin-bottom:2px">Document Type</div>
-                    <div id="rdyType" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
-                </div>
-                <div style="grid-column:1/-1;border-top:1px solid #bbf7d0;padding-top:8px">
-                    <div style="font-size:10.5px;font-weight:600;color:#6b7280;text-transform:uppercase;
-                                letter-spacing:.06em;margin-bottom:2px">Resident</div>
-                    <div id="rdyName" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div style="padding:16px 18px">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
-                        Pick-up Date <span style="color:var(--crimson)">*</span>
-                    </label>
-                    <input type="date" id="rdyPickupDate" class="form-control">
-                </div>
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
-                        Document Fee (₱)
-                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— optional</span>
-                    </label>
-                    <input type="number" id="rdyFee" class="form-control" min="0" step="0.01" placeholder="0.00">
-                </div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
-                        OR Number
-                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— optional</span>
-                    </label>
-                    <input type="text" id="rdyOR" class="form-control" placeholder="e.g. OR-2026-00123">
-                </div>
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
-                        Note to Resident
-                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— in email</span>
-                    </label>
-                    <input type="text" id="rdyNote" class="form-control" placeholder="e.g. Bring valid ID">
-                </div>
-            </div>
-            <div id="rdyError" style="display:none;font-size:13px;color:var(--crimson);
-                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
-                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
-            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-subtle);
-                        background:#f8f9fb;border:1px solid var(--border);border-radius:var(--radius-sm);
-                        padding:10px 12px;margin-bottom:14px">
-                <i class="fas fa-paper-plane" style="color:#16a34a;margin-top:1px;flex-shrink:0"></i>
-                <span>An email will be sent to the resident with the pick-up date and fee amount (if provided).</span>
-            </div>
-            <div style="display:flex;justify-content:flex-end;gap:10px">
-                <button type="button" onclick="closeReadyModal()" class="btn btn-secondary">Cancel</button>
-                <button type="button" id="rdySaveBtn" onclick="saveReady()" class="btn"
-                        style="background:#16a34a;color:#fff;border-color:#16a34a">
-                    <i class="fas fa-bell"></i> Mark as Ready
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <div id="aptConvertModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
      onclick="if(event.target===this)closeConvertModal()">
-    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:460px;
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
                 box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
-        <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+        
+        <div style="background:var(--navy);padding:14px 18px;
+                    display:flex;align-items:center;justify-content:space-between">
             <div style="display:flex;align-items:center;gap:9px">
                 <i class="fas fa-file-circle-check" style="color:var(--gold);font-size:13px"></i>
-                <span style="font-size:13.5px;font-weight:700;color:#fff">Issue Document Record</span>
+                <span style="font-size:13.5px;font-weight:700;color:#fff">Issue Document</span>
             </div>
             <button onclick="closeConvertModal()"
                     style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
@@ -401,37 +308,59 @@
                 <i class="fas fa-xmark"></i>
             </button>
         </div>
-        <div style="padding:18px">
+        
+        <div style="padding:18px 18px 0">
             <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
-                        border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px">
-                <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:12px;column-gap:16px">
+                        border-radius:var(--radius-sm);padding:14px 16px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:10px;column-gap:16px">
                     <div>
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Appointment No.</div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
+                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Appointment No.</div>
                         <div id="cvtNum" style="font-size:13px;font-weight:700;color:var(--navy);font-family:monospace"></div>
                     </div>
                     <div>
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Document Type</div>
-                        <div id="cvtType" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
+                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Date Requested</div>
+                        <div id="cvtDate" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
                     </div>
                     <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:10px">
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Resident</div>
-                        <div id="cvtName" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
+                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Document Type</div>
+                        <div id="cvtType" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
                     </div>
-                    <div id="cvtPurposeRow" style="grid-column:1/-1">
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Purpose</div>
-                        <div id="cvtPurpose" style="font-size:13px;color:var(--text)"></div>
+                    <div style="grid-column:1/-1">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
+                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Resident</div>
+                        <div id="cvtName" style="font-size:13px;color:var(--text)"></div>
                     </div>
                 </div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        </div>
+        
+        <div style="padding:16px 18px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
                 <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">Fee Paid (₱) <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span></label>
+                    <label class="form-label" style="font-size:12.5px">
+                        Fee Paid (₱)
+                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— optional</span>
+                    </label>
                     <input type="number" id="cvtFee" class="form-control" min="0" step="0.01" placeholder="0.00">
                 </div>
                 <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">O.R. Number <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span></label>
+                    <label class="form-label" style="font-size:12.5px">
+                        O.R. Number
+                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— optional</span>
+                    </label>
                     <input type="text" id="cvtOR" class="form-control" placeholder="e.g. 2026-00123">
                 </div>
+            </div>
+            <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label" style="font-size:12.5px">
+                    Note to Resident
+                    <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— included in email</span>
+                </label>
+                <input type="text" id="cvtNote" class="form-control"
+                       placeholder="e.g. Please bring valid ID when picking up.">
             </div>
             <div id="cvtError" style="display:none;font-size:13px;color:var(--crimson);
                  padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
@@ -439,8 +368,8 @@
             <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;
                         color:var(--text-subtle);background:#f8f9fb;border:1px solid var(--border);
                         border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px">
-                <i class="fas fa-circle-info" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
-                <span>Creates a <strong style="color:var(--navy)">Released</strong> document record in Document Issuance and automatically marks this appointment as Released.</span>
+                <i class="fas fa-paper-plane" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
+                <span>Marks the request as <strong style="color:var(--navy)">Released</strong>, creates the record in Document Issuance, and emails the resident.</span>
             </div>
             <div style="display:flex;justify-content:flex-end;gap:10px">
                 <button type="button" onclick="closeConvertModal()" class="btn btn-secondary">Cancel</button>
@@ -526,104 +455,6 @@
                 <button type="button" onclick="closeBizIssueModal()" class="btn btn-secondary">Cancel</button>
                 <button type="button" id="bizIssueSaveBtn" onclick="saveBizIssue()" class="btn btn-success">
                     <i class="fas fa-stamp"></i> Issue Permit
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div id="bizStatusModal"
-     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
-            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
-     onclick="if(event.target===this)closeBizStatusModal()">
-    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
-                box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
-        
-        <div style="background:var(--navy);padding:14px 18px;
-                    display:flex;align-items:center;justify-content:space-between">
-            <div style="display:flex;align-items:center;gap:9px">
-                <i class="fas fa-store" style="color:var(--gold);font-size:13px"></i>
-                <span style="font-size:13.5px;font-weight:700;color:#fff">Update Application Status</span>
-            </div>
-            <button onclick="closeBizStatusModal()"
-                    style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
-                           border-radius:var(--radius-sm);width:28px;height:28px;display:flex;
-                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer;font-size:12px">
-                <i class="fas fa-xmark"></i>
-            </button>
-        </div>
-        
-        <div style="padding:18px 18px 0">
-            <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
-                        border-radius:var(--radius-sm);padding:14px 16px">
-                <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:10px;column-gap:16px">
-                    <div>
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
-                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Permit No.</div>
-                        <div id="bizStNum" style="font-size:13px;font-weight:700;color:var(--navy);font-family:monospace"></div>
-                    </div>
-                    <div>
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
-                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Appointment Date</div>
-                        <div id="bizStAppt" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
-                    </div>
-                    <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:10px">
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
-                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Business</div>
-                        <div id="bizStBiz" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
-                    </div>
-                    <div style="grid-column:1/-1">
-                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
-                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Owner</div>
-                        <div id="bizStOwner" style="font-size:13px;color:var(--text)"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div style="padding:16px 18px">
-            
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-                <span style="font-size:12px;color:var(--text-muted);font-weight:500">Current Status:</span>
-                <span id="bizStCurrentBadge" class="badge badge-yellow"></span>
-            </div>
-
-            <div style="display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px">
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
-                        New Status <span style="color:var(--crimson)">*</span>
-                    </label>
-                    <select id="bizStNewStatus" class="form-control" style="font-size:13.5px">
-                        
-                    </select>
-                </div>
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">
-                        Staff Notes
-                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— included in email</span>
-                    </label>
-                    <textarea id="bizStNotes" class="form-control" rows="3"
-                              style="font-size:13.5px;resize:vertical"
-                              placeholder="e.g., Additional requirements needed, awaiting documents…"></textarea>
-                </div>
-            </div>
-
-            <div id="bizStError" style="display:none;font-size:13px;color:var(--crimson);
-                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
-                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
-
-            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-subtle);
-                        background:#f8f9fb;border:1px solid var(--border);border-radius:var(--radius-sm);
-                        padding:10px 12px;margin-bottom:16px">
-                <i class="fas fa-paper-plane" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
-                <span>The applicant will receive an email notification of this status update if an email address is on file.</span>
-            </div>
-
-            <div style="display:flex;justify-content:flex-end;gap:10px">
-                <button type="button" onclick="closeBizStatusModal()" class="btn btn-secondary">Cancel</button>
-                <button type="button" id="bizStSaveBtn" onclick="saveBizStatus()" class="btn btn-primary">
-                    <i class="fas fa-check"></i> Update Status
                 </button>
             </div>
         </div>
@@ -1104,176 +935,77 @@ $(document).ready(function () {
     }
 
     /* ═══════════════════════════════════════════════════════════════
-     | PIPELINE — Process button (Pending → Processing, no modal)
+     | MODAL — Issue Document  (single action: any Pending/Processing/Ready → Released)
      ═══════════════════════════════════════════════════════════════ */
-    $('#appointmentsTable').on('click', '.apt-pipeline-btn', function () {
-        var $btn    = $(this);
-        var url     = $btn.data('url');
-        var origHtml = $btn.html();
-        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>');
-
-        axios.patch(url, { status: 'Processing', _token: '<?php echo e(csrf_token()); ?>' })
-            .then(function (res) {
-                bmsToast(res.data.message || 'Status updated to Processing.', 'success');
-                docTable.ajax.reload(null, false);
-                // Update stat cards if counts returned
-                if (res.data.counts) {
-                    var c = res.data.counts;
-                    if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending  ?? 0;
-                    if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
-                    if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
-                }
-            })
-            .catch(function (err) {
-                $btn.prop('disabled', false).html(origHtml);
-                bmsToast(err.response?.data?.message || 'Failed to advance status.', 'error');
-            });
-    });
-
-    /* ═══════════════════════════════════════════════════════════════
-     | PIPELINE — Mark Ready button (Processing → modal)
-     ═══════════════════════════════════════════════════════════════ */
-    var _rdyUrl = null;
-
-    $('#appointmentsTable').on('click', '.apt-ready-btn', function () {
+    $('#appointmentsTable').on('click', '.apt-issue-btn', function () {
         var $btn = $(this);
-        _rdyUrl  = $btn.data('url');
+        document.getElementById('cvtNum').textContent  = $btn.data('num')  || '';
+        document.getElementById('cvtName').textContent = $btn.data('name') || '';
+        document.getElementById('cvtType').textContent = $btn.data('type') || '';
+        document.getElementById('cvtDate').textContent = $btn.data('date') || '—';
 
-        document.getElementById('rdyNum').textContent  = $btn.data('num')  || '';
-        document.getElementById('rdyName').textContent = $btn.data('name') || '';
-        document.getElementById('rdyType').textContent = $btn.data('type') || '';
-
-        // Pre-fill if fee/OR already on the linked document
-        document.getElementById('rdyFee').value      = $btn.data('fee') || '';
-        document.getElementById('rdyOR').value       = $btn.data('or')  || '';
-        document.getElementById('rdyNote').value     = '';
-        document.getElementById('rdyError').style.display = 'none';
-
-        // Default pickup date to tomorrow
-        var tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        document.getElementById('rdyPickupDate').value = tomorrow.toISOString().slice(0, 10);
-
-        document.getElementById('aptReadyModal').style.display = 'flex';
-        setTimeout(function () { document.getElementById('rdyPickupDate').focus(); }, 80);
-    });
-
-    window.closeReadyModal = function () {
-        document.getElementById('aptReadyModal').style.display = 'none';
-        _rdyUrl = null;
-    };
-
-    window.saveReady = function () {
-        var pickupDate = document.getElementById('rdyPickupDate').value;
-        var errEl      = document.getElementById('rdyError');
-
-        if (!pickupDate) {
-            errEl.textContent      = 'Please set a pick-up date.';
-            errEl.style.display    = '';
-            document.getElementById('rdyPickupDate').focus();
-            return;
-        }
-        errEl.style.display = 'none';
-
-        var btn = document.getElementById('rdySaveBtn');
-        btn.disabled    = true;
-        btn.innerHTML   = '<i class="fas fa-spinner fa-spin"></i> Saving…';
-
-        var payload = {
-            status:      'Ready',
-            pickup_date: pickupDate,
-            _token: '<?php echo e(csrf_token()); ?>',
-        };
-        var fee  = document.getElementById('rdyFee').value.trim();
-        var or_  = document.getElementById('rdyOR').value.trim();
-        var note = document.getElementById('rdyNote').value.trim();
-        if (fee)  payload.fee_paid   = fee;
-        if (or_)  payload.or_number  = or_;
-        if (note) payload.notes      = note;
-
-        axios.patch(_rdyUrl, payload)
-            .then(function (res) {
-                closeReadyModal();
-                docTable.ajax.reload(null, false);
-                bmsToast('📧 ' + (res.data.message || 'Marked as Ready. Email sent to resident.'), 'success');
-                if (res.data.counts) {
-                    var c = res.data.counts;
-                    if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending  ?? 0;
-                    if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
-                    if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
-                }
-            })
-            .catch(function (err) {
-                errEl.textContent   = err.response?.data?.message || 'Failed to mark as ready.';
-                errEl.style.display = '';
-            })
-            .finally(function () {
-                btn.disabled  = false;
-                btn.innerHTML = '<i class="fas fa-bell"></i> Mark as Ready';
-            });
-    };
-
-    $(document).on('keydown', function (e) {
-        if (e.key === 'Escape' && document.getElementById('aptReadyModal').style.display === 'flex') {
-            closeReadyModal();
-        }
-    });
-
-    /* ═══════════════════════════════════════════════════════════════
-     | MODAL — Issue Document
-     ═══════════════════════════════════════════════════════════════ */
-    $('#appointmentsTable').on('click', '.apt-convert-btn', function () {
-        var $btn = $(this);
-        document.getElementById('cvtNum').textContent  = $btn.data('num');
-        document.getElementById('cvtName').textContent = $btn.data('name');
-        document.getElementById('cvtType').textContent = $btn.data('type');
-        var purpose    = $btn.data('purpose') || '';
-        var purposeRow = document.getElementById('cvtPurposeRow');
-        if (purpose) { document.getElementById('cvtPurpose').textContent = purpose; purposeRow.style.display = ''; }
-        else { purposeRow.style.display = 'none'; }
-        document.getElementById('cvtFee').value = '';
-        document.getElementById('cvtOR').value  = '';
+        // Pre-fill fee/OR if already set on linked document
+        document.getElementById('cvtFee').value  = $btn.data('fee') || '';
+        document.getElementById('cvtOR').value   = $btn.data('or')  || '';
+        document.getElementById('cvtNote').value = '';
         document.getElementById('cvtError').style.display = 'none';
-        window._cvtUrl   = $btn.data('url');
-        window._cvtAptId = $btn.data('id');
+
+        window._cvtUrl = $btn.data('url');
         document.getElementById('aptConvertModal').style.display = 'flex';
+        setTimeout(function () { document.getElementById('cvtFee').focus(); }, 80);
     });
 
     window.closeConvertModal = function () {
         document.getElementById('aptConvertModal').style.display = 'none';
+        window._cvtUrl = null;
     };
 
     window.saveConvert = function () {
         var btn = document.getElementById('cvtSaveBtn');
-        btn.disabled = true;
+        btn.disabled  = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Issuing…';
         document.getElementById('cvtError').style.display = 'none';
 
         axios.post(window._cvtUrl, {
-            fee_paid:  document.getElementById('cvtFee').value  || null,
-            or_number: document.getElementById('cvtOR').value   || null,
-            _token: '<?php echo e(csrf_token()); ?>',
+            fee_paid:  document.getElementById('cvtFee').value.trim()  || null,
+            or_number: document.getElementById('cvtOR').value.trim()   || null,
+            notes:     document.getElementById('cvtNote').value.trim() || null,
+            _token:    '<?php echo e(csrf_token()); ?>',
         })
         .then(function (res) {
             closeConvertModal();
             docTable.ajax.reload(null, false);
-            bmsToast(res.data.message || 'Document issued.', 'success');
-            bmsStatDecrement('statApptTotal');
+            bmsToast('📧 ' + (res.data.message || 'Document issued successfully.'), 'success');
+            // Update stat cards
+            if (res.data.counts) {
+                var c = res.data.counts;
+                if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending  ?? 0;
+                if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
+                if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
+            }
         })
         .catch(function (err) {
             var msg = err.response?.data?.message || 'Failed to issue document.';
-            document.getElementById('cvtError').textContent = msg;
-            document.getElementById('cvtError').style.display = '';
+            document.getElementById('cvtError').textContent    = msg;
+            document.getElementById('cvtError').style.display  = '';
+            // If already issued — offer to open the existing record
             if (err.response?.data?.view_url) {
-                bmsToast('Already issued. Redirecting…', 'info');
-                setTimeout(() => window.open(err.response.data.view_url, '_blank'), 1200);
+                bmsToast('Document already issued.', 'info');
+                setTimeout(function () { window.open(err.response.data.view_url, '_blank'); }, 1200);
+                closeConvertModal();
             }
         })
         .finally(function () {
-            btn.disabled = false;
+            btn.disabled  = false;
             btn.innerHTML = '<i class="fas fa-file-circle-check"></i> Issue Document';
         });
     };
+
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape' && document.getElementById('aptConvertModal').style.display === 'flex') {
+            closeConvertModal();
+        }
+    });
 
     /* ═══════════════════════════════════════════════════════════════
      | MODAL — Issue Business Permit
@@ -1345,115 +1077,6 @@ $(document).ready(function () {
             btn.innerHTML = '<i class="fas fa-stamp"></i> Issue Permit';
         });
     };
-
-    /* ═══════════════════════════════════════════════════════════════
-     | MODAL — Update Business Application Status
-     ═══════════════════════════════════════════════════════════════ */
-
-    // Status options per current status
-    var BIZ_STATUS_OPTIONS = {
-        'Pending':    ['For Review', 'Cancelled'],
-        'For Review': ['Pending', 'Cancelled'],
-        'Cancelled':  ['Pending', 'For Review'],
-    };
-
-    // Badge class map
-    var BIZ_STATUS_BADGE = {
-        'Pending':    'badge-yellow',
-        'For Review': 'badge-blue',
-        'Active':     'badge-green',
-        'Cancelled':  'badge-red',
-        'Suspended':  'badge-yellow',
-        'Expired':    'badge-red',
-    };
-
-    $('#bizTable').on('click', '.biz-status-btn', function () {
-        var $btn       = $(this);
-        var curStatus  = $btn.data('status');
-
-        // Populate info strip
-        document.getElementById('bizStNum').textContent   = $btn.data('num')   || '';
-        document.getElementById('bizStAppt').textContent  = $btn.data('appt')  || '—';
-        document.getElementById('bizStBiz').textContent   = $btn.data('biz')   || '';
-        document.getElementById('bizStOwner').textContent = $btn.data('owner') || '';
-
-        // Current status badge
-        var badgeCls = BIZ_STATUS_BADGE[curStatus] || 'badge-gray';
-        var badgeEl  = document.getElementById('bizStCurrentBadge');
-        badgeEl.textContent = curStatus;
-        badgeEl.className   = 'badge ' + badgeCls;
-
-        // Populate next-status options
-        var $sel   = document.getElementById('bizStNewStatus');
-        var opts   = BIZ_STATUS_OPTIONS[curStatus] || ['Pending', 'For Review', 'Cancelled'];
-        $sel.innerHTML = '';
-        opts.forEach(function (s) {
-            var opt = document.createElement('option');
-            opt.value = s;
-            opt.textContent = s;
-            $sel.appendChild(opt);
-        });
-
-        // Clear fields
-        document.getElementById('bizStNotes').value          = '';
-        document.getElementById('bizStError').style.display  = 'none';
-
-        window._bizStUrl = $btn.data('status-url');
-
-        document.getElementById('bizStatusModal').style.display = 'flex';
-        setTimeout(function () { document.getElementById('bizStNewStatus').focus(); }, 80);
-    });
-
-    window.closeBizStatusModal = function () {
-        document.getElementById('bizStatusModal').style.display = 'none';
-        window._bizStUrl = null;
-    };
-
-    window.saveBizStatus = function () {
-        var newStatus = document.getElementById('bizStNewStatus').value;
-        var notes     = document.getElementById('bizStNotes').value.trim();
-        var errEl     = document.getElementById('bizStError');
-
-        if (!newStatus) {
-            errEl.textContent    = 'Please select a new status.';
-            errEl.style.display  = '';
-            return;
-        }
-        errEl.style.display = 'none';
-
-        var btn = document.getElementById('bizStSaveBtn');
-        btn.disabled  = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating…';
-
-        axios.patch(window._bizStUrl, {
-            status: newStatus,
-            notes:  notes || null,
-            _token: '<?php echo e(csrf_token()); ?>',
-        })
-        .then(function (res) {
-            closeBizStatusModal();
-            bizTable.ajax.reload(null, false);
-            bmsToast(res.data.message || 'Status updated.', 'success');
-            if (res.data.biz_pending !== undefined) {
-                document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
-            }
-        })
-        .catch(function (err) {
-            errEl.textContent    = err.response?.data?.message || 'Failed to update status.';
-            errEl.style.display  = '';
-        })
-        .finally(function () {
-            btn.disabled  = false;
-            btn.innerHTML = '<i class="fas fa-check"></i> Update Status';
-        });
-    };
-
-    // Also close on Escape
-    $(document).on('keydown', function (e) {
-        if (e.key === 'Escape' && document.getElementById('bizStatusModal').style.display === 'flex') {
-            closeBizStatusModal();
-        }
-    });
 
     /* ═══════════════════════════════════════════════════════════════
      | MODAL — Activate Blotter Case
