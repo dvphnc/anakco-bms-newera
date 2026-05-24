@@ -66,22 +66,50 @@ class AppointmentController extends Controller
                     return '<span class="badge '.$cls.'">'.e($a->status).'</span>';
                 })
                 ->addColumn('actions', function ($a) {
-                    // Appointments is a read-only tracking view.
-                    // All status management happens in Document Issuance.
-                    if ($a->document) {
-                        $docUrl = route('documents.show', $a->document);
-                        return '<div style="display:flex;justify-content:flex-end">
-                                    <a href="'.$docUrl.'" target="_blank"
-                                       class="btn btn-secondary btn-sm"
-                                       style="font-size:12px;padding:0 10px;height:30px;
-                                              display:inline-flex;align-items:center;gap:5px"
-                                       title="Open in Document Issuance">
-                                        <i class="fas fa-file-lines"></i> View Record
-                                    </a>
-                                </div>';
-                    }
-                    return '<div style="display:flex;justify-content:flex-end">
-                                <span style="font-size:12px;color:var(--text-muted)">—</span>
+                    $statusUrl = route('appointments.updateStatus', $a);
+
+                    // Context-aware pipeline button — one next step only
+                    $pipelineBtn = match ($a->status) {
+                        'Pending' =>
+                            '<button class="btn apt-pipeline-btn btn-sm"
+                                     style="height:30px;padding:0 10px;font-size:12px;font-weight:600;
+                                            background:#f0f4ff;color:#1d4ed8;border:1px solid #bfdbfe;
+                                            border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
+                                     title="Advance to Processing"
+                                     data-next="Processing" data-url="'.e($statusUrl).'">
+                                 <i class="fas fa-gear" style="font-size:11px;margin-right:3px"></i>Process
+                             </button>',
+                        'Processing' =>
+                            '<button class="btn apt-ready-btn btn-sm"
+                                     style="height:30px;padding:0 10px;font-size:12px;font-weight:600;
+                                            background:#f0fdf4;color:#15803d;border:1px solid #86efac;
+                                            border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
+                                     title="Mark Ready for Pick-up"
+                                     data-url="'.e($statusUrl).'"
+                                     data-num="'.e($a->appointment_number).'"
+                                     data-name="'.e($a->resident_name).'"
+                                     data-type="'.e($a->document_type).'"
+                                     data-fee="'.e($a->document?->fee_paid ?? '').'"
+                                     data-or="'.e($a->document?->or_number ?? '').'">
+                                 <i class="fas fa-bell" style="font-size:11px;margin-right:3px"></i>Mark Ready
+                             </button>',
+                        default => '',
+                    };
+
+                    // View Record link (only when a document exists)
+                    $viewBtn = $a->document
+                        ? '<a href="'.route('documents.show', $a->document).'" target="_blank"
+                              class="btn btn-secondary btn-sm"
+                              style="font-size:12px;padding:0 10px;height:30px;
+                                     display:inline-flex;align-items:center;gap:5px"
+                              title="Open in Document Issuance">
+                               <i class="fas fa-file-lines"></i> View
+                           </a>'
+                        : '';
+
+                    return '<div style="display:flex;justify-content:flex-end;align-items:center;gap:6px">
+                                '.$pipelineBtn.'
+                                '.$viewBtn.'
                             </div>';
                 })
                 ->filter(function ($query) use ($request) {
@@ -113,6 +141,8 @@ class AppointmentController extends Controller
             'status'      => 'required|in:' . implode(',', DocumentAppointment::$statuses),
             'notes'       => 'nullable|string|max:500',
             'pickup_date' => 'nullable|date',
+            'fee_paid'    => 'nullable|numeric|min:0',
+            'or_number'   => 'nullable|string|max:100',
         ]);
 
         $old = $appointment->toArray();
@@ -124,6 +154,8 @@ class AppointmentController extends Controller
             notes:       $validated['notes'] ?? null,
             pickupDate:  $validated['pickup_date'] ?? null,
             changedBy:   auth()->user()->name,
+            feePaid:     isset($validated['fee_paid']) ? (float) $validated['fee_paid'] : null,
+            orNumber:    $validated['or_number'] ?? null,
         );
 
         $this->logActivity('updated', $appointment, $old, $appointment->toArray());
