@@ -447,6 +447,25 @@ $(document).ready(function () {
         }
         return any;
     }
+    var _pdfBase  = '{{ route('export.pdf',   'blotter') }}';
+    var _xlsxBase = '{{ route('export.excel', 'blotter') }}';
+
+    function _syncExportUrls() {
+        var p = {};
+        var s  = $('#searchInput').val();   if (s)  p.s = s;
+        var st = $('#statusFilter').val();  if (st) p.status = st;
+        var tp = $('#typeFilter').val();    if (tp) p.incident_type = tp;
+        var df = $('#dateFrom').val();      if (df) p.date_from = df;
+        var dt = $('#dateTo').val();        if (dt) p.date_to = dt;
+        var sc = $('#sourceFilter').val();  if (sc) p.source = sc;
+        var qs = Object.keys(p).length ? '?' + $.param(p) : '';
+        $('#btnExportPdf').attr('href', _pdfBase + qs)
+            .attr('title', qs ? 'Export filtered results' : 'Export PDF');
+        $('#btnExportExcel').attr('href', _xlsxBase + qs)
+            .attr('title', qs ? 'Export filtered results' : 'Export Excel');
+        $('#btnExportPdf, #btnExportExcel').toggleClass('btn-export-filtered', Object.keys(p).length > 0);
+    }
+
     function updateBadge() {
         let n = 0;
         if ($('#searchInput').val())                    n++;
@@ -466,6 +485,7 @@ $(document).ready(function () {
             badge.style.display = 'none';
             chip.style.display  = 'none';
         }
+        _syncExportUrls();
     }
     window.toggleFilters = function (key) {
         const panel  = document.getElementById('filterPanel');
