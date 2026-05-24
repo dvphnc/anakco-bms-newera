@@ -122,35 +122,41 @@ class BusinessController extends Controller
                 })
                 ->addColumn('actions', function ($b) {
                     $show   = route('businesses.show', $b);
-                    $edit   = route('businesses.edit', $b);
                     $delete = route('businesses.destroy', $b);
 
-                    $statusBtn = '<button class="btn btn-primary btn-sm btn-icon biz-status-btn"
-                                    data-tippy-content="Update Status"
-                                    data-id="'.$b->id.'"
-                                    data-num="'.e($b->permit_number).'"
-                                    data-status="'.e($b->status).'"
-                                    data-notes=""
-                                    data-email="'.e($b->email ?? '').'"
-                                    data-name="'.e($b->owner_name).'">
-                                <i class="fas fa-rotate"></i>
-                            </button>';
+                    $viewBtn = '<a href="'.e($show).'" class="btn btn-secondary btn-sm btn-icon"
+                                   data-tippy-content="View Permit"><i class="fas fa-eye"></i></a>';
 
-                    return '
-                        <div style="display:flex;justify-content:flex-end;gap:6px">
-                            <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon biz-qv-btn"
-                               data-tippy-content="Quick View" data-url="'.$show.'"><i class="fas fa-eye"></i></a>
-                            '.$statusBtn.'
-                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon"
-                               data-tippy-content="Edit"><i class="fas fa-pen"></i></a>
-                            <button class="btn btn-danger btn-sm btn-icon biz-delete-btn"
-                                    data-tippy-content="Delete Permit"
-                                    data-url="'.e($delete).'"
-                                    data-num="'.e($b->permit_number).'"
-                                    data-name="'.e($b->business_name).'">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>';
+                    $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon biz-delete-btn"
+                                          data-tippy-content="Delete Permit"
+                                          data-url="'.e($delete).'"
+                                          data-num="'.e($b->permit_number).'"
+                                          data-name="'.e($b->business_name).'">
+                                     <i class="fas fa-trash"></i>
+                                 </button>';
+
+                    // Portal + unissued: show Issue Permit button (3rd action)
+                    $portalBtn = '';
+                    if ($b->source === 'portal' && in_array($b->status, ['Pending', 'For Review'])) {
+                        $issueUrl = route('appointments.bizIssue', $b);
+                        $apptDate = $b->preferred_date
+                            ? \Carbon\Carbon::parse($b->preferred_date)->format('M d, Y') : '—';
+                        $portalBtn = '<button class="btn btn-success btn-sm biz-issue-btn"
+                                              style="font-size:12px;padding:0 10px;height:30px;
+                                                     display:inline-flex;align-items:center;gap:5px;white-space:nowrap"
+                                              data-tippy-content="Issue Permit"
+                                              data-num="'.e($b->permit_number).'"
+                                              data-biz="'.e($b->business_name).'"
+                                              data-owner="'.e($b->owner_name).'"
+                                              data-appt="'.e($apptDate).'"
+                                              data-status="'.e($b->status).'"
+                                              data-issue-url="'.e($issueUrl).'">
+                                         <i class="fas fa-stamp" style="font-size:11px"></i> Issue
+                                     </button>';
+                    }
+
+                    return '<div style="display:flex;justify-content:flex-end;gap:6px">'.
+                           $portalBtn.$viewBtn.$deleteBtn.'</div>';
                 })
                 ->filter(function ($query) use ($request) {
                     if ($request->has('search') && $request->search['value']) {
