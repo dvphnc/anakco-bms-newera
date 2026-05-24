@@ -24,7 +24,8 @@ class BlotterController extends Controller
                 ->when($request->status, fn ($q) => $q->whereIn('status', (array) $request->status))
                 ->when($request->incident_type, fn ($q) => $q->whereIn('incident_type', (array) $request->incident_type))
                 ->when($request->date_from, fn ($q) => $q->whereDate('incident_date', '>=', $request->date_from))
-                ->when($request->date_to, fn ($q) => $q->whereDate('incident_date', '<=', $request->date_to));
+                ->when($request->date_to, fn ($q) => $q->whereDate('incident_date', '<=', $request->date_to))
+                ->when($request->source, fn ($q) => $q->where('source', $request->source));
 
             return DataTables::of($query)
                 ->addColumn('number_col', function ($c) {
