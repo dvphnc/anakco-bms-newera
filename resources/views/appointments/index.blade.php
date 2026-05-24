@@ -701,51 +701,30 @@
 }
 .apt-tab-more:hover { background: var(--surface2); color: var(--navy); }
 
-/* ── Panel toolbar ── */
-.apt-panel {}
-.apt-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    background: #fafbfc;
-    flex-wrap: wrap;
+/* ── Panel filter Select2 — mirrors Document Issuance ── */
+#docFilterPanel .select2-container,
+#bizFilterPanel .select2-container,
+#blotterFilterPanel .select2-container { width: 100% !important; }
+
+#docFilterPanel .select2-container--default .select2-selection--single,
+#bizFilterPanel .select2-container--default .select2-selection--single,
+#blotterFilterPanel .select2-container--default .select2-selection--single {
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); min-height: 38px;
+    padding: 0 32px 0 10px; display: flex; align-items: center;
 }
-.apt-search-icon {
-    position: absolute;
-    left: 11px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-subtle);
-    font-size: 12px;
-    pointer-events: none;
+#docFilterPanel .select2-container--default .select2-selection--single .select2-selection__rendered,
+#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__rendered,
+#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text); font-size: 13.5px; padding: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal;
 }
-.apt-search {
-    width: 100%;
-    height: 36px;
-    padding: 0 10px 0 32px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 13px;
-    font-family: 'Poppins', sans-serif;
-}
-.apt-search:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 2px rgba(13,33,68,.1); }
-.apt-select {
-    height: 36px;
-    padding: 0 28px 0 10px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 13px;
-    font-family: 'Poppins', sans-serif;
-    cursor: pointer;
-    appearance: auto;
-}
-.apt-select:focus { outline: none; border-color: var(--navy); }
+#docFilterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder,
+#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder,
+#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--text-subtle); }
+#docFilterPanel .select2-container--default .select2-selection--single .select2-selection__arrow,
+#bizFilterPanel .select2-container--default .select2-selection--single .select2-selection__arrow,
+#blotterFilterPanel .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; top: 0; right: 8px; }
 
 /* ── DataTables ── */
 #appointmentsTable_wrapper .dataTables_length,
@@ -1065,12 +1044,13 @@ $(document).ready(function () {
         }
     });
 
-    $('#blotterSearch').on('keyup', debounce(function () { blotterTable.ajax.reload(); }, 350));
-    $('#blotterStatusFilter').on('change', function () { blotterTable.ajax.reload(); });
+    $('#blotterSearch').on('keyup', debounce(function () { updateAptBadge('blotter'); blotterTable.ajax.reload(); }, 350));
+    $('#blotterStatusFilter').on('change', function () { updateAptBadge('blotter'); blotterTable.ajax.reload(); });
 
     window.resetBlotterFilters = function () {
         $('#blotterSearch').val('');
         $('#blotterStatusFilter').val(null).trigger('change');
+        updateAptBadge('blotter');
         blotterTable.ajax.reload();
     };
 
