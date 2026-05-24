@@ -742,15 +742,72 @@ class AppointmentController extends Controller
 
     public function destroy(Request $request, DocumentAppointment $appointment)
     {
-        $num = $appointment->appointment_number;
+        $num  = $appointment->appointment_number;
         $snap = $appointment->toArray();
         $appointment->delete();
         $this->logActivity('deleted', $appointment, $snap);
 
         if ($request->wantsJson()) {
-            return response()->json(['success' => true, 'message' => "Appointment {$num} deleted."]);
+            $counts = DocumentAppointment::selectRaw(
+                "SUM(status='Pending') as pending,
+                 SUM(status='Ready')   as ready,
+                 SUM(status='Released') as released"
+            )->first();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Appointment {$num} deleted.",
+                'counts'  => [
+                    'Pending'  => (int) $counts->pending,
+                    'Ready'    => (int) $counts->ready,
+                    'Released' => (int) $counts->released,
+                ],
+                'total'   => DocumentAppointment::count(),
+            ]);
         }
 
         return back()->with('success', "Appointment {$num} deleted.");
+    }
+
+    public function destroyBiz(Request $request, Business $business)
+    {
+        $num  = $business->permit_number;
+        $snap = $business->toArray();
+        $business->delete();
+        $this->logActivity('deleted', $business, $snap);
+
+        if ($request->wantsJson()) {
+            $bizPending = Business::where('source', 'portal')
+                ->whereIn('status', ['Pending', 'For Review'])->count();
+
+            return response()->json([
+                'success'     => true,
+                'message'     => "Business application {$num} deleted.",
+                'biz_pending' => $bizPending,
+            ]);
+        }
+
+        return back()->with('success', "Business application {$num} deleted.");
+    }
+
+    public function destroyBlotter(Request $request, BlotterCase $blotterCase)
+    {
+        $num  = $blotterCase->case_number;
+        $snap = $blotterCase->toArray();
+        $blotterCase->delete();
+        $this->logActivity('deleted', $blotterCase, $snap);
+
+        if ($request->wantsJson()) {
+            $blotterPending = BlotterCase::where('source', 'portal')
+                ->where('status', 'Pending')->count();
+
+            return response()->json([
+                'success'         => true,
+                'message'         => "Blotter report {$num} deleted.",
+                'blotter_pending' => $blotterPending,
+            ]);
+        }
+
+        return back()->with('success', "Blotter report {$num} deleted.");
     }
 }
