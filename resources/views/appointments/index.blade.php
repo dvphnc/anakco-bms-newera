@@ -1310,7 +1310,8 @@ $(document).ready(function () {
         document.getElementById('bizIssueFee').value         = '';
         document.getElementById('bizIssueOR').value          = '';
         document.getElementById('bizIssueError').style.display = 'none';
-        window._bizIssueUrl = $btn.data('url');
+        // data-issue-url is set on both Pending and For Review buttons
+        window._bizIssueUrl = $btn.data('issue-url') || $btn.data('url');
         document.getElementById('bizIssueModal').style.display = 'flex';
     });
 
