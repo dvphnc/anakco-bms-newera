@@ -161,9 +161,26 @@
 #householdsTable_wrapper .dataTables_paginate .paginate_button { padding:4px 10px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border) !important;background:white !important;color:var(--text) !important;margin:0 2px; }
 #householdsTable_wrapper .dataTables_paginate .paginate_button.current { background:var(--navy) !important;color:white !important;border-color:var(--navy) !important; }
 #householdsTable_wrapper .dataTables_paginate .paginate_button:hover:not(.current) { background:var(--navy-pale) !important;color:var(--navy) !important; }
+.btn-export-filtered { border-color: var(--gold) !important; box-shadow: 0 0 0 2px rgba(200,134,26,0.18) !important; }
 </style>
 <script>
 $(document).ready(function () {
+    var _pdfBase  = '{{ route('export.pdf',   'households') }}';
+    var _xlsxBase = '{{ route('export.excel', 'households') }}';
+
+    function _syncExportUrls() {
+        var p = {};
+        var s  = $('#searchInput').val();  if (s)  p.s = s;
+        var pk = $('#purokFilter').val();  if (pk) p.purok_id = pk;
+        var v  = $('#voterFilter').val();  if (v)  p.voter = v;
+        var qs = Object.keys(p).length ? '?' + $.param(p) : '';
+        $('#btnExportPdf').attr('href', _pdfBase + qs)
+            .attr('title', qs ? 'Export filtered results' : 'Export PDF');
+        $('#btnExportExcel').attr('href', _xlsxBase + qs)
+            .attr('title', qs ? 'Export filtered results' : 'Export Excel');
+        $('#btnExportPdf, #btnExportExcel').toggleClass('btn-export-filtered', Object.keys(p).length > 0);
+    }
+
     const s2 = { dropdownParent: $('body'), allowClear: true, width: '100%', minimumResultsForSearch: 0 };
 
     $('#purokFilter').select2($.extend({}, s2, { placeholder: 'All Puroks' }));
@@ -193,16 +210,18 @@ $(document).ready(function () {
         pageLength: 15,
         language: { processing: '<i class="fas fa-spinner fa-spin"></i> Loading...', emptyTable: '<div class="empty-state"><i class="fas fa-house"></i><p>No households found.</p></div>' }
     });
+    _syncExportUrls();
+
     let searchTimer;
     $('#searchInput').on('input', function () {
         clearTimeout(searchTimer);
-        searchTimer = setTimeout(() => table.ajax.reload(), 380);
+        searchTimer = setTimeout(() => { _syncExportUrls(); table.ajax.reload(); }, 380);
     });
-    $('#purokFilter, #voterFilter').on('change', function () { table.ajax.reload(); });
+    $('#purokFilter, #voterFilter').on('change', function () { _syncExportUrls(); table.ajax.reload(); });
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
         $('#purokFilter, #voterFilter').val(null).trigger('change');
-        table.ajax.reload();
+        _syncExportUrls(); table.ajax.reload();
     });
 
     /* Intercept view-button clicks in the DataTable */
