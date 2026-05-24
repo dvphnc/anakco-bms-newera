@@ -286,6 +286,14 @@ class DocumentController extends Controller
             $validated['requestor_contact']      = null;
         }
 
+        // Guard: Released documents cannot be cancelled or rolled back —
+        // the document was already physically handed to the resident.
+        if ($document->status === 'Released' && $validated['status'] !== 'Released') {
+            return back()->withErrors([
+                'status' => 'This document has already been released and cannot be changed. Delete and re-issue if a correction is needed.',
+            ])->withInput();
+        }
+
         if ($validated['status'] === 'Released' && $document->status !== 'Released' && empty($validated['released_at'])) {
             $validated['released_at'] = now();
         }
@@ -305,6 +313,14 @@ class DocumentController extends Controller
             'released_to'   => 'nullable|string|max:255',
             'pickup_date'   => 'nullable|date',
         ]);
+
+        // Guard: Released documents are immutable — already physically handed over
+        if ($document->status === 'Released' && $validated['status'] !== 'Released') {
+            return response()->json([
+                'success' => false,
+                'message' => 'This document has already been released and cannot be changed.',
+            ], 422);
+        }
 
         $old = $document->getOriginal();
 
