@@ -238,13 +238,18 @@ class DocumentQueueService
      */
     private function queueEmail(
         DocumentAppointment $appointment,
-        string $newStatus,
+        string  $newStatus,
         ?string $notes,
         ?string $pickupDate,
     ): void {
         if (! $appointment->email) {
             return;
         }
+
+        // Pass fee amount so "Ready" email tells the resident how much to bring
+        $feePaid = $newStatus === 'Ready'
+            ? ($appointment->document?->fee_paid !== null ? (float) $appointment->document->fee_paid : null)
+            : null;
 
         $this->dispatchMail(
             email:      $appointment->email,
@@ -255,6 +260,7 @@ class DocumentQueueService
             pickupDate: $pickupDate ?? $appointment->pickup_date?->format('Y-m-d'),
             fromStatus: null,
             contextKey: 'apt-' . $appointment->id,
+            feePaid:    $feePaid,
         );
     }
 
@@ -273,6 +279,7 @@ class DocumentQueueService
         ?string $pickupDate,
         ?string $fromStatus,
         string  $contextKey,
+        ?float  $feePaid = null,
     ): void {
         // Guard: silently skip when SMTP is not configured (dev/staging without mail)
         if (blank(config('mail.mailers.smtp.host'))) {
@@ -309,6 +316,7 @@ class DocumentQueueService
                 newStatus:     $newStatus,
                 notes:         $notes,
                 preferredDate: $pickupDate,
+                feePaid:       $feePaid,
             ));
         } catch (\Exception $e) {
             logger()->warning("DocumentQueueService: mail queue failed for {$refNum}: " . $e->getMessage());
