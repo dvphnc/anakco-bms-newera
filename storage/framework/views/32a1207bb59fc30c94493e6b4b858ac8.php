@@ -409,6 +409,13 @@ $(document).ready(function () {
         ],
         order: [[5, 'desc']],
         pageLength: 15,
+        drawCallback: function () {
+            if (typeof tippy !== 'undefined') {
+                tippy('#documentsTable [data-tippy-content]', {
+                    theme: 'bms', placement: 'top', arrow: true, animation: 'shift-away', duration: [150, 100]
+                });
+            }
+        },
         language: {
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading…',
             emptyTable:  '<div class="empty-state"><i class="fas fa-file-lines"></i><p>No documents found.</p></div>',
@@ -417,32 +424,31 @@ $(document).ready(function () {
     });
 
     /* ── Axios DELETE ─────────────────────────────────────────────────── */
-    $('#documentsTable').on('click', 'form[data-confirm] button[type="submit"]', function (e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        const btn  = $(this);
-        const form = btn.closest('form');
-        const url  = form.attr('action');
+    $('#documentsTable').on('click', '.doc-delete-btn', function () {
+        const $btn = $(this);
+        const url  = $btn.data('url');
+        const num  = $btn.data('num');
+        const name = $btn.data('name');
 
         bmsConfirm({
-            title:   form.data('confirm-title') || 'Delete Document',
-            message: form.data('confirm'),
-            ok:      form.data('confirm-ok')    || 'Delete',
+            title:   'Delete Document',
+            message: 'Delete document ' + num + ' for ' + name + '? This cannot be undone.',
+            ok:      'Delete',
         }, function () {
-            const icon = btn.find('i');
+            const icon = $btn.find('i');
             const orig = icon.attr('class');
-            icon.attr('class', 'fas fa-spinner fa-spin').css('color', 'var(--gold)');
-            btn.prop('disabled', true);
+            icon.attr('class', 'fas fa-spinner fa-spin');
+            $btn.prop('disabled', true);
 
-            axios.delete(url)
+            axios.delete(url, { data: { _token: '<?php echo e(csrf_token()); ?>' } })
                 .then(function (res) {
-                    table.row(form.closest('tr')).remove().draw(false);
+                    table.row($btn.closest('tr')).remove().draw(false);
                     bmsStatDecrement('statDocTotal');
                     bmsToast(res.data.message || 'Document deleted.', 'success');
                 })
                 .catch(function () {
-                    icon.attr('class', orig).css('color', '');
-                    btn.prop('disabled', false);
+                    icon.attr('class', orig);
+                    $btn.prop('disabled', false);
                     bmsToast('Could not delete document.', 'error');
                 });
         });
