@@ -546,6 +546,106 @@
 </div>
 
 {{-- ══════════════════════════════════════════════════════════════
+     MODAL — Update Business Application Status
+═══════════════════════════════════════════════════════════════ --}}
+<div id="bizStatusModal"
+     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
+            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
+     onclick="if(event.target===this)closeBizStatusModal()">
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
+                box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
+        {{-- Header --}}
+        <div style="background:var(--navy);padding:14px 18px;
+                    display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:9px">
+                <i class="fas fa-store" style="color:var(--gold);font-size:13px"></i>
+                <span style="font-size:13.5px;font-weight:700;color:#fff">Update Application Status</span>
+            </div>
+            <button onclick="closeBizStatusModal()"
+                    style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+                           border-radius:var(--radius-sm);width:28px;height:28px;display:flex;
+                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer;font-size:12px">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        {{-- Info strip --}}
+        <div style="padding:18px 18px 0">
+            <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
+                        border-radius:var(--radius-sm);padding:14px 16px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:10px;column-gap:16px">
+                    <div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
+                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Permit No.</div>
+                        <div id="bizStNum" style="font-size:13px;font-weight:700;color:var(--navy);font-family:monospace"></div>
+                    </div>
+                    <div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
+                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Appointment Date</div>
+                        <div id="bizStAppt" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:10px">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
+                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Business</div>
+                        <div id="bizStBiz" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div style="grid-column:1/-1">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
+                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Owner</div>
+                        <div id="bizStOwner" style="font-size:13px;color:var(--text)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- Form fields --}}
+        <div style="padding:16px 18px">
+            {{-- Current status chip --}}
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+                <span style="font-size:12px;color:var(--text-muted);font-weight:500">Current Status:</span>
+                <span id="bizStCurrentBadge" class="badge badge-yellow"></span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px">
+                <div class="form-group" style="margin:0">
+                    <label class="form-label" style="font-size:12.5px">
+                        New Status <span style="color:var(--crimson)">*</span>
+                    </label>
+                    <select id="bizStNewStatus" class="form-control" style="font-size:13.5px">
+                        {{-- Options populated by JS based on current status --}}
+                    </select>
+                </div>
+                <div class="form-group" style="margin:0">
+                    <label class="form-label" style="font-size:12.5px">
+                        Staff Notes
+                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— included in email</span>
+                    </label>
+                    <textarea id="bizStNotes" class="form-control" rows="3"
+                              style="font-size:13.5px;resize:vertical"
+                              placeholder="e.g., Additional requirements needed, awaiting documents…"></textarea>
+                </div>
+            </div>
+
+            <div id="bizStError" style="display:none;font-size:13px;color:var(--crimson);
+                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
+                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
+
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-subtle);
+                        background:#f8f9fb;border:1px solid var(--border);border-radius:var(--radius-sm);
+                        padding:10px 12px;margin-bottom:16px">
+                <i class="fas fa-paper-plane" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
+                <span>The applicant will receive an email notification of this status update if an email address is on file.</span>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:10px">
+                <button type="button" onclick="closeBizStatusModal()" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="bizStSaveBtn" onclick="saveBizStatus()" class="btn btn-primary">
+                    <i class="fas fa-check"></i> Update Status
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ══════════════════════════════════════════════════════════════
      MODAL — Activate Blotter Case
 ═══════════════════════════════════════════════════════════════ --}}
 <div id="blotterActivateModal"
