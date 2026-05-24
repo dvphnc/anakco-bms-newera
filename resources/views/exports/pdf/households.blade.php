@@ -80,7 +80,7 @@ tbody td:last-child { border-right:none; }
             <td style="text-align:center">{{ $h->family_size ?? '—' }}</td>
             <td style="text-align:center">{{ $h->residents->count() }}</td>
             <td><span class="badge {{ $h->is_voter_household ? 'badge-green' : 'badge-gray' }}">{{ $h->is_voter_household ? 'Yes' : 'No' }}</span></td>
-            <td>{{ $h->created_at->format('M d, Y') }}</td>
+            <td>{{ $h->created_at->format('m/d/Y') }}</td>
         </tr>
         @endforeach
     </tbody>

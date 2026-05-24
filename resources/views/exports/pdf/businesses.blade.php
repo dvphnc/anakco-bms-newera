@@ -96,8 +96,8 @@ tr.row-expiring td { background:#fffbeb !important; }
             <td>{{ $b->owner_name }}</td>
             <td>{{ $b->owner_contact ?? '—' }}</td>
             <td>{{ $b->business_address }}</td>
-            <td>{{ $b->permit_date ? \Carbon\Carbon::parse($b->permit_date)->format('M d, Y') : '—' }}</td>
-            <td>{{ $b->expiry_date ? \Carbon\Carbon::parse($b->expiry_date)->format('M d, Y') : '—' }}</td>
+            <td>{{ $b->permit_date ? \Carbon\Carbon::parse($b->permit_date)->format('m/d/Y') : '—' }}</td>
+            <td>{{ $b->expiry_date ? \Carbon\Carbon::parse($b->expiry_date)->format('m/d/Y') : '—' }}</td>
             <td><span class="badge {{ $cls }}">{{ $b->status }}</span></td>
         </tr>
         @endforeach

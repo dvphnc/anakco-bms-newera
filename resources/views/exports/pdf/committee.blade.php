@@ -191,7 +191,7 @@ tbody td:last-child { border-right: none; }
         <tr>
             <td style="font-weight:bold">{{ $a->title }}</td>
             <td><span class="badge badge-blue">{{ $a->activity_type }}</span></td>
-            <td>{{ $a->activity_date->format('M d, Y') }}</td>
+            <td>{{ $a->activity_date->format('m/d/Y') }}</td>
             <td>{{ $a->location ?? '—' }}</td>
             <td style="text-align:right">{{ $a->participants_count ?? '—' }}</td>
             <td><span class="badge {{ match($a->status) { 'Completed'=>'badge-green','Ongoing'=>'badge-yellow',default=>'badge-gray' } }}">{{ $a->status }}</span></td>
@@ -210,7 +210,7 @@ tbody td:last-child { border-right: none; }
         @foreach($attendances->sortByDesc('event_date') as $a)
         <tr>
             <td style="font-weight:bold">{{ $a->event_name }}</td>
-            <td>{{ $a->event_date->format('M d, Y') }}</td>
+            <td>{{ $a->event_date->format('m/d/Y') }}</td>
             <td>{{ $a->venue ?? '—' }}</td>
             <td style="text-align:right;font-weight:bold">{{ number_format($a->total_attendees) }}</td>
         </tr>
@@ -248,8 +248,8 @@ tbody td:last-child { border-right: none; }
         <tr>
             <td style="font-weight:bold">{{ $p->partner_name }}</td>
             <td><span class="badge badge-blue">{{ $p->partner_type }}</span></td>
-            <td>{{ $p->mou_date?->format('M d, Y') ?? '—' }}</td>
-            <td style="{{ $p->validity_date && $p->validity_date->isPast() ? 'color:#991b1b;font-weight:bold' : '' }}">{{ $p->validity_date?->format('M d, Y') ?? '—' }}</td>
+            <td>{{ $p->mou_date?->format('m/d/Y') ?? '—' }}</td>
+            <td style="{{ $p->validity_date && $p->validity_date->isPast() ? 'color:#991b1b;font-weight:bold' : '' }}">{{ $p->validity_date?->format('m/d/Y') ?? '—' }}</td>
             <td>{{ $p->contact_person ?? '—' }}</td>
         </tr>
         @endforeach
@@ -268,7 +268,7 @@ tbody td:last-child { border-right: none; }
             <td style="font-weight:bold">{{ $r->title }}</td>
             <td><span class="badge badge-gray">{{ $r->record_type }}</span></td>
             <td>{{ Str::limit($r->description ?? '—', 50) }}</td>
-            <td>{{ $r->created_at->format('M d, Y') }}</td>
+            <td>{{ $r->created_at->format('m/d/Y') }}</td>
         </tr>
         @endforeach
     </tbody>
