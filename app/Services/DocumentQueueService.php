@@ -301,8 +301,7 @@ class DocumentQueueService
         }
 
         // Skip sending for 'Submitted' (handled by sendSubmissionConfirmation)
-        // and suppress 'Confirmed' — keep only the 4 meaningful user-facing statuses
-        if (in_array($newStatus, ['Confirmed'])) {
+        if ($newStatus === 'Submitted') {
             return;
         }
 

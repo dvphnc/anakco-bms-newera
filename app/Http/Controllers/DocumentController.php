@@ -60,7 +60,6 @@ class DocumentController extends Controller
                     // Identical CSS classes to AppointmentController — single source of truth
                     $cls = match ($d->status) {
                         'Pending'    => 'badge-yellow',
-                        'Confirmed'  => 'badge-navy',
                         'Processing' => 'badge-blue',
                         'Ready'      => 'badge-green',
                         'Released'   => 'badge-gray',
