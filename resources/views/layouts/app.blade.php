@@ -954,31 +954,62 @@
         }, 5000);
     }
 
-    // ── Toast notification — injected inline at top of .main-content ────
-    function bmsToast(message, type) {
-        type = type || 'success';
-        var typeMap = {
-            success: { cls: 'alert-success', icon: 'fa-check-circle' },
-            error:   { cls: 'alert-error',   icon: 'fa-exclamation-circle' },
-            warning: { cls: 'alert-warning', icon: 'fa-triangle-exclamation' },
+    // ── Toast notification — floating, fixed top-right, never disrupts scroll ──
+    (function () {
+        var _stack = document.createElement('div');
+        _stack.id  = 'bmsToastStack';
+        _stack.style.cssText =
+            'position:fixed;top:20px;right:24px;z-index:9999;' +
+            'display:flex;flex-direction:column;gap:10px;pointer-events:none;' +
+            'width:340px;max-width:calc(100vw - 48px)';
+        document.body.appendChild(_stack);
+
+        window.bmsToast = function (message, type) {
+            type = type || 'success';
+            var map = {
+                success: { bg:'#f0fdf4', border:'#86efac', color:'#166534', icon:'fa-circle-check' },
+                error:   { bg:'#fff1f2', border:'#fda4af', color:'#be123c', icon:'fa-circle-exclamation' },
+                warning: { bg:'#fffbeb', border:'#fcd34d', color:'#92400e', icon:'fa-triangle-exclamation' },
+            };
+            var m = map[type] || map.success;
+            var el = document.createElement('div');
+            el.style.cssText =
+                'display:flex;align-items:flex-start;gap:11px;padding:13px 15px;' +
+                'background:' + m.bg + ';border:1px solid ' + m.border + ';border-radius:10px;' +
+                'box-shadow:0 4px 18px rgba(0,0,0,.12);pointer-events:all;' +
+                'animation:bmsToastIn .22s cubic-bezier(.34,1.56,.64,1) forwards;' +
+                'font-size:13.5px;line-height:1.5;font-family:inherit;color:' + m.color;
+            el.innerHTML =
+                '<i class="fas ' + m.icon + '" style="font-size:15px;flex-shrink:0;margin-top:1px"></i>' +
+                '<span style="flex:1;color:#1a1a2e">' + message + '</span>' +
+                '<button onclick="bmsToastDismiss(this.closest(\'[data-bms-toast]\'))" ' +
+                    'style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:14px;' +
+                    'padding:0;flex-shrink:0;line-height:1;margin-top:1px">' +
+                    '<i class="fas fa-xmark"></i></button>';
+            el.setAttribute('data-bms-toast', '1');
+            // Progress bar
+            var bar = document.createElement('div');
+            bar.style.cssText =
+                'position:absolute;bottom:0;left:0;height:2px;border-radius:0 0 10px 10px;' +
+                'background:' + m.border + ';width:100%;transform-origin:left;' +
+                'animation:bmsToastBar ' + (type === 'error' ? '8' : '5') + 's linear forwards';
+            el.style.position = 'relative';
+            el.style.overflow = 'hidden';
+            el.appendChild(bar);
+            _stack.appendChild(el);
+            // Auto-dismiss
+            var delay = type === 'error' ? 8000 : 5000;
+            var tid = setTimeout(function () { bmsToastDismiss(el); }, delay);
+            el._toastTimer = tid;
         };
-        var t = typeMap[type] || typeMap.success;
-        var el = document.createElement('div');
-        el.className = 'alert ' + t.cls + ' mb-4';
-        el.style.animation = 'alertSlideDown .25s ease';
-        el.innerHTML =
-            '<i class="fas ' + t.icon + ' alert-icon"></i>' +
-            '<div class="alert-message">' + message + '</div>' +
-            '<button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>';
-        var container = document.querySelector('.main-content');
-        if (container) {
-            container.insertBefore(el, container.firstChild);
-            container.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-            document.body.insertBefore(el, document.body.firstChild);
-        }
-        if (type !== 'error') bmsAlertAutoDismiss(el);
-    }
+
+        window.bmsToastDismiss = function (el) {
+            if (!el || !el.parentNode) return;
+            clearTimeout(el._toastTimer);
+            el.style.animation = 'bmsToastOut .2s ease forwards';
+            setTimeout(function () { if (el.parentNode) el.remove(); }, 210);
+        };
+    })();
 
     // ── Stat card decrement after Axios delete ───────────────────────────
     function bmsStatDecrement(id) {
