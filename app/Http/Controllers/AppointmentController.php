@@ -71,7 +71,7 @@ class AppointmentController extends Controller
                     $deleteBtn  = '<button class="btn btn-danger btn-sm btn-icon apt-delete-btn"
                                            style="height:30px;width:30px;padding:0;flex-shrink:0;
                                                   display:inline-flex;align-items:center;justify-content:center"
-                                           title="Delete Appointment"
+                                           data-tippy-content="Delete Appointment"
                                            data-num="'.e($a->appointment_number).'"
                                            data-name="'.e($a->resident_name).'"
                                            data-url="'.e($deleteUrl).'">
@@ -437,7 +437,7 @@ class AppointmentController extends Controller
                 $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon biz-delete-btn"
                                       style="height:30px;width:30px;padding:0;flex-shrink:0;
                                              display:inline-flex;align-items:center;justify-content:center"
-                                      title="Delete Application"
+                                      data-tippy-content="Delete Application"
                                       data-num="'.e($b->permit_number).'"
                                       data-name="'.e($b->owner_name).'"
                                       data-url="'.e($deleteUrl).'">
