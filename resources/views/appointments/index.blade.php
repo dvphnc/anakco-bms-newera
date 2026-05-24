@@ -973,13 +973,14 @@ $(document).ready(function () {
         }
     });
 
-    $('#docSearch').on('keyup', debounce(function () { docTable.ajax.reload(); }, 350));
-    $('#docStatusFilter, #docTypeFilter').on('change', function () { docTable.ajax.reload(); });
+    $('#docSearch').on('keyup', debounce(function () { updateAptBadge('doc'); docTable.ajax.reload(); }, 350));
+    $('#docStatusFilter, #docTypeFilter').on('change', function () { updateAptBadge('doc'); docTable.ajax.reload(); });
 
     window.resetDocFilters = function () {
         $('#docSearch').val('');
         $('#docStatusFilter').val(null).trigger('change');
         $('#docTypeFilter').val(null).trigger('change');
+        updateAptBadge('doc');
         docTable.ajax.reload();
     };
 
@@ -1019,12 +1020,13 @@ $(document).ready(function () {
         }
     });
 
-    $('#bizSearch').on('keyup', debounce(function () { bizTable.ajax.reload(); }, 350));
-    $('#bizStatusFilter').on('change', function () { bizTable.ajax.reload(); });
+    $('#bizSearch').on('keyup', debounce(function () { updateAptBadge('biz'); bizTable.ajax.reload(); }, 350));
+    $('#bizStatusFilter').on('change', function () { updateAptBadge('biz'); bizTable.ajax.reload(); });
 
     window.resetBizFilters = function () {
         $('#bizSearch').val('');
         $('#bizStatusFilter').val(null).trigger('change');
+        updateAptBadge('biz');
         bizTable.ajax.reload();
     };
 
