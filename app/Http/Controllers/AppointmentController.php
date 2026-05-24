@@ -324,8 +324,10 @@ class AppointmentController extends Controller
                 return '<span class="badge '.$cls.'">'.e($b->status).'</span>';
             })
             ->addColumn('actions', function ($b) {
-                $viewUrl  = route('businesses.show', $b);
-                $issueUrl = route('appointments.bizIssue', $b);
+                $viewUrl      = route('businesses.show', $b);
+                $issueUrl     = route('appointments.bizIssue', $b);
+                $statusUrl    = route('appointments.bizStatus', $b);
+                $apptDateFmt  = $b->preferred_date ? \Carbon\Carbon::parse($b->preferred_date)->format('M d, Y') : '—';
 
                 if ($b->permit_date) {
                     return '<div style="display:flex;justify-content:flex-end">
@@ -335,20 +337,52 @@ class AppointmentController extends Controller
                                     <i class="fas fa-stamp"></i> View Permit
                                 </a>
                             </div>';
-                } elseif (in_array($b->status, ['For Review', 'Pending'])) {
-                    return '<div style="display:flex;justify-content:flex-end">
+                }
+
+                // Common data attributes for the status-update modal
+                $dataAttrs = 'data-id="'.e($b->id).'"
+                              data-num="'.e($b->permit_number).'"
+                              data-biz="'.e($b->business_name).'"
+                              data-owner="'.e($b->owner_name).'"
+                              data-appt="'.e($apptDateFmt).'"
+                              data-status="'.e($b->status).'"
+                              data-status-url="'.e($statusUrl).'"
+                              data-issue-url="'.e($issueUrl).'"';
+
+                if ($b->status === 'Pending') {
+                    return '<div style="display:flex;justify-content:flex-end;gap:6px">
+                                <button class="btn btn-sm biz-status-btn"
+                                        style="height:30px;padding:0 10px;font-size:12px;font-weight:600;
+                                               background:#f0f4ff;color:#1d4ed8;border:1px solid #bfdbfe;
+                                               border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
+                                        '.$dataAttrs.'>
+                                    <i class="fas fa-pen-to-square" style="font-size:11px;margin-right:3px"></i>Update Status
+                                </button>
                                 <button class="btn btn-success btn-sm biz-issue-btn"
                                         style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
-                                        data-id="'.e($b->id).'"
-                                        data-num="'.e($b->permit_number).'"
-                                        data-biz="'.e($b->business_name).'"
-                                        data-owner="'.e($b->owner_name).'"
-                                        data-appt="'.($b->preferred_date ? \Carbon\Carbon::parse($b->preferred_date)->format('M d, Y') : '—').'"
-                                        data-url="'.$issueUrl.'">
+                                        '.$dataAttrs.'>
+                                    <i class="fas fa-stamp"></i> Issue
+                                </button>
+                            </div>';
+                }
+
+                if ($b->status === 'For Review') {
+                    return '<div style="display:flex;justify-content:flex-end;gap:6px">
+                                <button class="btn btn-sm biz-status-btn"
+                                        style="height:30px;padding:0 10px;font-size:12px;font-weight:600;
+                                               background:#f0f4ff;color:#1d4ed8;border:1px solid #bfdbfe;
+                                               border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap"
+                                        '.$dataAttrs.'>
+                                    <i class="fas fa-pen-to-square" style="font-size:11px;margin-right:3px"></i>Update
+                                </button>
+                                <button class="btn btn-success btn-sm biz-issue-btn"
+                                        style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
+                                        '.$dataAttrs.'>
                                     <i class="fas fa-stamp"></i> Issue Permit
                                 </button>
                             </div>';
                 }
+
                 return '';
             })
             ->filter(function ($query) use ($request) {
