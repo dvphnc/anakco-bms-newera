@@ -198,11 +198,11 @@ class AppointmentController extends Controller
     {
         $existingDoc = Document::where('appointment_id', $appointment->id)->first();
 
-        // Already fully issued — just return the existing record
-        if ($existingDoc && $existingDoc->status !== 'Pending') {
+        // Guard: already released — show the record instead
+        if ($existingDoc && $existingDoc->status === 'Released') {
             return response()->json([
                 'success'  => false,
-                'message'  => 'This appointment has already been issued as a document record.',
+                'message'  => 'This document has already been issued.',
                 'view_url' => route('documents.show', $existingDoc),
             ], 422);
         }
@@ -210,10 +210,11 @@ class AppointmentController extends Controller
         $validated = $request->validate([
             'fee_paid'  => 'nullable|numeric|min:0',
             'or_number' => 'nullable|string|max:100',
+            'notes'     => 'nullable|string|max:500',
         ]);
 
         if ($existingDoc) {
-            // Portal placeholder exists (status=Pending) — upgrade it in-place
+            // Portal placeholder exists — upgrade it in-place
             $existingDoc->update([
                 'fee_paid'    => $validated['fee_paid'] ?? 0,
                 'or_number'   => $validated['or_number'] ?? null,
@@ -244,26 +245,49 @@ class AppointmentController extends Controller
             $this->logActivity('created', $document);
         }
 
-        // Auto-release the appointment if not already released
-        if ($appointment->status !== 'Released') {
-            $old = $appointment->status;
+        // Release the appointment and write audit log
+        $fromStatus = $appointment->status;
 
-            AppointmentStatusLog::create([
-                'appointment_id' => $appointment->id,
-                'from_status'    => $old,
-                'to_status'      => 'Released',
-                'changed_by'     => auth()->user()->name,
-                'note'           => 'Auto-released when document '.$document->doc_number.' was issued.',
-            ]);
+        AppointmentStatusLog::create([
+            'appointment_id' => $appointment->id,
+            'from_status'    => $fromStatus,
+            'to_status'      => 'Released',
+            'changed_by'     => auth()->user()->name,
+            'note'           => $validated['notes'] ?? ('Document '.$document->doc_number.' issued.'),
+        ]);
 
-            $appointment->update([
-                'status'       => 'Released',
-                'released_at'  => now(),
-                'processed_by' => auth()->user()->name,
-            ]);
+        $appointment->update([
+            'status'       => 'Released',
+            'released_at'  => now(),
+            'processed_by' => auth()->user()->name,
+            'notes'        => $validated['notes'] ?? $appointment->notes,
+        ]);
 
-            $this->logActivity('updated', $appointment);
+        $this->logActivity('updated', $appointment);
+
+        // Send email notification to resident
+        if ($appointment->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($appointment->email)
+                    ->queue(new \App\Mail\PortalStatusUpdated(
+                        type:          'document',
+                        requestNumber: $appointment->appointment_number,
+                        residentName:  $appointment->resident_name,
+                        newStatus:     'Released',
+                        notes:         $validated['notes'] ?? null,
+                        preferredDate: $appointment->preferred_date?->format('Y-m-d'),
+                    ));
+            } catch (\Exception $e) {
+                logger()->warning('Issue document email failed: '.$e->getMessage());
+            }
         }
+
+        // Return fresh counts so stat cards stay current
+        $counts = DocumentAppointment::selectRaw(
+            "SUM(status='Pending') as pending,
+             SUM(status='Ready')   as ready,
+             SUM(status='Released') as released"
+        )->first();
 
         return response()->json([
             'success'    => true,
@@ -271,6 +295,11 @@ class AppointmentController extends Controller
             'doc_number' => $document->doc_number,
             'doc_id'     => $document->id,
             'view_url'   => route('documents.show', $document),
+            'counts'     => [
+                'Pending'  => (int) $counts->pending,
+                'Ready'    => (int) $counts->ready,
+                'Released' => (int) $counts->released,
+            ],
         ]);
     }
 
