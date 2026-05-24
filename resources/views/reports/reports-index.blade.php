@@ -12,7 +12,7 @@
     <div class="page-actions">
         <span style="font-size:13px;color:var(--text-muted);padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm)">
             <i class="fas fa-clock" style="color:var(--gold);margin-right:6px"></i>
-            As of {{ now()->format('F d, Y') }}
+            As of {{ now()->format('F d, Y · h:i A') }}
         </span>
         <a href="{{ route('reports.generate') }}" class="btn btn-secondary">
             <i class="fas fa-file-pdf"></i> Generate Reports

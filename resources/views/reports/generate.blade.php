@@ -132,8 +132,8 @@
                     <div class="form-group" style="margin-bottom:14px">
                         <label class="form-label" style="font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle)">Year</label>
                         <select name="year" id="reportYear" class="form-control" required>
-                            @for($y = date('Y'); $y >= 2020; $y--)
-                                <option value="{{ $y }}" {{ $y == date('Y') ? 'selected' : '' }}>{{ $y }}</option>
+                            @for($y = $currentYear; $y >= 2020; $y--)
+                                <option value="{{ $y }}" {{ $y == $currentYear ? 'selected' : '' }}>{{ $y }}</option>
                             @endfor
                         </select>
                     </div>
