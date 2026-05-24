@@ -568,9 +568,10 @@ $(document).on('click', '#documentsTable .doc-pipeline-btn', function () {
     $('#pmConfirmSpinner').hide();
     $('#pmConfirmBtn').prop('disabled', false).show();
 
-    /* Released-to field: show & pre-fill with resident name from row */
+    /* Released-to field: show & pre-fill with resident name from row.
+       Read only the first div (name) — not the sub-div (Purok / "Portal Submission"). */
     if (next === 'Released') {
-        var residentCell = $btn.closest('tr').find('td:nth-child(2)').text().trim().split('\n')[0].trim();
+        var residentCell = $btn.closest('tr').find('td:nth-child(2) div:first-child').text().trim();
         $('#pmReleasedTo').val(residentCell || '');
         $('#pmReleasedToRow').show();
     } else {

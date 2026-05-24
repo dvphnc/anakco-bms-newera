@@ -222,10 +222,32 @@ class DocumentController extends Controller
 
     public function edit(Document $document)
     {
-        $residents     = Resident::active()->orderBy('last_name')->get();
+        $document->load('resident');
+
         $documentTypes = ['Barangay Clearance', 'Certificate of Residency', 'Certificate of Indigency', 'Good Moral Character', 'Business Clearance', 'Certificate of Live Birth', 'Other'];
 
-        return view('documents.documents-edit', compact('document', 'residents', 'documentTypes'));
+        // For portal documents with no linked resident_id,
+        // try to find the resident by the portal-submitted name so the field pre-populates.
+        $suggestedResident = null;
+        if (! $document->resident && $document->resident_name_portal) {
+            $name = trim($document->resident_name_portal);
+            $suggestedResident = Resident::whereRaw(
+                "LOWER(CONCAT(first_name, ' ', last_name)) = ? OR LOWER(CONCAT(last_name, ', ', first_name)) = ?",
+                [strtolower($name), strtolower($name)]
+            )->first();
+
+            // Partial fallback — token match on last name
+            if (! $suggestedResident) {
+                $tokens = array_filter(explode(' ', strtolower($name)));
+                foreach ($tokens as $token) {
+                    if (strlen($token) < 3) continue;
+                    $suggestedResident = Resident::whereRaw('LOWER(last_name) LIKE ?', ["%$token%"])->first();
+                    if ($suggestedResident) break;
+                }
+            }
+        }
+
+        return view('documents.documents-edit', compact('document', 'documentTypes', 'suggestedResident'));
     }
 
     public function update(Request $request, Document $document)
