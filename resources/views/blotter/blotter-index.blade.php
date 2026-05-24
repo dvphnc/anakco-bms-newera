@@ -461,6 +461,55 @@ $(document).ready(function () {
     });
 });
 
+/* ── Activate Case Modal (portal submissions) ────────────────────── */
+$('#blotterTable').on('click', '.blotter-activate-btn', function () {
+    var $btn = $(this);
+    document.getElementById('blotterActivateNum').textContent        = $btn.data('num');
+    document.getElementById('blotterActivateType').textContent       = $btn.data('type');
+    document.getElementById('blotterActivateComplainant').textContent = $btn.data('complainant');
+    document.getElementById('blotterActivateDate').textContent       = $btn.data('date');
+    document.getElementById('blotterActivateNotes').value            = '';
+    document.getElementById('blotterActivateError').style.display    = 'none';
+    window._blotterActivateUrl = $btn.data('url');
+    document.getElementById('blotterActivateModal').style.display    = 'flex';
+});
+
+function closeBlotterActivateModal() {
+    document.getElementById('blotterActivateModal').style.display = 'none';
+    window._blotterActivateUrl = null;
+}
+
+function saveBlotterActivate() {
+    var btn = document.getElementById('blotterActivateSaveBtn');
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Activating…';
+    document.getElementById('blotterActivateError').style.display = 'none';
+
+    axios.post(window._blotterActivateUrl, {
+        notes:  document.getElementById('blotterActivateNotes').value || null,
+        _token: '{{ csrf_token() }}',
+    })
+    .then(function (res) {
+        closeBlotterActivateModal();
+        $('#blotterTable').DataTable().ajax.reload(null, false);
+        bmsToast(res.data.message || 'Case activated.', 'success');
+    })
+    .catch(function (err) {
+        var msg = err.response?.data?.message || 'Failed to activate case.';
+        document.getElementById('blotterActivateError').textContent   = msg;
+        document.getElementById('blotterActivateError').style.display = '';
+        if (err.response?.data?.view_url) {
+            bmsToast('Already activated.', 'info');
+            setTimeout(() => window.open(err.response.data.view_url, '_blank'), 1200);
+            closeBlotterActivateModal();
+        }
+    })
+    .finally(function () {
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fas fa-shield-halved"></i> Activate Case';
+    });
+}
+
 /* ── Quick Status Modal ───────────────────────────────────────────── */
 var _blotterStatusId = null;
 
@@ -478,7 +527,7 @@ function closeBlotterStatusModal() {
     _blotterStatusId = null;
 }
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { closeBlotterStatusModal(); }
+    if (e.key === 'Escape') { closeBlotterStatusModal(); closeBlotterActivateModal(); }
 });
 
 function saveBlotterStatus() {
