@@ -31,7 +31,8 @@ class BusinessController extends Controller
                     } elseif ($request->expiry_filter === 'valid') {
                         $q->where('expiry_date', '>', now()->addDays(30))->where('status', 'Active');
                     }
-                });
+                })
+                ->when($request->source, fn ($q) => $q->where('source', $request->source));
 
             return DataTables::of($query)
                 ->addColumn('number_col', function ($b) {

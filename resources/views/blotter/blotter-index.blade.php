@@ -63,6 +63,37 @@
     </div>
 </div>
 
+{{-- Source Quick-Filter Chip Strip --}}
+<div class="no-print" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <span style="font-size:12px;font-weight:600;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.06em">Source:</span>
+    <button type="button" class="src-chip src-chip-active" data-src=""
+            style="height:30px;padding:0 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid var(--navy);background:var(--navy);color:#fff;transition:all .15s">
+        All
+    </button>
+    <button type="button" class="src-chip" data-src="portal"
+            style="height:30px;padding:0 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;transition:all .15s">
+        <i class="fas fa-globe" style="font-size:10px;margin-right:4px"></i>Portal
+        <span id="srcChipPortalCount" style="margin-left:5px;background:#1d4ed8;color:#fff;border-radius:4px;
+              padding:1px 7px;font-size:10px;font-weight:700">
+            {{ \App\Models\BlotterCase::where('source','portal')->where('status','!=','Pending')->count() }}
+        </span>
+    </button>
+    <button type="button" class="src-chip" data-src="walk-in"
+            style="height:30px;padding:0 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all .15s">
+        <i class="fas fa-walking" style="font-size:10px;margin-right:4px"></i>Walk-in
+    </button>
+</div>
+
+{{-- Hidden source select — backing value for chip logic + DataTable AJAX --}}
+<select id="sourceFilter" style="display:none">
+    <option value=""></option>
+    <option value="portal">Portal</option>
+    <option value="walk-in">Walk-in</option>
+</select>
+
 {{-- Collapsible Filter Bar --}}
 <div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('blotter')">
