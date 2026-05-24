@@ -1047,9 +1047,9 @@ $(document).ready(function () {
         document.getElementById('cvtType').textContent = type;
         document.getElementById('cvtDate').textContent = $btn.data('date') || '—';
 
-        // Pre-fill fee/OR if already set on linked document
-        document.getElementById('cvtFee').value  = $btn.data('fee') || '';
-        document.getElementById('cvtOR').value   = $btn.data('or')  || '';
+        // Always start fee/OR blank — staff enters consciously at point of issue
+        document.getElementById('cvtFee').value  = '';
+        document.getElementById('cvtOR').value   = '';
         document.getElementById('cvtNote').value = '';
         document.getElementById('cvtError').style.display = 'none';
 
