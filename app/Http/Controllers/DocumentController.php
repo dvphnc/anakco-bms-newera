@@ -110,11 +110,12 @@ class DocumentController extends Controller
                     $printBtn = $d->status === 'Released'
                         ? '<a href="'.$show.'?print=1" target="_blank"
                               class="btn btn-primary btn-sm btn-icon"
-                              title="Print Certificate"
+                              data-tippy-content="Print Certificate"
                               style="background:var(--navy);border-color:var(--navy)">
                                <i class="fas fa-print"></i>
                            </a>'
-                        : '<a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View Document">
+                        : '<a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon"
+                               data-tippy-content="View Document">
                                <i class="fas fa-eye"></i>
                            </a>';
 
@@ -122,14 +123,13 @@ class DocumentController extends Controller
                         <div style="display:flex;justify-content:flex-end;align-items:center;gap:6px">
                             '.$pipelineBtn.'
                             '.$printBtn.'
-                            <form method="POST" action="'.$delete.'"
-                                  data-confirm="Delete document '.e($d->doc_number).'? This cannot be undone."
-                                  data-confirm-title="Delete Document"
-                                  data-confirm-ok="Delete">
-                                <input type="hidden" name="_token" value="'.csrf_token().'">
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
-                            </form>
+                            <button class="btn btn-danger btn-sm btn-icon doc-delete-btn"
+                                    data-tippy-content="Delete Document"
+                                    data-url="'.e($delete).'"
+                                    data-num="'.e($d->doc_number).'"
+                                    data-name="'.e($d->resident ? $d->resident->full_name : ($d->resident_name_portal ?? 'this document')).'">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>';
                 })
                 ->filter(function ($query) use ($request) {
