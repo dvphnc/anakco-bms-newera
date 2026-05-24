@@ -963,6 +963,122 @@ $(document).ready(function () {
     }
 
     /* ═══════════════════════════════════════════════════════════════
+     | PIPELINE — Process button (Pending → Processing, no modal)
+     ═══════════════════════════════════════════════════════════════ */
+    $('#appointmentsTable').on('click', '.apt-pipeline-btn', function () {
+        var $btn    = $(this);
+        var url     = $btn.data('url');
+        var origHtml = $btn.html();
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>');
+
+        axios.patch(url, { status: 'Processing', _token: '{{ csrf_token() }}' })
+            .then(function (res) {
+                bmsToast(res.data.message || 'Status updated to Processing.', 'success');
+                docTable.ajax.reload(null, false);
+                // Update stat cards if counts returned
+                if (res.data.counts) {
+                    var c = res.data.counts;
+                    if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending  ?? 0;
+                    if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
+                    if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
+                }
+            })
+            .catch(function (err) {
+                $btn.prop('disabled', false).html(origHtml);
+                bmsToast(err.response?.data?.message || 'Failed to advance status.', 'error');
+            });
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+     | PIPELINE — Mark Ready button (Processing → modal)
+     ═══════════════════════════════════════════════════════════════ */
+    var _rdyUrl = null;
+
+    $('#appointmentsTable').on('click', '.apt-ready-btn', function () {
+        var $btn = $(this);
+        _rdyUrl  = $btn.data('url');
+
+        document.getElementById('rdyNum').textContent  = $btn.data('num')  || '';
+        document.getElementById('rdyName').textContent = $btn.data('name') || '';
+        document.getElementById('rdyType').textContent = $btn.data('type') || '';
+
+        // Pre-fill if fee/OR already on the linked document
+        document.getElementById('rdyFee').value      = $btn.data('fee') || '';
+        document.getElementById('rdyOR').value       = $btn.data('or')  || '';
+        document.getElementById('rdyNote').value     = '';
+        document.getElementById('rdyError').style.display = 'none';
+
+        // Default pickup date to tomorrow
+        var tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('rdyPickupDate').value = tomorrow.toISOString().slice(0, 10);
+
+        document.getElementById('aptReadyModal').style.display = 'flex';
+        setTimeout(function () { document.getElementById('rdyPickupDate').focus(); }, 80);
+    });
+
+    window.closeReadyModal = function () {
+        document.getElementById('aptReadyModal').style.display = 'none';
+        _rdyUrl = null;
+    };
+
+    window.saveReady = function () {
+        var pickupDate = document.getElementById('rdyPickupDate').value;
+        var errEl      = document.getElementById('rdyError');
+
+        if (!pickupDate) {
+            errEl.textContent      = 'Please set a pick-up date.';
+            errEl.style.display    = '';
+            document.getElementById('rdyPickupDate').focus();
+            return;
+        }
+        errEl.style.display = 'none';
+
+        var btn = document.getElementById('rdySaveBtn');
+        btn.disabled    = true;
+        btn.innerHTML   = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+
+        var payload = {
+            status:      'Ready',
+            pickup_date: pickupDate,
+            _token: '{{ csrf_token() }}',
+        };
+        var fee  = document.getElementById('rdyFee').value.trim();
+        var or_  = document.getElementById('rdyOR').value.trim();
+        var note = document.getElementById('rdyNote').value.trim();
+        if (fee)  payload.fee_paid   = fee;
+        if (or_)  payload.or_number  = or_;
+        if (note) payload.notes      = note;
+
+        axios.patch(_rdyUrl, payload)
+            .then(function (res) {
+                closeReadyModal();
+                docTable.ajax.reload(null, false);
+                bmsToast('📧 ' + (res.data.message || 'Marked as Ready. Email sent to resident.'), 'success');
+                if (res.data.counts) {
+                    var c = res.data.counts;
+                    if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending  ?? 0;
+                    if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
+                    if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
+                }
+            })
+            .catch(function (err) {
+                errEl.textContent   = err.response?.data?.message || 'Failed to mark as ready.';
+                errEl.style.display = '';
+            })
+            .finally(function () {
+                btn.disabled  = false;
+                btn.innerHTML = '<i class="fas fa-bell"></i> Mark as Ready';
+            });
+    };
+
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape' && document.getElementById('aptReadyModal').style.display === 'flex') {
+            closeReadyModal();
+        }
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
      | MODAL — Issue Document
      ═══════════════════════════════════════════════════════════════ */
     $('#appointmentsTable').on('click', '.apt-convert-btn', function () {
