@@ -215,6 +215,80 @@
 </div>
 
 
+<div id="bizIssueModal"
+     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9700;
+            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
+     onclick="if(event.target===this)closeBizIssueModal()">
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
+                box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
+        <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:9px">
+                <i class="fas fa-stamp" style="color:var(--gold);font-size:13px"></i>
+                <span style="font-size:13.5px;font-weight:700;color:#fff">Issue Business Permit</span>
+            </div>
+            <button onclick="closeBizIssueModal()"
+                    style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+                           border-radius:var(--radius-sm);width:28px;height:28px;display:flex;
+                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer;font-size:12px">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div style="padding:18px">
+            <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
+                        border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:10px;column-gap:16px">
+                    <div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Permit No.</div>
+                        <div id="bizIssueNum" style="font-size:13px;font-weight:700;color:var(--navy);font-family:monospace"></div>
+                    </div>
+                    <div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Appointment Date</div>
+                        <div id="bizIssueAppt" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:10px">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Business</div>
+                        <div id="bizIssueBiz" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div style="grid-column:1/-1">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Owner</div>
+                        <div id="bizIssueOwner" style="font-size:13px;color:var(--text)"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                <div class="form-group" style="margin:0">
+                    <label class="form-label" style="font-size:12.5px">Permit Date <span style="color:var(--crimson)">*</span></label>
+                    <input type="date" id="bizIssuePermitDate" class="form-control">
+                </div>
+                <div class="form-group" style="margin:0">
+                    <label class="form-label" style="font-size:12.5px">Expiry Date <span style="color:var(--crimson)">*</span></label>
+                    <input type="date" id="bizIssueExpiryDate" class="form-control">
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+                <div class="form-group" style="margin:0">
+                    <label class="form-label" style="font-size:12.5px">Fee Paid (₱) <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span></label>
+                    <input type="number" id="bizIssueFee" class="form-control" min="0" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group" style="margin:0">
+                    <label class="form-label" style="font-size:12.5px">O.R. Number <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span></label>
+                    <input type="text" id="bizIssueOR" class="form-control" placeholder="e.g. 2026-00123">
+                </div>
+            </div>
+            <div id="bizIssueError" style="display:none;font-size:13px;color:var(--crimson);
+                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
+                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
+            <div style="display:flex;justify-content:flex-end;gap:10px">
+                <button type="button" onclick="closeBizIssueModal()" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="bizIssueSaveBtn" onclick="saveBizIssue()" class="btn btn-success">
+                    <i class="fas fa-stamp"></i> Issue Permit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div id="bizStatusModal"
      style="display:none;position:fixed;inset:0;z-index:9600;align-items:center;justify-content:center;
             background:rgba(9,20,40,0.5);backdrop-filter:blur(3px)"
@@ -367,6 +441,7 @@ $(document).ready(function () {
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 
+    window._bizTable = null;
     var table = $('#businessesTable').DataTable({
         processing: true,
         serverSide: true,
@@ -392,6 +467,7 @@ $(document).ready(function () {
         ],
         order: [[7, 'desc']],
         pageLength: 15,
+        initComplete: function () { window._bizTable = this.api(); },
         drawCallback: function () {
             if (typeof tippy !== 'undefined') {
                 tippy('#businessesTable [data-tippy-content]', {
@@ -444,10 +520,24 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Quick View ───────────────────────────────────────────────────── */
-    $('#businessesTable').on('click', 'a.biz-qv-btn', function (e) {
-        e.preventDefault();
-        openBizPanel($(this).data('url'));
+        /* ── Issue Permit (portal submissions) ──────────────────────────── */
+    $('#businessesTable').on('click', '.biz-issue-btn', function () {
+        const $btn = $(this);
+        document.getElementById('bizIssueNum').textContent   = $btn.data('num');
+        document.getElementById('bizIssueBiz').textContent   = $btn.data('biz');
+        document.getElementById('bizIssueOwner').textContent = $btn.data('owner');
+        document.getElementById('bizIssueAppt').textContent  = $btn.data('appt');
+        const today    = new Date();
+        const nextYear = new Date(today);
+        nextYear.setFullYear(nextYear.getFullYear() + 1);
+        const fmt = d => d.toISOString().slice(0, 10);
+        document.getElementById('bizIssuePermitDate').value  = fmt(today);
+        document.getElementById('bizIssueExpiryDate').value  = fmt(nextYear);
+        document.getElementById('bizIssueFee').value         = '';
+        document.getElementById('bizIssueOR').value          = '';
+        document.getElementById('bizIssueError').style.display = 'none';
+        window._bizIssueUrl = $btn.data('issue-url');
+        document.getElementById('bizIssueModal').style.display = 'flex';
     });
 
     /* ── URL persistence ──────────────────────────────────────────────── */
@@ -526,6 +616,54 @@ $(document).ready(function () {
         $('#expiryFilter').val(null).trigger('change');
         saveToUrl(); table.ajax.reload();
     });
+});
+
+/* ── Issue Permit Modal (portal) ─────────────────────────────────── */
+window.closeBizIssueModal = function () {
+    document.getElementById('bizIssueModal').style.display = 'none';
+    window._bizIssueUrl = null;
+};
+
+window.saveBizIssue = function () {
+    const permitDate = document.getElementById('bizIssuePermitDate').value;
+    const expiryDate = document.getElementById('bizIssueExpiryDate').value;
+    const errEl      = document.getElementById('bizIssueError');
+    if (!permitDate || !expiryDate) {
+        errEl.textContent   = 'Please fill in both permit date and expiry date.';
+        errEl.style.display = '';
+        return;
+    }
+    const btn    = document.getElementById('bizIssueSaveBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Issuing…';
+    errEl.style.display = 'none';
+
+    axios.post(window._bizIssueUrl, {
+        permit_date: permitDate,
+        expiry_date: expiryDate,
+        fee_paid:    document.getElementById('bizIssueFee').value  || null,
+        or_number:   document.getElementById('bizIssueOR').value   || null,
+        _token:      '<?php echo e(csrf_token()); ?>',
+    })
+    .then(function (res) {
+        closeBizIssueModal();
+        if (window._bizTable) window._bizTable.ajax.reload(null, false);
+        bmsToast(res.data.message || 'Permit issued.', 'success');
+    })
+    .catch(function (err) {
+        errEl.textContent   = err.response?.data?.message || 'Failed to issue permit.';
+        errEl.style.display = '';
+    })
+    .finally(function () {
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fas fa-stamp"></i> Issue Permit';
+    });
+};
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && document.getElementById('bizIssueModal').style.display === 'flex') {
+        closeBizIssueModal();
+    }
 });
 
 /* ── Business Quick View Panel ────────────────────────────────────── */
