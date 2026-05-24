@@ -166,7 +166,9 @@
 }
 .prog-step.cancelled .prog-dot {
     background: #dc2626; color: #fff; border-color: #dc2626;
+    box-shadow: 0 0 0 4px rgba(220,38,38,.2);
 }
+.prog-step.cancelled .prog-label { color: #dc2626; font-weight: 700; }
 .prog-label {
     font-size: .63rem; color: #9ca3af; font-weight: 500; line-height: 1.2;
 }
@@ -456,9 +458,11 @@ unset($__errorArgs, $__bag); ?>
     }
 
     function renderStepper(d) {
-        if (!d.steps || !d.steps.length || d.cancelled) return '';
+        if (!d.steps || !d.steps.length) return '';
 
-        // Per-step custom colors for current state
+        var isCancelled = d.cancelled;
+
+        // Per-step custom colors for active state
         var stepColors = {
             'Pending':    { bg: '#C8861A', border: '#C8861A', shadow: 'rgba(200,134,26,.25)' },
             'Processing': { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
@@ -467,13 +471,21 @@ unset($__errorArgs, $__bag); ?>
         };
 
         var dots = d.steps.map(function (step, i) {
-            var isDone    = d.step_index !== -1 && i < d.step_index;
-            var isCurrent = d.status === step ||
-                            (d.step_index !== -1 && i === d.step_index && !d.steps.includes(d.status));
-            var cls  = isDone ? 'done' : (isCurrent ? 'current' : '');
-            var icon = isDone
-                ? '<i class="fas fa-check"></i>'
-                : (isCurrent ? '<i class="fas fa-circle-dot"></i>' : (i + 1));
+            var isDone         = d.step_index !== -1 && i < d.step_index;
+            // For cancelled: mark the step it was at when cancelled with the 'cancelled' class
+            var isCancelledAt  = isCancelled && d.step_index !== -1 && i === d.step_index;
+            var isCurrent      = !isCancelled && (
+                d.status === step ||
+                (d.step_index !== -1 && i === d.step_index && !d.steps.includes(d.status))
+            );
+
+            var cls = isDone ? 'done'
+                             : (isCancelledAt ? 'cancelled'
+                                              : (isCurrent ? 'current' : ''));
+            var icon = isDone         ? '<i class="fas fa-check"></i>'
+                     : isCancelledAt  ? '<i class="fas fa-xmark"></i>'
+                     : isCurrent      ? '<i class="fas fa-circle-dot"></i>'
+                     : (i + 1);
 
             var dotStyle = '';
             if (isCurrent && stepColors[step]) {
