@@ -34,7 +34,7 @@
 
 <?php
     $portalPending = \App\Models\Document::where('source','portal')
-        ->whereIn('status',['Pending','Confirmed','Processing','Ready'])->count();
+        ->whereIn('status',['Pending','Processing','Ready'])->count();
 ?>
 <div class="grid-4 mb-6">
     <div class="stat-card">
@@ -582,7 +582,6 @@ $(document).on('click', '.src-chip', function () {
 /* ── Status badge class map ───────────────────────────────────────── */
 const DOC_STATUS_CLS = {
     Pending:    'badge-yellow',
-    Confirmed:  'badge-navy',
     Processing: 'badge-blue',
     Ready:      'badge-green',
     Released:   'badge-gray',
