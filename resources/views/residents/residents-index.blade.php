@@ -238,6 +238,8 @@
 }
 /* Filter panel transition */
 #filterPanel { transition: none; }
+/* Filtered export indicator */
+.btn-export-filtered { border-color: var(--gold) !important; box-shadow: 0 0 0 2px rgba(200,134,26,0.18) !important; }
 
 /* Audit B — Condensed row density */
 #residentsTable td,
@@ -351,6 +353,24 @@ $(document).ready(function () {
         return any;
     }
 
+    var _pdfBase  = '{{ route('export.pdf',   'residents') }}';
+    var _xlsxBase = '{{ route('export.excel', 'residents') }}';
+
+    function _syncExportUrls() {
+        var p = {};
+        var s = $('#searchInput').val();           if (s) p.s = s;
+        var st = $('#statusFilter').val();         if (st) p.status = st;
+        var g  = $('#genderFilter').val();         if (g)  p.gender = g;
+        var pk = $('#purokFilter').val();          if (pk) p.purok_id = pk;
+        var qs = Object.keys(p).length ? '?' + $.param(p) : '';
+        $('#btnExportPdf').attr('href', _pdfBase + qs)
+            .attr('title', qs ? 'Export filtered results — ' + Object.entries(p).map(([k,v])=>k+':'+v).join(', ') : 'Export PDF');
+        $('#btnExportExcel').attr('href', _xlsxBase + qs)
+            .attr('title', qs ? 'Export filtered results — ' + Object.entries(p).map(([k,v])=>k+':'+v).join(', ') : 'Export Excel');
+        var active = Object.keys(p).length > 0;
+        $('#btnExportPdf, #btnExportExcel').toggleClass('btn-export-filtered', active);
+    }
+
     function updateBadge() {
         let n = 0;
         if ($('#searchInput').val())                    n++;
@@ -372,6 +392,7 @@ $(document).ready(function () {
             badge.style.display = 'none';
             chip.style.display  = 'none';
         }
+        _syncExportUrls();
     }
 
     /* ── Filter panel toggle — persists to localStorage ─────────────── */
