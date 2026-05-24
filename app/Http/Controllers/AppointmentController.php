@@ -301,8 +301,10 @@ class AppointmentController extends Controller
 
         return response()->json([
             'success'    => true,
-            'message'    => "Document {$document->doc_number} issued successfully.",
+            'message'    => "Document {$document->doc_number} issued successfully."
+                            .($document->or_number ? " OR No.: {$document->or_number}" : ''),
             'doc_number' => $document->doc_number,
+            'or_number'  => $document->or_number,
             'doc_id'     => $document->id,
             'view_url'   => route('documents.show', $document),
             'counts'     => [
@@ -311,6 +313,64 @@ class AppointmentController extends Controller
                 'Released' => (int) $counts->released,
             ],
         ]);
+    }
+
+    /* ─────────────────────────────────────────────────────────────────────
+     |  RESIDENT VERIFICATION — for Issue Document modal
+     |────────────────────────────────────────────────────────────────────── */
+
+    /**
+     * Fuzzy-match a free-text portal name against the residents table.
+     * Returns the best match (if any) so the modal can show a verification chip.
+     */
+    public function verifyResident(Request $request)
+    {
+        $raw = trim($request->input('name', ''));
+        if (strlen($raw) < 2) {
+            return response()->json(['found' => false]);
+        }
+
+        $name = strtolower($raw);
+
+        // Try progressively looser matches
+        $resident = \App\Models\Resident::whereRaw(
+            "LOWER(CONCAT(first_name, ' ', last_name)) = ?", [$name]
+        )->first();
+
+        if (! $resident) {
+            $resident = \App\Models\Resident::whereRaw(
+                "LOWER(CONCAT(first_name, ' ', COALESCE(middle_name,''), ' ', last_name)) LIKE ?
+                 OR LOWER(CONCAT(last_name, ', ', first_name)) LIKE ?
+                 OR LOWER(CONCAT(first_name, ' ', last_name)) LIKE ?",
+                ["%$name%", "%$name%", "%$name%"]
+            )->first();
+        }
+
+        if (! $resident) {
+            // Last resort: split into tokens and try each part
+            $tokens = array_filter(explode(' ', $name));
+            foreach ($tokens as $token) {
+                if (strlen($token) < 3) continue;
+                $resident = \App\Models\Resident::whereRaw(
+                    "LOWER(last_name) LIKE ? OR LOWER(first_name) LIKE ?",
+                    ["%$token%", "%$token%"]
+                )->first();
+                if ($resident) break;
+            }
+        }
+
+        if ($resident) {
+            return response()->json([
+                'found'    => true,
+                'id'       => $resident->id,
+                'name'     => $resident->full_name,
+                'address'  => $resident->address ?? '—',
+                'purok'    => $resident->purok?->name ?? null,
+                'status'   => $resident->residency_status ?? 'Active',
+            ]);
+        }
+
+        return response()->json(['found' => false]);
     }
 
     /* ─────────────────────────────────────────────────────────────────────

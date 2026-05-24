@@ -204,6 +204,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('appointments.updateStatus')->middleware('role:Admin,Secretary');
     Route::post('appointments/{appointment}/convert', [AppointmentController::class, 'convertToDocument'])
         ->name('appointments.convert')->middleware('role:Admin,Secretary');
+    Route::get('appointments/verify-resident', [AppointmentController::class, 'verifyResident'])
+        ->name('appointments.verifyResident')->middleware('role:Admin,Secretary');
     Route::delete('appointments/{appointment}', [AppointmentController::class, 'destroy'])
         ->name('appointments.destroy')->middleware('role:Admin,Secretary');
     // Business permit portal appointments (separate DataTable on same page)
