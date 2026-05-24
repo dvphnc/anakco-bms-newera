@@ -440,6 +440,7 @@ $(document).ready(function () {
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
 
+    window._bizTable = null;
     var table = $('#businessesTable').DataTable({
         processing: true,
         serverSide: true,
@@ -465,6 +466,7 @@ $(document).ready(function () {
         ],
         order: [[7, 'desc']],
         pageLength: 15,
+        initComplete: function () { window._bizTable = this.api(); },
         drawCallback: function () {
             if (typeof tippy !== 'undefined') {
                 tippy('#businessesTable [data-tippy-content]', {
@@ -644,9 +646,7 @@ window.saveBizIssue = function () {
     })
     .then(function (res) {
         closeBizIssueModal();
-        $(document).ready(function () { $('.biz-table-ref').DataTable().ajax.reload(null, false); });
-        // Reload the table — we need a reference to `table`
-        if (typeof table !== 'undefined') table.ajax.reload(null, false);
+        if (window._bizTable) window._bizTable.ajax.reload(null, false);
         bmsToast(res.data.message || 'Permit issued.', 'success');
     })
     .catch(function (err) {
