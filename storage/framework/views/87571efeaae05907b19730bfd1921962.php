@@ -330,14 +330,26 @@
                     </div>
                     <div style="grid-column:1/-1">
                         <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
-                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Resident</div>
-                        <div id="cvtName" style="font-size:13px;color:var(--text)"></div>
+                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Applicant Name</div>
+                        <div id="cvtName" style="font-size:13px;font-weight:600;color:var(--text)"></div>
                     </div>
                 </div>
             </div>
         </div>
+
         
-        <div style="padding:16px 18px">
+        <div style="padding:10px 18px 0">
+            <div id="cvtVerifyBox"
+                 style="border-radius:var(--radius-sm);padding:10px 14px;
+                        display:flex;align-items:flex-start;gap:10px;font-size:13px;
+                        background:#f8f9fb;border:1px solid var(--border)">
+                <i class="fas fa-spinner fa-spin" style="color:var(--text-subtle);margin-top:1px;flex-shrink:0;font-size:12px"></i>
+                <span style="color:var(--text-muted)">Checking resident database…</span>
+            </div>
+        </div>
+
+        
+        <div style="padding:14px 18px">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
                 <div class="form-group" style="margin:0">
                     <label class="form-label" style="font-size:12.5px">
@@ -349,9 +361,12 @@
                 <div class="form-group" style="margin:0">
                     <label class="form-label" style="font-size:12.5px">
                         O.R. Number
-                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— optional</span>
+                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px;display:block;margin-top:1px">
+                            auto-generated if fee &gt; 0
+                        </span>
                     </label>
-                    <input type="text" id="cvtOR" class="form-control" placeholder="e.g. 2026-00123">
+                    <input type="text" id="cvtOR" class="form-control"
+                           placeholder="Leave blank to auto-generate">
                 </div>
             </div>
             <div class="form-group" style="margin-bottom:12px">
@@ -369,7 +384,7 @@
                         color:var(--text-subtle);background:#f8f9fb;border:1px solid var(--border);
                         border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px">
                 <i class="fas fa-paper-plane" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
-                <span>Marks the request as <strong style="color:var(--navy)">Released</strong>, creates the record in Document Issuance, and emails the resident.</span>
+                <span>Marks as <strong style="color:var(--navy)">Released</strong>, creates the record in Document Issuance, and sends an email notification to the resident.</span>
             </div>
             <div style="display:flex;justify-content:flex-end;gap:10px">
                 <button type="button" onclick="closeConvertModal()" class="btn btn-secondary">Cancel</button>
@@ -937,11 +952,85 @@ $(document).ready(function () {
     /* ═══════════════════════════════════════════════════════════════
      | MODAL — Issue Document  (single action: any Pending/Processing/Ready → Released)
      ═══════════════════════════════════════════════════════════════ */
+
+    var _cvtVerifiedResidentId = null;   // set after successful AJAX verification
+
+    function setCvtVerifyBox(html, borderColor, bgColor) {
+        var box = document.getElementById('cvtVerifyBox');
+        box.style.background  = bgColor    || '#f8f9fb';
+        box.style.borderColor = borderColor || 'var(--border)';
+        box.innerHTML = html;
+    }
+
+    function runResidentVerification(name, docType) {
+        _cvtVerifiedResidentId = null;
+        setCvtVerifyBox(
+            '<i class="fas fa-spinner fa-spin" style="color:var(--text-subtle);flex-shrink:0;font-size:12px"></i>' +
+            '<span style="color:var(--text-muted)">Checking resident database…</span>'
+        );
+
+        axios.get('<?php echo e(route('appointments.verifyResident')); ?>', { params: { name: name } })
+            .then(function (res) {
+                if (res.data.found) {
+                    _cvtVerifiedResidentId = res.data.id;
+                    var purok = res.data.purok ? ' · ' + res.data.purok : '';
+                    setCvtVerifyBox(
+                        '<i class="fas fa-circle-check" style="color:#16a34a;flex-shrink:0;margin-top:1px;font-size:13px"></i>' +
+                        '<div style="line-height:1.5">' +
+                            '<strong style="color:#14532d;font-size:13px">Verified Resident of Barangay New Era</strong>' +
+                            '<div style="font-size:12px;color:#166534;margin-top:2px">' +
+                                res.data.name + purok +
+                                (res.data.address ? '<br>' + res.data.address : '') +
+                            '</div>' +
+                        '</div>',
+                        '#86efac', '#f0fdf4'
+                    );
+                } else {
+                    // Not found — check if it's a Certificate of Residency for a possible new resident
+                    var isResidency = docType && docType.toLowerCase().indexOf('residency') !== -1;
+                    if (isResidency) {
+                        setCvtVerifyBox(
+                            '<i class="fas fa-circle-info" style="color:#b45309;flex-shrink:0;margin-top:1px;font-size:13px"></i>' +
+                            '<div style="line-height:1.5">' +
+                                '<strong style="color:#92400e;font-size:13px">Not found in resident database</strong>' +
+                                '<div style="font-size:12px;color:#b45309;margin-top:2px">' +
+                                    'This appears to be a <strong>new resident</strong> applying for their first Certificate of Residency. ' +
+                                    'You may proceed with issuance — please add them to the resident registry separately afterwards.' +
+                                '</div>' +
+                            '</div>',
+                            '#fcd34d', '#fffbeb'
+                        );
+                    } else {
+                        setCvtVerifyBox(
+                            '<i class="fas fa-triangle-exclamation" style="color:#b45309;flex-shrink:0;margin-top:1px;font-size:13px"></i>' +
+                            '<div style="line-height:1.5">' +
+                                '<strong style="color:#92400e;font-size:13px">Name not found in resident database</strong>' +
+                                '<div style="font-size:12px;color:#b45309;margin-top:2px">' +
+                                    'Please verify the applicant\'s identity and confirm they are a resident of Barangay New Era before issuing.' +
+                                '</div>' +
+                            '</div>',
+                            '#fcd34d', '#fffbeb'
+                        );
+                    }
+                }
+            })
+            .catch(function () {
+                setCvtVerifyBox(
+                    '<i class="fas fa-circle-exclamation" style="color:var(--crimson);flex-shrink:0;font-size:12px"></i>' +
+                    '<span style="color:var(--crimson)">Could not verify — check manually.</span>',
+                    'var(--crimson-border)', 'var(--crimson-pale)'
+                );
+            });
+    }
+
     $('#appointmentsTable').on('click', '.apt-issue-btn', function () {
-        var $btn = $(this);
+        var $btn  = $(this);
+        var name  = $btn.data('name') || '';
+        var type  = $btn.data('type') || '';
+
         document.getElementById('cvtNum').textContent  = $btn.data('num')  || '';
-        document.getElementById('cvtName').textContent = $btn.data('name') || '';
-        document.getElementById('cvtType').textContent = $btn.data('type') || '';
+        document.getElementById('cvtName').textContent = name;
+        document.getElementById('cvtType').textContent = type;
         document.getElementById('cvtDate').textContent = $btn.data('date') || '—';
 
         // Pre-fill fee/OR if already set on linked document
@@ -951,13 +1040,20 @@ $(document).ready(function () {
         document.getElementById('cvtError').style.display = 'none';
 
         window._cvtUrl = $btn.data('url');
+        _cvtVerifiedResidentId = null;
+
         document.getElementById('aptConvertModal').style.display = 'flex';
-        setTimeout(function () { document.getElementById('cvtFee').focus(); }, 80);
+
+        // Kick off resident verification immediately
+        runResidentVerification(name, type);
+
+        setTimeout(function () { document.getElementById('cvtFee').focus(); }, 120);
     });
 
     window.closeConvertModal = function () {
         document.getElementById('aptConvertModal').style.display = 'none';
         window._cvtUrl = null;
+        _cvtVerifiedResidentId = null;
     };
 
     window.saveConvert = function () {
@@ -966,12 +1062,17 @@ $(document).ready(function () {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Issuing…';
         document.getElementById('cvtError').style.display = 'none';
 
-        axios.post(window._cvtUrl, {
-            fee_paid:  document.getElementById('cvtFee').value.trim()  || null,
-            or_number: document.getElementById('cvtOR').value.trim()   || null,
-            notes:     document.getElementById('cvtNote').value.trim() || null,
-            _token:    '<?php echo e(csrf_token()); ?>',
-        })
+        var payload = {
+            fee_paid:    document.getElementById('cvtFee').value.trim()  || null,
+            or_number:   document.getElementById('cvtOR').value.trim()   || null,
+            notes:       document.getElementById('cvtNote').value.trim() || null,
+            _token:      '<?php echo e(csrf_token()); ?>',
+        };
+        if (_cvtVerifiedResidentId) {
+            payload.resident_id = _cvtVerifiedResidentId;
+        }
+
+        axios.post(window._cvtUrl, payload)
         .then(function (res) {
             closeConvertModal();
             docTable.ajax.reload(null, false);
