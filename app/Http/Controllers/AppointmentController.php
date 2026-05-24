@@ -214,11 +214,19 @@ class AppointmentController extends Controller
             'resident_id' => 'nullable|integer|exists:residents,id',
         ]);
 
+        // Auto-generate OR number if fee > 0 and staff did not supply one
+        $feePaid  = $validated['fee_paid'] ?? 0;
+        $orNumber = $validated['or_number'] ?? null;
+        if ($feePaid > 0 && ! $orNumber) {
+            $orNumber = Document::generateOrNumber();
+        }
+
         if ($existingDoc) {
             // Portal placeholder exists — upgrade it in-place
             $existingDoc->update([
-                'fee_paid'    => $validated['fee_paid'] ?? 0,
-                'or_number'   => $validated['or_number'] ?? null,
+                'fee_paid'    => $feePaid,
+                'or_number'   => $orNumber,
+                'resident_id' => $validated['resident_id'] ?? $existingDoc->resident_id,
                 'status'      => 'Released',
                 'issued_by'   => auth()->id(),
                 'released_at' => now(),
@@ -231,14 +239,15 @@ class AppointmentController extends Controller
                 'doc_number'             => Document::generateDocNumber(),
                 'appointment_id'         => $appointment->id,
                 'source'                 => 'portal',
+                'resident_id'            => $validated['resident_id'] ?? null,
                 'resident_name_portal'   => $appointment->resident_name,
                 'requestor_name'         => $appointment->requestor_name,
                 'requestor_relationship' => $appointment->requestor_relationship,
                 'requestor_contact'      => $appointment->requestor_contact,
                 'document_type'          => $appointment->document_type,
                 'purpose'                => $appointment->purpose,
-                'fee_paid'               => $validated['fee_paid'] ?? 0,
-                'or_number'              => $validated['or_number'] ?? null,
+                'fee_paid'               => $feePaid,
+                'or_number'              => $orNumber,
                 'status'                 => 'Released',
                 'issued_by'              => auth()->id(),
                 'released_at'            => now(),
