@@ -339,14 +339,26 @@
                     </div>
                     <div style="grid-column:1/-1">
                         <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);
-                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Resident</div>
-                        <div id="cvtName" style="font-size:13px;color:var(--text)"></div>
+                                    text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Applicant Name</div>
+                        <div id="cvtName" style="font-size:13px;font-weight:600;color:var(--text)"></div>
                     </div>
                 </div>
             </div>
         </div>
+
+        {{-- Resident verification chip — filled by JS after AJAX --}}
+        <div style="padding:10px 18px 0">
+            <div id="cvtVerifyBox"
+                 style="border-radius:var(--radius-sm);padding:10px 14px;
+                        display:flex;align-items:flex-start;gap:10px;font-size:13px;
+                        background:#f8f9fb;border:1px solid var(--border)">
+                <i class="fas fa-spinner fa-spin" style="color:var(--text-subtle);margin-top:1px;flex-shrink:0;font-size:12px"></i>
+                <span style="color:var(--text-muted)">Checking resident database…</span>
+            </div>
+        </div>
+
         {{-- Form --}}
-        <div style="padding:16px 18px">
+        <div style="padding:14px 18px">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
                 <div class="form-group" style="margin:0">
                     <label class="form-label" style="font-size:12.5px">
@@ -358,9 +370,12 @@
                 <div class="form-group" style="margin:0">
                     <label class="form-label" style="font-size:12.5px">
                         O.R. Number
-                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— optional</span>
+                        <span style="font-weight:400;color:var(--text-subtle);font-size:11px;display:block;margin-top:1px">
+                            auto-generated if fee &gt; 0
+                        </span>
                     </label>
-                    <input type="text" id="cvtOR" class="form-control" placeholder="e.g. 2026-00123">
+                    <input type="text" id="cvtOR" class="form-control"
+                           placeholder="Leave blank to auto-generate">
                 </div>
             </div>
             <div class="form-group" style="margin-bottom:12px">
@@ -378,7 +393,7 @@
                         color:var(--text-subtle);background:#f8f9fb;border:1px solid var(--border);
                         border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px">
                 <i class="fas fa-paper-plane" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
-                <span>Marks the request as <strong style="color:var(--navy)">Released</strong>, creates the record in Document Issuance, and emails the resident.</span>
+                <span>Marks as <strong style="color:var(--navy)">Released</strong>, creates the record in Document Issuance, and sends an email notification to the resident.</span>
             </div>
             <div style="display:flex;justify-content:flex-end;gap:10px">
                 <button type="button" onclick="closeConvertModal()" class="btn btn-secondary">Cancel</button>
