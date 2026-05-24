@@ -49,15 +49,17 @@ class DocumentQueueService
      */
     public function advance(
         DocumentAppointment $appointment,
-        string $newStatus,
+        string  $newStatus,
         ?string $notes,
         ?string $pickupDate,
-        string $changedBy,
+        string  $changedBy,
+        ?float  $feePaid  = null,
+        ?string $orNumber = null,
     ): DocumentAppointment {
 
         $fromStatus = $appointment->status;
 
-        DB::transaction(function () use ($appointment, $newStatus, $notes, $pickupDate, $changedBy, $fromStatus) {
+        DB::transaction(function () use ($appointment, $newStatus, $notes, $pickupDate, $changedBy, $fromStatus, $feePaid, $orNumber) {
 
             $update = ['status' => $newStatus, 'processed_by' => $changedBy];
 
@@ -81,8 +83,15 @@ class DocumentQueueService
             // Mirror to linked Document — raw query bypasses Eloquent model events
             // to prevent re-entrant loops.
             if ($appointment->document) {
-                Document::where('id', $appointment->document->id)
-                    ->update(['status' => $newStatus]);
+                $docUpdate = ['status' => $newStatus];
+
+                // When marking Ready, sync fee + OR number captured by staff
+                if ($newStatus === 'Ready') {
+                    if ($feePaid !== null) $docUpdate['fee_paid']  = $feePaid;
+                    if ($orNumber !== null) $docUpdate['or_number'] = $orNumber;
+                }
+
+                Document::where('id', $appointment->document->id)->update($docUpdate);
             }
 
             // Append immutable audit log entry
