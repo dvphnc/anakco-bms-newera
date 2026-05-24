@@ -107,9 +107,22 @@ class DocumentController extends Controller
                         default      => '',
                     };
 
+                    // Print button — only for Released docs (certificate is ready); show eye icon otherwise
+                    $printBtn = $d->status === 'Released'
+                        ? '<a href="'.$show.'" target="_blank"
+                              class="btn btn-primary btn-sm btn-icon"
+                              title="Print Certificate"
+                              style="background:var(--navy);border-color:var(--navy)">
+                               <i class="fas fa-print"></i>
+                           </a>'
+                        : '<a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View Document">
+                               <i class="fas fa-eye"></i>
+                           </a>';
+
                     return '
                         <div style="display:flex;justify-content:flex-end;align-items:center;gap:6px">
                             '.$pipelineBtn.'
+                            '.$printBtn.'
                             <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
                             <form method="POST" action="'.$delete.'"
                                   data-confirm="Delete document '.e($d->doc_number).'? This cannot be undone."
