@@ -15,7 +15,7 @@ class Document extends Model
      * Portal documents cycle through all six stages.
      */
     public static array $statuses = [
-        'Pending', 'Confirmed', 'Processing', 'Ready', 'Released', 'Cancelled',
+        'Pending', 'Processing', 'Ready', 'Released', 'Cancelled',
     ];
 
     protected $fillable = [
