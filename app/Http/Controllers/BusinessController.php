@@ -231,16 +231,20 @@ class BusinessController extends Controller
         $business->load(['ownerResident', 'issuedBy']);
 
         if ($request->wantsJson()) {
-            $expiry  = $business->expiry_date ? Carbon::parse($business->expiry_date) : null;
-            $expStat = 'valid';
-            $expDays = null;
-            if ($expiry && $business->status === 'Active') {
-                if ($expiry->isPast()) {
+            $expiryFmt = $business->expiry_date ? Carbon::parse($business->expiry_date->format('Y-m-d')) : null;
+            $expiry    = $expiryFmt; // for format() below
+            $expStat   = 'valid';
+            $expDays   = null;
+            if ($expiryFmt && $business->status === 'Active') {
+                $today    = Carbon::today();
+                $isOverdue = $expiryFmt->lt($today);
+                $daysLeft  = (int) $today->diffInDays($expiryFmt);
+                if ($isOverdue) {
                     $expStat = 'overdue';
-                    $expDays = (int) floor(now()->floatDiffInDays($expiry));
-                } elseif ($expiry->diffInDays(now()) <= 30) {
+                    $expDays = $daysLeft;
+                } elseif ($daysLeft <= 30) {
                     $expStat = 'expiring_soon';
-                    $expDays = (int) ceil(now()->floatDiffInDays($expiry));
+                    $expDays = $daysLeft;
                 }
             }
 
