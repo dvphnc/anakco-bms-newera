@@ -386,27 +386,68 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 
 @section('content')
 
-{{-- PAGE HEADER --}}
-<div class="page-header">
-    <div style="display:flex;align-items:center;gap:14px">
-        <div style="width:48px;height:48px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:#EEF2F7;color:var(--navy)">
-            <i class="fas {{ $committee['icon'] }}"></i>
+{{-- ── COMMITTEE HEADER BANNER ────────────────────────────────────── --}}
+<div class="no-print" style="
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1a3a6e 100%);
+    border-radius: var(--radius-lg);
+    padding: 20px 26px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 24px rgba(13,33,68,0.20)">
+
+    {{-- Decorative glows (toned down vs dashboard) --}}
+    <div style="position:absolute;top:-60px;right:-60px;width:240px;height:240px;
+                background:radial-gradient(circle, rgba(200,134,26,0.10) 0%, transparent 65%);
+                pointer-events:none"></div>
+    <div style="position:absolute;bottom:-50px;left:-30px;width:200px;height:200px;
+                background:radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+                pointer-events:none"></div>
+
+    <div style="position:relative;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+
+        {{-- Left: Committee identity --}}
+        <div style="display:flex;align-items:center;gap:14px">
+            {{-- Icon badge --}}
+            <div style="width:46px;height:46px;border-radius:50%;flex-shrink:0;
+                        background:rgba(255,255,255,0.10);border:1.5px solid rgba(200,134,26,0.45);
+                        display:flex;align-items:center;justify-content:center;
+                        font-size:18px;color:var(--gold-light);
+                        box-shadow:0 0 0 4px rgba(200,134,26,0.08)">
+                <i class="fas {{ $committee['icon'] }}"></i>
+            </div>
+            <div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;
+                            color:rgba(229,160,32,0.9);margin-bottom:2px">
+                    Committee
+                </div>
+                <div style="font-size:17px;font-weight:800;color:#fff;line-height:1.2;letter-spacing:-0.01em">
+                    {{ $committee['name'] }}
+                </div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.50);font-weight:300;margin-top:2px">
+                    Chairperson: <span style="color:rgba(255,255,255,0.75);font-weight:500">{{ $committee['chair'] }}</span>
+                </div>
+            </div>
         </div>
-        <div>
-            <h1 class="page-title">{{ $committee['name'] }}</h1>
-            <p class="page-subtitle">Chairperson: <strong>{{ $committee['chair'] }}</strong></p>
+
+        {{-- Right: Action buttons --}}
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            @if($committee['slug'] === 'peace-order')
+            <a href="{{ route('blotter.index') }}"
+               style="background:rgba(255,255,255,0.10);color:#fff;border:1px solid rgba(255,255,255,0.20);
+                      font-size:12px;padding:6px 14px;min-height:32px"
+               class="btn btn-sm">
+                <i class="fas fa-gavel" style="color:var(--gold-light)"></i> View Blotter Cases
+            </a>
+            @endif
+            <a href="{{ route('export.pdf', 'committees') }}?slug={{ $committee['slug'] }}"
+               style="background:rgba(255,255,255,0.10);color:#fff;border:1px solid rgba(255,255,255,0.20);
+                      font-size:12px;padding:6px 14px;min-height:32px"
+               class="btn btn-sm" target="_blank">
+                <i class="fas fa-file-pdf" style="color:#f87171"></i> Export PDF
+            </a>
         </div>
-    </div>
-    <div class="page-actions">
-        @if($committee['slug'] === 'peace-order')
-        <a href="{{ route('blotter.index') }}" class="btn btn-secondary btn-sm">
-            <i class="fas fa-gavel"></i> View Blotter Cases
-        </a>
-        @endif
-        <a href="{{ route('export.pdf', 'committees') }}?slug={{ $committee['slug'] }}"
-           class="btn btn-secondary btn-sm" target="_blank">
-            <i class="fas fa-file-pdf"></i> Export PDF
-        </a>
+
     </div>
 </div>
 
