@@ -68,7 +68,9 @@
       "Bash(php -l app/Services/DocumentQueueService.php)",
       "Bash(php -l app/Http/Controllers/DocumentController.php)",
       "Bash(php -l app/Models/Document.php)",
-      "Bash(xargs grep -l \"PortalStatusUpdated\")"
+      "Bash(xargs grep -l \"PortalStatusUpdated\")",
+      "Bash(php -l app/Http/Controllers/AppointmentController.php)",
+      "Bash(php -l app/Mail/PortalStatusUpdated.php)"
     ]
   }
 }
