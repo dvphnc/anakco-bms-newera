@@ -182,12 +182,19 @@ class ExportController extends Controller
                     $sheet->fromArray([$i + 1, $r->last_name, $r->first_name, $r->middle_name ?? '—', $r->suffix ?? '—', $r->gender, $r->birthdate?->format('M d, Y') ?? '—', $r->age ?? '—', $r->civil_status ?? '—', $r->purok->name ?? '—', $r->address, $r->contact_number ?? '—', $r->email_address ?? '—', $r->is_voter ? 'Yes' : 'No', $r->is_senior ? 'Yes' : 'No', $r->is_pwd ? 'Yes' : 'No', $r->is_solo_parent ? 'Yes' : 'No', $r->is_4ps ? 'Yes' : 'No', $r->residency_status, $r->created_at->format('M d, Y')], null, "A{$row}");
                 }
                 $this->styleDataRows($sheet, $data->count(), count($headers));
-                $this->addMetaSheet($ss, 'Residents', $data->count(), $by);
+                $this->addMetaSheet($ss, 'Residents', $data->count(), $by, $this->filterLabel($filters));
 
                 return $this->streamXlsx($ss, "residents-{$date}.xlsx");
 
             case 'households':
-                $data = Household::with(['purok', 'residents'])->orderBy('household_number')->get();
+                $data = Household::with(['purok', 'residents'])
+                    ->when($filters['purok_id'] ?? null, fn ($q, $v) => $q->where('purok_id', $v))
+                    ->when(($filters['voter'] ?? null) === 'yes', fn ($q) => $q->where('is_voter_household', true))
+                    ->when(($filters['voter'] ?? null) === 'no',  fn ($q) => $q->where('is_voter_household', false))
+                    ->when($filters['s'] ?? null, fn ($q, $v) => $q->where(fn ($q2) => $q2
+                        ->where('household_number', 'like', "%{$v}%")
+                        ->orWhere('household_head', 'like', "%{$v}%")))
+                    ->orderBy('household_number')->get();
                 $ss = new Spreadsheet;
                 $sheet = $ss->getActiveSheet()->setTitle('Households');
                 $headers = ['#', 'Household No.', 'Household Head', 'Purok', 'Address', 'Family Size', 'Members', 'Voter HH', 'Registered'];
@@ -199,7 +206,7 @@ class ExportController extends Controller
                     $sheet->fromArray([$i + 1, $h->household_number, $h->household_head ?? '—', $h->purok->name ?? '—', $h->address, $h->family_size ?? '—', $h->residents->count(), $h->is_voter_household ? 'Yes' : 'No', $h->created_at->format('M d, Y')], null, "A{$row}");
                 }
                 $this->styleDataRows($sheet, $data->count(), count($headers));
-                $this->addMetaSheet($ss, 'Households', $data->count(), $by);
+                $this->addMetaSheet($ss, 'Households', $data->count(), $by, $this->filterLabel($filters));
 
                 return $this->streamXlsx($ss, "households-{$date}.xlsx");
 
@@ -207,6 +214,7 @@ class ExportController extends Controller
                 $data = Document::with(['resident', 'issuedBy'])
                     ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
                     ->when($filters['document_type'] ?? null, fn ($q, $v) => $q->where('document_type', $v))
+                    ->when($filters['source'] ?? null, fn ($q, $v) => $q->where('source', $v))
                     ->orderBy('created_at', 'desc')->get();
                 $ss = new Spreadsheet;
                 $sheet = $ss->getActiveSheet()->setTitle('Documents');
@@ -219,7 +227,7 @@ class ExportController extends Controller
                     $sheet->fromArray([$i + 1, $d->doc_number, $d->document_type, $d->resident->full_name ?? '—', $d->purpose ?? '—', $d->status, $d->fee_paid > 0 ? '₱'.number_format($d->fee_paid, 2) : 'Free', $d->or_number ?? '—', $d->issuedBy->name ?? '—', $d->created_at->format('M d, Y'), $d->released_at?->format('M d, Y') ?? '—'], null, "A{$row}");
                 }
                 $this->styleDataRows($sheet, $data->count(), count($headers));
-                $this->addMetaSheet($ss, 'Documents', $data->count(), $by);
+                $this->addMetaSheet($ss, 'Documents', $data->count(), $by, $this->filterLabel($filters));
 
                 return $this->streamXlsx($ss, "documents-{$date}.xlsx");
 
@@ -227,6 +235,9 @@ class ExportController extends Controller
                 $data = BlotterCase::with(['filedBy'])
                     ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
                     ->when($filters['incident_type'] ?? null, fn ($q, $v) => $q->where('incident_type', $v))
+                    ->when($filters['date_from'] ?? null, fn ($q, $v) => $q->whereDate('incident_date', '>=', $v))
+                    ->when($filters['date_to'] ?? null, fn ($q, $v) => $q->whereDate('incident_date', '<=', $v))
+                    ->when($filters['source'] ?? null, fn ($q, $v) => $q->where('source', $v))
                     ->orderBy('incident_date', 'desc')->get();
                 $ss = new Spreadsheet;
                 $sheet = $ss->getActiveSheet()->setTitle('Blotter Cases');
@@ -239,13 +250,20 @@ class ExportController extends Controller
                     $sheet->fromArray([$i + 1, $b->case_number, $b->incident_type, $b->incident_date ? \Carbon\Carbon::parse($b->incident_date)->format('M d, Y') : '—', $b->incident_location ?? '—', $b->complainant_name ?? '—', $b->respondent_name ?? '—', $b->status, $b->filedBy->name ?? '—', $b->created_at->format('M d, Y'), $b->settled_at?->format('M d, Y') ?? '—'], null, "A{$row}");
                 }
                 $this->styleDataRows($sheet, $data->count(), count($headers));
-                $this->addMetaSheet($ss, 'Blotter', $data->count(), $by);
+                $this->addMetaSheet($ss, 'Blotter', $data->count(), $by, $this->filterLabel($filters));
 
                 return $this->streamXlsx($ss, "blotter-cases-{$date}.xlsx");
 
             case 'businesses':
                 $data = Business::with(['issuedBy'])
                     ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
+                    ->when($filters['business_type'] ?? null, fn ($q, $v) => $q->where('business_type', $v))
+                    ->when($filters['source'] ?? null, fn ($q, $v) => $q->where('source', $v))
+                    ->when($filters['expiry_filter'] ?? null, function ($q, $v) {
+                        if ($v === 'expired')       $q->where('expiry_date', '<', now())->where('status', 'Active');
+                        elseif ($v === 'expiring_soon') $q->whereBetween('expiry_date', [now(), now()->addDays(30)])->where('status', 'Active');
+                        elseif ($v === 'valid')     $q->where('expiry_date', '>', now()->addDays(30))->where('status', 'Active');
+                    })
                     ->orderBy('business_name')->get();
                 $ss = new Spreadsheet;
                 $sheet = $ss->getActiveSheet()->setTitle('Business Permits');
@@ -258,7 +276,7 @@ class ExportController extends Controller
                     $sheet->fromArray([$i + 1, $b->permit_number, $b->business_name, $b->business_type, $b->owner_name, $b->owner_contact ?? '—', $b->business_address, $b->permit_date ? \Carbon\Carbon::parse($b->permit_date)->format('M d, Y') : '—', $b->expiry_date ? \Carbon\Carbon::parse($b->expiry_date)->format('M d, Y') : '—', $b->status], null, "A{$row}");
                 }
                 $this->styleDataRows($sheet, $data->count(), count($headers));
-                $this->addMetaSheet($ss, 'Businesses', $data->count(), $by);
+                $this->addMetaSheet($ss, 'Businesses', $data->count(), $by, $this->filterLabel($filters));
 
                 return $this->streamXlsx($ss, "businesses-{$date}.xlsx");
 
