@@ -63,6 +63,38 @@
 </div>
 
 
+<div class="no-print" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <span style="font-size:12px;font-weight:600;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.06em">Source:</span>
+    <button type="button" class="src-chip src-chip-active" data-src=""
+            style="height:30px;padding:0 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid var(--navy);background:var(--navy);color:#fff;transition:all .15s">
+        All
+    </button>
+    <button type="button" class="src-chip" data-src="portal"
+            style="height:30px;padding:0 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;transition:all .15s">
+        <i class="fas fa-globe" style="font-size:10px;margin-right:4px"></i>Portal
+        <span id="srcChipPortalCount" style="margin-left:5px;background:#1d4ed8;color:#fff;border-radius:4px;
+              padding:1px 7px;font-size:10px;font-weight:700">
+            <?php echo e(\App\Models\BlotterCase::where('source','portal')->where('status','!=','Pending')->count()); ?>
+
+        </span>
+    </button>
+    <button type="button" class="src-chip" data-src="walk-in"
+            style="height:30px;padding:0 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;
+                   border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all .15s">
+        <i class="fas fa-walking" style="font-size:10px;margin-right:4px"></i>Walk-in
+    </button>
+</div>
+
+
+<select id="sourceFilter" style="display:none">
+    <option value=""></option>
+    <option value="portal">Portal</option>
+    <option value="walk-in">Walk-in</option>
+</select>
+
+
 <div class="card mb-6">
     <div class="card-header" style="cursor:pointer" onclick="toggleFilters('blotter')">
         <div style="display:flex;align-items:center;gap:10px">
@@ -321,6 +353,7 @@ $(document).ready(function () {
                 d.status        = $('#statusFilter').val();
                 d.date_from     = $('#dateFrom').val();
                 d.date_to       = $('#dateTo').val();
+                d.source        = $('#sourceFilter').val();
                 d.search        = { value: $('#searchInput').val() };
             }
         },
@@ -384,7 +417,7 @@ $(document).ready(function () {
     /* ── URL persistence ──────────────────────────────────────────────── */
     function saveToUrl() {
         const url = new URL(window.location);
-        ['s','date_from','date_to'].forEach(k => url.searchParams.delete(k));
+        ['s','date_from','date_to','source'].forEach(k => url.searchParams.delete(k));
         url.searchParams.delete('incident_type');
         url.searchParams.delete('status');
         if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
@@ -392,6 +425,7 @@ $(document).ready(function () {
         if ($('#dateTo').val())      url.searchParams.set('date_to', $('#dateTo').val());
         if ($('#typeFilter').val())   url.searchParams.set('incident_type', $('#typeFilter').val());
         if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
+        if ($('#sourceFilter').val()) url.searchParams.set('source', $('#sourceFilter').val());
         history.replaceState({}, '', url);
         updateBadge();
     }
@@ -404,14 +438,21 @@ $(document).ready(function () {
         const type = p.get('incident_type'), status = p.get('status');
         if (type)   { $('#typeFilter').val(type).trigger('change.select2'); any = true; }
         if (status) { $('#statusFilter').val(status).trigger('change.select2'); any = true; }
+        if (p.get('source')) {
+            var src = p.get('source');
+            $('#sourceFilter').val(src);
+            $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === src); });
+            any = true;
+        }
         return any;
     }
     function updateBadge() {
         let n = 0;
         if ($('#searchInput').val())                    n++;
-        if ($('#typeFilter').val())   n++;
-        if ($('#statusFilter').val()) n++;
+        if ($('#typeFilter').val())                     n++;
+        if ($('#statusFilter').val())                   n++;
         if ($('#dateFrom').val() || $('#dateTo').val()) n++;
+        if ($('#sourceFilter').val())                   n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');
         const chipN = document.getElementById('headerFilterCount');
@@ -433,11 +474,16 @@ $(document).ready(function () {
         localStorage.setItem('fp_' + key, isOpen ? '0' : '1');
     };
     window.quickFilter = function (filterId, values) {
-        $('#' + filterId).val(values).trigger('change');
-        if (document.getElementById('filterPanel').style.display === 'none') {
-            document.getElementById('filterPanel').style.display = 'block';
-            document.getElementById('filterToggleText').textContent = 'Hide Filters';
-            localStorage.setItem('fp_blotter', '1');
+        if (filterId === 'sourceFilter') {
+            $('#sourceFilter').val(values);
+            $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === values); });
+        } else {
+            $('#' + filterId).val(values).trigger('change');
+            if (document.getElementById('filterPanel').style.display === 'none') {
+                document.getElementById('filterPanel').style.display = 'block';
+                document.getElementById('filterToggleText').textContent = 'Hide Filters';
+                localStorage.setItem('fp_blotter', '1');
+            }
         }
         saveToUrl(); table.ajax.reload();
     };
@@ -456,8 +502,51 @@ $(document).ready(function () {
         $('#searchInput').val('');
         $('#typeFilter, #statusFilter').val(null).trigger('change');
         $('#dateFrom, #dateTo').val('');
+        $('#sourceFilter').val(null);
+        $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === ''); });
         saveToUrl(); table.ajax.reload();
     });
+});
+
+/* ── Source chip helpers ──────────────────────────────────────────── */
+function _syncChip($chip, isActive) {
+    var src = $chip.data('src');
+    $chip.toggleClass('src-chip-active', isActive);
+    if (src === '') {
+        $chip.css({ background: isActive ? 'var(--navy)' : '#fff',
+                    color:       isActive ? '#fff'        : 'var(--text-muted)',
+                    borderColor: isActive ? 'var(--navy)' : 'var(--border)' });
+    } else if (src === 'portal') {
+        $chip.css({ background: isActive ? '#1d4ed8' : '#eff6ff',
+                    color:       isActive ? '#fff'    : '#1d4ed8',
+                    borderColor: isActive ? '#1d4ed8' : '#bfdbfe' });
+    } else {
+        $chip.css({ background: isActive ? 'var(--navy)'  : 'var(--surface)',
+                    color:       isActive ? '#fff'         : 'var(--text-muted)',
+                    borderColor: isActive ? 'var(--navy)'  : 'var(--border)' });
+    }
+}
+
+$(document).on('click', '.src-chip', function () {
+    var src = $(this).data('src');
+    $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === src); });
+    $('#sourceFilter').val(src || null);
+    const url = new URL(window.location);
+    url.searchParams.delete('source');
+    if (src) url.searchParams.set('source', src);
+    history.replaceState({}, '', url);
+    var n = 0;
+    if ($('#searchInput').val())                    n++;
+    if ($('#typeFilter').val())                     n++;
+    if ($('#statusFilter').val())                   n++;
+    if ($('#dateFrom').val() || $('#dateTo').val()) n++;
+    if (src) n++;
+    var badge = document.getElementById('filterBadge');
+    var chip  = document.getElementById('headerFilterChip');
+    var chipN = document.getElementById('headerFilterCount');
+    if (n > 0) { badge.textContent = n + (n === 1 ? ' filter active' : ' filters active'); badge.style.display = ''; chipN.textContent = n; chip.style.display = ''; }
+    else { badge.style.display = 'none'; chip.style.display = 'none'; }
+    $('#blotterTable').DataTable().ajax.reload();
 });
 
 /* ── Activate Case Modal (portal submissions) ────────────────────── */
