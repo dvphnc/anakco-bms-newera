@@ -145,6 +145,65 @@
 </div>
 
 
+<div id="blotterActivateModal"
+     style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9700;
+            align-items:center;justify-content:center;backdrop-filter:blur(3px)"
+     onclick="if(event.target===this)closeBlotterActivateModal()">
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:460px;
+                box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
+        <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:9px">
+                <i class="fas fa-shield-halved" style="color:var(--gold);font-size:13px"></i>
+                <span style="font-size:13.5px;font-weight:700;color:#fff">Activate Blotter Case</span>
+            </div>
+            <button onclick="closeBlotterActivateModal()"
+                    style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+                           border-radius:var(--radius-sm);width:28px;height:28px;display:flex;
+                           align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer;font-size:12px">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div style="padding:18px">
+            <div style="background:var(--navy-pale,#f0f4fb);border:1px solid var(--navy-border,#d0daea);
+                        border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:10px;column-gap:16px">
+                    <div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Case No.</div>
+                        <div id="blotterActivateNum" style="font-size:13px;font-weight:700;color:var(--navy);font-family:monospace"></div>
+                    </div>
+                    <div>
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Incident Type</div>
+                        <div id="blotterActivateType" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:10px">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Complainant</div>
+                        <div id="blotterActivateComplainant" style="font-size:13px;font-weight:600;color:var(--navy)"></div>
+                    </div>
+                    <div style="grid-column:1/-1">
+                        <div style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Incident Date</div>
+                        <div id="blotterActivateDate" style="font-size:13px;color:var(--text)"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom:14px">
+                <label class="form-label" style="font-size:12.5px">Staff Notes <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span></label>
+                <textarea id="blotterActivateNotes" class="form-control" rows="3"
+                          placeholder="e.g., Verified with complainant; proceeding with mediation…"></textarea>
+            </div>
+            <div id="blotterActivateError" style="display:none;font-size:13px;color:var(--crimson);
+                 padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
+                 border:1px solid var(--crimson-border);margin-bottom:12px"></div>
+            <div style="display:flex;justify-content:flex-end;gap:10px">
+                <button type="button" onclick="closeBlotterActivateModal()" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="blotterActivateSaveBtn" onclick="saveBlotterActivate()" class="btn btn-success">
+                    <i class="fas fa-shield-halved"></i> Activate Case
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div id="blotterStatusModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -401,6 +460,55 @@ $(document).ready(function () {
     });
 });
 
+/* ── Activate Case Modal (portal submissions) ────────────────────── */
+$('#blotterTable').on('click', '.blotter-activate-btn', function () {
+    var $btn = $(this);
+    document.getElementById('blotterActivateNum').textContent        = $btn.data('num');
+    document.getElementById('blotterActivateType').textContent       = $btn.data('type');
+    document.getElementById('blotterActivateComplainant').textContent = $btn.data('complainant');
+    document.getElementById('blotterActivateDate').textContent       = $btn.data('date');
+    document.getElementById('blotterActivateNotes').value            = '';
+    document.getElementById('blotterActivateError').style.display    = 'none';
+    window._blotterActivateUrl = $btn.data('url');
+    document.getElementById('blotterActivateModal').style.display    = 'flex';
+});
+
+function closeBlotterActivateModal() {
+    document.getElementById('blotterActivateModal').style.display = 'none';
+    window._blotterActivateUrl = null;
+}
+
+function saveBlotterActivate() {
+    var btn = document.getElementById('blotterActivateSaveBtn');
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Activating…';
+    document.getElementById('blotterActivateError').style.display = 'none';
+
+    axios.post(window._blotterActivateUrl, {
+        notes:  document.getElementById('blotterActivateNotes').value || null,
+        _token: '<?php echo e(csrf_token()); ?>',
+    })
+    .then(function (res) {
+        closeBlotterActivateModal();
+        $('#blotterTable').DataTable().ajax.reload(null, false);
+        bmsToast(res.data.message || 'Case activated.', 'success');
+    })
+    .catch(function (err) {
+        var msg = err.response?.data?.message || 'Failed to activate case.';
+        document.getElementById('blotterActivateError').textContent   = msg;
+        document.getElementById('blotterActivateError').style.display = '';
+        if (err.response?.data?.view_url) {
+            bmsToast('Already activated.', 'info');
+            setTimeout(() => window.open(err.response.data.view_url, '_blank'), 1200);
+            closeBlotterActivateModal();
+        }
+    })
+    .finally(function () {
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fas fa-shield-halved"></i> Activate Case';
+    });
+}
+
 /* ── Quick Status Modal ───────────────────────────────────────────── */
 var _blotterStatusId = null;
 
@@ -418,7 +526,7 @@ function closeBlotterStatusModal() {
     _blotterStatusId = null;
 }
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { closeBlotterStatusModal(); }
+    if (e.key === 'Escape') { closeBlotterStatusModal(); closeBlotterActivateModal(); }
 });
 
 function saveBlotterStatus() {
