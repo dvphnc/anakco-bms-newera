@@ -17,7 +17,77 @@ class ReportController extends Controller
 {
     public function index()
     {
-        return view('reports.generate');
+        $currentYear  = (int) date('Y');
+        $currentMonth = (int) date('n');
+        $snapshotAt   = now();
+
+        // Monthly trend arrays (12 months of current year)
+        $monthlyDocs    = [];
+        $monthlyBlotter = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $monthlyDocs[]    = Document::whereYear('created_at', $currentYear)->whereMonth('created_at', $m)->count();
+            $monthlyBlotter[] = BlotterCase::whereYear('created_at', $currentYear)->whereMonth('created_at', $m)->count();
+        }
+
+        // Aggregations by type/location
+        $docsByType    = Document::whereYear('created_at', $currentYear)
+                            ->selectRaw('document_type, count(*) as total')
+                            ->groupBy('document_type')->pluck('total', 'document_type');
+        $blotterByType = BlotterCase::whereYear('created_at', $currentYear)
+                            ->selectRaw('incident_type, count(*) as total')
+                            ->groupBy('incident_type')->pluck('total', 'incident_type');
+        $puroks        = Purok::withCount(['residents' => fn ($q) => $q->where('residency_status', 'Active')])
+                            ->orderByDesc('residents_count')->get();
+
+        // Core KPIs
+        $totalResidents  = Resident::count();
+        $activeResidents = Resident::where('residency_status', 'Active')->count();
+        $totalDocs       = Document::whereYear('created_at', $currentYear)->count();
+        $totalBlotter    = BlotterCase::whereYear('created_at', $currentYear)->count();
+        $totalBusinesses = Business::where('status', 'Active')->count();
+        $totalHouseholds = Household::count();
+        $totalMale       = Resident::where('gender', 'Male')->count();
+        $totalFemale     = Resident::where('gender', 'Female')->count();
+        $totalVoters     = Resident::where('is_voter', true)->count();
+        $totalSeniors    = Resident::where('is_senior', true)->count();
+        $totalPwd        = Resident::where('is_pwd', true)->count();
+        $totalSoloParent = Resident::where('is_solo_parent', true)->count();
+        $total4ps        = Resident::where('is_4ps', true)->count();
+
+        // Derived gender percentages
+        $genderTotal = ($totalMale + $totalFemale) ?: 1;
+        $malePct     = round(($totalMale / $genderTotal) * 100);
+        $femalePct   = 100 - $malePct;
+
+        // Snapshot counts: today & this month
+        $todayDocs      = Document::whereDate('created_at', today())->count();
+        $todayResidents = Resident::whereDate('created_at', today())->count();
+        $todayBlotter   = BlotterCase::whereDate('created_at', today())->count();
+        $thisMonthDocs  = Document::whereYear('created_at', $currentYear)->whereMonth('created_at', $currentMonth)->count();
+        $thisMonthBlt   = BlotterCase::whereYear('created_at', $currentYear)->whereMonth('created_at', $currentMonth)->count();
+        $thisMonthRes   = Resident::whereYear('created_at', $currentYear)->whereMonth('created_at', $currentMonth)->count();
+
+        // Quick-generate shortcuts
+        $quick = [
+            ['label' => 'This Month · Summary',   'short' => 'Summary',   'icon' => 'fa-chart-pie',     'type' => 'monthly',   'module' => 'summary',   'month' => $currentMonth, 'year' => $currentYear],
+            ['label' => 'This Month · Documents',  'short' => 'Documents', 'icon' => 'fa-file-alt',      'type' => 'monthly',   'module' => 'documents', 'month' => $currentMonth, 'year' => $currentYear],
+            ['label' => 'This Month · Blotter',    'short' => 'Blotter',   'icon' => 'fa-gavel',         'type' => 'monthly',   'module' => 'blotter',   'month' => $currentMonth, 'year' => $currentYear],
+            ['label' => 'This Quarter · Summary',  'short' => 'Quarterly', 'icon' => 'fa-calendar-week', 'type' => 'quarterly', 'module' => 'summary',   'quarter' => (int) ceil($currentMonth / 3), 'year' => $currentYear],
+            ['label' => $currentYear.' Annual',    'short' => 'Annual',    'icon' => 'fa-calendar',      'type' => 'annual',    'module' => 'summary',   'year' => $currentYear],
+        ];
+
+        return view('reports.generate', compact(
+            'currentYear', 'currentMonth', 'snapshotAt',
+            'monthlyDocs', 'monthlyBlotter',
+            'docsByType', 'blotterByType', 'puroks',
+            'totalResidents', 'activeResidents', 'totalDocs', 'totalBlotter',
+            'totalBusinesses', 'totalHouseholds', 'totalMale', 'totalFemale',
+            'totalVoters', 'totalSeniors', 'totalPwd', 'totalSoloParent', 'total4ps',
+            'genderTotal', 'malePct', 'femalePct',
+            'todayDocs', 'todayResidents', 'todayBlotter',
+            'thisMonthDocs', 'thisMonthBlt', 'thisMonthRes',
+            'quick'
+        ));
     }
 
     public function analytics()
