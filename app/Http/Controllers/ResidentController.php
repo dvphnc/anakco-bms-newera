@@ -314,7 +314,14 @@ class ResidentController extends Controller
         $validated = $request->validate($this->residentRules(), $this->residentMessages());
 
         if ($request->hasFile('photo_path')) {
+            // Delete old photo before storing the new one
+            if ($resident->photo_path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($resident->photo_path);
+            }
             $validated['photo_path'] = $request->file('photo_path')->store('residents', 'public');
+        } elseif ($request->boolean('remove_photo') && $resident->photo_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($resident->photo_path);
+            $validated['photo_path'] = null;
         }
 
         $validated['is_voter'] = $request->boolean('is_voter');
