@@ -1,7 +1,5 @@
 @extends('layouts.app')
 @section('title', $committee['name'])
-@section('topbar-title', $committee['name'])
-@section('topbar-subtitle', 'Chairperson: ' . $committee['chair'])
 
 @push('styles')
 <style>
