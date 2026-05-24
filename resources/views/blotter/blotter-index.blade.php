@@ -353,6 +353,7 @@ $(document).ready(function () {
                 d.status        = $('#statusFilter').val();
                 d.date_from     = $('#dateFrom').val();
                 d.date_to       = $('#dateTo').val();
+                d.source        = $('#sourceFilter').val();
                 d.search        = { value: $('#searchInput').val() };
             }
         },
@@ -416,7 +417,7 @@ $(document).ready(function () {
     /* ── URL persistence ──────────────────────────────────────────────── */
     function saveToUrl() {
         const url = new URL(window.location);
-        ['s','date_from','date_to'].forEach(k => url.searchParams.delete(k));
+        ['s','date_from','date_to','source'].forEach(k => url.searchParams.delete(k));
         url.searchParams.delete('incident_type');
         url.searchParams.delete('status');
         if ($('#searchInput').val()) url.searchParams.set('s', $('#searchInput').val());
@@ -424,6 +425,7 @@ $(document).ready(function () {
         if ($('#dateTo').val())      url.searchParams.set('date_to', $('#dateTo').val());
         if ($('#typeFilter').val())   url.searchParams.set('incident_type', $('#typeFilter').val());
         if ($('#statusFilter').val()) url.searchParams.set('status', $('#statusFilter').val());
+        if ($('#sourceFilter').val()) url.searchParams.set('source', $('#sourceFilter').val());
         history.replaceState({}, '', url);
         updateBadge();
     }
@@ -436,14 +438,21 @@ $(document).ready(function () {
         const type = p.get('incident_type'), status = p.get('status');
         if (type)   { $('#typeFilter').val(type).trigger('change.select2'); any = true; }
         if (status) { $('#statusFilter').val(status).trigger('change.select2'); any = true; }
+        if (p.get('source')) {
+            var src = p.get('source');
+            $('#sourceFilter').val(src);
+            $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === src); });
+            any = true;
+        }
         return any;
     }
     function updateBadge() {
         let n = 0;
         if ($('#searchInput').val())                    n++;
-        if ($('#typeFilter').val())   n++;
-        if ($('#statusFilter').val()) n++;
+        if ($('#typeFilter').val())                     n++;
+        if ($('#statusFilter').val())                   n++;
         if ($('#dateFrom').val() || $('#dateTo').val()) n++;
+        if ($('#sourceFilter').val())                   n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');
         const chipN = document.getElementById('headerFilterCount');
@@ -465,11 +474,16 @@ $(document).ready(function () {
         localStorage.setItem('fp_' + key, isOpen ? '0' : '1');
     };
     window.quickFilter = function (filterId, values) {
-        $('#' + filterId).val(values).trigger('change');
-        if (document.getElementById('filterPanel').style.display === 'none') {
-            document.getElementById('filterPanel').style.display = 'block';
-            document.getElementById('filterToggleText').textContent = 'Hide Filters';
-            localStorage.setItem('fp_blotter', '1');
+        if (filterId === 'sourceFilter') {
+            $('#sourceFilter').val(values);
+            $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === values); });
+        } else {
+            $('#' + filterId).val(values).trigger('change');
+            if (document.getElementById('filterPanel').style.display === 'none') {
+                document.getElementById('filterPanel').style.display = 'block';
+                document.getElementById('filterToggleText').textContent = 'Hide Filters';
+                localStorage.setItem('fp_blotter', '1');
+            }
         }
         saveToUrl(); table.ajax.reload();
     };
@@ -488,6 +502,8 @@ $(document).ready(function () {
         $('#searchInput').val('');
         $('#typeFilter, #statusFilter').val(null).trigger('change');
         $('#dateFrom, #dateTo').val('');
+        $('#sourceFilter').val(null);
+        $('.src-chip').each(function () { _syncChip($(this), $(this).data('src') === ''); });
         saveToUrl(); table.ajax.reload();
     });
 });
