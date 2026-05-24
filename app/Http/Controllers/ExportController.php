@@ -126,9 +126,39 @@ class ExportController extends Controller
     // -------------------------------------------------------
     // EXCEL EXPORTS
     // -------------------------------------------------------
+    // Build a human-readable label from active filters for meta/header
+    private function filterLabel(array $filters): string
+    {
+        $parts = [];
+        $map = [
+            'status'        => 'Status',
+            'gender'        => 'Gender',
+            'purok_id'      => 'Purok ID',
+            'document_type' => 'Type',
+            'incident_type' => 'Type',
+            'business_type' => 'Business Type',
+            'expiry_filter' => 'Expiry',
+            'date_from'     => 'From',
+            'date_to'       => 'To',
+            'source'        => 'Source',
+            'voter'         => 'Voter HH',
+            's'             => 'Search',
+        ];
+        foreach ($map as $key => $label) {
+            if (!empty($filters[$key])) {
+                $parts[] = "{$label}: {$filters[$key]}";
+            }
+        }
+        return $parts ? implode(' · ', $parts) : 'None (all records)';
+    }
+
     public function excel(Request $request, string $module)
     {
-        $filters = $request->only(['status', 'gender', 'purok_id', 'document_type', 'incident_type', 'business_type']);
+        $filters = $request->only([
+            'status', 'gender', 'purok_id',
+            'document_type', 'incident_type', 'business_type',
+            'expiry_filter', 'date_from', 'date_to', 'source', 'voter', 's',
+        ]);
         $date = now()->format('Y-m-d');
         $by = auth()->user()->name;
 
