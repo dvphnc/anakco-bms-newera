@@ -215,6 +215,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('appointments.bizStatus')->middleware('role:Admin,Secretary');
     Route::post('appointments/biz/{business}/issue', [AppointmentController::class, 'issueBizPermit'])
         ->name('appointments.bizIssue')->middleware('role:Admin,Secretary');
+    Route::delete('appointments/biz/{business}', [AppointmentController::class, 'destroyBiz'])
+        ->name('appointments.bizDestroy')->middleware('role:Admin,Secretary');
     // Blotter portal appointments
     Route::get('appointments/blotter-data', [AppointmentController::class, 'blotterAppointments'])
         ->name('appointments.blotterData')->middleware('role:Admin,Secretary');
@@ -222,6 +224,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('appointments.blotterActivate')->middleware('role:Admin,Secretary');
     Route::patch('appointments/blotter/{blotterCase}/status', [AppointmentController::class, 'updateBlotterStatus'])
         ->name('appointments.blotterStatus')->middleware('role:Admin,Secretary');
+    Route::delete('appointments/blotter/{blotterCase}', [AppointmentController::class, 'destroyBlotter'])
+        ->name('appointments.blotterDestroy')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Portal Pending Count — for sidebar badge (Admin + Secretary)

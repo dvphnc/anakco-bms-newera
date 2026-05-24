@@ -631,9 +631,20 @@ class AppointmentController extends Controller
             ->addColumn('actions', function ($c) {
                 $viewUrl     = route('blotter.show', $c);
                 $activateUrl = route('appointments.blotterActivate', $c);
+                $deleteUrl   = route('appointments.blotterDestroy', $c);
+
+                $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon blotter-delete-btn"
+                                      style="height:30px;width:30px;padding:0;flex-shrink:0;
+                                             display:inline-flex;align-items:center;justify-content:center"
+                                      title="Delete Report"
+                                      data-num="'.e($c->case_number).'"
+                                      data-name="'.e($c->complainant_name).'"
+                                      data-url="'.e($deleteUrl).'">
+                                  <i class="fas fa-trash" style="font-size:11px"></i>
+                              </button>';
 
                 if ($c->status === 'Pending') {
-                    return '<div style="display:flex;justify-content:flex-end">
+                    return '<div style="display:flex;justify-content:flex-end;gap:6px">
                                 <button class="btn btn-success btn-sm blotter-activate-btn"
                                         style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px"
                                         data-id="'.e($c->id).'"
@@ -644,14 +655,16 @@ class AppointmentController extends Controller
                                         data-url="'.$activateUrl.'">
                                     <i class="fas fa-shield-halved"></i> Activate
                                 </button>
+                                '.$deleteBtn.'
                             </div>';
                 }
-                return '<div style="display:flex;justify-content:flex-end">
+                return '<div style="display:flex;justify-content:flex-end;gap:6px">
                             <a href="'.$viewUrl.'" target="_blank"
                                class="btn btn-secondary btn-sm"
                                style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px">
                                 <i class="fas fa-shield-halved"></i> View Case
                             </a>
+                            '.$deleteBtn.'
                         </div>';
             })
             ->filter(function ($query) use ($request) {
