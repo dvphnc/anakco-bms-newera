@@ -707,6 +707,25 @@
 </style>
 
 <script>
+/* ── Suppress DataTables alert popups — show inline error instead ── */
+$.fn.dataTable.ext.errMode = 'none';
+$(document).on('error.dt', function (e, settings, techNote, message) {
+    var tableId = settings.sTableId || 'table';
+    var wrap = document.getElementById(tableId + '_wrapper');
+    if (wrap) {
+        var tbody = wrap.querySelector('tbody');
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="99" style="text-align:center;padding:24px">'
+                + '<div class="empty-state" style="color:#be123c">'
+                + '<i class="fas fa-triangle-exclamation"></i>'
+                + '<p>Could not load data. Please <a href="" onclick="location.reload();return false" '
+                + 'style="color:var(--navy);font-weight:600">reload the page</a>.</p>'
+                + '</div></td></tr>';
+        }
+    }
+    console.warn('DataTables [' + tableId + '] error (tn/' + techNote + '):', message);
+});
+
 $(document).ready(function () {
 
     /* ── Tab switching — define FIRST so calls below work ───────── */
