@@ -100,10 +100,10 @@
             </div>
         </div>
 
-        <div class="form-section-title">Accused</div>
+        <div class="form-section-title">Respondent</div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
-                <label class="form-label">Accused Name <span style="color:var(--crimson)">*</span></label>
+                <label class="form-label">Respondent Name <span style="color:var(--crimson)">*</span></label>
                 <input type="text" name="respondent_name" id="respondent_name" class="form-control" value="{{ old('respondent_name') }}" placeholder="Full name" required>
                 @error('respondent_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
