@@ -46,20 +46,17 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #111; }
     margin-bottom: 10px;
 }
 
-/* Meta info bar */
+/* Meta info bar — no border-radius (DomPDF cost) */
 .meta-bar {
     background: #f0f4f8;
     border: 1px solid #dde2ea;
-    border-radius: 4px;
     padding: 5px 10px;
     margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
     font-size: 7.5pt;
     color: #444;
 }
 
-/* Table */
+/* Table — avoid :nth-child (expensive in DomPDF) */
 table { width: 100%; border-collapse: collapse; font-size: 7.5pt; }
 thead { display: table-header-group; }
 thead tr th {
@@ -68,26 +65,21 @@ thead tr th {
     padding: 6px 8px;
     text-align: left;
     font-size: 7pt;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
     border: 1px solid #0a1a36;
 }
-tbody tr { page-break-inside: avoid; }
-tbody tr:nth-child(odd)  { background: #fff; }
-tbody tr:nth-child(even) { background: #f5f7fa; }
 tbody td {
     padding: 5px 7px;
     border-bottom: 1px solid #e5e7eb;
-    border-right: 1px solid #f0f0f0;
-    vertical-align: middle;
+    vertical-align: top;
 }
-tbody td:last-child { border-right: none; }
+.tr-odd  { background: #fff; }
+.tr-even { background: #f5f7fa; }
 
-/* Badges */
+/* Badges — use border-radius:3px instead of 99px (big DomPDF savings) */
 .badge {
     display: inline-block;
     padding: 1px 5px;
-    border-radius: 99px;
+    border-radius: 3px;
     font-size: 6.5pt;
     font-weight: bold;
     margin: 1px;
@@ -176,7 +168,7 @@ tbody td:last-child { border-right: none; }
     </thead>
     <tbody>
         <?php $__currentLoopData = $data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $r): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <tr>
+        <tr class="<?php echo e($i % 2 === 0 ? 'tr-odd' : 'tr-even'); ?>">
             <td style="text-align:center;color:#888"><?php echo e($i+1); ?></td>
             <td><strong><?php echo e($r->last_name); ?>, <?php echo e($r->first_name); ?><?php echo e($r->middle_name ? ' '.substr($r->middle_name,0,1).'.' : ''); ?><?php echo e($r->suffix ? ' '.$r->suffix : ''); ?></strong></td>
             <td><?php echo e($r->gender); ?></td>
