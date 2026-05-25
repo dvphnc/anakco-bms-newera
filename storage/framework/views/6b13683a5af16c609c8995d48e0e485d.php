@@ -187,10 +187,10 @@ unset($__errorArgs, $__bag); ?>
             </div>
         </div>
 
-        <div class="form-section-title">Accused</div>
+        <div class="form-section-title">Respondent</div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
-                <label class="form-label">Accused Name <span style="color:var(--crimson)">*</span></label>
+                <label class="form-label">Respondent Name <span style="color:var(--crimson)">*</span></label>
                 <input type="text" name="respondent_name" id="respondent_name" class="form-control <?php $__errorArgs = ['respondent_name'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -219,11 +219,11 @@ unset($__errorArgs, $__bag); ?>
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">Accused Address</label>
+                <label class="form-label">Respondent Address</label>
                 <input type="text" name="respondent_address" id="respondent_address" class="form-control" value="<?php echo e(old('respondent_address', $blotter->respondent_address)); ?>">
             </div>
             <div class="form-group">
-                <label class="form-label">Accused Contact</label>
+                <label class="form-label">Respondent Contact</label>
                 <input type="text" name="respondent_contact" class="form-control" value="<?php echo e(old('respondent_contact', $blotter->respondent_contact)); ?>">
             </div>
         </div>
