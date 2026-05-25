@@ -126,6 +126,17 @@
                 <input type="text" name="respondent_contact" class="form-control" value="{{ old('respondent_contact') }}" placeholder="09XX XXX XXXX">
             </div>
         </div>
+
+        <div class="form-section-title">Responding Officer</div>
+        <div class="form-grid-2 mb-6">
+            <div class="form-group">
+                <label class="form-label">
+                    Responding Officer
+                    <span class="help-icon" data-tippy-content="The Barangay Tanod, duty officer, or barangay official who responded to or handled this incident. Leave blank if not applicable.">?</span>
+                </label>
+                <input type="text" name="responding_officer" class="form-control" value="{{ old('responding_officer') }}" placeholder="e.g. Tanod Juan Dela Cruz">
+            </div>
+        </div>
     </div>
 </div>
 

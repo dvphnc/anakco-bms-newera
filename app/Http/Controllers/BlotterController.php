@@ -148,6 +148,7 @@ class BlotterController extends Controller
             'respondent_address'     => 'nullable|string|max:255',
             'respondent_contact'     => 'nullable|string|max:20',
             'respondent_resident_id' => 'nullable|exists:residents,id',
+            'responding_officer'     => 'nullable|string|max:255',
             'status' => 'required|in:Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
             'resolution_notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120',
@@ -199,6 +200,7 @@ class BlotterController extends Controller
             'respondent_address'     => 'nullable|string|max:255',
             'respondent_contact'     => 'nullable|string|max:20',
             'respondent_resident_id' => 'nullable|exists:residents,id',
+            'responding_officer'     => 'nullable|string|max:255',
             'status'                 => 'required|in:Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
             'resolution_notes'       => 'nullable|string',
         ]);
