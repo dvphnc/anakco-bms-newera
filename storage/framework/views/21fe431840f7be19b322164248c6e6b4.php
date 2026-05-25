@@ -261,9 +261,8 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
 (function () {
-    var LS_NAME    = 'portal_name';
-    var LS_CONTACT = 'portal_contact';
-    var LS_EMAIL   = 'portal_email';
+    // Clear any previously-saved personal info so the form always starts blank
+    ['portal_name','portal_contact','portal_email'].forEach(function (k) { localStorage.removeItem(k); });
 
     /* ── Error helpers ── */
     function clearErrors() {
@@ -319,14 +318,7 @@
         syncRep(); // run on load
     });
 
-    /* ── localStorage pre-fill ── */
     document.addEventListener('DOMContentLoaded', function () {
-        var name    = localStorage.getItem(LS_NAME);
-        var contact = localStorage.getItem(LS_CONTACT);
-        var email   = localStorage.getItem(LS_EMAIL);
-        if (name)    document.getElementById('resident_name').value    = name;
-        if (contact) document.getElementById('contact_number').value   = contact;
-        if (email)   document.getElementById('email').value            = email;
 
         /* Init Select2 */
         $('#document_type').select2({
@@ -365,15 +357,6 @@
         icon.style.display = 'none';
         spinner.style.display = 'inline-block';
         label.textContent  = 'Submitting…';
-
-        /* Save personal info to localStorage for future visits */
-        var name    = document.getElementById('resident_name').value.trim();
-        var contact = document.getElementById('contact_number').value.trim();
-        var email   = document.getElementById('email').value.trim();
-        if (name)    localStorage.setItem(LS_NAME, name);
-        if (contact) localStorage.setItem(LS_CONTACT, contact);
-        if (email)   localStorage.setItem(LS_EMAIL, email);
-        else         localStorage.removeItem(LS_EMAIL);
 
         var fd = new FormData(document.getElementById('docRequestForm'));
 
