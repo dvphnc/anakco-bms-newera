@@ -178,14 +178,6 @@
         spinner.style.display = 'inline-block';
         label.textContent     = 'Submitting…';
 
-        var name    = document.getElementById('complainant_name').value.trim();
-        var contact = document.getElementById('contact_number').value.trim();
-        var email   = document.getElementById('email').value.trim();
-        if (name)    localStorage.setItem(LS_NAME, name);
-        if (contact) localStorage.setItem(LS_CONTACT, contact);
-        if (email)   localStorage.setItem(LS_EMAIL, email);
-        else         localStorage.removeItem(LS_EMAIL);
-
         var fd = new FormData(document.getElementById('blotterForm'));
 
         axios.post('{{ route('portal.blotter.store') }}', fd, {

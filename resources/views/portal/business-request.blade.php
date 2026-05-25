@@ -160,9 +160,7 @@
 @push('scripts')
 <script>
 (function () {
-    var LS_NAME    = 'portal_name';
-    var LS_CONTACT = 'portal_contact';
-    var LS_EMAIL   = 'portal_email';
+    ['portal_name','portal_contact','portal_email'].forEach(function (k) { localStorage.removeItem(k); });
 
     function clearErrors() {
         document.querySelectorAll('.form-error[id^="err-"]').forEach(function (el) {
@@ -181,15 +179,6 @@
         if (input) input.style.borderColor = 'var(--crimson)';
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var name    = localStorage.getItem(LS_NAME);
-        var contact = localStorage.getItem(LS_CONTACT);
-        var email   = localStorage.getItem(LS_EMAIL);
-        if (name)    document.getElementById('owner_name').value    = name;
-        if (contact) document.getElementById('contact_number').value = contact;
-        if (email)   document.getElementById('email').value          = email;
-    });
-
     document.getElementById('businessForm').addEventListener('submit', function (e) {
         e.preventDefault();
         clearErrors();
@@ -202,14 +191,6 @@
         icon.style.display    = 'none';
         spinner.style.display = 'inline-block';
         label.textContent     = 'Scheduling…';
-
-        var name    = document.getElementById('owner_name').value.trim();
-        var contact = document.getElementById('contact_number').value.trim();
-        var email   = document.getElementById('email').value.trim();
-        if (name)    localStorage.setItem(LS_NAME, name);
-        if (contact) localStorage.setItem(LS_CONTACT, contact);
-        if (email)   localStorage.setItem(LS_EMAIL, email);
-        else         localStorage.removeItem(LS_EMAIL);
 
         var fd = new FormData(document.getElementById('businessForm'));
 
