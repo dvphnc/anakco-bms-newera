@@ -299,6 +299,10 @@ class ExportController extends Controller
     // -------------------------------------------------------
     public function pdf(Request $request, string $module)
     {
+        // DomPDF is memory-intensive on large tables — raise limits before rendering
+        ini_set('memory_limit', '2048M');
+        set_time_limit(120);
+
         $filters = $request->only([
             'status', 'gender', 'purok_id',
             'document_type', 'incident_type', 'business_type',
