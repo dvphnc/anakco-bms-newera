@@ -8,8 +8,7 @@
         <p class="page-subtitle">{{ $blotter->case_number }}</p>
     </div>
     <div class="page-actions">
-        <a href="{{ route('blotter.show', $blotter) }}" class="btn btn-secondary"><i class="fas fa-eye"></i> View</a>
-        <a href="{{ route('blotter.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+        <a href="{{ route('blotter.show', $blotter) }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 </div>
 

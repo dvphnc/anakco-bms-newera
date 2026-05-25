@@ -8,8 +8,7 @@
         <p class="page-subtitle">{{ $business->permit_number }} — {{ $business->business_name }}</p>
     </div>
     <div class="page-actions">
-        <a href="{{ route('businesses.show', $business) }}" class="btn btn-secondary"><i class="fas fa-eye"></i> View</a>
-        <a href="{{ route('businesses.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+        <a href="{{ route('businesses.show', $business) }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 </div>
 
