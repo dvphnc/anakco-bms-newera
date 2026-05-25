@@ -1098,6 +1098,7 @@ $(document).ready(function () {
                 if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
                 if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
             }
+            if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
         .catch(function (err) {
             var msg = err.response?.data?.message || 'Failed to issue document.';
