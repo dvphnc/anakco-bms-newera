@@ -118,11 +118,11 @@
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">Accused Address</label>
+                <label class="form-label">Respondent Address</label>
                 <input type="text" name="respondent_address" id="respondent_address" class="form-control" value="{{ old('respondent_address') }}" placeholder="Address">
             </div>
             <div class="form-group">
-                <label class="form-label">Accused Contact</label>
+                <label class="form-label">Respondent Contact</label>
                 <input type="text" name="respondent_contact" class="form-control" value="{{ old('respondent_contact') }}" placeholder="09XX XXX XXXX">
             </div>
         </div>
