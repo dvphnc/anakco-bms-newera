@@ -166,7 +166,7 @@ tbody td {
     </thead>
     <tbody>
         @foreach($data as $i => $r)
-        <tr>
+        <tr class="{{ $i % 2 === 0 ? 'tr-odd' : 'tr-even' }}">
             <td style="text-align:center;color:#888">{{ $i+1 }}</td>
             <td><strong>{{ $r->last_name }}, {{ $r->first_name }}{{ $r->middle_name ? ' '.substr($r->middle_name,0,1).'.' : '' }}{{ $r->suffix ? ' '.$r->suffix : '' }}</strong></td>
             <td>{{ $r->gender }}</td>
