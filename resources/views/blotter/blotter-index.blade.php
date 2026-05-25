@@ -406,6 +406,7 @@ $(document).ready(function () {
                     table.row($btn.closest('tr')).remove().draw(false);
                     bmsStatDecrement('statBlotTotal');
                     bmsToast(res.data.message || 'Case deleted.', 'success');
+                    if (window.refreshPortalBadges) window.refreshPortalBadges();
                 })
                 .catch(function () {
                     icon.attr('class', orig);
@@ -602,6 +603,7 @@ function saveBlotterActivate() {
         closeBlotterActivateModal();
         $('#blotterTable').DataTable().ajax.reload(null, false);
         bmsToast(res.data.message || 'Case activated.', 'success');
+        if (window.refreshPortalBadges) window.refreshPortalBadges();
     })
     .catch(function (err) {
         var msg = err.response?.data?.message || 'Failed to activate case.';
@@ -669,6 +671,7 @@ function saveBlotterStatus() {
             closeBlotterStatusModal();
             bmsToast(res.data.message, 'success');
             $('#blotterTable').DataTable().ajax.reload(null, false);
+            if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
         .catch(function (err) {
             errDiv.textContent   = err.response?.data?.message || 'Failed to update status.';

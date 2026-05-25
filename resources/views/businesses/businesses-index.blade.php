@@ -756,6 +756,7 @@ window.saveBizIssue = function () {
         closeBizIssueModal();
         if (window._bizTable) window._bizTable.ajax.reload(null, false);
         bmsToast(res.data.message || 'Permit issued.', 'success');
+        if (window.refreshPortalBadges) window.refreshPortalBadges();
     })
     .catch(function (err) {
         errEl.textContent   = err.response?.data?.message || 'Failed to issue permit.';
