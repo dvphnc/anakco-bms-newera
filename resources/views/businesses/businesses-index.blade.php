@@ -543,6 +543,7 @@ $(document).ready(function () {
                     table.row($btn.closest('tr')).remove().draw(false);
                     bmsStatDecrement('statBizTotal');
                     bmsToast(res.data.message || 'Permit deleted.', 'success');
+                    if (window.refreshPortalBadges) window.refreshPortalBadges();
                 })
                 .catch(function () {
                     icon.attr('class', orig);
