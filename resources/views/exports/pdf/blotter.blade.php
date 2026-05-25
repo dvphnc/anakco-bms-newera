@@ -85,7 +85,7 @@ tbody td { padding:5px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top;
     <tbody>
         @foreach($data as $i => $b)
         @php $cls = match($b->status) { 'Active'=>'badge-red','Settled'=>'badge-green','Closed'=>'badge-gray','Under Investigation'=>'badge-yellow',default=>'badge-orange' }; @endphp
-        <tr>
+        <tr class="{{ $i % 2 === 0 ? 'tr-odd' : 'tr-even' }}">
             <td style="text-align:center;color:#888">{{ $i+1 }}</td>
             <td><strong>{{ $b->case_number }}</strong></td>
             <td>{{ $b->incident_type }}</td>
