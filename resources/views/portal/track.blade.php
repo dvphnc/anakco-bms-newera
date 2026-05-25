@@ -584,7 +584,7 @@
             infoCell('Incident Date',  d.incident_date) +
             infoCell('Last Updated',   d.updated_at) +
             infoCell('Location',       d.incident_location, true) +
-            (d.respondent_name ? infoCell('Respondent', d.respondent_name) : '') +
+            (d.respondent_name ? infoCell('Accused', d.respondent_name) : '') +
             (d.resolution_notes ? infoCell('Staff Notes', d.resolution_notes, true) : '') +
             '</div>';
     }

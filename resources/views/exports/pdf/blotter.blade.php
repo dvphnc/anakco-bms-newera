@@ -76,7 +76,7 @@ tbody td { padding:5px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top;
             <th>Date</th>
             <th>Location</th>
             <th>Complainant</th>
-            <th>Respondent</th>
+            <th>Accused</th>
             <th>Status</th>
             <th>Filed By</th>
             <th>Date Filed</th>
