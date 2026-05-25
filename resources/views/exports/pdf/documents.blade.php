@@ -83,7 +83,7 @@ tbody td { padding:5px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top;
     <tbody>
         @foreach($data as $i => $d)
         @php $cls = match($d->status) { 'Released'=>'badge-green','Processing'=>'badge-blue','Pending'=>'badge-yellow',default=>'badge-gray' }; @endphp
-        <tr>
+        <tr class="{{ $i % 2 === 0 ? 'tr-odd' : 'tr-even' }}">
             <td style="text-align:center;color:#888">{{ $i+1 }}</td>
             <td><strong>{{ $d->doc_number }}</strong></td>
             <td>{{ $d->document_type }}</td>
