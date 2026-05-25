@@ -229,7 +229,7 @@ class BlotterController extends Controller
         $blotter->update($validated);
         $this->logActivity('updated', $blotter, $oldData, $blotter->fresh()->toArray());
 
-        return redirect()->route('blotter.index')->with('success', 'Blotter case updated successfully.');
+        return redirect()->route('blotter.show', $blotter)->with('success', 'Blotter case updated successfully.');
     }
 
     public function quickStatus(Request $request, BlotterCase $blotter)

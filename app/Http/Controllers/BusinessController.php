@@ -304,7 +304,7 @@ class BusinessController extends Controller
         $business->update($validated);
         $this->logActivity('updated', $business, $oldData, $business->fresh()->toArray());
 
-        return redirect()->route('businesses.index')->with('success', 'Business permit updated successfully.');
+        return redirect()->route('businesses.show', $business)->with('success', 'Business permit updated successfully.');
     }
 
     /**

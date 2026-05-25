@@ -7,8 +7,7 @@
         <p class="page-subtitle"><?php echo e($business->permit_number); ?> — <?php echo e($business->business_name); ?></p>
     </div>
     <div class="page-actions">
-        <a href="<?php echo e(route('businesses.show', $business)); ?>" class="btn btn-secondary"><i class="fas fa-eye"></i> View</a>
-        <a href="<?php echo e(route('businesses.index')); ?>" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+        <a href="<?php echo e(route('businesses.show', $business)); ?>" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 </div>
 
