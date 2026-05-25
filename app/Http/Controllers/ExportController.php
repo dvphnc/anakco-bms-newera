@@ -253,13 +253,13 @@ class ExportController extends Controller
                     ->orderBy('incident_date', 'desc')->get();
                 $ss = new Spreadsheet;
                 $sheet = $ss->getActiveSheet()->setTitle('Blotter Cases');
-                $headers = ['#', 'Case Number', 'Incident Type', 'Incident Date', 'Location', 'Complainant', 'Respondent', 'Status', 'Filed By', 'Date Filed', 'Settled On'];
-                $widths = ['A' => 5, 'B' => 18, 'C' => 20, 'D' => 14, 'E' => 28, 'F' => 22, 'G' => 22, 'H' => 24, 'I' => 18, 'J' => 14, 'K' => 14];
+                $headers = ['#', 'Case Number', 'Incident Type', 'Incident Date', 'Location', 'Complainant', 'Accused', 'Responding Officer', 'Status', 'Filed By', 'Date Filed', 'Settled On'];
+                $widths = ['A' => 5, 'B' => 18, 'C' => 20, 'D' => 14, 'E' => 28, 'F' => 22, 'G' => 22, 'H' => 22, 'I' => 24, 'J' => 18, 'K' => 14, 'L' => 14];
                 $this->styleSheet($sheet, $headers, $widths);
 
                 foreach ($data as $i => $b) {
                     $row = $i + 2;
-                    $sheet->fromArray([$i + 1, $b->case_number, $b->incident_type, $b->incident_date ? \Carbon\Carbon::parse($b->incident_date)->format('M d, Y') : '—', $b->incident_location ?? '—', $b->complainant_name ?? '—', $b->respondent_name ?? '—', $b->status, $b->filedBy->name ?? '—', $b->created_at->format('M d, Y'), $b->settled_at?->format('M d, Y') ?? '—'], null, "A{$row}");
+                    $sheet->fromArray([$i + 1, $b->case_number, $b->incident_type, $b->incident_date ? \Carbon\Carbon::parse($b->incident_date)->format('M d, Y') : '—', $b->incident_location ?? '—', $b->complainant_name ?? '—', $b->respondent_name ?? '—', $b->responding_officer ?? '—', $b->status, $b->filedBy->name ?? '—', $b->created_at->format('M d, Y'), $b->settled_at?->format('M d, Y') ?? '—'], null, "A{$row}");
                 }
                 $this->styleDataRows($sheet, $data->count(), count($headers));
                 $this->addMetaSheet($ss, 'Blotter', $data->count(), $by, $this->filterLabel($filters));

@@ -260,6 +260,7 @@ tbody td { padding:4px 7px; border-bottom:1px solid #e5e7eb; }
             <td>{{ $b->incident_type }}</td>
             <td>{{ $b->complainant_name ?? '—' }}</td>
             <td>{{ $b->respondent_name ?? '—' }}</td>
+            <td>{{ $b->responding_officer ?? '—' }}</td>
             <td><span class="badge {{ $b->status === 'Settled' ? 'badge-green' : ($b->status === 'Active' ? 'badge-red' : 'badge-gray') }}">{{ $b->status }}</span></td>
             <td>{{ $b->created_at->format('M d, Y') }}</td>
         </tr>
