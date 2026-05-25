@@ -1178,6 +1178,7 @@ $(document).ready(function () {
             if (res.data.biz_pending !== undefined) {
                 document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
             }
+            if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
         .catch(function (err) {
             var msg = err.response?.data?.message || 'Failed to issue permit.';
@@ -1230,6 +1231,7 @@ $(document).ready(function () {
             if (res.data.blotter_pending !== undefined) {
                 document.getElementById('tabBadgeBlotter').textContent = res.data.blotter_pending;
             }
+            if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
         .catch(function (err) {
             var msg = err.response?.data?.message || 'Failed to activate case.';
