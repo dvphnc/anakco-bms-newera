@@ -20,7 +20,9 @@
     $releasedCount  = \App\Models\DocumentAppointment::where('status', 'Released')->count();
     $totalCount     = \App\Models\DocumentAppointment::count();
     $bizPending     = \App\Models\Business::where('source', 'portal')->whereIn('status', ['Pending', 'For Review'])->count();
+    $bizTotal       = \App\Models\Business::where('source', 'portal')->count();
     $blotterPending = \App\Models\BlotterCase::where('source', 'portal')->where('status', 'Pending')->count();
+    $blotterTotal   = \App\Models\BlotterCase::where('source', 'portal')->count();
 @endphp
 
 {{-- Stat cards --}}
