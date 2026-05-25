@@ -262,9 +262,8 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
 (function () {
-    var LS_NAME    = 'portal_name';
-    var LS_CONTACT = 'portal_contact';
-    var LS_EMAIL   = 'portal_email';
+    // Clear any previously-saved personal info so the form always starts blank
+    ['portal_name','portal_contact','portal_email'].forEach(function (k) { localStorage.removeItem(k); });
 
     /* ── Error helpers ── */
     function clearErrors() {
