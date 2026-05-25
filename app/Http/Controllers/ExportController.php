@@ -163,6 +163,9 @@ class ExportController extends Controller
 
     public function excel(Request $request, string $module)
     {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(120);
+
         $filters = $request->only([
             'status', 'gender', 'purok_id',
             'document_type', 'incident_type', 'business_type',
