@@ -114,7 +114,7 @@
                     <div style="position:relative">
                         <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-subtle);font-size:12px;pointer-events:none;z-index:1"></i>
                         <input type="text" id="searchInput" class="form-control" style="padding-left:32px"
-                               placeholder="Case number, complainant, respondent…">
+                               placeholder="Case number, complainant, accused…">
                     </div>
                 </div>
                 <div class="form-group" style="grid-column:span 2">
@@ -164,7 +164,7 @@
                     <th>Case No.</th>
                     <th>Incident Type</th>
                     <th>Complainant</th>
-                    <th>Respondent</th>
+                    <th>Accused</th>
                     <th>Incident Date</th>
                     <th>Status</th>
                     <th style="display:none"></th>

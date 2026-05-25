@@ -453,7 +453,7 @@
             <span class="val"><strong>{{ $blotter->complainant_name ?? ($blotter->complainantResident?->full_name ?? '—') }}</strong></span>
         </div>
         <div class="rpt-field">
-            <span class="lbl">Respondent</span>
+            <span class="lbl">Accused</span>
             <span class="val"><strong>{{ $blotter->respondent_name ?? '—' }}</strong></span>
         </div>
         <div class="rpt-field">
@@ -461,7 +461,7 @@
             <span class="val">{{ $blotter->complainant_address ?? '—' }}</span>
         </div>
         <div class="rpt-field">
-            <span class="lbl">Respondent Address</span>
+            <span class="lbl">Accused Address</span>
             <span class="val">{{ $blotter->respondent_address ?? '—' }}</span>
         </div>
         <div class="rpt-field" style="border-bottom:none">
@@ -469,7 +469,7 @@
             <span class="val">{{ $blotter->complainant_contact ?? '—' }}</span>
         </div>
         <div class="rpt-field" style="border-bottom:none">
-            <span class="lbl">Respondent Contact</span>
+            <span class="lbl">Accused Contact</span>
             <span class="val">{{ $blotter->respondent_contact ?? '—' }}</span>
         </div>
     </div>
@@ -516,7 +516,7 @@
                 <div style="height:36px"></div>
                 <div class="rpt-sig-line"></div>
                 <div class="rpt-sig-name">{{ $blotter->respondent_name ?? '—' }}</div>
-                <div class="rpt-sig-title">Respondent</div>
+                <div class="rpt-sig-title">Accused</div>
             </div>
             <div class="rpt-sig-box">
                 <div style="height:36px"></div>
