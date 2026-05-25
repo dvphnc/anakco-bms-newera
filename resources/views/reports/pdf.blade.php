@@ -251,7 +251,7 @@ tbody td { padding:4px 7px; border-bottom:1px solid #e5e7eb; }
 @endif
 @if($data['records']->count())
 <table>
-    <thead><tr><th>#</th><th>Case No.</th><th>Type</th><th>Complainant</th><th>Accused</th><th>Status</th><th>Date</th></tr></thead>
+    <thead><tr><th>#</th><th>Case No.</th><th>Type</th><th>Complainant</th><th>Accused</th><th>Responding Officer</th><th>Status</th><th>Date</th></tr></thead>
     <tbody>
         @foreach($data['records'] as $i => $b)
         <tr>

@@ -77,6 +77,7 @@ tbody td { padding:5px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top;
             <th>Location</th>
             <th>Complainant</th>
             <th>Accused</th>
+            <th>Responding Officer</th>
             <th>Status</th>
             <th>Filed By</th>
             <th>Date Filed</th>
@@ -93,6 +94,7 @@ tbody td { padding:5px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top;
             <td>{{ $b->incident_location ?? '—' }}</td>
             <td>{{ $b->complainant_name ?? '—' }}</td>
             <td>{{ $b->respondent_name ?? '—' }}</td>
+            <td>{{ $b->responding_officer ?? '—' }}</td>
             <td><span class="badge {{ $cls }}">{{ $b->status }}</span></td>
             <td>{{ $b->filedBy->name ?? '—' }}</td>
             <td>{{ $b->created_at->format('m/d/Y') }}</td>
