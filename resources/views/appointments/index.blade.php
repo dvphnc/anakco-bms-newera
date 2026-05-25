@@ -71,12 +71,12 @@
             <button class="apt-tab" data-tab="business" onclick="switchTab('business')">
                 <i class="fas fa-store"></i>
                 Business Permits
-                <span class="apt-tab-badge" id="tabBadgeBiz">{{ $bizPending }}</span>
+                <span class="apt-tab-badge" id="tabBadgeBiz">{{ $bizTotal }}</span>
             </button>
             <button class="apt-tab" data-tab="blotter" onclick="switchTab('blotter')">
                 <i class="fas fa-shield-halved"></i>
                 Blotter Reports
-                <span class="apt-tab-badge" id="tabBadgeBlotter">{{ $blotterPending }}</span>
+                <span class="apt-tab-badge" id="tabBadgeBlotter">{{ $blotterTotal }}</span>
             </button>
         </div>
         <button class="apt-tab-more" id="aptTabMore" onclick="scrollTabBar()" title="Scroll tabs">
@@ -1194,11 +1194,10 @@ $(document).ready(function () {
         })
         .then(function (res) {
             closeBizIssueModal();
-            bizTable.ajax.reload(null, false);
+            bizTable.ajax.reload(function (json) {
+                document.getElementById('tabBadgeBiz').textContent = json.recordsTotal;
+            }, false);
             bmsToast(res.data.message || 'Permit issued.', 'success');
-            if (res.data.biz_pending !== undefined) {
-                document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
-            }
             if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
         .catch(function (err) {
