@@ -76,7 +76,8 @@
       "PowerShell(cd \"D:\\\\laragon\\\\www\\\\anakco_bms\"; php artisan tinker --execute=\"foreach\\(App\\\\Models\\\\Official::orderBy\\('id'\\)->get\\(\\) as \\\\$o\\){ echo \\\\$o->id.' | '.\\\\$o->first_name.' '.\\\\$o->last_name.' | '.\\\\$o->position.' | '.\\(\\\\$o->committee??'—'\\).' | '.\\(\\\\$o->is_active?'active':'inactive'\\).PHP_EOL; }\")",
       "PowerShell(Get-Content \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\storage\\\\logs\\\\laravel.log\" -Tail 80 | Where-Object { $_ -match \"ERROR|SQLSTATE|Unknown column|blotter|appointment|responding\" } 2>&1)",
       "PowerShell(Select-String -Path \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\resources\\\\views\\\\layouts\\\\app.blade.php\" -Pattern \"dt|DataTable|error\" -CaseSensitive:$false)",
-      "Bash(del test_blotter_ajax.php test_blotter2.php test_blotter3.php test_blotter4.php)"
+      "Bash(del test_blotter_ajax.php test_blotter2.php test_blotter3.php test_blotter4.php)",
+      "Bash(Remove-Item -Force \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\test_blotter_ajax.php\",\"D:\\\\laragon\\\\www\\\\anakco_bms\\\\test_blotter2.php\",\"D:\\\\laragon\\\\www\\\\anakco_bms\\\\test_blotter3.php\",\"D:\\\\laragon\\\\www\\\\anakco_bms\\\\test_blotter4.php\" -ErrorAction SilentlyContinue)"
     ]
   }
 }
