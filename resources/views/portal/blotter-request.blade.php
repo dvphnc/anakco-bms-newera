@@ -118,7 +118,7 @@
             <div class="form-error" id="err-incident_description" style="display:none"></div>
         </div>
         <div class="form-group">
-            <label for="respondent_name">Accused / Suspect Name <span style="color:#9ca3af;font-weight:400">(optional)</span></label>
+            <label for="respondent_name">Respondent / Suspect Name <span style="color:#9ca3af;font-weight:400">(optional)</span></label>
             <input type="text" id="respondent_name" name="respondent_name" class="form-control"
                    placeholder="Name of person being complained against (if known)">
             <div class="form-error" id="err-respondent_name" style="display:none"></div>

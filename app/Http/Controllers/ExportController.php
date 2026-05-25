@@ -253,7 +253,7 @@ class ExportController extends Controller
                     ->orderBy('incident_date', 'desc')->get();
                 $ss = new Spreadsheet;
                 $sheet = $ss->getActiveSheet()->setTitle('Blotter Cases');
-                $headers = ['#', 'Case Number', 'Incident Type', 'Incident Date', 'Location', 'Complainant', 'Accused', 'Responding Officer', 'Status', 'Filed By', 'Date Filed', 'Settled On'];
+                $headers = ['#', 'Case Number', 'Incident Type', 'Incident Date', 'Location', 'Complainant', 'Respondent', 'Responding Officer', 'Status', 'Filed By', 'Date Filed', 'Settled On'];
                 $widths = ['A' => 5, 'B' => 18, 'C' => 20, 'D' => 14, 'E' => 28, 'F' => 22, 'G' => 22, 'H' => 22, 'I' => 24, 'J' => 18, 'K' => 14, 'L' => 14];
                 $this->styleSheet($sheet, $headers, $widths);
 
