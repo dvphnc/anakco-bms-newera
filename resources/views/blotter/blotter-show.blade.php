@@ -214,7 +214,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title"><i class="fas fa-user-slash"></i> Respondent</span>
+                    <span class="card-title"><i class="fas fa-user-slash"></i> Accused</span>
                 </div>
                 <div class="card-body">
                     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
@@ -223,7 +223,7 @@
                         </div>
                         <div>
                             <div style="font-weight:600;font-size:14px">{{ $blotter->respondent_name ?? '—' }}</div>
-                            <div class="td-muted">Respondent</div>
+                            <div class="td-muted">Accused</div>
                         </div>
                     </div>
                     <div style="display:flex;flex-direction:column;gap:8px">

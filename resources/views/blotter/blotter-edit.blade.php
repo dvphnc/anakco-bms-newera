@@ -104,10 +104,10 @@
             </div>
         </div>
 
-        <div class="form-section-title">Respondent</div>
+        <div class="form-section-title">Accused</div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
-                <label class="form-label">Respondent Name <span style="color:var(--crimson)">*</span></label>
+                <label class="form-label">Accused Name <span style="color:var(--crimson)">*</span></label>
                 <input type="text" name="respondent_name" id="respondent_name" class="form-control @error('respondent_name') is-invalid @enderror" value="{{ old('respondent_name', $blotter->respondent_name) }}" required>
                 @error('respondent_name')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
@@ -122,11 +122,11 @@
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">Respondent Address</label>
+                <label class="form-label">Accused Address</label>
                 <input type="text" name="respondent_address" id="respondent_address" class="form-control" value="{{ old('respondent_address', $blotter->respondent_address) }}">
             </div>
             <div class="form-group">
-                <label class="form-label">Respondent Contact</label>
+                <label class="form-label">Accused Contact</label>
                 <input type="text" name="respondent_contact" class="form-control" value="{{ old('respondent_contact', $blotter->respondent_contact) }}">
             </div>
         </div>
