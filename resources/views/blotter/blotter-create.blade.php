@@ -4,7 +4,7 @@
 
 <div class="page-header">
     <div>
-        <h1 class="page-title">File Blotter Case</h1>
+        <h1 class="page-title"><i class="fas fa-gavel" style="color:var(--gold);margin-right:6px"></i>File Blotter Case</h1>
         <p class="page-subtitle">Record a new incident or complaint</p>
     </div>
     <div class="page-actions">

@@ -4,7 +4,7 @@
 
 <div class="page-header">
     <div>
-        <h1 class="page-title">Issue Business Permit</h1>
+        <h1 class="page-title"><i class="fas fa-stamp" style="color:var(--gold);margin-right:6px"></i>Issue Business Permit</h1>
         <p class="page-subtitle">Register a new business in Barangay New Era</p>
     </div>
     <div class="page-actions">
