@@ -218,7 +218,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title"><i class="fas fa-user-slash"></i> Respondent</span>
+                    <span class="card-title"><i class="fas fa-user-slash"></i> Accused</span>
                 </div>
                 <div class="card-body">
                     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
@@ -227,7 +227,7 @@
                         </div>
                         <div>
                             <div style="font-weight:600;font-size:14px"><?php echo e($blotter->respondent_name ?? '—'); ?></div>
-                            <div class="td-muted">Respondent</div>
+                            <div class="td-muted">Accused</div>
                         </div>
                     </div>
                     <div style="display:flex;flex-direction:column;gap:8px">
@@ -456,7 +456,7 @@
             <span class="val"><strong><?php echo e($blotter->complainant_name ?? ($blotter->complainantResident?->full_name ?? '—')); ?></strong></span>
         </div>
         <div class="rpt-field">
-            <span class="lbl">Respondent</span>
+            <span class="lbl">Accused</span>
             <span class="val"><strong><?php echo e($blotter->respondent_name ?? '—'); ?></strong></span>
         </div>
         <div class="rpt-field">
@@ -464,7 +464,7 @@
             <span class="val"><?php echo e($blotter->complainant_address ?? '—'); ?></span>
         </div>
         <div class="rpt-field">
-            <span class="lbl">Respondent Address</span>
+            <span class="lbl">Accused Address</span>
             <span class="val"><?php echo e($blotter->respondent_address ?? '—'); ?></span>
         </div>
         <div class="rpt-field" style="border-bottom:none">
@@ -472,7 +472,7 @@
             <span class="val"><?php echo e($blotter->complainant_contact ?? '—'); ?></span>
         </div>
         <div class="rpt-field" style="border-bottom:none">
-            <span class="lbl">Respondent Contact</span>
+            <span class="lbl">Accused Contact</span>
             <span class="val"><?php echo e($blotter->respondent_contact ?? '—'); ?></span>
         </div>
     </div>
@@ -519,7 +519,7 @@
                 <div style="height:36px"></div>
                 <div class="rpt-sig-line"></div>
                 <div class="rpt-sig-name"><?php echo e($blotter->respondent_name ?? '—'); ?></div>
-                <div class="rpt-sig-title">Respondent</div>
+                <div class="rpt-sig-title">Accused</div>
             </div>
             <div class="rpt-sig-box">
                 <div style="height:36px"></div>
