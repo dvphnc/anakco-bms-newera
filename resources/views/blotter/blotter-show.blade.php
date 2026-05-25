@@ -244,6 +244,25 @@
             </div>
         </div>
 
+        @if($blotter->responding_officer)
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-shield-halved"></i> Responding Officer</span>
+            </div>
+            <div class="card-body">
+                <div style="display:flex;align-items:center;gap:10px">
+                    <div style="width:40px;height:40px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-muted)">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;font-size:14px">{{ $blotter->responding_officer }}</div>
+                        <div class="td-muted">Responding Officer</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         @if($blotter->resolution_notes)
         <div class="card">
             <div class="card-header">
@@ -473,6 +492,13 @@
             <span class="val">{{ $blotter->respondent_contact ?? '—' }}</span>
         </div>
     </div>
+
+    @if($blotter->responding_officer)
+    <div class="rpt-section-title">Responding Officer</div>
+    <div class="rpt-fullwidth">
+        <span class="val">{{ $blotter->responding_officer }}</span>
+    </div>
+    @endif
 
     {{-- Incident Details --}}
     <div class="rpt-section-title">Incident Details / Narrative</div>
