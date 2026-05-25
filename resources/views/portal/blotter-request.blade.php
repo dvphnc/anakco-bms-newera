@@ -146,9 +146,7 @@
 @push('scripts')
 <script>
 (function () {
-    var LS_NAME    = 'portal_name';
-    var LS_CONTACT = 'portal_contact';
-    var LS_EMAIL   = 'portal_email';
+    ['portal_name','portal_contact','portal_email'].forEach(function (k) { localStorage.removeItem(k); });
 
     function clearErrors() {
         document.querySelectorAll('.form-error[id^="err-"]').forEach(function (el) {
@@ -166,15 +164,6 @@
         var input = document.getElementById(field);
         if (input) input.style.borderColor = 'var(--crimson)';
     }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        var name    = localStorage.getItem(LS_NAME);
-        var contact = localStorage.getItem(LS_CONTACT);
-        var email   = localStorage.getItem(LS_EMAIL);
-        if (name)    document.getElementById('complainant_name').value = name;
-        if (contact) document.getElementById('contact_number').value   = contact;
-        if (email)   document.getElementById('email').value            = email;
-    });
 
     document.getElementById('blotterForm').addEventListener('submit', function (e) {
         e.preventDefault();
