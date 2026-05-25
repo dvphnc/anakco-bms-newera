@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #111; }
+
+/* Header */
+.header {
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #0D2144;
+    margin-bottom: 12px;
+    position: relative;
+}
+.header .logo-left {
+    position: absolute; left: 0; top: 0;
+    width: 55px; height: 55px;
+}
+.header .logo-right {
+    position: absolute; right: 0; top: 0;
+    width: 55px; height: 55px;
+}
+.header .titles { padding: 0 70px; }
+.header .republic { font-size: 8pt; font-style: italic; color: #444; }
+.header .brgy { font-size: 14pt; font-weight: bold; text-transform: uppercase; color: #0D2144; letter-spacing: 0.05em; }
+.header .office { font-size: 8pt; color: #555; font-style: italic; }
+.header .address { font-size: 7.5pt; color: #777; }
+
+/* Report title */
+.report-title {
+    text-align: center;
+    font-size: 12pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #0D2144;
+    margin: 10px 0 3px;
+    text-decoration: underline;
+}
+.report-sub {
+    text-align: center;
+    font-size: 7.5pt;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* Meta info bar */
+.meta-bar {
+    background: #f0f4f8;
+    border: 1px solid #dde2ea;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 7.5pt;
+    color: #444;
+}
+
+/* Table */
+table { width: 100%; border-collapse: collapse; font-size: 7.5pt; }
+thead { display: table-header-group; }
+thead tr th {
+    background: #0D2144;
+    color: #fff;
+    padding: 6px 8px;
+    text-align: left;
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border: 1px solid #0a1a36;
+}
+tbody tr { page-break-inside: avoid; }
+tbody tr:nth-child(odd)  { background: #fff; }
+tbody tr:nth-child(even) { background: #f5f7fa; }
+tbody td {
+    padding: 5px 7px;
+    border-bottom: 1px solid #e5e7eb;
+    border-right: 1px solid #f0f0f0;
+    vertical-align: middle;
+}
+tbody td:last-child { border-right: none; }
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 99px;
+    font-size: 6.5pt;
+    font-weight: bold;
+    margin: 1px;
+}
+.badge-green  { background: #dcfce7; color: #166534; }
+.badge-red    { background: #fee2e2; color: #991b1b; }
+.badge-yellow { background: #fef9c3; color: #854d0e; }
+.badge-gray   { background: #f3f4f6; color: #6b7280; }
+.badge-blue   { background: #dbeafe; color: #1e40af; }
+.badge-orange { background: #ffedd5; color: #9a3412; }
+.badge-gold   { background: #fef3dc; color: #92600a; }
+
+/* Footer */
+.footer {
+    margin-top: 14px;
+    padding-top: 8px;
+    border-top: 2px solid #0D2144;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7pt;
+    color: #555;
+}
+.footer .sig-line {
+    text-align: center;
+    min-width: 160px;
+}
+.footer .sig-line .line {
+    border-top: 1px solid #333;
+    margin-bottom: 3px;
+    width: 100%;
+}
+.footer .sig-line .name { font-weight: bold; font-size: 7.5pt; text-transform: uppercase; }
+.footer .sig-line .title { font-size: 7pt; color: #666; }
+</style>
+</head>
+<body>
+
+
+<div class="header">
+    <img class="logo-left"  src="<?php echo e(public_path('images/qc-seal.png')); ?>" alt="QC">
+    <img class="logo-right" src="<?php echo e(public_path('images/bne-logo.png')); ?>" alt="BNE">
+    <div class="titles">
+        <div class="republic"><em>Republic of the Philippines</em></div>
+        <div style="font-size:8pt;color:#555">City of Quezon, National Capital Region</div>
+        <div class="brgy">Barangay New Era</div>
+        <div class="office">Office of the Punong Barangay</div>
+        <div class="address">New Era, Quezon City, Metro Manila</div>
+    </div>
+</div>
+
+<div class="report-title">Residents Master List</div>
+<div class="report-sub">
+    As of <?php echo e(now()->format('F d, Y')); ?>
+
+    <?php if(!empty($filters['gender'])): ?> &nbsp;·&nbsp; Gender: <strong><?php echo e($filters['gender']); ?></strong> <?php endif; ?>
+    <?php if(!empty($filters['status'])): ?> &nbsp;·&nbsp; Status: <strong><?php echo e($filters['status']); ?></strong> <?php endif; ?>
+    <?php if(!empty($filters['purok_id'])): ?> &nbsp;·&nbsp; Purok ID: <strong><?php echo e($filters['purok_id']); ?></strong> <?php endif; ?>
+</div>
+<?php if(isset($activeFilters) && $activeFilters !== 'None (all records)'): ?>
+<div style="background:#fef9c3;border:1px solid #fde68a;border-radius:3px;padding:4px 10px;margin-bottom:8px;font-size:7pt;color:#92400e;text-align:center">
+    <strong>Filtered Export:</strong> <?php echo e($activeFilters); ?>
+
+</div>
+<?php endif; ?>
+
+<div class="meta-bar">
+    <span>Total Records: <strong><?php echo e($data->count()); ?></strong></span>
+    <span>Generated by: <strong><?php echo e($generatedBy); ?></strong> &nbsp;|&nbsp; <?php echo e($generatedAt); ?></span>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width:25px">#</th>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Age</th>
+            <th>Civil Status</th>
+            <th>Purok</th>
+            <th>Address</th>
+            <th>Contact</th>
+            <th>Classifications</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $__currentLoopData = $data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $r): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <tr>
+            <td style="text-align:center;color:#888"><?php echo e($i+1); ?></td>
+            <td><strong><?php echo e($r->last_name); ?>, <?php echo e($r->first_name); ?><?php echo e($r->middle_name ? ' '.substr($r->middle_name,0,1).'.' : ''); ?><?php echo e($r->suffix ? ' '.$r->suffix : ''); ?></strong></td>
+            <td><?php echo e($r->gender); ?></td>
+            <td style="text-align:center"><?php echo e($r->age ?? '—'); ?></td>
+            <td><?php echo e($r->civil_status ?? '—'); ?></td>
+            <td><?php echo e($r->purok->name ?? '—'); ?></td>
+            <td><?php echo e($r->address); ?></td>
+            <td><?php echo e($r->contact_number ?? '—'); ?></td>
+            <td>
+                <?php if($r->is_voter): ?>       <span class="badge badge-green">Voter</span> <?php endif; ?>
+                <?php if($r->is_senior): ?>      <span class="badge badge-yellow">Senior</span> <?php endif; ?>
+                <?php if($r->is_pwd): ?>         <span class="badge badge-blue">PWD</span> <?php endif; ?>
+                <?php if($r->is_solo_parent): ?> <span class="badge badge-orange">Solo Parent</span> <?php endif; ?>
+                <?php if($r->is_4ps): ?>         <span class="badge badge-gold">4Ps</span> <?php endif; ?>
+                <?php if(!$r->is_voter && !$r->is_senior && !$r->is_pwd && !$r->is_solo_parent && !$r->is_4ps): ?>
+                    <span style="color:#aaa">—</span>
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php $sc = match($r->residency_status) { 'Active'=>'badge-green','Deceased'=>'badge-gray','Transferred'=>'badge-yellow',default=>'badge-gray' }; ?>
+                <span class="badge <?php echo e($sc); ?>"><?php echo e($r->residency_status); ?></span>
+            </td>
+        </tr>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    </tbody>
+</table>
+
+<div class="footer">
+    <div style="font-size:7pt;color:#888">
+        <em>This document is confidential. For official use only.</em><br>
+        Barangay New Era Management System
+    </div>
+    <div style="display:flex;gap:40px;align-items:flex-end">
+        <div class="sig-line">
+            <div style="height:28px"></div>
+            <div class="line"></div>
+            <div class="name"><?php echo e($secretaryName); ?></div>
+            <div class="title">Barangay Secretary</div>
+        </div>
+        <div class="sig-line">
+            <div style="height:28px"></div>
+            <div class="line"></div>
+            <div class="name"><?php echo e($officialName); ?></div>
+            <div class="title">Punong Barangay</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html><?php /**PATH D:\laragon\www\anakco_bms\resources\views/exports/pdf/residents.blade.php ENDPATH**/ ?>
