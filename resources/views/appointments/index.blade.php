@@ -1246,11 +1246,10 @@ $(document).ready(function () {
         })
         .then(function (res) {
             closeBlotterActivateModal();
-            blotterTable.ajax.reload(null, false);
+            blotterTable.ajax.reload(function (json) {
+                document.getElementById('tabBadgeBlotter').textContent = json.recordsTotal;
+            }, false);
             bmsToast(res.data.message || 'Case activated.', 'success');
-            if (res.data.blotter_pending !== undefined) {
-                document.getElementById('tabBadgeBlotter').textContent = res.data.blotter_pending;
-            }
             if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
         .catch(function (err) {
@@ -1318,11 +1317,10 @@ $(document).ready(function () {
         }, function () {
             axios.delete(url, { data: { _token: '{{ csrf_token() }}' } })
             .then(function (res) {
-                bizTable.ajax.reload(null, false);
+                bizTable.ajax.reload(function (json) {
+                    document.getElementById('tabBadgeBiz').textContent = json.recordsTotal;
+                }, false);
                 bmsToast(res.data.message || 'Application deleted.', 'success');
-                if (res.data.biz_pending !== undefined) {
-                    document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
-                }
                 if (window.refreshPortalBadges) window.refreshPortalBadges();
             })
             .catch(function () {
