@@ -25,6 +25,7 @@ class BlotterCase extends Model
         'respondent_name',
         'respondent_address',
         'respondent_contact',
+        'responding_officer',
         'status',
         'resolution_notes',
         'settled_at',
