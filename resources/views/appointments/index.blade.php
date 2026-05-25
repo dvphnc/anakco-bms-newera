@@ -1275,6 +1275,7 @@ $(document).ready(function () {
                     if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
                     if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
                 }
+                if (window.refreshPortalBadges) window.refreshPortalBadges();
             })
             .catch(function () {
                 bmsToast('Failed to delete appointment.', 'error');
@@ -1302,6 +1303,7 @@ $(document).ready(function () {
                 if (res.data.biz_pending !== undefined) {
                     document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
                 }
+                if (window.refreshPortalBadges) window.refreshPortalBadges();
             })
             .catch(function () {
                 bmsToast('Failed to delete application.', 'error');
@@ -1329,6 +1331,7 @@ $(document).ready(function () {
                 if (res.data.blotter_pending !== undefined) {
                     document.getElementById('tabBadgeBlotter').textContent = res.data.blotter_pending;
                 }
+                if (window.refreshPortalBadges) window.refreshPortalBadges();
             })
             .catch(function () {
                 bmsToast('Failed to delete report.', 'error');
