@@ -224,13 +224,13 @@
     <div class="card-body">
         <div class="form-group" style="max-width:360px">
             <label class="form-label">Upload Photo <span style="color:#9ca3af;font-weight:400">(optional)</span></label>
-            <div id="photoDropZone" style="border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s">
+            <label for="photoFileInput" id="photoDropZone" style="display:block;border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s">
                 <i class="fas fa-camera" id="photoDropIcon" style="font-size:28px;color:var(--text-muted);margin-bottom:8px;display:block"></i>
                 <img id="photoDropPreview" src="" alt="" style="display:none;width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 8px;border:2px solid var(--border)">
                 <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
                 <div style="font-size:12px;color:var(--text-subtle)">JPG, PNG, WEBP — max 2MB</div>
                 <div id="photoDropName" style="display:none;margin-top:8px;font-size:13px;font-weight:600;color:var(--navy)"></div>
-            </div>
+            </label>
             <input type="file" id="photoFileInput" name="photo_path" accept="image/*" style="display:none">
             <button type="button" id="photoClearBtn" onclick="clearResidentPhoto()" style="display:none;margin-top:8px;background:none;border:none;color:var(--danger,#c0392b);font-size:13px;cursor:pointer;padding:0"><i class="fas fa-times"></i> Remove photo</button>
         </div>
