@@ -176,7 +176,13 @@
         var errEl = document.getElementById('err-' + field);
         if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
         var input = document.getElementById(field);
-        if (input) input.style.borderColor = 'var(--crimson)';
+        if (input) {
+            if (input.tagName === 'SELECT' && input._setInvalid) {
+                input._setInvalid();
+            } else {
+                input.style.borderColor = 'var(--crimson)';
+            }
+        }
     }
 
     document.getElementById('businessForm').addEventListener('submit', function (e) {
