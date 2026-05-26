@@ -81,7 +81,8 @@
       "Bash(python -c \"import sys,json; tables=[t for t in json.load\\(sys.stdin\\)['tables'] if t['name']=='businesses']; print\\(tables\\)\")",
       "Bash(git merge *)",
       "Bash(git add *)",
-      "Bash(php -l app/Http/Controllers/BlotterController.php)"
+      "Bash(php -l app/Http/Controllers/BlotterController.php)",
+      "Bash(python -c ' *)"
     ]
   }
 }
