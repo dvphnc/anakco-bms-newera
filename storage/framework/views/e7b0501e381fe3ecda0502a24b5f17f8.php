@@ -121,7 +121,7 @@
         <i class="fas fa-globe" style="font-size:10px;margin-right:4px"></i>Portal
         <span id="srcChipPortalCount" style="margin-left:5px;background:#1d4ed8;color:#fff;border-radius:4px;
               padding:1px 7px;font-size:10px;font-weight:700">
-            <?php echo e(\App\Models\Business::where('source','portal')->whereNotNull('permit_date')->count()); ?>
+            <?php echo e(\App\Models\Business::where('source','portal')->where('status','!=','Pending')->count()); ?>
 
         </span>
     </button>
