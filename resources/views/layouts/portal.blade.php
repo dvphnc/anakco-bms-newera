@@ -1553,55 +1553,21 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     }
 
-    function buildYearDropdown(fp) {
-        var cal = fp.calendarContainer;
-        // The year lives inside .numInputWrapper — target that wrapper
+    // ── Year: static display badge (no dropdown) ─────────────────────
+    function buildYearDisplay(fp) {
+        var cal         = fp.calendarContainer;
         var yearWrapper = cal.querySelector('.numInputWrapper');
         if (!yearWrapper) return;
 
-        var now     = new Date().getFullYear();
-        var minYear = fp.config.minDate ? fp.config.minDate.getFullYear() : now - 10;
-        var maxYear = fp.config.maxDate ? fp.config.maxDate.getFullYear() : now + 5;
-        // Always include current view year in range
-        minYear = Math.min(minYear, fp.currentYear);
-        maxYear = Math.max(maxYear, fp.currentYear);
+        var badge = document.createElement('span');
+        badge.className   = 'fp-year-display';
+        badge.textContent = fp.currentYear;
 
-        buildPickerPanel(
-            cal, yearWrapper, 'fp-year-btn',
-            // render button label
-            function (btn) {
-                btn.innerHTML = fp.currentYear +
-                    ' <i class="fas fa-chevron-down" style="font-size:9px;opacity:.7;margin-left:1px"></i>';
-            },
-            // render grid (newest first)
-            function (panel) {
-                panel.innerHTML = '<div class="fp-year-grid"></div>';
-                var grid = panel.querySelector('.fp-year-grid');
-                for (var y = maxYear; y >= minYear; y--) {
-                    (function (year) {
-                        var cell = document.createElement('button');
-                        cell.type = 'button';
-                        cell.className = 'fp-picker-cell' + (year === fp.currentYear ? ' current' : '');
-                        cell.textContent = year;
-                        cell.addEventListener('click', function (e) {
-                            e.stopPropagation();
-                            fp.changeYear(year);
-                            panel.classList.remove('open');
-                        });
-                        grid.appendChild(cell);
-                    })(y);
-                }
-            },
-            // hooks
-            function (btn, panel) {
-                fp.config.onYearChange.push(function () {
-                    btn.innerHTML = fp.currentYear +
-                        ' <i class="fas fa-chevron-down" style="font-size:9px;opacity:.7;margin-left:1px"></i>';
-                    panel.classList.remove('open');
-                });
-                fp.config.onClose.push(function () { panel.classList.remove('open'); });
-            }
-        );
+        fp.config.onYearChange.push(function () {
+            badge.textContent = fp.currentYear;
+        });
+
+        yearWrapper.parentNode.insertBefore(badge, yearWrapper);
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -1615,7 +1581,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 onReady: function (sd, ds, fp) {
                     if (fp.altInput) fp.altInput.placeholder = 'mm/dd/yyyy';
                     buildMonthDropdown(fp);
-                    buildYearDropdown(fp);
+                    buildYearDisplay(fp);
                 },
             };
             if (el.min) opts.minDate = el.min;
