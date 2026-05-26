@@ -236,18 +236,20 @@
 
 <?php if(in_array(auth()->user()?->role, ['Admin', 'Secretary'])): ?>
 <script>
-/* ── Portal pending badge — real-time ──────────────────── */
+/* ── Portal pending badges — SSE with polling fallback ─── */
 (function () {
+
+    /* ── DOM helpers ──────────────────────────────────────── */
     function setBadge(id, n) {
         var el = document.getElementById(id);
         if (!el) return;
         var prev = parseInt(el.textContent, 10) || 0;
-        el.textContent   = n > 99 ? '99+' : n;
+        el.textContent   = n > 99 ? '99+' : String(n);
         el.style.display = n > 0 ? 'inline-block' : 'none';
-        // Flash gold → white when count drops (action just taken)
-        if (n !== prev && el.style.display !== 'none') {
+        // Pulse animation when count changes
+        if (n !== prev) {
             el.style.transition = 'opacity .2s';
-            el.style.opacity = '.4';
+            el.style.opacity    = '.35';
             setTimeout(function () { el.style.opacity = '1'; }, 220);
         }
     }
@@ -256,27 +258,80 @@
         setBadge('pblBadge',           data.blotter   || 0);
         setBadge('pbizBadge',          data.business  || 0);
         setBadge('portalPendingBadge', data.documents || 0);
+
+        // Also keep the Appointments page tab badges in sync if that page is open
+        var tabBlotter = document.getElementById('tabBadgeBlotter');
+        var tabBiz     = document.getElementById('tabBadgeBiz');
+        if (tabBlotter) tabBlotter.textContent = data.blotter  || 0;
+        if (tabBiz)     tabBiz.textContent     = data.business || 0;
     }
 
+    /* ── Fallback: one-shot AJAX fetch ───────────────────── */
     function fetchPendingCount() {
         axios.get('<?php echo e(route('portal.pending-count')); ?>')
             .then(function (res) { updatePortalBadges(res.data); })
             .catch(function () { /* silent */ });
     }
 
-    // Expose globally so action handlers on any page can trigger an instant refresh
+    // Expose globally so any action handler can force an immediate refresh
     window.refreshPortalBadges = fetchPendingCount;
 
-    document.addEventListener('DOMContentLoaded', function () {
+    /* ── SSE connection ───────────────────────────────────── */
+    var _sseActive   = false;
+    var _pollTimer   = null;
+    var _sseUrl      = '<?php echo e(route('portal.badge-stream')); ?>';
+
+    function startFallbackPoll() {
+        if (_pollTimer) return;                  // already running
         fetchPendingCount();
-        // Fallback poll every 30 s in case another staff member takes an action
-        setInterval(fetchPendingCount, 30000);
+        _pollTimer = setInterval(fetchPendingCount, 15000);
+    }
+
+    function stopFallbackPoll() {
+        if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
+    }
+
+    function connectSSE() {
+        if (!window.EventSource) { startFallbackPoll(); return; }
+
+        var sse = new EventSource(_sseUrl);
+
+        sse.onopen = function () {
+            _sseActive = true;
+            stopFallbackPoll();   // SSE running — no need to poll
+        };
+
+        sse.onmessage = function (e) {
+            try { updatePortalBadges(JSON.parse(e.data)); } catch (_) {}
+        };
+
+        sse.onerror = function () {
+            // EventSource auto-reconnects; while disconnected, poll as backup
+            _sseActive = false;
+            startFallbackPoll();
+        };
+
+        // When SSE reconnects successfully, stop the backup poll again
+        sse.addEventListener('open', function () {
+            if (_sseActive) return;
+            _sseActive = true;
+            stopFallbackPoll();
+        });
+
+        return sse;
+    }
+
+    /* ── Boot ─────────────────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchPendingCount();   // Instant first load
+        connectSSE();          // Live stream thereafter
     });
 
-    // Refresh immediately when the user switches back to this tab
+    // Re-fetch immediately when the user brings the tab back into focus
     document.addEventListener('visibilitychange', function () {
         if (document.visibilityState === 'visible') fetchPendingCount();
     });
-})();
+
+}());
 </script>
 <?php endif; ?><?php /**PATH D:\laragon\www\anakco_bms\resources\views/partials/_sidebar.blade.php ENDPATH**/ ?>
