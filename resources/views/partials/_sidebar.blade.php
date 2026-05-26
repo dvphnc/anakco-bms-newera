@@ -76,7 +76,7 @@
                   style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
                          font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
                          text-align:center;line-height:16px;margin-left:auto"
-                  title="Portal submissions pending"></span>
+                  title="Active portal blotter cases"></span>
         </a>
 
         <a href="{{ route('businesses.index') }}"
@@ -87,7 +87,7 @@
                   style="display:none;background:var(--gold);color:var(--navy);font-size:9px;
                          font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
                          text-align:center;line-height:16px;margin-left:auto"
-                  title="Portal submissions pending"></span>
+                  title="Business applications under review"></span>
         </a>
 
         <a href="{{ route('appointments.index') }}"

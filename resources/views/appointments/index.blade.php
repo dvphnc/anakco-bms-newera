@@ -295,7 +295,7 @@
 
 
 {{-- ══════════════════════════════════════════════════════════════
-     MODAL — Issue Document  (single action: portal request → Released)
+     MODAL — Accept & Process  (portal request → Processing in Document Issuance)
 ═══════════════════════════════════════════════════════════════ --}}
 <div id="aptConvertModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
@@ -308,7 +308,7 @@
                     display:flex;align-items:center;justify-content:space-between">
             <div style="display:flex;align-items:center;gap:9px">
                 <i class="fas fa-file-circle-check" style="color:var(--gold);font-size:13px"></i>
-                <span style="font-size:13.5px;font-weight:700;color:#fff">Issue Document</span>
+                <span style="font-size:13.5px;font-weight:700;color:#fff">Accept &amp; Process</span>
             </div>
             <button onclick="closeConvertModal()"
                     style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
@@ -359,32 +359,12 @@
 
         {{-- Form --}}
         <div style="padding:14px 18px">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;align-items:start">
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12px;font-weight:600;margin-bottom:5px;display:block">
-                        Fee Paid <span style="color:var(--text-subtle);font-size:11px">(₱) — optional</span>
-                    </label>
-                    <input type="number" id="cvtFee" class="form-control" min="0" step="0.01" placeholder="0.00"
-                           style="font-size:13.5px">
-                </div>
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12px;font-weight:600;margin-bottom:5px;display:block;white-space:nowrap">
-                        O.R. Number
-                    </label>
-                    <input type="text" id="cvtOR" class="form-control"
-                           placeholder="Auto-generated if fee > 0"
-                           style="font-size:13px">
-                    <div style="font-size:10.5px;color:var(--text-subtle);margin-top:4px;line-height:1.3">
-                        Leave blank to auto-generate
-                    </div>
-                </div>
-            </div>
             <div class="form-group" style="margin-bottom:12px">
                 <label class="form-label" style="font-size:12px;font-weight:600;margin-bottom:5px;display:block">
-                    Note to Resident <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— included in email</span>
+                    Note to Resident <span style="font-weight:400;color:var(--text-subtle);font-size:11px">— optional, sent by email</span>
                 </label>
                 <input type="text" id="cvtNote" class="form-control"
-                       placeholder="e.g. Please bring valid ID when picking up."
+                       placeholder="e.g. Please bring your valid ID and proof of residency."
                        style="font-size:13px">
             </div>
             <div id="cvtError" style="display:none;font-size:13px;color:var(--crimson);
@@ -393,13 +373,13 @@
             <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;
                         color:var(--text-subtle);background:#f8f9fb;border:1px solid var(--border);
                         border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px">
-                <i class="fas fa-paper-plane" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
-                <span>Marks as <strong style="color:var(--navy)">Released</strong>, creates the record in Document Issuance, and sends an email notification to the resident.</span>
+                <i class="fas fa-circle-right" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
+                <span>Sets appointment to <strong style="color:var(--navy)">Processing</strong> and creates the request in <strong style="color:var(--navy)">Document Issuance</strong> for staff to complete (mark Ready → Release).</span>
             </div>
             <div style="display:flex;justify-content:flex-end;gap:10px">
                 <button type="button" onclick="closeConvertModal()" class="btn btn-secondary">Cancel</button>
                 <button type="button" id="cvtSaveBtn" onclick="saveConvert()" class="btn btn-primary">
-                    <i class="fas fa-file-circle-check"></i> Issue Document
+                    <i class="fas fa-file-circle-check"></i> Accept &amp; Process
                 </button>
             </div>
         </div>
