@@ -49,6 +49,8 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/track',                    [ResidentPortalController::class, 'trackForm'])->name('track');
     Route::post('/track',                   [ResidentPortalController::class, 'track'])->name('track.post');
     Route::get('/track/lookup',             [ResidentPortalController::class, 'trackLookup'])->name('track.lookup');
+    // My Submissions
+    Route::get('/submissions',              [ResidentPortalController::class, 'submissions'])->name('submissions');
 });
 
 // -------------------------------------------------------
