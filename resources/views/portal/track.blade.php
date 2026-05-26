@@ -743,13 +743,44 @@
 
         var timeline = renderTimeline(d.logs || []);
 
+        var terminal = TERMINAL.indexOf(d.status) !== -1;
+        var liveBar  = terminal
+            ? '<div class="live-bar stopped">' +
+                '<span><span class="live-dot" style="display:none"></span>' +
+                '<span class="live-ts">Status finalised</span></span>' +
+              '</div>'
+            : '<div class="live-bar">' +
+                '<span><span class="live-dot"></span>' +
+                '<span class="live-ts">Live · checking every 15s</span></span>' +
+                '<button type="button" onclick="window._manualRefresh()" title="Refresh now">' +
+                '<i class="fas fa-rotate-right" style="margin-right:3px"></i>Refresh</button>' +
+              '</div>';
+
         return '<div class="result-card">' +
             header +
             '<div class="result-body">' +
                 banner + progress + grid + timeline +
             '</div>' +
+            liveBar +
             '</div>';
     }
+
+    // Expose manual refresh for the "Refresh" button
+    window._manualRefresh = function () {
+        if (!currentNum) return;
+        stopPolling();
+        lastStatus = null;
+        fetchStatus(currentNum, false).then(function () {
+            if (lastStatus && TERMINAL.indexOf(lastStatus) === -1) startPolling();
+        });
+    };
+
+    // Tick the "Updated Xs ago" label every 5 seconds without re-rendering
+    setInterval(function () {
+        if (!lastChecked) return;
+        var bar = resultDiv.querySelector('.live-bar:not(.stopped) .live-ts');
+        if (bar) bar.textContent = 'Live · updated ' + formatAgo(lastChecked);
+    }, 5000);
 })();
 </script>
 @endpush
