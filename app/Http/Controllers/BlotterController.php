@@ -211,12 +211,6 @@ class BlotterController extends Controller
 
         // Auto-set settled_at when moving into Settled
         if ($validated['status'] === 'Settled') {
-<<<<<<< HEAD
-            if (empty($validated['settled_at']) && $blotter->status !== 'Settled') {
-                $validated['settled_at'] = now();
-            }
-        } else {
-=======
             if (! empty($validated['settled_at'])) {
                 // keep the staff-supplied date
             } elseif ($blotter->status !== 'Settled') {
@@ -224,7 +218,6 @@ class BlotterController extends Controller
             }
         } else {
             // Clear settled_at when moving away from Settled
->>>>>>> claude/festive-lovelace-684745
             $validated['settled_at'] = null;
         }
 
