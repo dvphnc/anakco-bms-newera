@@ -63,6 +63,34 @@
     </div>
 </div>
 
+{{-- Portal Queue notice (shown only when there are pending portal blotter submissions) --}}
+@php $blotterPortalPending = \App\Models\BlotterCase::where('source','portal')->where('status','Pending')->count(); @endphp
+@if($blotterPortalPending > 0)
+<div class="no-print mb-4"
+     style="display:flex;align-items:center;gap:10px;padding:10px 16px;
+            background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius);
+            font-size:13px;color:#1e40af">
+    <i class="fas fa-globe" style="font-size:13px;color:#3b82f6;flex-shrink:0"></i>
+    <span>
+        <strong>{{ $blotterPortalPending }}</strong> portal report{{ $blotterPortalPending > 1 ? 's' : '' }} pending activation
+    </span>
+    <div style="display:flex;gap:8px;margin-left:auto;flex-shrink:0">
+        <button type="button"
+                onclick="quickFilter('sourceFilter','portal')"
+                style="height:28px;padding:0 12px;font-size:12px;font-weight:600;cursor:pointer;
+                       background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd;border-radius:var(--radius-sm)">
+            <i class="fas fa-filter" style="font-size:10px;margin-right:4px"></i>Filter Portal
+        </button>
+        <a href="{{ route('appointments.index') }}#blotter"
+           style="height:28px;padding:0 12px;font-size:12px;font-weight:600;
+                  background:var(--navy);color:#fff;border:1px solid var(--navy);border-radius:var(--radius-sm);
+                  display:inline-flex;align-items:center;gap:5px;text-decoration:none">
+            <i class="fas fa-calendar-check" style="font-size:10px"></i>Appointments
+        </a>
+    </div>
+</div>
+@endif
+
 {{-- Source Quick-Filter Chip Strip --}}
 <div class="no-print" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
     <span style="font-size:12px;font-weight:600;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.06em">Source:</span>
