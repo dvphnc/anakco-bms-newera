@@ -28,7 +28,7 @@ This is our group capstone project — built as a team with every feature ground
 
 ---
 
-## What I Built
+## What We Built
 
 > A full-stack Laravel application covering every core function of a barangay office — resident management, case tracking, document issuance, business permits, a public-facing portal, and a full reporting suite.
 
@@ -110,7 +110,12 @@ Poppins           Primary typeface (Google Fonts)
 
 ## My Role
 
-I built this system **solo** — architecture, database design, backend logic, frontend, and UX — over a focused development sprint.
+I served as **Scrum Master and Full-Stack Developer** on this group capstone project — leading sprints, managing the backlog, and owning the end-to-end technical implementation.
+
+**As Scrum Master:**
+- Facilitated sprint planning, daily stand-ups, and retrospectives across the team
+- Maintained and prioritized the product backlog, mapping barangay workflows to deliverable features
+- Tracked progress and kept the team aligned on capstone deadlines
 
 **As Full-Stack Developer:**
 - Designed the full database schema — 20+ tables covering residents, documents, blotter, permits, committees, activity logs, and portal submissions
@@ -244,6 +249,6 @@ May 26, 2025     Capstone submission — all features complete
 
 <div align="center">
 
-<sub>© 2025 Barangay New Era BMS · Built by Joana Daphne Sy · New Era University<br/>All Rights Reserved.</sub>
+<sub>© 2025 Barangay New Era BMS · Group Capstone Project · New Era University<br/>Joana Daphne Sy — Scrum Master & Developer · All Rights Reserved.</sub>
 
 </div>
