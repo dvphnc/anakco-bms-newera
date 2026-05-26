@@ -24,6 +24,9 @@ class Business extends Model
         'expiry_date',
         'status',
         'issued_by',
+        'fee_paid',
+        'or_number',
+        'remarks',
     ];
 
     protected function casts(): array
@@ -74,6 +77,17 @@ class Business extends Model
     // -------------------------------------------------------
     // Helpers
     // -------------------------------------------------------
+
+    // Generate next OR number e.g. OR-2026-00001
+    public static function generateOrNumber(): string
+    {
+        $year   = date('Y');
+        $prefix = 'OR-'.$year.'-';
+        $max = self::where('or_number', 'like', $prefix.'%')
+            ->selectRaw('MAX(CAST(SUBSTRING(or_number, ?) AS UNSIGNED)) as max_seq', [strlen($prefix) + 1])
+            ->value('max_seq');
+        return $prefix.str_pad(($max ?? 0) + 1, 5, '0', STR_PAD_LEFT);
+    }
 
     // Generate next permit number e.g. BP-2025-00001
     public static function generatePermitNumber(): string
