@@ -932,9 +932,6 @@
         .fp-year-display {
             color: #fff; font-weight: 700; font-size: 14px;
             font-family: 'Poppins', sans-serif;
-            padding: 2px 10px;
-            border: 1.5px solid rgba(255,255,255,.35);
-            border-radius: 6px;
             user-select: none;
         }
 
