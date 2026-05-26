@@ -687,7 +687,6 @@ function saveBlotterStatus() {
                 'Under Investigation':  'badge-yellow',
                 'Mediated':             'badge-blue',
                 'Settled':              'badge-green',
-                'Closed':               'badge-gray',
                 'Referred to Higher Authority': 'badge-orange',
             };
             const row = $('button.blotter-status-btn[data-id="' + _blotterStatusId + '"]').closest('tr');
