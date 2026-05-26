@@ -1042,7 +1042,7 @@ $(document).ready(function () {
         // Kick off resident verification immediately
         runResidentVerification(name, type);
 
-        setTimeout(function () { document.getElementById('cvtFee').focus(); }, 120);
+        setTimeout(function () { document.getElementById('cvtNote').focus(); }, 120);
     });
 
     window.closeConvertModal = function () {
