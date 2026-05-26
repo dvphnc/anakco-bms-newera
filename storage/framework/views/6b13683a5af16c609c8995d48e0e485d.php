@@ -72,7 +72,7 @@ unset($__errorArgs, $__bag); ?>
                     Status
                     <span class="help-icon" data-tippy-content="'Active' = newly filed. 'Under Investigation' = Barangay is looking into it. 'Mediated' = parties have met. 'Settled' = issue resolved. 'Referred' = escalated to police or court.">?</span>
                 </label>
-                <select name="status" class="form-control <?php $__errorArgs = ['status'];
+                <select name="status" id="statusSelect" class="form-control <?php $__errorArgs = ['status'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -80,11 +80,43 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>">
-                    <?php $__currentLoopData = ['Active','Under Investigation','Mediated','Settled','Closed','Referred to Higher Authority']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php $__currentLoopData = ['Pending','Active','Under Investigation','Mediated','Settled','Closed','Referred to Higher Authority']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <option value="<?php echo e($s); ?>" <?php echo e(old('status', $blotter->status) === $s ? 'selected' : ''); ?>><?php echo e($s); ?></option>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
                 <?php $__errorArgs = ['status'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> <?php echo e($message); ?></span><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+            </div>
+        </div>
+
+        
+        <?php $closingStatuses = ['Settled','Closed','Referred to Higher Authority']; ?>
+        <div id="settledDateGroup" class="form-grid-2 mb-6"
+             style="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed']) ? '' : 'display:none'); ?>">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-calendar-check" style="color:#16a34a;font-size:11px;margin-right:4px"></i>
+                    Date Settled / Closed
+                    <span class="help-icon" data-tippy-content="The date the case was officially resolved or closed. Defaults to today if left blank.">?</span>
+                </label>
+                <input type="date" name="settled_at" id="settledAtInput"
+                       class="form-control <?php $__errorArgs = ['settled_at'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                       value="<?php echo e(old('settled_at', $blotter->settled_at?->format('Y-m-d'))); ?>"
+                       style="border-color:#86efac">
+                <?php $__errorArgs = ['settled_at'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -252,13 +284,49 @@ unset($__errorArgs, $__bag); ?>
         <span class="card-title"><i class="fas fa-clipboard-list"></i> Resolution & Attachments</span>
     </div>
     <div class="card-body">
-        <div class="form-group mb-6">
-            <label class="form-label">
+
+        
+        <div id="resolutionGroup" class="form-group mb-6">
+            <label class="form-label" id="resolutionLabel">
+                <i class="fas fa-gavel" id="resolutionIcon"
+                   style="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'color:#16a34a;' : 'display:none;'); ?>font-size:11px;margin-right:4px"></i>
                 Resolution Notes
                 <span class="help-icon" data-tippy-content="Describe what action was taken: who mediated, what the parties agreed to, or why the case was referred. Leave blank if the case is newly filed.">?</span>
             </label>
-            <textarea name="resolution_notes" class="form-control" rows="3"><?php echo e(old('resolution_notes', $blotter->resolution_notes)); ?></textarea>
+            <textarea name="resolution_notes" id="resolutionNotes"
+                      class="form-control"
+                      rows="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 4 : 3); ?>"
+                      style="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'border-color:#86efac;' : ''); ?>"
+                      placeholder="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'Describe the resolution — what was agreed, who mediated, or why it was referred.' : 'Optional: describe any action taken so far.'); ?>"><?php echo e(old('resolution_notes', $blotter->resolution_notes)); ?></textarea>
+            <div id="resolutionHint"
+                 style="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? '' : 'display:none;'); ?>font-size:11.5px;color:#16a34a;margin-top:5px;display:flex;align-items:center;gap:4px">
+                <i class="fas fa-circle-info" style="font-size:10px"></i>
+                Required for this status — describe the outcome clearly for the record.
+            </div>
         </div>
+
+        
+        <?php if($blotter->source === 'portal'): ?>
+        <div id="portalMessageSection" style="margin-bottom:24px">
+            <div class="form-section-title">
+                <i class="fas fa-comment-dots" style="font-size:12px;margin-right:5px;color:var(--gold)"></i>
+                Message to Complainant
+            </div>
+            <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:var(--radius-sm);
+                        padding:12px 14px;margin-bottom:12px;font-size:12.5px;color:#92400e;
+                        display:flex;align-items:flex-start;gap:8px">
+                <i class="fas fa-circle-info" style="flex-shrink:0;margin-top:1px"></i>
+                <span>This is a <strong>portal report</strong>. Any message you enter below will be sent to the complainant by email and appear in their portal tracker when the status changes.</span>
+            </div>
+            <div class="form-group" style="margin:0">
+                <label class="form-label">
+                    Message <span style="font-weight:400;color:var(--text-subtle);font-size:12px">— optional, only sent when status changes</span>
+                </label>
+                <textarea name="status_message" id="statusMessageArea" class="form-control" rows="3"
+                          placeholder="e.g. Your case is now under investigation. A hearing is scheduled for next week. We will contact you with details."><?php echo e(old('status_message')); ?></textarea>
+            </div>
+        </div>
+        <?php endif; ?>
         <?php if($blotter->file_path): ?>
         <div style="margin-bottom:16px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:12px">
             <i class="fas fa-file" style="font-size:20px;color:var(--navy);flex-shrink:0"></i>
@@ -287,6 +355,53 @@ unset($__errorArgs, $__bag); ?>
 
 <?php $__env->startPush('scripts'); ?>
 <script>
+/* ── Status-dependent conditional fields ──────────────────── */
+(function () {
+    var statusSel      = document.getElementById('statusSelect');
+    var settledGroup   = document.getElementById('settledDateGroup');
+    var resNotes       = document.getElementById('resolutionNotes');
+    var resIcon        = document.getElementById('resolutionIcon');
+    var resHint        = document.getElementById('resolutionHint');
+    var msgArea        = document.getElementById('statusMessageArea');
+    var origStatus     = '<?php echo e($blotter->status); ?>';
+
+    var CLOSING  = ['Settled', 'Closed'];
+    var TERMINAL = ['Settled', 'Closed', 'Referred to Higher Authority'];
+
+    function syncStatusUi() {
+        if (!statusSel) return;
+        var s = statusSel.value;
+        var isClosing  = CLOSING.indexOf(s) !== -1;
+        var isTerminal = TERMINAL.indexOf(s) !== -1;
+
+        // Settled date: show for Settled / Closed only
+        if (settledGroup) settledGroup.style.display = isClosing ? '' : 'none';
+
+        // Resolution notes: highlight when terminal status
+        if (resNotes) {
+            resNotes.style.borderColor = isTerminal ? '#86efac' : '';
+            resNotes.rows = isTerminal ? 4 : 3;
+            resNotes.placeholder = isTerminal
+                ? 'Describe the resolution — what was agreed, who mediated, or why it was referred.'
+                : 'Optional: describe any action taken so far.';
+        }
+        if (resIcon) resIcon.style.display = isTerminal ? '' : 'none';
+        if (resHint) resHint.style.display  = isTerminal ? 'flex' : 'none';
+    }
+
+    if (statusSel) {
+        statusSel.addEventListener('change', function () {
+            syncStatusUi();
+            // Auto-scroll to message field on status change (portal only)
+            if (msgArea && statusSel.value !== origStatus) {
+                msgArea.closest('.form-group').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                setTimeout(function () { msgArea.focus(); }, 250);
+            }
+        });
+    }
+    syncStatusUi();
+}());
+
 // Auto-fill complainant name/address when resident selected
 $('#complainant_resident_id').on('select2:select', function(e) {
     const text = e.params.data.text;
