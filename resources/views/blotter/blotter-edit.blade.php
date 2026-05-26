@@ -54,14 +54,14 @@
             </div>
         </div>
 
-        {{-- ── Settled Date — shown when status = Settled / Closed ── --}}
-        @php $closingStatuses = ['Settled','Closed','Referred to Higher Authority']; @endphp
+        {{-- ── Settled Date — shown when status = Settled ── --}}
+        @php $closingStatuses = ['Settled','Referred to Higher Authority']; @endphp
         <div id="settledDateGroup" class="form-grid-2 mb-6"
-             style="{{ in_array(old('status', $blotter->status), ['Settled','Closed']) ? '' : 'display:none' }}">
+             style="{{ old('status', $blotter->status) === 'Settled' ? '' : 'display:none' }}">
             <div class="form-group">
                 <label class="form-label">
                     <i class="fas fa-calendar-check" style="color:#16a34a;font-size:11px;margin-right:4px"></i>
-                    Date Settled / Closed
+                    Date Settled
                     <span class="help-icon" data-tippy-content="The date the case was officially resolved or closed. Defaults to today if left blank.">?</span>
                 </label>
                 <input type="date" name="settled_at" id="settledAtInput"
@@ -178,17 +178,17 @@
         <div id="resolutionGroup" class="form-group mb-6">
             <label class="form-label" id="resolutionLabel">
                 <i class="fas fa-gavel" id="resolutionIcon"
-                   style="{{ in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'color:#16a34a;' : 'display:none;' }}font-size:11px;margin-right:4px"></i>
+                   style="{{ in_array(old('status', $blotter->status), ['Settled','Referred to Higher Authority']) ? 'color:#16a34a;' : 'display:none;' }}font-size:11px;margin-right:4px"></i>
                 Resolution Notes
                 <span class="help-icon" data-tippy-content="Describe what action was taken: who mediated, what the parties agreed to, or why the case was referred. Leave blank if the case is newly filed.">?</span>
             </label>
             <textarea name="resolution_notes" id="resolutionNotes"
                       class="form-control"
-                      rows="{{ in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 4 : 3 }}"
-                      style="{{ in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'border-color:#86efac;' : '' }}"
-                      placeholder="{{ in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'Describe the resolution — what was agreed, who mediated, or why it was referred.' : 'Optional: describe any action taken so far.' }}">{{ old('resolution_notes', $blotter->resolution_notes) }}</textarea>
+                      rows="{{ in_array(old('status', $blotter->status), ['Settled','Referred to Higher Authority']) ? 4 : 3 }}"
+                      style="{{ in_array(old('status', $blotter->status), ['Settled','Referred to Higher Authority']) ? 'border-color:#86efac;' : '' }}"
+                      placeholder="{{ in_array(old('status', $blotter->status), ['Settled','Referred to Higher Authority']) ? 'Describe the resolution — what was agreed, who mediated, or why it was referred.' : 'Optional: describe any action taken so far.' }}">{{ old('resolution_notes', $blotter->resolution_notes) }}</textarea>
             <div id="resolutionHint"
-                 style="{{ in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? '' : 'display:none;' }}font-size:11.5px;color:#16a34a;margin-top:5px;display:flex;align-items:center;gap:4px">
+                 style="{{ in_array(old('status', $blotter->status), ['Settled','Referred to Higher Authority']) ? '' : 'display:none;' }}font-size:11.5px;color:#16a34a;margin-top:5px;display:flex;align-items:center;gap:4px">
                 <i class="fas fa-circle-info" style="font-size:10px"></i>
                 Required for this status — describe the outcome clearly for the record.
             </div>
@@ -254,8 +254,8 @@
     var msgArea        = document.getElementById('statusMessageArea');
     var origStatus     = '{{ $blotter->status }}';
 
-    var CLOSING  = ['Settled', 'Closed'];
-    var TERMINAL = ['Settled', 'Closed', 'Referred to Higher Authority'];
+    var CLOSING  = ['Settled'];
+    var TERMINAL = ['Settled', 'Referred to Higher Authority'];
 
     function syncStatusUi() {
         if (!statusSel) return;
