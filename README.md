@@ -24,7 +24,7 @@ BMS is a full-stack Barangay Management System built to digitize and streamline 
 
 > Barangay offices still run on paper folders, physical logbooks, and manual signatures. This system replaces all of that — one place for resident records, case management, document issuance, and real-time status tracking. Built for the actual staff who use it every day.
 
-This is my capstone project — built solo, end-to-end, from database schema to final UI polish. Every feature reflects a real barangay workflow, not a textbook exercise.
+This is our group capstone project — built as a team with every feature grounded in real barangay workflows, not textbook exercises.
 
 ---
 
