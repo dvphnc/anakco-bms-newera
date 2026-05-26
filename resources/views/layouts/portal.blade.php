@@ -1230,6 +1230,28 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 @stack('scripts')
 
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+// ── Flatpickr — init all date inputs with MM/DD/YYYY display ────────
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('input[type="date"]').forEach(function (el) {
+        var opts = {
+            dateFormat:  'Y-m-d',   // value sent to server (Laravel date validation)
+            altInput:    true,      // show a separate human-readable input
+            altFormat:   'm/d/Y',   // MM/DD/YYYY display
+            allowInput:  true,
+            disableMobile: true,    // force Flatpickr on mobile too (no native picker)
+        };
+        // Carry over min/max attributes as Flatpickr minDate/maxDate
+        if (el.min) opts.minDate = el.min;
+        if (el.max) opts.maxDate = el.max;
+        // Copy CSS classes to the alt (visible) input
+        if (el.className) opts.altInputClass = el.className;
+        flatpickr(el, opts);
+    });
+});
+</script>
+
 <script>
 // ── Scroll progress bar ─────────────────────────────────────────────
 (function () {
