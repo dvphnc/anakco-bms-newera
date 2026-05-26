@@ -120,7 +120,7 @@
     font-family="'Helvetica Neue', Arial, sans-serif"
     font-size="30" font-weight="200" letter-spacing="15"
     fill="url(#titleShimmer)" opacity="0">
-    Barangay Management System
+    BARANGAY MANAGEMENT SYSTEM
     <animate attributeName="opacity" from="0" to="1" dur="1s" begin="0.5s" fill="freeze"/>
   </text>
 
