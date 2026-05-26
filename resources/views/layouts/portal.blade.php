@@ -1666,7 +1666,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function positionPanel() {
             var r = trigger.getBoundingClientRect();
-            panel.style.top   = (r.bottom + window.scrollY) + 'px';
+            panel.style.top   = r.bottom + 'px';   // fixed = viewport coords, no scrollY
             panel.style.left  = r.left + 'px';
             panel.style.width = r.width + 'px';
         }
