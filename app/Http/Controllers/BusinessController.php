@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\PortalStatusUpdated;
 use App\Models\Business;
+use App\Models\BusinessStatusLog;
 use App\Models\Resident;
 use App\Traits\LogsActivity;
 use Carbon\Carbon;
@@ -288,21 +289,71 @@ class BusinessController extends Controller
 
     public function update(Request $request, Business $business)
     {
+        $isActive = $request->input('status') === 'Active';
+
         $validated = $request->validate([
-            'business_name' => 'required|string|max:255',
-            'business_type' => 'required|string',
-            'business_address' => 'required|string|max:255',
-            'owner_name' => 'required|string|max:255',
-            'owner_contact' => 'nullable|string|max:20',
+            'business_name'     => 'required|string|max:255',
+            'business_type'     => 'required|string',
+            'business_address'  => 'required|string|max:255',
+            'owner_name'        => 'required|string|max:255',
+            'owner_contact'     => 'nullable|string|max:20',
             'owner_resident_id' => 'nullable|exists:residents,id',
-            'permit_date' => 'required|date',
-            'expiry_date' => 'required|date|after:permit_date',
-            'status' => 'required|in:Active,Expired,Suspended,Cancelled',
-            'remarks' => 'nullable|string',
+            'permit_date'       => $isActive ? 'required|date' : 'nullable|date',
+            'expiry_date'       => $isActive ? 'required|date|after:permit_date' : 'nullable|date',
+            'status'            => 'required|in:Pending,For Review,Active,Expired,Suspended,Cancelled',
+            'remarks'           => 'nullable|string',
+            'fee_paid'          => 'nullable|numeric|min:0',
+            'or_number'         => 'nullable|string|max:100',
+            'status_message'    => 'nullable|string|max:500',
         ]);
-        $oldData = $business->getOriginal();
+
+        $statusMessage = $validated['status_message'] ?? null;
+        unset($validated['status_message']);
+
+        // Auto-generate OR number if fee > 0 and none supplied
+        $feePaid = (float) ($validated['fee_paid'] ?? 0);
+        if ($feePaid > 0 && empty($validated['or_number'])) {
+            $validated['or_number'] = Business::generateOrNumber();
+        }
+
+        // Clear permit/expiry when not Active
+        if (! $isActive) {
+            $validated['permit_date'] = $validated['permit_date'] ?? null;
+            $validated['expiry_date'] = $validated['expiry_date'] ?? null;
+        }
+
+        $oldStatus = $business->getRawOriginal('status');
+        $oldData   = $business->getOriginal();
         $business->update($validated);
         $this->logActivity('updated', $business, $oldData, $business->fresh()->toArray());
+
+        $newStatus = $business->getRawOriginal('status');
+
+        // ── Status log + portal notification ─────────────────────────
+        if ($oldStatus !== $newStatus) {
+            BusinessStatusLog::create([
+                'business_id' => $business->id,
+                'from_status' => $oldStatus,
+                'to_status'   => $newStatus,
+                'changed_by'  => auth()->user()->name,
+                'note'        => $statusMessage ?: null,
+                'created_at'  => now(),
+            ]);
+
+            if ($business->source === 'portal' && $business->email) {
+                try {
+                    Mail::to($business->email)->queue(new PortalStatusUpdated(
+                        type:          'business',
+                        requestNumber: $business->permit_number,
+                        residentName:  $business->owner_name,
+                        newStatus:     $newStatus,
+                        notes:         $statusMessage,
+                    ));
+                } catch (\Exception $e) {
+                    logger()->warning('Business edit status email failed: ' . $e->getMessage());
+                }
+            }
+        }
 
         return redirect()->route('businesses.show', $business)->with('success', 'Business permit updated successfully.');
     }
