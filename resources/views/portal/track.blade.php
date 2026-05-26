@@ -236,6 +236,23 @@
     padding: .35rem .6rem; border-radius: 0 4px 4px 0; font-style: italic;
 }
 
+/* ─── Referred to Higher Authority banner ─────────────────── */
+.referred-banner {
+    display: flex; align-items: flex-start; gap: .75rem;
+    padding: .9rem 1.1rem;
+    background: #f5f3ff;
+    border-radius: var(--radius-sm);
+    border: 1px solid #ddd6fe;
+    margin-bottom: 1.25rem;
+}
+.referred-banner .rb-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+    border-radius: 50%; background: #7c3aed; color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: .9rem;
+}
+.referred-banner .rb-title { font-size: .88rem; font-weight: 700; color: #4c1d95; margin-bottom: .15rem; }
+.referred-banner .rb-text  { font-size: .8rem; color: #6d28d9; }
+
 /* ─── Closed/cancelled banner ─────────────────────────────── */
 .closed-banner {
     display: flex; align-items: flex-start; gap: .75rem;
@@ -424,7 +441,7 @@
     var lastStatus  = null;
     var lastChecked = null;
     var currentNum  = null;
-    var TERMINAL    = ['Released','Cancelled','Settled','Closed','Referred to Higher Authority'];
+    var TERMINAL    = ['Released','Cancelled','Settled','Referred to Higher Authority'];
 
     if (input.value.trim()) doSearch(input.value.trim());
 
