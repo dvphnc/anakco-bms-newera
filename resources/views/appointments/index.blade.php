@@ -1345,9 +1345,10 @@ $(document).ready(function () {
         }, function () {
             axios.delete(url, { data: { _token: '{{ csrf_token() }}' } })
             .then(function (res) {
-                blotterTable.ajax.reload(function (json) {
-                    document.getElementById('tabBadgeBlotter').textContent = json.recordsTotal;
-                }, false);
+                blotterTable.ajax.reload(null, false);
+                if (res.data.blotter_pending !== undefined) {
+                    document.getElementById('tabBadgeBlotter').textContent = res.data.blotter_pending;
+                }
                 bmsToast(res.data.message || 'Report deleted.', 'success');
                 if (window.refreshPortalBadges) window.refreshPortalBadges();
             })

@@ -18,10 +18,8 @@
     $readyCount     = \App\Models\DocumentAppointment::where('status', 'Ready')->count();
     $releasedCount  = \App\Models\DocumentAppointment::where('status', 'Released')->count();
     $totalCount     = \App\Models\DocumentAppointment::count();
-    $bizPending     = \App\Models\Business::where('source', 'portal')->whereIn('status', ['Pending', 'For Review'])->count();
-    $bizTotal       = \App\Models\Business::where('source', 'portal')->count();
+    $bizPending     = \App\Models\Business::where('source', 'portal')->where('status', 'Pending')->count();
     $blotterPending = \App\Models\BlotterCase::where('source', 'portal')->where('status', 'Pending')->count();
-    $blotterTotal   = \App\Models\BlotterCase::where('source', 'portal')->count();
 ?>
 
 
@@ -70,12 +68,12 @@
             <button class="apt-tab" data-tab="blotter" onclick="switchTab('blotter')">
                 <i class="fas fa-shield-halved"></i>
                 Blotter Reports
-                <span class="apt-tab-badge" id="tabBadgeBlotter"><?php echo e($blotterTotal); ?></span>
+                <span class="apt-tab-badge" id="tabBadgeBlotter"><?php echo e($blotterPending); ?></span>
             </button>
             <button class="apt-tab" data-tab="business" onclick="switchTab('business')">
                 <i class="fas fa-store"></i>
                 Business Permits
-                <span class="apt-tab-badge" id="tabBadgeBiz"><?php echo e($bizTotal); ?></span>
+                <span class="apt-tab-badge" id="tabBadgeBiz"><?php echo e($bizPending); ?></span>
             </button>
         </div>
         <button class="apt-tab-more" id="aptTabMore" onclick="scrollTabBar()" title="Scroll tabs">
@@ -1181,9 +1179,10 @@ $(document).ready(function () {
         })
         .then(function (res) {
             closeBizIssueModal();
-            bizTable.ajax.reload(function (json) {
-                document.getElementById('tabBadgeBiz').textContent = json.recordsTotal;
-            }, false);
+            bizTable.ajax.reload(null, false);
+            if (res.data.biz_pending !== undefined) {
+                document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
+            }
             bmsToast(res.data.message || 'Permit issued.', 'success');
             if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
@@ -1233,9 +1232,10 @@ $(document).ready(function () {
         })
         .then(function (res) {
             closeBlotterActivateModal();
-            blotterTable.ajax.reload(function (json) {
-                document.getElementById('tabBadgeBlotter').textContent = json.recordsTotal;
-            }, false);
+            blotterTable.ajax.reload(null, false);
+            if (res.data.blotter_pending !== undefined) {
+                document.getElementById('tabBadgeBlotter').textContent = res.data.blotter_pending;
+            }
             bmsToast(res.data.message || 'Case activated.', 'success');
             if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
@@ -1304,9 +1304,10 @@ $(document).ready(function () {
         }, function () {
             axios.delete(url, { data: { _token: '<?php echo e(csrf_token()); ?>' } })
             .then(function (res) {
-                bizTable.ajax.reload(function (json) {
-                    document.getElementById('tabBadgeBiz').textContent = json.recordsTotal;
-                }, false);
+                bizTable.ajax.reload(null, false);
+                if (res.data.biz_pending !== undefined) {
+                    document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
+                }
                 bmsToast(res.data.message || 'Application deleted.', 'success');
                 if (window.refreshPortalBadges) window.refreshPortalBadges();
             })
@@ -1331,9 +1332,10 @@ $(document).ready(function () {
         }, function () {
             axios.delete(url, { data: { _token: '<?php echo e(csrf_token()); ?>' } })
             .then(function (res) {
-                blotterTable.ajax.reload(function (json) {
-                    document.getElementById('tabBadgeBlotter').textContent = json.recordsTotal;
-                }, false);
+                blotterTable.ajax.reload(null, false);
+                if (res.data.blotter_pending !== undefined) {
+                    document.getElementById('tabBadgeBlotter').textContent = res.data.blotter_pending;
+                }
                 bmsToast(res.data.message || 'Report deleted.', 'success');
                 if (window.refreshPortalBadges) window.refreshPortalBadges();
             })
