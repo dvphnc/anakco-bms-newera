@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 @section('title', 'Edit Document')
 @section('content')
 
@@ -28,8 +28,8 @@
             <div class="form-group">
                 <label class="form-label">Resident <span style="color:var(--crimson)">*</span></label>
                 @php
-                    $preResident = $document->resident ?? $suggestedResident ?? null;
-                    $preResidentId = $document->resident ? $document->resident_id : ($suggestedResident?->id);
+                    $preResident   = $document->resident ?? $suggestedResident ?? null;
+                    $preResidentId = $document->resident_id ?? $suggestedResident?->id;
                 @endphp
                 <select name="resident_id" id="resident_id"
                         class="select2-resident @error('resident_id') is-invalid @enderror"
@@ -44,7 +44,7 @@
                         </option>
                     @endif
                 </select>
-                @if($suggestedResident && !$document->resident)
+                @if($suggestedResident && !$document->resident_id)
                     <div style="font-size:11.5px;color:#b45309;margin-top:5px;display:flex;align-items:center;gap:5px">
                         <i class="fas fa-circle-info"></i>
                         Auto-matched from portal name "<strong>{{ $document->resident_name_portal }}</strong>" — please verify before saving.
@@ -77,7 +77,7 @@
             <div class="form-group">
                 <label class="form-label">
                     Status
-                    <span class="help-icon" data-tippy-content="'Pending' = not yet processed. 'Processing' = being prepared. 'Released' = given to the resident. 'Cancelled' = request withdrawn.">?</span>
+                    <span class="help-icon" data-tippy-content="'Pending' = not yet processed. 'Processing' = being prepared. 'Ready' = ready for pick-up. 'Released' = given to the resident. 'Cancelled' = request withdrawn.">?</span>
                 </label>
                 @if($document->status === 'Released')
                     {{-- Released documents are immutable — lock the status field --}}
@@ -89,7 +89,7 @@
                     </div>
                     <input type="hidden" name="status" value="Released">
                 @else
-                    <select name="status" class="form-control @error('status') is-invalid @enderror">
+                    <select name="status" id="statusSelect" class="form-control @error('status') is-invalid @enderror">
                         @foreach(\App\Models\Document::$statuses as $s)
                             @if($s !== 'Released' || $document->status === 'Released')
                                 <option value="{{ $s }}" {{ old('status', $document->status) === $s ? 'selected' : '' }}>{{ $s }}</option>
@@ -102,17 +102,39 @@
             <div class="form-group">
                 <label class="form-label">
                     Fee (₱)
-                    <span class="help-icon" data-tippy-content="Enter 0 for indigent residents or free certificates.">?</span>
+                    <span class="help-icon" data-tippy-content="Enter 0 for indigent residents or free certificates. OR Number will be auto-generated when fee is greater than 0.">?</span>
                 </label>
-                <input type="number" name="fee_paid" class="form-control @error('fee_paid') is-invalid @enderror" value="{{ old('fee_paid', $document->fee_paid ?? 0) }}" min="0" step="0.01">
+                <input type="number" id="feeInput" name="fee_paid"
+                       class="form-control @error('fee_paid') is-invalid @enderror"
+                       value="{{ old('fee_paid', $document->fee_paid ?? 0) }}"
+                       min="0" step="0.01">
                 @error('fee_paid')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">
-                    OR Number
-                    <span class="help-icon" data-tippy-content="Official Receipt number from the cashier. Fill this in when the fee has been paid.">?</span>
+                <label class="form-label" style="display:flex;align-items:center;justify-content:space-between">
+                    <span>
+                        OR Number
+                        <span class="help-icon" data-tippy-content="Official Receipt number from the cashier. Leave blank to auto-generate when fee is greater than 0.">?</span>
+                    </span>
+                    <button type="button" id="orAutoBtn"
+                            style="display:none;font-size:11.5px;font-weight:600;color:var(--navy);
+                                   background:rgba(13,33,68,0.07);border:1px solid rgba(13,33,68,0.18);
+                                   border-radius:4px;padding:2px 8px;cursor:pointer;transition:.15s"
+                            onclick="autoFillOrNumber()">
+                        <i class="fas fa-wand-magic-sparkles" style="font-size:10px"></i> Auto-fill
+                    </button>
                 </label>
-                <input type="text" name="or_number" class="form-control @error('or_number') is-invalid @enderror" placeholder="e.g. OR-2026-00001" value="{{ old('or_number', $document->or_number) }}">
+                <div style="position:relative">
+                    <input type="text" id="orInput" name="or_number"
+                           class="form-control @error('or_number') is-invalid @enderror"
+                           placeholder="{{ $document->fee_paid > 0 && !$document->or_number ? 'Will be auto-generated on save' : 'e.g. OR-2026-00001' }}"
+                           value="{{ old('or_number', $document->or_number) }}">
+                    <span id="orAutoHint"
+                          style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);
+                                 font-size:11px;color:#9ca3af;pointer-events:none">
+                        auto-generate on save
+                    </span>
+                </div>
                 @error('or_number')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
@@ -124,6 +146,30 @@
                 @error('released_at')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
         </div>
+
+        {{-- ── Portal Status Message (only for portal-sourced documents) ── --}}
+        @if($document->source === 'portal')
+        <div id="portalMessageSection" style="margin-bottom:24px">
+            <div class="form-section-title">
+                <i class="fas fa-comment-dots" style="font-size:12px;margin-right:5px;color:var(--gold)"></i>
+                Message to Resident
+            </div>
+            <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:var(--radius-sm);
+                        padding:12px 14px;margin-bottom:12px;font-size:12.5px;color:#92400e;
+                        display:flex;align-items:flex-start;gap:8px">
+                <i class="fas fa-circle-info" style="flex-shrink:0;margin-top:1px"></i>
+                <span>This is a <strong>portal request</strong>. Any message you enter below will be sent to the resident by email and will also appear in their portal tracker when the status changes.</span>
+            </div>
+            <div class="form-group" style="margin:0">
+                <label class="form-label">
+                    Message <span style="font-weight:400;color:var(--text-subtle);font-size:12px">— optional, only sent when status changes</span>
+                </label>
+                <textarea name="status_message" class="form-control" rows="3"
+                          placeholder="e.g. Your document is ready for pick-up. Please bring a valid ID. Office hours: Mon–Fri, 8AM–5PM."
+                          id="statusMessageArea">{{ old('status_message') }}</textarea>
+            </div>
+        </div>
+        @endif
 
         {{-- ── Issued By ── --}}
         <div class="form-section-title">Issued By</div>
@@ -194,30 +240,108 @@
     vertical-align: middle;
     margin-right: 4px;
 }
+#orAutoBtn:hover { background: rgba(13,33,68,.14) !important; }
 </style>
 <script>
 (function () {
-    // ── Submit spinner ────────────────────────────────────────────
+    var _generateOrUrl = '{{ route('documents.generateOrNumber') }}';
+
+    /* ── Submit spinner ─────────────────────────────────────── */
     document.getElementById('docEditForm').addEventListener('submit', function () {
         document.getElementById('docEditLabel').style.display   = 'none';
         document.getElementById('docEditSpinner').style.display = '';
         document.getElementById('docEditSubmitBtn').disabled = true;
     });
 
-    // ── Resident Select2 pre-selection ────────────────────────────
-    // Global init (app.blade.php) runs in $(document).ready.
-    // We wait for it to finish, then call val().trigger('change')
-    // so Select2 renders the pre-populated <option selected>.
+    /* ── OR auto-generate logic ─────────────────────────────── */
+    var feeInput  = document.getElementById('feeInput');
+    var orInput   = document.getElementById('orInput');
+    var orBtn     = document.getElementById('orAutoBtn');
+    var orHint    = document.getElementById('orAutoHint');
+
+    function syncOrUi() {
+        if (!feeInput || !orInput) return;
+        var hasFee = parseFloat(feeInput.value || '0') > 0;
+        var hasOr  = orInput.value.trim().length > 0;
+
+        if (hasFee && !hasOr) {
+            if (orBtn)  orBtn.style.display  = 'inline-block';
+            if (orHint) orHint.style.display = 'block';
+            orInput.placeholder = 'Will be auto-generated on save';
+        } else {
+            if (orBtn)  orBtn.style.display  = 'none';
+            if (orHint) orHint.style.display = 'none';
+            if (!hasOr) orInput.placeholder = 'e.g. OR-2026-00001';
+        }
+    }
+
+    if (feeInput) feeInput.addEventListener('input', syncOrUi);
+    if (orInput)  orInput.addEventListener('input',  syncOrUi);
+    syncOrUi(); // run on page load
+
+    window.autoFillOrNumber = function () {
+        if (orBtn) { orBtn.disabled = true; orBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:10px"></i>'; }
+
+        axios.get(_generateOrUrl)
+            .then(function (res) {
+                if (res.data.or_number) {
+                    orInput.value = res.data.or_number;
+                    orInput.dispatchEvent(new Event('input'));
+                    orInput.classList.add('is-valid');
+                    setTimeout(function () { orInput.classList.remove('is-valid'); }, 2000);
+                }
+            })
+            .catch(function () {
+                bmsToast('Could not generate OR number — please enter manually.', 'error');
+            })
+            .finally(function () {
+                if (orBtn) { orBtn.disabled = false; orBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles" style="font-size:10px"></i> Auto-fill'; }
+            });
+    };
+
+    /* ── Resident Select2 — robust pre-selection ────────────── */
     $(document).ready(function () {
-        setTimeout(function () {
-            var $sel = $('#resident_id');
-            var preId = $sel.data('initial-id');
-            if (preId && $sel.find('option[value="' + preId + '"]').length) {
+        var $sel   = $('#resident_id');
+        var preId  = $sel.data('initial-id');
+        var preText = $sel.data('initial-text');
+
+        if (!preId) return; // no pre-selection needed
+
+        // If the option is already in the DOM (server-rendered), just set value.
+        // Use a generous delay so global Select2 AJAX init finishes first.
+        function tryPreselect() {
+            if ($sel.find('option[value="' + preId + '"]').length) {
                 $sel.val(String(preId)).trigger('change');
+            } else if (preText) {
+                // Option was lost after Select2 re-init — re-inject it
+                var opt = new Option(preText, String(preId), true, true);
+                $sel.append(opt).trigger('change');
             }
-        }, 80);
+        }
+
+        // First attempt: 150 ms (usually enough)
+        setTimeout(tryPreselect, 150);
+        // Safety net: 600 ms (catches slow Select2 AJAX init)
+        setTimeout(tryPreselect, 600);
     });
-})();
+
+    @if($document->source === 'portal' && $document->status !== 'Released')
+    /* ── Status-change message: auto-focus textarea when status changes ─ */
+    var statusSel   = document.getElementById('statusSelect');
+    var msgArea     = document.getElementById('statusMessageArea');
+    var origStatus  = '{{ $document->status }}';
+
+    if (statusSel && msgArea) {
+        statusSel.addEventListener('change', function () {
+            if (this.value !== origStatus) {
+                msgArea.closest('.form-group').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                setTimeout(function () { msgArea.focus(); }, 250);
+            }
+        });
+    }
+    @endif
+
+}());
 </script>
 @endpush
 
