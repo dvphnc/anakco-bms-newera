@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\AppointmentStatusLog;
 use App\Models\BlotterCase;
+use App\Models\BlotterStatusLog;
 use App\Models\Business;
+use App\Models\BusinessStatusLog;
 use App\Models\Document;
 use App\Models\DocumentAppointment;
 use App\Services\DocumentQueueService;
@@ -372,28 +374,77 @@ class ResidentPortalController extends Controller
     {
         $steps     = ['Pending', 'Active', 'Settled'];
         $stepIndex = array_search($c->status, $steps);
-        // Treat all closure-type statuses as past "Settled"
         if (in_array($c->status, ['Closed', 'Referred to Higher Authority', 'Mediated'])) {
             $stepIndex = 2;
         }
 
+        $logs = BlotterStatusLog::where('blotter_case_id', $c->id)
+            ->orderBy('created_at')
+            ->get()
+            ->map(fn ($l) => [
+                'from' => $l->from_status,
+                'to'   => $l->to_status,
+                'by'   => $l->changed_by,
+                'note' => $l->note,
+                'date' => $l->created_at->format('m/d/Y'),
+                'time' => $l->created_at->format('g:i A'),
+            ]);
+
         return [
-            'found'              => true,
-            'type'               => 'blotter',
-            'reference_number'   => $c->case_number,
-            'complainant_name'   => $c->complainant_name,
-            'incident_type'      => $c->incident_type,
-            'incident_date'      => $c->incident_date?->format('m/d/Y'),
-            'incident_location'  => $c->incident_location,
-            'respondent_name'    => $c->respondent_name,
-            'resolution_notes'   => $c->resolution_notes,
-            'created_at'         => $c->created_at->format('m/d/Y g:i A'),
-            'updated_at'         => $c->updated_at->format('m/d/Y g:i A'),
-            'status'             => $c->status,
-            'cancelled'          => $c->status === 'Closed',
-            'step_index'         => $stepIndex === false ? 0 : (int) $stepIndex,
-            'steps'              => $steps,
-            'logs'               => [],
+            'found'            => true,
+            'type'             => 'blotter',
+            'reference_number' => $c->case_number,
+            'complainant_name' => $c->complainant_name,
+            'incident_type'    => $c->incident_type,
+            'incident_date'    => $c->incident_date?->format('m/d/Y'),
+            'incident_location'=> $c->incident_location,
+            'respondent_name'  => $c->respondent_name,
+            'resolution_notes' => $c->resolution_notes,
+            'created_at'       => $c->created_at->format('m/d/Y g:i A'),
+            'updated_at'       => $c->updated_at->format('m/d/Y g:i A'),
+            'status'           => $c->status,
+            'cancelled'        => $c->status === 'Closed',
+            'step_index'       => $stepIndex === false ? 0 : (int) $stepIndex,
+            'steps'            => $steps,
+            'logs'             => $logs,
+        ];
+    }
+
+    private function trackBusinessPayload(Business $b): array
+    {
+        $steps     = ['Pending', 'For Review', 'Active'];
+        $stepIndex = array_search($b->getRawOriginal('status'), $steps);
+
+        $logs = BusinessStatusLog::where('business_id', $b->id)
+            ->orderBy('created_at')
+            ->get()
+            ->map(fn ($l) => [
+                'from' => $l->from_status,
+                'to'   => $l->to_status,
+                'by'   => $l->changed_by,
+                'note' => $l->note,
+                'date' => $l->created_at->format('m/d/Y'),
+                'time' => $l->created_at->format('g:i A'),
+            ]);
+
+        return [
+            'found'            => true,
+            'type'             => 'business',
+            'reference_number' => $b->permit_number,
+            'owner_name'       => $b->owner_name,
+            'business_name'    => $b->business_name,
+            'business_type'    => $b->business_type,
+            'business_address' => $b->business_address,
+            'appointment_date' => $b->preferred_date?->format('m/d/Y'),
+            'permit_date'      => $b->permit_date?->format('m/d/Y'),
+            'expiry_date'      => $b->expiry_date?->format('m/d/Y'),
+            'created_at'       => $b->created_at->format('m/d/Y g:i A'),
+            'updated_at'       => $b->updated_at->format('m/d/Y g:i A'),
+            'status'           => $b->getRawOriginal('status'),
+            'cancelled'        => in_array($b->getRawOriginal('status'), ['Cancelled', 'Suspended']),
+            'step_index'       => $stepIndex === false ? -1 : (int) $stepIndex,
+            'steps'            => $steps,
+            'logs'             => $logs,
         ];
     }
 }
