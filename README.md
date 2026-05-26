@@ -11,13 +11,8 @@
 [![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)](https://mysql.com/)
 [![Blade](https://img.shields.io/badge/Blade_Templates-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com/docs/blade)
 [![Font Awesome](https://img.shields.io/badge/Font_Awesome_6-528DD7?style=flat-square&logo=fontawesome&logoColor=white)](https://fontawesome.com/)
-<<<<<<< HEAD
 [![Made by](https://img.shields.io/badge/Made_by_Joana_Daphne_Sy-0D2144?style=flat-square)](https://github.com/dvphnc)
 [![Status](https://img.shields.io/badge/Status-IPT_Project-C8861A?style=flat-square)]()
-=======
-[![Made by](https://img.shields.io/badge/Made_by_AnakCo-0D2144?style=flat-square)](https://github.com/dvphnc)
-[![Status](https://img.shields.io/badge/Status-Capstone_Ready-C8861A?style=flat-square)]()
->>>>>>> 494d687522f26a7b910dc05499c476b0299e69f5
 
 </div>
 
@@ -29,7 +24,7 @@ BMS is a full-stack Barangay Management System built to digitize and streamline 
 
 > Barangay offices still run on paper folders, physical logbooks, and manual signatures. This system replaces all of that — one place for resident records, case management, document issuance, and real-time status tracking. Built for the actual staff who use it every day.
 
-This is our group collaboration project for **Integrative Programming And Technologies** — built as a team with every feature grounded in real barangay workflows, not textbook exercises.
+This is our group collaboration project for **Integrative Programming and Technologies** — built as a team with every feature grounded in real barangay workflows, not textbook exercises.
 
 <img src=".github/divider.svg" width="100%"/>
 
@@ -115,7 +110,7 @@ Poppins           Primary typeface (Google Fonts)
 
 ## My Role
 
-I served as **Scrum Master and Full-Stack Developer** on this group project for Integrative Programming And Technologies — leading sprints, managing the backlog, and owning the end-to-end technical implementation.
+I served as **Scrum Master and Full-Stack Developer** on this group project for Integrative Programming and Technologies — leading sprints, managing the backlog, and owning the end-to-end technical implementation.
 
 **As Scrum Master:**
 - Facilitated sprint planning, daily stand-ups, and retrospectives across the team
@@ -144,8 +139,8 @@ I served as **Scrum Master and Full-Stack Developer** on this group project for 
 > Requires [Laragon](https://laragon.org/) (or any local PHP 8.2 + MySQL environment).
 
 ```bash
-git clone https://github.com/dvphnc/anakco-bms.git
-cd anakco-bms
+git clone https://github.com/dvphnc/anakco-bms-newera.git
+cd anakco-bms-newera
 composer install
 npm install
 cp .env.example .env
@@ -189,7 +184,7 @@ Open `http://localhost:8000` — you're in.
 ## How It's Organized
 
 ```
-anakco-bms/
+anakco-bms-newera/
 │
 ├── app/
 │   ├── Http/
@@ -254,10 +249,6 @@ May 26, 2025     Final submission — all features complete
 
 <div align="center">
 
-<<<<<<< HEAD
-<sub>© 2025 Barangay New Era BMS · IPT Group Project · New Era University<br/>Joana Daphne Sy — Scrum Master & Developer · All Rights Reserved.</sub>
-=======
-<sub>© 2025 Barangay New Era BMS · Built by AnakCo. · New Era University<br/>All Rights Reserved.</sub>
->>>>>>> 494d687522f26a7b910dc05499c476b0299e69f5
+<sub>© 2025 Barangay New Era BMS · IPT Group Project · New Era University Philippines<br/>Joana Daphne Sy — Scrum Master & Full-Stack Developer · All Rights Reserved.</sub>
 
 </div>
