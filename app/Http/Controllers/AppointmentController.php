@@ -221,9 +221,12 @@ class AppointmentController extends Controller
                 if (connection_aborted()) break;
 
                 $current = [
-                    'documents' => DocumentAppointment::where('status', 'Pending')->where('source', 'portal')->count(),
-                    'blotter'   => BlotterCase::where('source', 'portal')->where('status', 'Pending')->count(),
-                    'business'  => Business::where('source', 'portal')->where('status', 'Pending')->count(),
+                    'documents'      => DocumentAppointment::where('status', 'Pending')->where('source', 'portal')->count(),
+                    'blotter'        => BlotterCase::where('source', 'portal')->where('status', 'Pending')->count(),
+                    'business'       => Business::where('source', 'portal')->where('status', 'Pending')->count(),
+                    // Module-level in-progress counts (for sidebar badges on each module)
+                    'blotter_active' => BlotterCase::where('source', 'portal')->where('status', 'Active')->count(),
+                    'biz_for_review' => Business::where('source', 'portal')->where('status', 'For Review')->count(),
                 ];
 
                 // Heartbeat comment keeps connection alive; data only sent on change
@@ -542,47 +545,40 @@ class AppointmentController extends Controller
 
     public function issueBizPermit(Request $request, Business $business)
     {
-        // Guard: already issued
-        if ($business->permit_date) {
+        // Guard: already moved beyond Pending
+        if (! in_array($business->status, ['Pending'])) {
             return response()->json([
                 'success'  => false,
-                'message'  => 'This business has already been issued a permit.',
+                'message'  => 'This application has already been accepted.',
                 'view_url' => route('businesses.show', $business),
             ], 422);
         }
 
         $validated = $request->validate([
-            'permit_date' => 'required|date',
-            'expiry_date' => 'required|date|after:permit_date',
-            'fee_paid'    => 'nullable|numeric|min:0',
-            'or_number'   => 'nullable|string|max:100',
+            'notes' => 'nullable|string|max:500',
         ]);
 
         $old = $business->toArray();
 
         $business->update([
-            'permit_date' => $validated['permit_date'],
-            'expiry_date' => $validated['expiry_date'],
-            'issued_by'   => auth()->id(),
-            'status'      => 'Active',
+            'status' => 'For Review',
         ]);
 
         $this->logActivity('updated', $business, $old, $business->fresh()->toArray());
 
-        // Notify applicant if email is available
+        // Notify applicant
         if ($business->email) {
             try {
                 Mail::to($business->email)->queue(new PortalStatusUpdated(
                     type:          'business',
                     requestNumber: $business->permit_number,
                     residentName:  $business->owner_name,
-                    newStatus:     'Active',
-                    notes:         'Your business permit has been issued. Permit valid until '
-                                   .\Carbon\Carbon::parse($validated['expiry_date'])->format('m/d/Y').'.',
+                    newStatus:     'For Review',
+                    notes:         $validated['notes'] ?? 'Your business permit application is now under review. A barangay staff member will contact you regarding your appointment.',
                     preferredDate: $business->preferred_date?->format('Y-m-d'),
                 ));
             } catch (\Exception $e) {
-                logger()->warning('Business permit issued email failed: '.$e->getMessage());
+                logger()->warning('Mark For Review email failed: '.$e->getMessage());
             }
         }
 
@@ -590,7 +586,7 @@ class AppointmentController extends Controller
 
         return response()->json([
             'success'     => true,
-            'message'     => "Permit {$business->permit_number} issued successfully.",
+            'message'     => "Application {$business->permit_number} marked For Review — now visible in Business Permits.",
             'permit_num'  => $business->permit_number,
             'view_url'    => route('businesses.show', $business),
             'biz_pending' => $bizPending,
