@@ -244,6 +244,53 @@
 
 @push('scripts')
 <script>
+/* ── Status-dependent conditional fields ──────────────────── */
+(function () {
+    var statusSel      = document.getElementById('statusSelect');
+    var settledGroup   = document.getElementById('settledDateGroup');
+    var resNotes       = document.getElementById('resolutionNotes');
+    var resIcon        = document.getElementById('resolutionIcon');
+    var resHint        = document.getElementById('resolutionHint');
+    var msgArea        = document.getElementById('statusMessageArea');
+    var origStatus     = '{{ $blotter->status }}';
+
+    var CLOSING  = ['Settled', 'Closed'];
+    var TERMINAL = ['Settled', 'Closed', 'Referred to Higher Authority'];
+
+    function syncStatusUi() {
+        if (!statusSel) return;
+        var s = statusSel.value;
+        var isClosing  = CLOSING.indexOf(s) !== -1;
+        var isTerminal = TERMINAL.indexOf(s) !== -1;
+
+        // Settled date: show for Settled / Closed only
+        if (settledGroup) settledGroup.style.display = isClosing ? '' : 'none';
+
+        // Resolution notes: highlight when terminal status
+        if (resNotes) {
+            resNotes.style.borderColor = isTerminal ? '#86efac' : '';
+            resNotes.rows = isTerminal ? 4 : 3;
+            resNotes.placeholder = isTerminal
+                ? 'Describe the resolution — what was agreed, who mediated, or why it was referred.'
+                : 'Optional: describe any action taken so far.';
+        }
+        if (resIcon) resIcon.style.display = isTerminal ? '' : 'none';
+        if (resHint) resHint.style.display  = isTerminal ? 'flex' : 'none';
+    }
+
+    if (statusSel) {
+        statusSel.addEventListener('change', function () {
+            syncStatusUi();
+            // Auto-scroll to message field on status change (portal only)
+            if (msgArea && statusSel.value !== origStatus) {
+                msgArea.closest('.form-group').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                setTimeout(function () { msgArea.focus(); }, 250);
+            }
+        });
+    }
+    syncStatusUi();
+}());
+
 // Auto-fill complainant name/address when resident selected
 $('#complainant_resident_id').on('select2:select', function(e) {
     const text = e.params.data.text;
