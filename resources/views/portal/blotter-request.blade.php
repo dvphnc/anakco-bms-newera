@@ -53,7 +53,7 @@
         <span id="form-error-text">Please correct the errors below.</span>
     </div>
 
-    <form id="blotterForm" novalidate>
+    <form id="blotterForm" enctype="multipart/form-data" novalidate>
         @csrf
 
         <div class="section-label">Complainant Information</div>
@@ -122,6 +122,19 @@
             <input type="text" id="respondent_name" name="respondent_name" class="form-control"
                    placeholder="Name of person being complained against (if known)">
             <div class="form-error" id="err-respondent_name" style="display:none"></div>
+        </div>
+
+        <div class="section-label">Supporting Evidence <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.72rem;color:#9ca3af">(optional)</span></div>
+        <div class="form-group">
+            <div id="blotterDropZone" style="border:2px dashed #d1d5db;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s">
+                <i class="fas fa-cloud-arrow-up" id="blotterDropIcon" style="font-size:28px;color:#9ca3af;margin-bottom:8px;display:block"></i>
+                <div style="font-size:13px;color:#6b7280;margin-bottom:4px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
+                <div style="font-size:12px;color:#9ca3af">JPG, PNG, PDF, DOC — max 5MB</div>
+                <div id="blotterDropName" style="display:none;margin-top:8px;font-size:13px;font-weight:600;color:var(--navy)"></div>
+                <input type="file" id="blotterFileInput" name="attachment" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" style="display:none">
+            </div>
+            <button type="button" id="blotterClearBtn" onclick="clearBlotterFile()" style="display:none;margin-top:8px;background:none;border:none;color:#c0392b;font-size:13px;cursor:pointer;padding:0"><i class="fas fa-times"></i> Remove file</button>
+            <div class="form-error" id="err-attachment" style="display:none"></div>
         </div>
 
         <div class="form-actions">
