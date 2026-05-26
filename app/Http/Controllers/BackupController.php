@@ -49,7 +49,7 @@ class BackupController extends Controller
             $dump = $this->resolveMysqlBin('mysqldump');
             if (! $dump) {
                 return back()->with('error',
-                    'mysqldump not found. Ensure Laragon MySQL bin is in PATH, or add MYSQLDUMP_PATH to your .env.');
+                    'mysqldump not found. Add MYSQLDUMP_PATH to your .env pointing to mysqldump.exe.');
             }
 
             $filename = 'backup_'.now()->format('Y-m-d_H-i-s').'.sql';
@@ -60,24 +60,54 @@ class BackupController extends Controller
                 mkdir(storage_path('app/'.$this->backupPath), 0755, true);
             }
 
-            // Build mysqldump command (password via env var avoids shell-history exposure)
-            $env     = PHP_OS_FAMILY === 'Windows' ? "set MYSQL_PWD={$pass} && " : "MYSQL_PWD={$pass} ";
-            $command = $env.sprintf(
-                '%s --host=%s --port=%s --user=%s --single-transaction --routines --triggers %s > %s 2>&1',
-                escapeshellarg($dump),
-                escapeshellarg($host),
-                escapeshellarg($port),
-                escapeshellarg($user),
-                escapeshellarg($db),
-                escapeshellarg($fullPath)
+            // Write a temporary MySQL options file so credentials are never exposed
+            // in the command line (and MYSQL_PWD is not supported on Windows MySQL 8).
+            $tmpCnf = tempnam(sys_get_temp_dir(), 'bms_mysql_') . '.cnf';
+            file_put_contents($tmpCnf,
+                "[mysqldump]\n" .
+                "host={$host}\n" .
+                "port={$port}\n" .
+                "user={$user}\n" .
+                "password={$pass}\n"
             );
 
-            exec($command, $output, $returnCode);
+            // Build command — no inline credentials needed
+            $command = sprintf(
+                '%s --defaults-extra-file=%s --single-transaction --routines --triggers %s',
+                escapeshellarg($dump),
+                escapeshellarg($tmpCnf),
+                escapeshellarg($db)
+            );
 
-            if ($returnCode !== 0 || ! file_exists($fullPath) || filesize($fullPath) < 100) {
-                $detail = ! empty($output) ? ' — '.implode(' ', array_slice($output, 0, 3)) : '';
+            // Run via proc_open so we can capture stdout (SQL) and stderr (errors) separately
+            $descriptors = [
+                0 => ['pipe', 'r'],   // stdin
+                1 => ['pipe', 'w'],   // stdout → SQL content
+                2 => ['pipe', 'w'],   // stderr → error messages
+            ];
+
+            $proc = proc_open($command, $descriptors, $pipes);
+
+            if (! is_resource($proc)) {
+                @unlink($tmpCnf);
+                return back()->with('error', 'Backup failed: could not start mysqldump process.');
+            }
+
+            fclose($pipes[0]);
+            $sqlContent = stream_get_contents($pipes[1]);
+            $errContent = stream_get_contents($pipes[2]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            $returnCode = proc_close($proc);
+            @unlink($tmpCnf);
+
+            // Validate output
+            if ($returnCode !== 0 || strlen($sqlContent) < 100) {
+                $detail = $errContent ? ' — '.trim(substr($errContent, 0, 300)) : '';
                 return back()->with('error', 'Backup failed'.$detail);
             }
+
+            file_put_contents($fullPath, $sqlContent);
 
             // Keep only last 10 backups
             $this->pruneOldBackups();
