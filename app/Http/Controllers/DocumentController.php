@@ -295,6 +295,18 @@ class DocumentController extends Controller
                 }
                 DocumentAppointment::where('id', $appointment->id)->update($aptUpdate);
 
+                // Write a status log entry so the portal tracker history stays current
+                if ($oldStatus !== $newStatus) {
+                    AppointmentStatusLog::create([
+                        'appointment_id' => $appointment->id,
+                        'from_status'    => $oldStatus,
+                        'to_status'      => $newStatus,
+                        'changed_by'     => auth()->user()->name,
+                        'note'           => $statusMessage ?: null,
+                        'created_at'     => now(),
+                    ]);
+                }
+
                 // Queue resident email
                 if ($appointment->email) {
                     try {
