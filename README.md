@@ -12,7 +12,7 @@
 
 </div>
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## What is BMS?
 
@@ -22,7 +22,7 @@ BMS is a full-stack Barangay Management System built to digitize and streamline 
 
 This is our group collaboration project for **Integrative Programming and Technologies** — built as a team with every feature grounded in real barangay workflows, not textbook exercises.
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## What We Built
 
@@ -82,7 +82,7 @@ Charts and summary tables across all modules — resident demographics, document
 Role-based access control (Admin, Secretary, Committee), full activity logging with weekly/monthly charts, user management with email verification, database backup and restore, and global AJAX search across residents, documents, cases, and permits — all from the topbar.
 </details>
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## Built With
 
@@ -101,7 +101,7 @@ Font Awesome 6    Icon system throughout the UI
 Poppins           Primary typeface (Google Fonts)
 ```
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## My Role
 
@@ -127,7 +127,7 @@ I served as **Scrum Master and Full-Stack Developer** on this group project for 
 - Iterated on every form, table, modal, and print layout to match real barangay workflows
 - Added contextual UX: overdue case badges, expiry warnings, live portal status badges, and CSS tooltip labels
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## Run It Locally
 
@@ -174,7 +174,7 @@ Open `http://localhost:8000` — you're in.
 |------|-------|----------|
 | Admin | admin@bms.gov.ph | Admin@12345 |
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## How It's Organized
 
@@ -224,7 +224,7 @@ anakco-bms-newera/
     └── web.php                                all routes with role middleware
 ```
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## Timeline
 
