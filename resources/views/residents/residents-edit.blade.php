@@ -248,10 +248,16 @@
             @endif
             <div class="form-group" style="flex:1">
                 <label class="form-label">Upload New Photo</label>
-                <input type="file" name="photo_path" id="photo-upload" class="form-control" accept="image/*">
-                <div style="font-size:13px;color:var(--text-subtle);margin-top:4px">
-                    <i class="fas fa-circle-info" style="color:var(--navy);opacity:0.5"></i> Leave blank to keep the current photo.
+                <div id="photoDropZone" style="border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s">
+                    <i class="fas fa-camera" id="photoDropIcon" style="font-size:24px;color:var(--text-muted);margin-bottom:6px;display:block"></i>
+                    <img id="photoDropPreview" src="" alt="" style="display:none;width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto 6px;border:2px solid var(--border)">
+                    <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
+                    <div style="font-size:12px;color:var(--text-subtle)">JPG, PNG, WEBP — max 2MB</div>
+                    <div id="photoDropName" style="display:none;margin-top:6px;font-size:13px;font-weight:600;color:var(--navy)"></div>
+                    <input type="file" name="photo_path" id="photo-upload" accept="image/*" style="display:none">
                 </div>
+                <button type="button" id="photoClearBtn" onclick="clearResidentPhoto()" style="display:none;margin-top:6px;background:none;border:none;color:var(--danger,#c0392b);font-size:13px;cursor:pointer;padding:0"><i class="fas fa-times"></i> Remove new photo</button>
+                <div style="font-size:12px;color:var(--text-subtle);margin-top:6px"><i class="fas fa-circle-info" style="color:var(--navy);opacity:0.5"></i> Leave blank to keep the current photo.</div>
             </div>
         </div>
     </div>
@@ -278,14 +284,14 @@ $(function () {
     if ($removeCb.length && $photoInput.length) {
         $removeCb.on('change', function () {
             if (this.checked) {
-                $photoInput.val('');   // clear selected file
+                clearResidentPhoto();
                 $('#current-photo-preview').css('opacity', '0.35');
             } else {
                 $('#current-photo-preview').css('opacity', '1');
             }
         });
         $photoInput.on('change', function () {
-            if (this.value) $removeCb.prop('checked', false).trigger('change');
+            if (this.value) { $removeCb.prop('checked', false).trigger('change'); showResidentPhoto(this.files[0]); }
         });
     }
 
@@ -305,5 +311,64 @@ $(function () {
         allowClear: true
     }));
 });
+
+/* ── Photo drag-and-drop ── */
+(function () {
+    var zone  = document.getElementById('photoDropZone');
+    var input = document.getElementById('photo-upload');
+    if (!zone || !input) return;
+
+    zone.addEventListener('click', function () { input.click(); });
+
+    zone.addEventListener('dragover', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = 'var(--navy)';
+        zone.style.backgroundColor = 'rgba(13,33,68,.04)';
+    });
+    zone.addEventListener('dragleave', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = '';
+        zone.style.backgroundColor = '';
+    });
+    zone.addEventListener('drop', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = '';
+        zone.style.backgroundColor = '';
+        var files = e.dataTransfer.files;
+        if (files.length) {
+            var dt = new DataTransfer(); dt.items.add(files[0]); input.files = dt.files;
+            showResidentPhoto(files[0]);
+            // uncheck remove-photo if active
+            var cb = document.getElementById('remove-photo-cb');
+            if (cb && cb.checked) { cb.checked = false; var prev = document.getElementById('current-photo-preview'); if (prev) prev.style.opacity = ''; }
+        }
+    });
+}());
+
+function showResidentPhoto(file) {
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+        var preview = document.getElementById('photoDropPreview');
+        preview.src = ev.target.result;
+        preview.style.display = 'block';
+        document.getElementById('photoDropIcon').style.display = 'none';
+        document.getElementById('photoDropName').textContent = '✔ ' + file.name;
+        document.getElementById('photoDropName').style.display = 'block';
+        document.getElementById('photoClearBtn').style.display = 'inline-block';
+    };
+    reader.readAsDataURL(file);
+}
+function clearResidentPhoto() {
+    var input = document.getElementById('photo-upload');
+    if (input) input.value = '';
+    var preview = document.getElementById('photoDropPreview');
+    if (preview) { preview.style.display = 'none'; preview.src = ''; }
+    var icon = document.getElementById('photoDropIcon');
+    if (icon) icon.style.display = 'block';
+    var name = document.getElementById('photoDropName');
+    if (name) name.style.display = 'none';
+    var btn = document.getElementById('photoClearBtn');
+    if (btn) btn.style.display = 'none';
+}
 </script>
 @endpush
