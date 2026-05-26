@@ -80,6 +80,7 @@
 .apt-status-badge.s-released            { background: rgba(255,255,255,.08); color: #d1d5db; border-color: rgba(255,255,255,.2); }
 .apt-status-badge.s-cancelled           { background: rgba(220,38,38,.2); color: #fca5a5; border-color: rgba(220,38,38,.35); }
 .apt-status-badge.s-active              { background: rgba(220,38,38,.2); color: #fca5a5; border-color: rgba(220,38,38,.35); }
+.apt-status-badge.s-active-biz          { background: rgba(22,163,74,.2);  color: #86efac; border-color: rgba(22,163,74,.4); }
 .apt-status-badge.s-for-review          { background: rgba(37,99,235,.25); color: #93c5fd; border-color: rgba(37,99,235,.4); }
 .apt-status-badge.s-under-investigation { background: rgba(200,134,26,.18); color: #e6a020; border-color: rgba(200,134,26,.35); }
 .apt-status-badge.s-mediated            { background: rgba(37,99,235,.25); color: #93c5fd; border-color: rgba(37,99,235,.4); }
