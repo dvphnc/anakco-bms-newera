@@ -209,10 +209,12 @@
 .tl-dot-ready      { border-color: #16a34a;      background: rgba(22,163,74,.1); }
 .tl-dot-released   { border-color: #6b7280;      background: rgba(107,114,128,.1); }
 .tl-dot-cancelled  { border-color: #dc2626;      background: rgba(220,38,38,.1); }
-.tl-dot-active     { border-color: #dc2626;      background: rgba(220,38,38,.1); }
-.tl-dot-settled    { border-color: #16a34a;      background: rgba(22,163,74,.1); }
-.tl-dot-mediated   { border-color: #2563eb;      background: rgba(37,99,235,.1); }
-.tl-dot-closed     { border-color: #6b7280;      background: rgba(107,114,128,.1); }
+.tl-dot-active                      { border-color: #dc2626;  background: rgba(220,38,38,.1); }
+.tl-dot-settled                     { border-color: #16a34a;  background: rgba(22,163,74,.1); }
+.tl-dot-mediated                    { border-color: #2563eb;  background: rgba(37,99,235,.1); }
+.tl-dot-closed                      { border-color: #6b7280;  background: rgba(107,114,128,.1); }
+.tl-dot-under-investigation         { border-color: #d97706;  background: rgba(217,119,6,.1); }
+.tl-dot-referred-to-higher-authority{ border-color: #7c3aed;  background: rgba(124,58,237,.1); }
 
 .tl-card {
     background: #fff;
@@ -232,6 +234,23 @@
     background: #f9fafb; border-left: 3px solid #e5e7eb;
     padding: .35rem .6rem; border-radius: 0 4px 4px 0; font-style: italic;
 }
+
+/* ─── Referred to Higher Authority banner ─────────────────── */
+.referred-banner {
+    display: flex; align-items: flex-start; gap: .75rem;
+    padding: .9rem 1.1rem;
+    background: #f5f3ff;
+    border-radius: var(--radius-sm);
+    border: 1px solid #ddd6fe;
+    margin-bottom: 1.25rem;
+}
+.referred-banner .rb-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+    border-radius: 50%; background: #7c3aed; color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: .9rem;
+}
+.referred-banner .rb-title { font-size: .88rem; font-weight: 700; color: #4c1d95; margin-bottom: .15rem; }
+.referred-banner .rb-text  { font-size: .8rem; color: #6d28d9; }
 
 /* ─── Closed/cancelled banner ─────────────────────────────── */
 .closed-banner {
@@ -430,7 +449,7 @@ unset($__errorArgs, $__bag); ?>
     var lastStatus  = null;
     var lastChecked = null;
     var currentNum  = null;
-    var TERMINAL    = ['Released','Cancelled','Settled','Closed','Referred to Higher Authority'];
+    var TERMINAL    = ['Released','Cancelled','Settled','Referred to Higher Authority'];
 
     if (input.value.trim()) doSearch(input.value.trim());
 
@@ -570,15 +589,25 @@ unset($__errorArgs, $__bag); ?>
 
     function renderStepper(d) {
         if (!d.steps || !d.steps.length) return '';
+        // "Referred to Higher Authority" gets its own banner — no confusing stepper
+        if (d.referred) return '';
 
         var isCancelled = d.cancelled;
 
-        // Per-step custom colors for active state
+        // Per-step custom colors for "current" dot
         var stepColors = {
-            'Pending':    { bg: '#C8861A', border: '#C8861A', shadow: 'rgba(200,134,26,.25)' },
-            'Processing': { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
-            'Ready':      { bg: '#16a34a', border: '#16a34a', shadow: 'rgba(22,163,74,.25)' },
-            'Released':   { bg: '#0D2144', border: '#0D2144', shadow: 'rgba(13,33,68,.25)' },
+            // Document steps
+            'Pending':              { bg: '#C8861A', border: '#C8861A', shadow: 'rgba(200,134,26,.25)' },
+            'Processing':           { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
+            'Ready':                { bg: '#16a34a', border: '#16a34a', shadow: 'rgba(22,163,74,.25)' },
+            'Released':             { bg: '#0D2144', border: '#0D2144', shadow: 'rgba(13,33,68,.25)' },
+            // Blotter steps
+            'Active':               { bg: '#dc2626', border: '#dc2626', shadow: 'rgba(220,38,38,.25)' },
+            'Under Investigation':  { bg: '#d97706', border: '#d97706', shadow: 'rgba(217,119,6,.25)' },
+            'Mediated':             { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
+            'Settled':              { bg: '#16a34a', border: '#16a34a', shadow: 'rgba(22,163,74,.25)' },
+            // Business steps
+            'For Review':           { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
         };
 
         var dots = d.steps.map(function (step, i) {
@@ -645,6 +674,22 @@ unset($__errorArgs, $__bag); ?>
             '<div class="cb-icon"><i class="fas ' + (icon||'fa-ban') + '"></i></div>' +
             '<div><div class="cb-title">' + title + '</div>' +
             '<div class="cb-text">' + text + '</div></div>' +
+            '</div>';
+    }
+    function referredBanner(resolutionNotes) {
+        var noteText = resolutionNotes
+            ? esc(resolutionNotes)
+            : 'The Barangay has completed its process and escalated this case to the appropriate authority.';
+        return '<div class="referred-banner">' +
+            '<div class="rb-icon"><i class="fas fa-arrow-up-right-from-square"></i></div>' +
+            '<div>' +
+                '<div class="rb-title">Case Referred to Higher Authority</div>' +
+                '<div class="rb-text">' + noteText + '</div>' +
+                '<div style="margin-top:.45rem;font-size:.75rem;color:#7c3aed;font-weight:600">' +
+                    '<i class="fas fa-circle-info" style="margin-right:3px"></i>' +
+                    'This case has been escalated to police, courts, or other agencies. Visit the Barangay Hall for further assistance.' +
+                '</div>' +
+            '</div>' +
             '</div>';
     }
 
@@ -731,7 +776,9 @@ unset($__errorArgs, $__bag); ?>
             '</div>';
 
         var banner = '';
-        if (d.cancelled) {
+        if (d.referred) {
+            banner = referredBanner(d.resolution_notes);
+        } else if (d.cancelled) {
             if (d.type === 'blotter') {
                 banner = closedBanner('This blotter case has been closed.', d.resolution_notes || 'The case has been resolved.', 'fa-shield-halved');
             } else if (d.type === 'business') {
