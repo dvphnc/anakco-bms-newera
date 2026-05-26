@@ -99,6 +99,32 @@
                 @endif
                 @error('status')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
+
+            {{-- ── Pickup Date — shown only when status = Ready ── --}}
+            <div class="form-group" id="pickupDateGroup"
+                 style="{{ old('status', $document->status) === 'Ready' ? '' : 'display:none' }}">
+                <label class="form-label">
+                    <i class="fas fa-calendar-check" style="color:#16a34a;font-size:11px;margin-right:4px"></i>
+                    Pick-up Date
+                    <span class="help-icon" data-tippy-content="Tell the resident when their document will be ready for pick-up. This date will appear in the portal tracker.">?</span>
+                </label>
+                @php
+                    $existingPickup = null;
+                    if ($document->appointment_id) {
+                        $existingPickup = \App\Models\DocumentAppointment::find($document->appointment_id)?->pickup_date?->format('Y-m-d');
+                    }
+                @endphp
+                <input type="date" name="pickup_date" id="pickupDateInput"
+                       class="form-control @error('pickup_date') is-invalid @enderror"
+                       value="{{ old('pickup_date', $existingPickup) }}"
+                       style="border-color:#86efac">
+                <div style="font-size:11.5px;color:#16a34a;margin-top:5px;display:flex;align-items:center;gap:4px">
+                    <i class="fas fa-circle-info" style="font-size:10px"></i>
+                    Resident will see this date highlighted in their portal tracker.
+                </div>
+                @error('pickup_date')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+            </div>
+
             <div class="form-group">
                 <label class="form-label">
                     Fee (₱)
