@@ -64,7 +64,7 @@
             <button class="apt-tab active" data-tab="documents" onclick="switchTab('documents')">
                 <i class="fas fa-file-lines"></i>
                 Document Requests
-                <span class="apt-tab-badge" id="tabBadgeDocs">{{ $totalCount }}</span>
+                <span class="apt-tab-badge" id="tabBadgeDocs">{{ $pendingCount }}</span>
             </button>
             <button class="apt-tab" data-tab="blotter" onclick="switchTab('blotter')">
                 <i class="fas fa-shield-halved"></i>
