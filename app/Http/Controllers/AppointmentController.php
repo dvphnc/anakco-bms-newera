@@ -783,7 +783,7 @@ class AppointmentController extends Controller
     public function updateBlotterStatus(Request $request, BlotterCase $blotterCase)
     {
         $validated = $request->validate([
-            'status' => 'required|in:Pending,Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
+            'status' => 'required|in:Pending,Active,Under Investigation,Mediated,Settled,Referred to Higher Authority',
             'notes'  => 'nullable|string|max:500',
         ]);
 

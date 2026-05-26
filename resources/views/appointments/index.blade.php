@@ -264,7 +264,7 @@
                             <option value="Under Investigation">Under Investigation</option>
                             <option value="Mediated">Mediated</option>
                             <option value="Settled">Settled</option>
-                            <option value="Closed">Closed</option>
+                            <option value="Referred to Higher Authority">Referred to Higher Authority</option>
                         </select>
                     </div>
                 </div>
