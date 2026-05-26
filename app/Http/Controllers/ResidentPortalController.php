@@ -253,6 +253,30 @@ class ResidentPortalController extends Controller
         return view('portal.submitted', compact('type', 'number', 'record'));
     }
 
+    /* ─────────────────────────────────────────────────────
+     |  MY SUBMISSIONS — lookup by contact number
+     |──────────────────────────────────────────────────── */
+    public function submissions(Request $request)
+    {
+        $contact      = trim($request->input('contact', ''));
+        $blotterCases = collect();
+        $businesses   = collect();
+
+        if ($contact) {
+            $blotterCases = BlotterCase::where('source', 'portal')
+                ->where('complainant_contact', $contact)
+                ->orderByDesc('created_at')
+                ->get();
+
+            $businesses = Business::where('source', 'portal')
+                ->where('owner_contact', $contact)
+                ->orderByDesc('created_at')
+                ->get();
+        }
+
+        return view('portal.submissions', compact('blotterCases', 'businesses', 'contact'));
+    }
+
     public function trackLookup(Request $request)
     {
         $number = strtoupper(trim($request->input('number', '')));
