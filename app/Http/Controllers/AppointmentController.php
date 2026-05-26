@@ -667,7 +667,6 @@ class AppointmentController extends Controller
                     'Under Investigation'          => 'badge-yellow',
                     'Mediated'                     => 'badge-blue',
                     'Settled'                      => 'badge-green',
-                    'Closed'                       => 'badge-gray',
                     'Referred to Higher Authority' => 'badge-orange',
                     default                        => 'badge-gray',
                 };
