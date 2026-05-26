@@ -173,13 +173,49 @@
         <span class="card-title"><i class="fas fa-clipboard-list"></i> Resolution & Attachments</span>
     </div>
     <div class="card-body">
-        <div class="form-group mb-6">
-            <label class="form-label">
+
+        {{-- ── Resolution Notes — highlighted when status is closing ── --}}
+        <div id="resolutionGroup" class="form-group mb-6">
+            <label class="form-label" id="resolutionLabel">
+                <i class="fas fa-gavel" id="resolutionIcon"
+                   style="{{ in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'color:#16a34a;' : 'display:none;' }}font-size:11px;margin-right:4px"></i>
                 Resolution Notes
                 <span class="help-icon" data-tippy-content="Describe what action was taken: who mediated, what the parties agreed to, or why the case was referred. Leave blank if the case is newly filed.">?</span>
             </label>
-            <textarea name="resolution_notes" class="form-control" rows="3">{{ old('resolution_notes', $blotter->resolution_notes) }}</textarea>
+            <textarea name="resolution_notes" id="resolutionNotes"
+                      class="form-control"
+                      rows="{{ in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 4 : 3 }}"
+                      style="{{ in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'border-color:#86efac;' : '' }}"
+                      placeholder="{{ in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'Describe the resolution — what was agreed, who mediated, or why it was referred.' : 'Optional: describe any action taken so far.' }}">{{ old('resolution_notes', $blotter->resolution_notes) }}</textarea>
+            <div id="resolutionHint"
+                 style="{{ in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? '' : 'display:none;' }}font-size:11.5px;color:#16a34a;margin-top:5px;display:flex;align-items:center;gap:4px">
+                <i class="fas fa-circle-info" style="font-size:10px"></i>
+                Required for this status — describe the outcome clearly for the record.
+            </div>
         </div>
+
+        {{-- ── Portal Message — portal cases only ── --}}
+        @if($blotter->source === 'portal')
+        <div id="portalMessageSection" style="margin-bottom:24px">
+            <div class="form-section-title">
+                <i class="fas fa-comment-dots" style="font-size:12px;margin-right:5px;color:var(--gold)"></i>
+                Message to Complainant
+            </div>
+            <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:var(--radius-sm);
+                        padding:12px 14px;margin-bottom:12px;font-size:12.5px;color:#92400e;
+                        display:flex;align-items:flex-start;gap:8px">
+                <i class="fas fa-circle-info" style="flex-shrink:0;margin-top:1px"></i>
+                <span>This is a <strong>portal report</strong>. Any message you enter below will be sent to the complainant by email and appear in their portal tracker when the status changes.</span>
+            </div>
+            <div class="form-group" style="margin:0">
+                <label class="form-label">
+                    Message <span style="font-weight:400;color:var(--text-subtle);font-size:12px">— optional, only sent when status changes</span>
+                </label>
+                <textarea name="status_message" id="statusMessageArea" class="form-control" rows="3"
+                          placeholder="e.g. Your case is now under investigation. A hearing is scheduled for next week. We will contact you with details.">{{ old('status_message') }}</textarea>
+            </div>
+        </div>
+        @endif
         @if($blotter->file_path)
         <div style="margin-bottom:16px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:12px">
             <i class="fas fa-file" style="font-size:20px;color:var(--navy);flex-shrink:0"></i>
