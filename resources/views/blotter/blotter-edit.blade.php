@@ -45,12 +45,30 @@
                     Status
                     <span class="help-icon" data-tippy-content="'Active' = newly filed. 'Under Investigation' = Barangay is looking into it. 'Mediated' = parties have met. 'Settled' = issue resolved. 'Referred' = escalated to police or court.">?</span>
                 </label>
-                <select name="status" class="form-control @error('status') is-invalid @enderror">
-                    @foreach(['Active','Under Investigation','Mediated','Settled','Closed','Referred to Higher Authority'] as $s)
+                <select name="status" id="statusSelect" class="form-control @error('status') is-invalid @enderror">
+                    @foreach(['Pending','Active','Under Investigation','Mediated','Settled','Closed','Referred to Higher Authority'] as $s)
                         <option value="{{ $s }}" {{ old('status', $blotter->status) === $s ? 'selected' : '' }}>{{ $s }}</option>
                     @endforeach
                 </select>
                 @error('status')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+            </div>
+        </div>
+
+        {{-- ── Settled Date — shown when status = Settled / Closed ── --}}
+        @php $closingStatuses = ['Settled','Closed','Referred to Higher Authority']; @endphp
+        <div id="settledDateGroup" class="form-grid-2 mb-6"
+             style="{{ in_array(old('status', $blotter->status), ['Settled','Closed']) ? '' : 'display:none' }}">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-calendar-check" style="color:#16a34a;font-size:11px;margin-right:4px"></i>
+                    Date Settled / Closed
+                    <span class="help-icon" data-tippy-content="The date the case was officially resolved or closed. Defaults to today if left blank.">?</span>
+                </label>
+                <input type="date" name="settled_at" id="settledAtInput"
+                       class="form-control @error('settled_at') is-invalid @enderror"
+                       value="{{ old('settled_at', $blotter->settled_at?->format('Y-m-d')) }}"
+                       style="border-color:#86efac">
+                @error('settled_at')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
         </div>
         <div class="form-group mb-6">
