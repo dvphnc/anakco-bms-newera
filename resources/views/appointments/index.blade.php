@@ -1031,9 +1031,6 @@ $(document).ready(function () {
         document.getElementById('cvtType').textContent = type;
         document.getElementById('cvtDate').textContent = $btn.data('date') || '—';
 
-        // Always start fee/OR blank — staff enters consciously at point of issue
-        document.getElementById('cvtFee').value  = '';
-        document.getElementById('cvtOR').value   = '';
         document.getElementById('cvtNote').value = '';
         document.getElementById('cvtError').style.display = 'none';
 
@@ -1115,18 +1112,11 @@ $(document).ready(function () {
         document.getElementById('bizIssueBiz').textContent   = $btn.data('biz');
         document.getElementById('bizIssueOwner').textContent = $btn.data('owner');
         document.getElementById('bizIssueAppt').textContent  = $btn.data('appt');
-        var today    = new Date();
-        var nextYear = new Date(today);
-        nextYear.setFullYear(nextYear.getFullYear() + 1);
-        var fmt = function (d) { return d.toISOString().slice(0, 10); };
-        document.getElementById('bizIssuePermitDate').value  = fmt(today);
-        document.getElementById('bizIssueExpiryDate').value  = fmt(nextYear);
-        document.getElementById('bizIssueFee').value         = '';
-        document.getElementById('bizIssueOR').value          = '';
+        document.getElementById('bizIssueNote').value        = '';
         document.getElementById('bizIssueError').style.display = 'none';
-        // data-issue-url is set on both Pending and For Review buttons
         window._bizIssueUrl = $btn.data('issue-url') || $btn.data('url');
         document.getElementById('bizIssueModal').style.display = 'flex';
+        setTimeout(function () { document.getElementById('bizIssueNote').focus(); }, 120);
     });
 
     window.closeBizIssueModal = function () {
@@ -1134,24 +1124,14 @@ $(document).ready(function () {
     };
 
     window.saveBizIssue = function () {
-        var permitDate = document.getElementById('bizIssuePermitDate').value;
-        var expiryDate = document.getElementById('bizIssueExpiryDate').value;
         var errEl = document.getElementById('bizIssueError');
-        if (!permitDate || !expiryDate) {
-            errEl.textContent = 'Please fill in both permit date and expiry date.';
-            errEl.style.display = '';
-            return;
-        }
-        var btn = document.getElementById('bizIssueSaveBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Issuing…';
+        var btn   = document.getElementById('bizIssueSaveBtn');
+        btn.disabled  = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
         errEl.style.display = 'none';
 
         axios.post(window._bizIssueUrl, {
-            permit_date: permitDate,
-            expiry_date: expiryDate,
-            fee_paid:    document.getElementById('bizIssueFee').value  || null,
-            or_number:   document.getElementById('bizIssueOR').value   || null,
+            notes:  document.getElementById('bizIssueNote').value.trim() || null,
             _token: '{{ csrf_token() }}',
         })
         .then(function (res) {
@@ -1160,21 +1140,22 @@ $(document).ready(function () {
             if (res.data.biz_pending !== undefined) {
                 document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
             }
-            bmsToast(res.data.message || 'Permit issued.', 'success');
+            bmsToast(res.data.message || 'Application marked For Review.', 'success');
             if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
         .catch(function (err) {
-            var msg = err.response?.data?.message || 'Failed to issue permit.';
+            var msg = err.response?.data?.message || 'Failed to update application.';
             errEl.textContent = msg;
             errEl.style.display = '';
             if (err.response?.data?.view_url) {
-                bmsToast('Already issued.', 'info');
-                setTimeout(() => window.open(err.response.data.view_url, '_blank'), 1200);
+                bmsToast('Already accepted.', 'info');
+                setTimeout(function () { window.open(err.response.data.view_url, '_blank'); }, 1200);
+                closeBizIssueModal();
             }
         })
         .finally(function () {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-stamp"></i> Issue Permit';
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fas fa-magnifying-glass"></i> Mark For Review';
         });
     };
 
