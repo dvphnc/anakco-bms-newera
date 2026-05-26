@@ -273,8 +273,9 @@ $(function () {
 (function () {
     var zone  = document.getElementById('photoDropZone');
     var input = document.getElementById('photoFileInput');
+    if (!zone || !input) return;
 
-    zone.addEventListener('click', function () { input.click(); });
+    /* click-to-browse is handled natively by <label for="photoFileInput"> — no JS click handler needed */
 
     zone.addEventListener('dragover', function (e) {
         e.preventDefault(); e.stopPropagation();
