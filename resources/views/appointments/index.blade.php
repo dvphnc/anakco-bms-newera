@@ -1192,9 +1192,10 @@ $(document).ready(function () {
         })
         .then(function (res) {
             closeBizIssueModal();
-            bizTable.ajax.reload(function (json) {
-                document.getElementById('tabBadgeBiz').textContent = json.recordsTotal;
-            }, false);
+            bizTable.ajax.reload(null, false);
+            if (res.data.biz_pending !== undefined) {
+                document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
+            }
             bmsToast(res.data.message || 'Permit issued.', 'success');
             if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
@@ -1244,9 +1245,10 @@ $(document).ready(function () {
         })
         .then(function (res) {
             closeBlotterActivateModal();
-            blotterTable.ajax.reload(function (json) {
-                document.getElementById('tabBadgeBlotter').textContent = json.recordsTotal;
-            }, false);
+            blotterTable.ajax.reload(null, false);
+            if (res.data.blotter_pending !== undefined) {
+                document.getElementById('tabBadgeBlotter').textContent = res.data.blotter_pending;
+            }
             bmsToast(res.data.message || 'Case activated.', 'success');
             if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
@@ -1315,9 +1317,10 @@ $(document).ready(function () {
         }, function () {
             axios.delete(url, { data: { _token: '{{ csrf_token() }}' } })
             .then(function (res) {
-                bizTable.ajax.reload(function (json) {
-                    document.getElementById('tabBadgeBiz').textContent = json.recordsTotal;
-                }, false);
+                bizTable.ajax.reload(null, false);
+                if (res.data.biz_pending !== undefined) {
+                    document.getElementById('tabBadgeBiz').textContent = res.data.biz_pending;
+                }
                 bmsToast(res.data.message || 'Application deleted.', 'success');
                 if (window.refreshPortalBadges) window.refreshPortalBadges();
             })
