@@ -861,7 +861,7 @@ class AppointmentController extends Controller
 
         if ($request->wantsJson()) {
             $bizPending = Business::where('source', 'portal')
-                ->whereIn('status', ['Pending', 'For Review'])->count();
+                ->where('status', 'Pending')->count();
 
             return response()->json([
                 'success'     => true,
