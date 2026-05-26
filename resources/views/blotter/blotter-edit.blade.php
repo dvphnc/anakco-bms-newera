@@ -77,7 +77,10 @@
         <span class="card-title"><i class="fas fa-users"></i> Parties Involved</span>
     </div>
     <div class="card-body">
-        <div class="form-section-title">Complainant</div>
+        <div class="form-section-title">
+            Complainant
+            <span class="help-icon" data-tippy-content="The person filing the complaint. Fill in their name, address, and contact number. You may optionally link to a registered resident to auto-fill their details.">?</span>
+        </div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Complainant Name <span style="color:var(--crimson)">*</span></label>
@@ -104,7 +107,10 @@
             </div>
         </div>
 
-        <div class="form-section-title">Respondent</div>
+        <div class="form-section-title">
+            Respondent
+            <span class="help-icon" data-tippy-content="The person being complained against. Fill in their name, address, and contact number if known. You may also link them to a registered resident to auto-fill their details.">?</span>
+        </div>
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Respondent Name <span style="color:var(--crimson)">*</span></label>
