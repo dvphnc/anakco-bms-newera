@@ -780,6 +780,13 @@ class AppointmentController extends Controller
     {
         $num  = $appointment->appointment_number;
         $snap = $appointment->toArray();
+
+        // Also delete the issued document record so it doesn't linger in Document Issuance
+        if ($appointment->document) {
+            $this->logActivity('deleted', $appointment->document);
+            $appointment->document->delete();
+        }
+
         $appointment->delete();
         $this->logActivity('deleted', $appointment, $snap);
 
@@ -830,6 +837,12 @@ class AppointmentController extends Controller
     {
         $num  = $blotterCase->case_number;
         $snap = $blotterCase->toArray();
+
+        // Delete any uploaded attachment file from storage
+        if ($blotterCase->file_path) {
+            \Storage::disk('public')->delete($blotterCase->file_path);
+        }
+
         $blotterCase->delete();
         $this->logActivity('deleted', $blotterCase, $snap);
 
