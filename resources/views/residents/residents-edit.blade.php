@@ -355,27 +355,31 @@ $(function () {
 function showResidentPhoto(file) {
     var reader = new FileReader();
     reader.onload = function (ev) {
-        var preview = document.getElementById('photoDropPreview');
-        preview.src = ev.target.result;
-        preview.style.display = 'block';
+        document.getElementById('photoDropPreview').src = ev.target.result;
+        document.getElementById('photoDropPreview').style.display = 'block';
         document.getElementById('photoDropIcon').style.display = 'none';
+        document.getElementById('photoDropHint').style.display = 'none';
+        document.getElementById('photoDropSub').style.display  = 'none';
         document.getElementById('photoDropName').textContent = '✔ ' + file.name;
         document.getElementById('photoDropName').style.display = 'block';
-        document.getElementById('photoClearBtn').style.display = 'inline-block';
+        document.getElementById('photoClearBtn').style.display = 'block';
+        var z = document.getElementById('photoDropZone');
+        z.style.borderStyle = 'solid'; z.style.borderColor = 'var(--navy)';
     };
     reader.readAsDataURL(file);
 }
 function clearResidentPhoto() {
     var input = document.getElementById('photo-upload');
     if (input) input.value = '';
-    var preview = document.getElementById('photoDropPreview');
-    if (preview) { preview.style.display = 'none'; preview.src = ''; }
-    var icon = document.getElementById('photoDropIcon');
-    if (icon) icon.style.display = 'block';
-    var name = document.getElementById('photoDropName');
-    if (name) name.style.display = 'none';
-    var btn = document.getElementById('photoClearBtn');
-    if (btn) btn.style.display = 'none';
+    document.getElementById('photoDropPreview').style.display = 'none';
+    document.getElementById('photoDropPreview').src = '';
+    document.getElementById('photoDropIcon').style.display = 'block';
+    document.getElementById('photoDropHint').style.display = 'block';
+    document.getElementById('photoDropSub').style.display  = 'block';
+    document.getElementById('photoDropName').style.display = 'none';
+    document.getElementById('photoClearBtn').style.display = 'none';
+    var z = document.getElementById('photoDropZone');
+    z.style.borderStyle = ''; z.style.borderColor = '';
 }
 </script>
 @endpush
