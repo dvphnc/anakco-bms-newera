@@ -80,7 +80,7 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>">
-                    <?php $__currentLoopData = ['Pending','Active','Under Investigation','Mediated','Settled','Closed','Referred to Higher Authority']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php $__currentLoopData = ['Pending','Active','Under Investigation','Mediated','Settled','Referred to Higher Authority']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <option value="<?php echo e($s); ?>" <?php echo e(old('status', $blotter->status) === $s ? 'selected' : ''); ?>><?php echo e($s); ?></option>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
@@ -96,13 +96,13 @@ unset($__errorArgs, $__bag); ?>
         </div>
 
         
-        <?php $closingStatuses = ['Settled','Closed','Referred to Higher Authority']; ?>
+        <?php $closingStatuses = ['Settled','Referred to Higher Authority']; ?>
         <div id="settledDateGroup" class="form-grid-2 mb-6"
-             style="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed']) ? '' : 'display:none'); ?>">
+             style="<?php echo e(old('status', $blotter->status) === 'Settled' ? '' : 'display:none'); ?>">
             <div class="form-group">
                 <label class="form-label">
                     <i class="fas fa-calendar-check" style="color:#16a34a;font-size:11px;margin-right:4px"></i>
-                    Date Settled / Closed
+                    Date Settled
                     <span class="help-icon" data-tippy-content="The date the case was officially resolved or closed. Defaults to today if left blank.">?</span>
                 </label>
                 <input type="date" name="settled_at" id="settledAtInput"
@@ -289,17 +289,17 @@ unset($__errorArgs, $__bag); ?>
         <div id="resolutionGroup" class="form-group mb-6">
             <label class="form-label" id="resolutionLabel">
                 <i class="fas fa-gavel" id="resolutionIcon"
-                   style="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'color:#16a34a;' : 'display:none;'); ?>font-size:11px;margin-right:4px"></i>
+                   style="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Referred to Higher Authority']) ? 'color:#16a34a;' : 'display:none;'); ?>font-size:11px;margin-right:4px"></i>
                 Resolution Notes
                 <span class="help-icon" data-tippy-content="Describe what action was taken: who mediated, what the parties agreed to, or why the case was referred. Leave blank if the case is newly filed.">?</span>
             </label>
             <textarea name="resolution_notes" id="resolutionNotes"
                       class="form-control"
-                      rows="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 4 : 3); ?>"
-                      style="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'border-color:#86efac;' : ''); ?>"
-                      placeholder="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? 'Describe the resolution — what was agreed, who mediated, or why it was referred.' : 'Optional: describe any action taken so far.'); ?>"><?php echo e(old('resolution_notes', $blotter->resolution_notes)); ?></textarea>
+                      rows="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Referred to Higher Authority']) ? 4 : 3); ?>"
+                      style="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Referred to Higher Authority']) ? 'border-color:#86efac;' : ''); ?>"
+                      placeholder="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Referred to Higher Authority']) ? 'Describe the resolution — what was agreed, who mediated, or why it was referred.' : 'Optional: describe any action taken so far.'); ?>"><?php echo e(old('resolution_notes', $blotter->resolution_notes)); ?></textarea>
             <div id="resolutionHint"
-                 style="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Closed','Referred to Higher Authority']) ? '' : 'display:none;'); ?>font-size:11.5px;color:#16a34a;margin-top:5px;display:flex;align-items:center;gap:4px">
+                 style="<?php echo e(in_array(old('status', $blotter->status), ['Settled','Referred to Higher Authority']) ? '' : 'display:none;'); ?>font-size:11.5px;color:#16a34a;margin-top:5px;display:flex;align-items:center;gap:4px">
                 <i class="fas fa-circle-info" style="font-size:10px"></i>
                 Required for this status — describe the outcome clearly for the record.
             </div>
@@ -365,8 +365,8 @@ unset($__errorArgs, $__bag); ?>
     var msgArea        = document.getElementById('statusMessageArea');
     var origStatus     = '<?php echo e($blotter->status); ?>';
 
-    var CLOSING  = ['Settled', 'Closed'];
-    var TERMINAL = ['Settled', 'Closed', 'Referred to Higher Authority'];
+    var CLOSING  = ['Settled'];
+    var TERMINAL = ['Settled', 'Referred to Higher Authority'];
 
     function syncStatusUi() {
         if (!statusSel) return;
@@ -374,7 +374,7 @@ unset($__errorArgs, $__bag); ?>
         var isClosing  = CLOSING.indexOf(s) !== -1;
         var isTerminal = TERMINAL.indexOf(s) !== -1;
 
-        // Settled date: show for Settled / Closed only
+        // Settled date: show only when status = Settled
         if (settledGroup) settledGroup.style.display = isClosing ? '' : 'none';
 
         // Resolution notes: highlight when terminal status
