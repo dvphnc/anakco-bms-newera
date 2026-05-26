@@ -109,7 +109,7 @@
         <i class="fas fa-globe" style="font-size:10px;margin-right:4px"></i>Portal
         <span id="srcChipPortalCount" style="margin-left:5px;background:#1d4ed8;color:#fff;border-radius:4px;
               padding:1px 7px;font-size:10px;font-weight:700">
-            {{ \App\Models\Document::where('source','portal')->whereNotIn('status',['Released','Cancelled'])->count() }}
+            {{ \App\Models\Document::where('source','portal')->count() }}
         </span>
     </button>
     <button type="button" class="src-chip" data-src="walk-in"
