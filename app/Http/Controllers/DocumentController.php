@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\PortalStatusUpdated;
+use App\Models\AppointmentStatusLog;
 use App\Models\Document;
 use App\Models\DocumentAppointment;
 use App\Models\Resident;
