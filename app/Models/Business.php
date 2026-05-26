@@ -66,6 +66,11 @@ class Business extends Model
         return $this->belongsTo(User::class, 'issued_by');
     }
 
+    public function statusLogs()
+    {
+        return $this->hasMany(BusinessStatusLog::class, 'business_id')->orderBy('created_at');
+    }
+
     // -------------------------------------------------------
     // Helpers
     // -------------------------------------------------------

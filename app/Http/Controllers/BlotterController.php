@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\PortalStatusUpdated;
 use App\Models\BlotterCase;
+use App\Models\BlotterStatusLog;
 use App\Models\Resident;
 use App\Traits\LogsActivity;
 use Carbon\Carbon;

@@ -59,6 +59,11 @@ class BlotterCase extends Model
         return $this->belongsTo(User::class, 'filed_by');
     }
 
+    public function statusLogs()
+    {
+        return $this->hasMany(BlotterStatusLog::class, 'blotter_case_id')->orderBy('created_at');
+    }
+
     // -------------------------------------------------------
     // Helpers
     // -------------------------------------------------------
