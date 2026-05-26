@@ -76,38 +76,122 @@
         </div>
 
         <div class="form-section-title">Permit Details</div>
+        @php $currentStatus = old('status', $business->getRawOriginal('status')); @endphp
         <div class="form-grid-3 mb-6">
-            <div class="form-group">
-                <label class="form-label">Permit Date <span style="color:var(--crimson)">*</span></label>
-                <input type="date" name="permit_date" class="form-control @error('permit_date') is-invalid @enderror" value="{{ old('permit_date', $business->permit_date ? \Carbon\Carbon::parse($business->permit_date)->format('Y-m-d') : '') }}" required>
-                @error('permit_date')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-            </div>
-            <div class="form-group">
-                <label class="form-label">
-                    Expiry Date <span style="color:var(--crimson)">*</span>
-                    <span class="help-icon" data-tippy-content="The date this permit becomes invalid. The system will automatically alert you 30 days before expiry and mark overdue permits in red. Most permits are issued for 1 year.">?</span>
-                </label>
-                <input type="date" name="expiry_date" class="form-control @error('expiry_date') is-invalid @enderror" value="{{ old('expiry_date', $business->expiry_date ? \Carbon\Carbon::parse($business->expiry_date)->format('Y-m-d') : '') }}" required>
-                @error('expiry_date')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-            </div>
+
+            {{-- Status always visible --}}
             <div class="form-group">
                 <label class="form-label">
                     Status
-                    <span class="help-icon" data-tippy-content="'Active' = currently operating with valid permit. 'Expired' = permit past its expiry date. 'Suspended' = temporarily stopped by Barangay order. 'Cancelled' = permit revoked.">?</span>
+                    <span class="help-icon" data-tippy-content="'Pending' = awaiting review. 'For Review' = under staff assessment. 'Active' = permit issued. 'Expired' = past expiry. 'Suspended' = temporarily halted. 'Cancelled' = permit revoked.">?</span>
                 </label>
-                <select name="status" class="form-control @error('status') is-invalid @enderror">
-                    @foreach(['Active','Expired','Suspended','Cancelled'] as $s)
-                        <option value="{{ $s }}" {{ old('status', $business->status) === $s ? 'selected' : '' }}>{{ $s }}</option>
+                <select name="status" id="statusSelect" class="form-control @error('status') is-invalid @enderror">
+                    @foreach(['Pending','For Review','Active','Expired','Suspended','Cancelled'] as $s)
+                        <option value="{{ $s }}" {{ $currentStatus === $s ? 'selected' : '' }}>{{ $s }}</option>
                     @endforeach
                 </select>
                 @error('status')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
+
+            {{-- Fee — always visible --}}
+            <div class="form-group">
+                <label class="form-label">
+                    Fee (₱)
+                    <span class="help-icon" data-tippy-content="Permit fee collected. OR Number will be auto-generated when fee is greater than 0.">?</span>
+                </label>
+                <input type="number" id="feeInput" name="fee_paid"
+                       class="form-control @error('fee_paid') is-invalid @enderror"
+                       value="{{ old('fee_paid', $business->fee_paid ?? 0) }}"
+                       min="0" step="0.01">
+                @error('fee_paid')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+            </div>
+
+            {{-- OR Number — always visible --}}
+            <div class="form-group">
+                <label class="form-label" style="display:flex;align-items:center;justify-content:space-between">
+                    <span>
+                        OR Number
+                        <span class="help-icon" data-tippy-content="Official Receipt number. Leave blank to auto-generate when fee is greater than 0.">?</span>
+                    </span>
+                    <button type="button" id="orAutoBtn"
+                            style="display:none;font-size:11.5px;font-weight:600;color:var(--navy);
+                                   background:rgba(13,33,68,0.07);border:1px solid rgba(13,33,68,0.18);
+                                   border-radius:4px;padding:2px 8px;cursor:pointer;transition:.15s"
+                            onclick="autoFillOrNumber()">
+                        <i class="fas fa-wand-magic-sparkles" style="font-size:10px"></i> Auto-fill
+                    </button>
+                </label>
+                <div style="position:relative">
+                    <input type="text" id="orInput" name="or_number"
+                           class="form-control @error('or_number') is-invalid @enderror"
+                           placeholder="e.g. OR-2026-00001"
+                           value="{{ old('or_number', $business->or_number) }}">
+                    <span id="orAutoHint"
+                          style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);
+                                 font-size:11px;color:#9ca3af;pointer-events:none">
+                        auto-generate on save
+                    </span>
+                </div>
+                @error('or_number')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+            </div>
         </div>
 
-        <div class="form-group">
+        {{-- Permit Date + Expiry Date — only when status = Active --}}
+        <div id="permitDatesGroup" class="form-grid-2 mb-6"
+             style="{{ $currentStatus === 'Active' ? '' : 'display:none' }}">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-calendar-check" style="color:#16a34a;font-size:11px;margin-right:4px"></i>
+                    Permit Date <span style="color:var(--crimson)">*</span>
+                </label>
+                <input type="date" name="permit_date"
+                       class="form-control @error('permit_date') is-invalid @enderror"
+                       value="{{ old('permit_date', $business->permit_date?->format('Y-m-d')) }}"
+                       style="border-color:#86efac">
+                @error('permit_date')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-calendar-xmark" style="color:#dc2626;font-size:11px;margin-right:4px"></i>
+                    Expiry Date <span style="color:var(--crimson)">*</span>
+                    <span class="help-icon" data-tippy-content="Most permits are issued for 1 year. The system alerts you 30 days before expiry.">?</span>
+                </label>
+                <input type="date" name="expiry_date"
+                       class="form-control @error('expiry_date') is-invalid @enderror"
+                       value="{{ old('expiry_date', $business->expiry_date?->format('Y-m-d')) }}"
+                       style="border-color:#86efac">
+                @error('expiry_date')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+            </div>
+        </div>
+
+        <div class="form-group mb-6">
             <label class="form-label">Remarks</label>
             <textarea name="remarks" class="form-control" rows="3">{{ old('remarks', $business->remarks) }}</textarea>
         </div>
+
+        {{-- ── Portal Message — portal applications only ── --}}
+        @if($business->source === 'portal')
+        <div id="portalMessageSection">
+            <div class="form-section-title">
+                <i class="fas fa-comment-dots" style="font-size:12px;margin-right:5px;color:var(--gold)"></i>
+                Message to Applicant
+            </div>
+            <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:var(--radius-sm);
+                        padding:12px 14px;margin-bottom:12px;font-size:12.5px;color:#92400e;
+                        display:flex;align-items:flex-start;gap:8px">
+                <i class="fas fa-circle-info" style="flex-shrink:0;margin-top:1px"></i>
+                <span>This is a <strong>portal application</strong>. Any message you enter below will be sent to the applicant by email and appear in their portal tracker when the status changes.</span>
+            </div>
+            <div class="form-group" style="margin:0">
+                <label class="form-label">
+                    Message <span style="font-weight:400;color:var(--text-subtle);font-size:12px">— optional, only sent when status changes</span>
+                </label>
+                <textarea name="status_message" id="statusMessageArea" class="form-control" rows="3"
+                          placeholder="e.g. Your permit application is now under review. We will contact you within 3–5 business days.">{{ old('status_message') }}</textarea>
+            </div>
+        </div>
+        @endif
+
     </div>
 </div>
 
