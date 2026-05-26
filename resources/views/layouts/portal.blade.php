@@ -1396,85 +1396,142 @@ document.addEventListener('DOMContentLoaded', function () {
     var MONTHS = ['January','February','March','April','May','June',
                   'July','August','September','October','November','December'];
 
-    function buildMonthDropdown(fp) {
-        var cal = fp.calendarContainer;
-        var nativeSel = cal.querySelector('.flatpickr-monthDropdown-months');
-        if (!nativeSel) return;
-
-        // ── Month button ──────────────────────────────────────────
+    // ── Shared helper: build a body-fixed picker panel ───────────────
+    function buildPickerPanel(cal, anchorEl, btnClass, renderBtnFn, renderGridFn, hooksFn) {
         var btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'fp-month-btn';
+        btn.className = btnClass;
+        renderBtnFn(btn);
 
-        function renderBtn() {
-            btn.innerHTML = MONTHS[fp.currentMonth] +
-                ' <i class="fas fa-chevron-down" style="font-size:9px;opacity:.7"></i>';
-        }
-        renderBtn();
-
-        // ── Month panel — appended to body to escape overflow clipping ──
         var panel = document.createElement('div');
-        panel.className = 'fp-month-panel';
+        panel.className = 'fp-picker-panel';
         document.body.appendChild(panel);
-
-        var grid = document.createElement('div');
-        grid.className = 'fp-month-grid';
-        panel.appendChild(grid);
 
         function positionPanel() {
             var rect = cal.getBoundingClientRect();
-            panel.style.top   = (rect.top + 46 + window.scrollY) + 'px';
+            panel.style.top   = (rect.bottom - 4) + 'px';
             panel.style.left  = rect.left + 'px';
             panel.style.width = rect.width + 'px';
         }
 
-        function renderGrid() {
-            grid.innerHTML = '';
-            MONTHS.forEach(function (name, idx) {
-                var cell = document.createElement('button');
-                cell.type = 'button';
-                cell.className = 'fp-month-cell' + (idx === fp.currentMonth ? ' current' : '');
-                cell.textContent = name.slice(0, 3);
-                cell.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    fp.changeMonth(idx - fp.currentMonth);
-                    panel.classList.remove('open');
-                });
-                grid.appendChild(cell);
-            });
-        }
-
         btn.addEventListener('click', function (e) {
             e.stopPropagation();
+            // Close any other open panels
+            document.querySelectorAll('.fp-picker-panel.open').forEach(function (p) {
+                if (p !== panel) p.classList.remove('open');
+            });
             if (panel.classList.contains('open')) {
                 panel.classList.remove('open');
                 return;
             }
-            renderGrid();
+            renderGridFn(panel);
             positionPanel();
             panel.classList.add('open');
         });
 
-        // Close panel on outside click
         document.addEventListener('click', function (e) {
             if (!panel.contains(e.target) && e.target !== btn) {
                 panel.classList.remove('open');
             }
         });
 
-        // Update button label when arrows change the month
-        fp.config.onMonthChange.push(function () {
-            renderBtn();
-            panel.classList.remove('open');
-        });
+        // Caller supplies hook registrations
+        hooksFn(btn, panel);
 
-        // Clean up panel when calendar closes
-        fp.config.onClose.push(function () {
-            panel.classList.remove('open');
-        });
+        anchorEl.parentNode.insertBefore(btn, anchorEl);
+        return { btn: btn, panel: panel };
+    }
 
-        // Insert custom button where native select was
-        nativeSel.parentNode.insertBefore(btn, nativeSel);
+    function buildMonthDropdown(fp) {
+        var cal = fp.calendarContainer;
+        var nativeSel = cal.querySelector('.flatpickr-monthDropdown-months');
+        if (!nativeSel) return;
+
+        buildPickerPanel(
+            cal, nativeSel, 'fp-month-btn',
+            // render button label
+            function (btn) {
+                btn.innerHTML = MONTHS[fp.currentMonth] +
+                    ' <i class="fas fa-chevron-down" style="font-size:9px;opacity:.7;margin-left:1px"></i>';
+            },
+            // render grid
+            function (panel) {
+                panel.innerHTML = '<div class="fp-month-grid"></div>';
+                var grid = panel.querySelector('.fp-month-grid');
+                MONTHS.forEach(function (name, idx) {
+                    var cell = document.createElement('button');
+                    cell.type = 'button';
+                    cell.className = 'fp-picker-cell' + (idx === fp.currentMonth ? ' current' : '');
+                    cell.textContent = name.slice(0, 3);
+                    cell.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        fp.changeMonth(idx - fp.currentMonth);
+                        panel.classList.remove('open');
+                    });
+                    grid.appendChild(cell);
+                });
+            },
+            // hooks
+            function (btn, panel) {
+                fp.config.onMonthChange.push(function () {
+                    btn.innerHTML = MONTHS[fp.currentMonth] +
+                        ' <i class="fas fa-chevron-down" style="font-size:9px;opacity:.7;margin-left:1px"></i>';
+                    panel.classList.remove('open');
+                });
+                fp.config.onClose.push(function () { panel.classList.remove('open'); });
+            }
+        );
+    }
+
+    function buildYearDropdown(fp) {
+        var cal = fp.calendarContainer;
+        // The year lives inside .numInputWrapper — target that wrapper
+        var yearWrapper = cal.querySelector('.numInputWrapper');
+        if (!yearWrapper) return;
+
+        var now     = new Date().getFullYear();
+        var minYear = fp.config.minDate ? fp.config.minDate.getFullYear() : now - 10;
+        var maxYear = fp.config.maxDate ? fp.config.maxDate.getFullYear() : now + 5;
+        // Always include current view year in range
+        minYear = Math.min(minYear, fp.currentYear);
+        maxYear = Math.max(maxYear, fp.currentYear);
+
+        buildPickerPanel(
+            cal, yearWrapper, 'fp-year-btn',
+            // render button label
+            function (btn) {
+                btn.innerHTML = fp.currentYear +
+                    ' <i class="fas fa-chevron-down" style="font-size:9px;opacity:.7;margin-left:1px"></i>';
+            },
+            // render grid (newest first)
+            function (panel) {
+                panel.innerHTML = '<div class="fp-year-grid"></div>';
+                var grid = panel.querySelector('.fp-year-grid');
+                for (var y = maxYear; y >= minYear; y--) {
+                    (function (year) {
+                        var cell = document.createElement('button');
+                        cell.type = 'button';
+                        cell.className = 'fp-picker-cell' + (year === fp.currentYear ? ' current' : '');
+                        cell.textContent = year;
+                        cell.addEventListener('click', function (e) {
+                            e.stopPropagation();
+                            fp.changeYear(year);
+                            panel.classList.remove('open');
+                        });
+                        grid.appendChild(cell);
+                    })(y);
+                }
+            },
+            // hooks
+            function (btn, panel) {
+                fp.config.onYearChange.push(function () {
+                    btn.innerHTML = fp.currentYear +
+                        ' <i class="fas fa-chevron-down" style="font-size:9px;opacity:.7;margin-left:1px"></i>';
+                    panel.classList.remove('open');
+                });
+                fp.config.onClose.push(function () { panel.classList.remove('open'); });
+            }
+        );
     }
 
     document.addEventListener('DOMContentLoaded', function () {
