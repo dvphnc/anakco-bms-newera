@@ -212,6 +212,7 @@
 .tl-dot-released   { border-color: #6b7280;      background: rgba(107,114,128,.1); }
 .tl-dot-cancelled  { border-color: #dc2626;      background: rgba(220,38,38,.1); }
 .tl-dot-active                      { border-color: #dc2626;  background: rgba(220,38,38,.1); }
+.tl-dot-active-biz                  { border-color: #16a34a;  background: rgba(22,163,74,.1); }
 .tl-dot-settled                     { border-color: #16a34a;  background: rgba(22,163,74,.1); }
 .tl-dot-mediated                    { border-color: #2563eb;  background: rgba(37,99,235,.1); }
 .tl-dot-closed                      { border-color: #6b7280;  background: rgba(107,114,128,.1); }
@@ -565,8 +566,11 @@
     function statusSlug(s) {
         return s ? s.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '') : '';
     }
-    function statusBadgeHtml(s) {
-        return '<span class="apt-status-badge s-' + statusSlug(s) + '">' +
+    function statusBadgeHtml(s, type) {
+        var slug = statusSlug(s);
+        // Business permit Active = green (not blotter red)
+        if (type === 'business' && s === 'Active') slug = 'active-biz';
+        return '<span class="apt-status-badge s-' + slug + '">' +
             '<i class="fas fa-circle" style="font-size:.45rem"></i> ' + esc(s) +
             '</span>';
     }
@@ -594,7 +598,7 @@
             'Processing':           { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
             'Ready':                { bg: '#16a34a', border: '#16a34a', shadow: 'rgba(22,163,74,.25)' },
             'Released':             { bg: '#0D2144', border: '#0D2144', shadow: 'rgba(13,33,68,.25)' },
-            // Blotter steps
+            // Blotter steps (Active = red — open case)
             'Active':               { bg: '#dc2626', border: '#dc2626', shadow: 'rgba(220,38,38,.25)' },
             'Under Investigation':  { bg: '#d97706', border: '#d97706', shadow: 'rgba(217,119,6,.25)' },
             'Mediated':             { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
@@ -602,6 +606,10 @@
             // Business steps
             'For Review':           { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
         };
+        // Business permit: Active = green (issued/valid), not blotter red
+        if (d.type === 'business') {
+            stepColors['Active'] = { bg: '#16a34a', border: '#16a34a', shadow: 'rgba(22,163,74,.25)' };
+        }
 
         var dots = d.steps.map(function (step, i) {
             var isDone         = d.step_index !== -1 && i < d.step_index;
