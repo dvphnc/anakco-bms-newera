@@ -1361,11 +1361,17 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('input[type="date"]').forEach(function (el) {
         var opts = {
-            dateFormat:  'Y-m-d',   // value sent to server (Laravel date validation)
-            altInput:    true,      // show a separate human-readable input
-            altFormat:   'm/d/Y',   // MM/DD/YYYY display
-            allowInput:  true,
-            disableMobile: true,    // force Flatpickr on mobile too (no native picker)
+            dateFormat:    'Y-m-d',   // value sent to server (Laravel date validation)
+            altInput:      true,      // show a separate human-readable input
+            altFormat:     'm/d/Y',   // MM/DD/YYYY display
+            allowInput:    true,
+            disableMobile: true,      // force Flatpickr on mobile too (no native picker)
+            onReady: function (selectedDates, dateStr, instance) {
+                // Set placeholder on the visible alt input
+                if (instance.altInput) {
+                    instance.altInput.placeholder = 'mm/dd/yyyy';
+                }
+            },
         };
         // Carry over min/max attributes as Flatpickr minDate/maxDate
         if (el.min) opts.minDate = el.min;
