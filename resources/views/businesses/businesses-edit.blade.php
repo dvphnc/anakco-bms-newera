@@ -2,6 +2,8 @@
 @section('title', 'Edit Business Permit')
 @section('content')
 
+@php $currentStatus = old('status', $business->getRawOriginal('status')); @endphp
+
 <div class="page-header">
     <div>
         <h1 class="page-title">Edit Business Permit</h1>
@@ -12,7 +14,36 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('businesses.update', $business) }}">
+{{-- ── Issue Permit CTA Banner (Pending / For Review only) ──────────── --}}
+@if(in_array($currentStatus, ['Pending', 'For Review']))
+<div id="issuePermitBanner"
+     style="display:flex;align-items:center;gap:14px;
+            background:linear-gradient(135deg,#064e3b,#065f46);
+            border-radius:var(--radius);padding:14px 20px;margin-bottom:20px;
+            border:1px solid #059669;color:#fff">
+    <div style="width:44px;height:44px;border-radius:var(--radius-sm);
+                background:rgba(255,255,255,0.12);display:flex;align-items:center;
+                justify-content:center;flex-shrink:0">
+        <i class="fas fa-stamp" style="font-size:20px;color:#6ee7b7"></i>
+    </div>
+    <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:14px;margin-bottom:2px">Ready to issue this permit?</div>
+        <div style="font-size:12.5px;color:rgba(255,255,255,0.75)">
+            Status is currently <strong>{{ $currentStatus }}</strong>.
+            Click <em>Issue Permit</em> to set it Active with today's date and a 1-year validity.
+        </div>
+    </div>
+    <button type="button" id="issuePermitBtn" onclick="issuePermitNow()"
+            style="flex-shrink:0;background:#059669;color:#fff;border:1.5px solid #6ee7b7;
+                   border-radius:var(--radius-sm);padding:8px 20px;font-size:13px;font-weight:700;
+                   cursor:pointer;transition:background .15s;white-space:nowrap;
+                   display:inline-flex;align-items:center;gap:7px">
+        <i class="fas fa-stamp" style="font-size:11px"></i> Issue Permit
+    </button>
+</div>
+@endif
+
+<form method="POST" action="{{ route('businesses.update', $business) }}" id="bizEditForm">
 @csrf @method('PUT')
 
 <div class="card mb-6">
@@ -76,10 +107,9 @@
         </div>
 
         <div class="form-section-title">Permit Details</div>
-        @php $currentStatus = old('status', $business->getRawOriginal('status')); @endphp
         <div class="form-grid-3 mb-6">
 
-            {{-- Status always visible --}}
+            {{-- Status --}}
             <div class="form-group">
                 <label class="form-label">
                     Status
@@ -93,7 +123,7 @@
                 @error('status')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
 
-            {{-- Fee — always visible --}}
+            {{-- Fee --}}
             <div class="form-group">
                 <label class="form-label">
                     Fee (₱)
@@ -106,7 +136,7 @@
                 @error('fee_paid')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
 
-            {{-- OR Number — always visible --}}
+            {{-- OR Number --}}
             <div class="form-group">
                 <label class="form-label" style="display:flex;align-items:center;justify-content:space-between">
                     <span>
@@ -136,15 +166,16 @@
             </div>
         </div>
 
-        {{-- Permit Date + Expiry Date — only when status = Active --}}
+        {{-- Permit Date + Expiry Date — visible when status needs dates (Active/Expired/Suspended/Cancelled) --}}
+        @php $showDates = in_array($currentStatus, ['Active','Expired','Suspended','Cancelled']); @endphp
         <div id="permitDatesGroup" class="form-grid-2 mb-6"
-             style="{{ $currentStatus === 'Active' ? '' : 'display:none' }}">
+             style="{{ $showDates ? '' : 'display:none' }}">
             <div class="form-group">
                 <label class="form-label">
                     <i class="fas fa-calendar-check" style="color:#16a34a;font-size:11px;margin-right:4px"></i>
-                    Permit Date <span style="color:var(--crimson)">*</span>
+                    Permit Date <span id="permitDateRequired" style="color:var(--crimson)">*</span>
                 </label>
-                <input type="date" name="permit_date"
+                <input type="date" id="permitDateInput" name="permit_date"
                        class="form-control @error('permit_date') is-invalid @enderror"
                        value="{{ old('permit_date', $business->permit_date?->format('Y-m-d')) }}"
                        style="border-color:#86efac">
@@ -153,10 +184,10 @@
             <div class="form-group">
                 <label class="form-label">
                     <i class="fas fa-calendar-xmark" style="color:#dc2626;font-size:11px;margin-right:4px"></i>
-                    Expiry Date <span style="color:var(--crimson)">*</span>
+                    Expiry Date <span id="expiryDateRequired" style="color:var(--crimson)">*</span>
                     <span class="help-icon" data-tippy-content="Most permits are issued for 1 year. The system alerts you 30 days before expiry.">?</span>
                 </label>
-                <input type="date" name="expiry_date"
+                <input type="date" id="expiryDateInput" name="expiry_date"
                        class="form-control @error('expiry_date') is-invalid @enderror"
                        value="{{ old('expiry_date', $business->expiry_date?->format('Y-m-d')) }}"
                        style="border-color:#86efac">
@@ -196,19 +227,52 @@
 </div>
 
 <div class="form-actions">
-    <button type="submit" class="btn btn-primary"><i class="fas fa-floppy-disk"></i> Save Changes</button>
+    <button type="submit" class="btn btn-primary" id="bizEditSubmitBtn">
+        <span id="bizEditLabel">
+            <i class="fas fa-floppy-disk"></i>
+            <span id="saveBtnText">Save Changes</span>
+        </span>
+        <span id="bizEditSpinner" style="display:none"><span class="biz-spin-icon"></span> Saving…</span>
+    </button>
     <a href="{{ route('businesses.show', $business) }}" class="btn btn-secondary">Cancel</a>
 </div>
 </form>
 
 @push('scripts')
 <style>
-#orAutoBtn:hover { background: rgba(13,33,68,.14) !important; }
+@keyframes biz-spin { to { transform: rotate(360deg); } }
+.biz-spin-icon {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: biz-spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+#orAutoBtn:hover      { background: rgba(13,33,68,.14) !important; }
+#issuePermitBtn:hover { background: #047857 !important; }
 </style>
 <script>
-/* ── OR auto-generate (same pattern as Document edit) ─────── */
 (function () {
     var _generateOrUrl = '{{ route('documents.generateOrNumber') }}';
+    var statusSel   = document.getElementById('statusSelect');
+    var datesGroup  = document.getElementById('permitDatesGroup');
+    var permitInput = document.getElementById('permitDateInput');
+    var expiryInput = document.getElementById('expiryDateInput');
+    var msgArea     = document.getElementById('statusMessageArea');
+    var origStatus  = '{{ $business->getRawOriginal('status') }}';
+    var DATES_STATUSES = ['Active','Expired','Suspended','Cancelled'];
+
+    /* ── Submit spinner ─────────────────────────────────────── */
+    document.getElementById('bizEditForm').addEventListener('submit', function () {
+        document.getElementById('bizEditLabel').style.display   = 'none';
+        document.getElementById('bizEditSpinner').style.display = '';
+        document.getElementById('bizEditSubmitBtn').disabled = true;
+    });
+
+    /* ── OR auto-generate logic ─────────────────────────────── */
     var feeInput = document.getElementById('feeInput');
     var orInput  = document.getElementById('orInput');
     var orBtn    = document.getElementById('orAutoBtn');
@@ -218,15 +282,17 @@
         var fee   = parseFloat(feeInput ? feeInput.value : 0) || 0;
         var orVal = orInput ? orInput.value.trim() : '';
         if (fee > 0 && !orVal) {
-            if (orBtn)  orBtn.style.display  = '';
-            if (orHint) orHint.style.display = '';
+            if (orBtn)  orBtn.style.display  = 'inline-block';
+            if (orHint) orHint.style.display = 'block';
+            if (orInput) orInput.placeholder = 'Will be auto-generated on save';
         } else {
             if (orBtn)  orBtn.style.display  = 'none';
             if (orHint) orHint.style.display = 'none';
+            if (orInput && !orInput.value.trim()) orInput.placeholder = 'e.g. OR-2026-00001';
         }
     }
     if (feeInput) feeInput.addEventListener('input', syncOrUi);
-    if (orInput)  orInput.addEventListener('input', syncOrUi);
+    if (orInput)  orInput.addEventListener('input',  syncOrUi);
     syncOrUi();
 
     window.autoFillOrNumber = function () {
@@ -235,32 +301,42 @@
             .then(function (res) {
                 if (res.data.or_number) {
                     orInput.value = res.data.or_number;
-                    syncOrUi();
+                    orInput.dispatchEvent(new Event('input'));
+                    orInput.classList.add('is-valid');
+                    setTimeout(function () { orInput.classList.remove('is-valid'); }, 2000);
                 }
             })
-            .catch(function () { alert('Could not generate OR number. Please try again.'); })
+            .catch(function () { bmsToast('Could not generate OR number — please enter manually.', 'error'); })
             .finally(function () {
                 if (orBtn) { orBtn.disabled = false; orBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles" style="font-size:10px"></i> Auto-fill'; }
             });
     };
-}());
 
-/* ── Status-dependent permit dates + portal message ──────── */
-(function () {
-    var statusSel   = document.getElementById('statusSelect');
-    var datesGroup  = document.getElementById('permitDatesGroup');
-    var msgArea     = document.getElementById('statusMessageArea');
-    var origStatus  = '{{ $business->getRawOriginal('status') }}';
-
+    /* ── Status-dependent permit dates + save button label ──── */
     function syncStatusUi() {
         if (!statusSel) return;
         var s = statusSel.value;
-        if (datesGroup) datesGroup.style.display = (s === 'Active') ? '' : 'none';
+        var showDates = DATES_STATUSES.indexOf(s) !== -1;
+        if (datesGroup) datesGroup.style.display = showDates ? '' : 'none';
+
+        // Update save button text
+        var saveTxt = document.getElementById('saveBtnText');
+        if (saveTxt) {
+            if (s === 'Active' && origStatus !== 'Active') {
+                saveTxt.textContent = 'Issue Permit';
+                document.getElementById('bizEditLabel').innerHTML =
+                    '<i class="fas fa-stamp"></i> Issue Permit';
+            } else {
+                document.getElementById('bizEditLabel').innerHTML =
+                    '<i class="fas fa-floppy-disk"></i> Save Changes';
+            }
+        }
     }
 
     if (statusSel) {
         statusSel.addEventListener('change', function () {
             syncStatusUi();
+            // Auto-focus message area when status changes (portal only)
             if (msgArea && statusSel.value !== origStatus) {
                 msgArea.closest('.form-group').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 setTimeout(function () { msgArea.focus(); }, 250);
@@ -268,20 +344,59 @@
         });
     }
     syncStatusUi();
-}());
 
-/* ── Owner resident auto-fill ─────────────────────────────── */
-$('#owner_resident_id').on('select2:select', function(e) {
-    const text = e.params.data.text;
-    const parts = text.split(' — ');
-    const namePart = parts[0].trim();
-    const nameParts = namePart.split(', ');
-    const fullName  = nameParts.length > 1 ? nameParts[1] + ' ' + nameParts[0] : namePart;
-    $('#owner_name').val(fullName);
-});
-$('#owner_resident_id').on('select2:clear', function() {
-    $('#owner_name').val('');
-});
+    /* ── Issue Permit Now (banner button) ───────────────────── */
+    window.issuePermitNow = function () {
+        // 1. Switch status to Active
+        if (statusSel) {
+            statusSel.value = 'Active';
+            statusSel.dispatchEvent(new Event('change'));
+        }
+
+        // 2. Auto-fill permit_date = today, expiry_date = +1 year
+        var today = new Date();
+        var pad   = function (n) { return String(n).padStart(2, '0'); };
+        var todayStr = today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate());
+        var nextYear = new Date(today);
+        nextYear.setFullYear(nextYear.getFullYear() + 1);
+        var nextYearStr = nextYear.getFullYear() + '-' + pad(nextYear.getMonth() + 1) + '-' + pad(nextYear.getDate());
+
+        if (permitInput && !permitInput.value) permitInput.value = todayStr;
+        if (expiryInput && !expiryInput.value) expiryInput.value = nextYearStr;
+
+        // 3. Hide the banner
+        var banner = document.getElementById('issuePermitBanner');
+        if (banner) banner.style.display = 'none';
+
+        // 4. Scroll to and highlight the dates
+        if (datesGroup) {
+            datesGroup.style.display = '';
+            datesGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            [permitInput, expiryInput].forEach(function (el) {
+                if (!el) return;
+                el.style.transition = 'box-shadow .3s';
+                el.style.boxShadow  = '0 0 0 3px rgba(5,150,105,0.35)';
+                setTimeout(function () { el.style.boxShadow = ''; }, 1800);
+            });
+        }
+
+        bmsToast('Permit dates pre-filled — review and click Issue Permit to save.', 'success');
+    };
+
+    /* ── Owner resident auto-fill ─────────────────────────────── */
+    $('#owner_resident_id').on('select2:select', function(e) {
+        var text  = e.params.data.text;
+        var parts = text.split(' — ');
+        var namePart  = parts[0].trim();
+        var nameParts = namePart.split(', ');
+        var fullName  = nameParts.length > 1 ? nameParts[1] + ' ' + nameParts[0] : namePart;
+        $('#owner_name').val(fullName);
+    });
+    $('#owner_resident_id').on('select2:clear', function() {
+        $('#owner_name').val('');
+    });
+
+}());
 </script>
 @endpush
 
