@@ -20,8 +20,8 @@ class BusinessController extends Controller
     {
         if ($request->ajax()) {
             $query = Business::select('businesses.*')
-                // Portal submissions that haven't been issued yet live in Appointments, not here
-                ->where(fn ($q) => $q->where('source', '!=', 'portal')->orWhereNotNull('permit_date'))
+                // Portal submissions that are still Pending live in Appointments, not here
+                ->where(fn ($q) => $q->where('source', '!=', 'portal')->orWhere('status', '!=', 'Pending'))
                 ->when($request->status, fn ($q) => $q->whereIn('status', (array) $request->status))
                 ->when($request->business_type, fn ($q) => $q->whereIn('business_type', (array) $request->business_type))
                 ->when($request->expiry_filter, function ($q) use ($request) {
