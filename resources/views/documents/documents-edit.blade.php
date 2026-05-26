@@ -299,31 +299,8 @@
             });
     };
 
-    /* ── Resident Select2 — robust pre-selection ────────────── */
-    $(document).ready(function () {
-        var $sel   = $('#resident_id');
-        var preId  = $sel.data('initial-id');
-        var preText = $sel.data('initial-text');
-
-        if (!preId) return; // no pre-selection needed
-
-        // If the option is already in the DOM (server-rendered), just set value.
-        // Use a generous delay so global Select2 AJAX init finishes first.
-        function tryPreselect() {
-            if ($sel.find('option[value="' + preId + '"]').length) {
-                $sel.val(String(preId)).trigger('change');
-            } else if (preText) {
-                // Option was lost after Select2 re-init — re-inject it
-                var opt = new Option(preText, String(preId), true, true);
-                $sel.append(opt).trigger('change');
-            }
-        }
-
-        // First attempt: 150 ms (usually enough)
-        setTimeout(tryPreselect, 150);
-        // Safety net: 600 ms (catches slow Select2 AJAX init)
-        setTimeout(tryPreselect, 600);
-    });
+    // Resident pre-selection is handled globally in app.blade.php
+    // via the data-initial-id / data-initial-text attributes on the select.
 
     @if($document->source === 'portal' && $document->status !== 'Released')
     /* ── Status-change message: auto-focus textarea when status changes ─ */
