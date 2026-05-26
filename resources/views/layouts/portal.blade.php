@@ -875,19 +875,52 @@
             justify-content: center !important;
             gap: 4px !important;
         }
+        /* Native select hidden — replaced by custom dropdown via JS */
         .flatpickr-current-month .flatpickr-monthDropdown-months {
-            color: #fff !important;
-            background: transparent !important;
-            font-weight: 600 !important;
-            font-size: 14px !important;
-            padding: 0 2px !important;
-            margin: 0 !important;
-            border: none !important;
-            /* Prevent native dropdown from opening and overlapping the calendar */
-            -webkit-appearance: none !important;
-            -moz-appearance: none !important;
-            appearance: none !important;
-            pointer-events: none !important;
+            display: none !important;
+        }
+        /* Custom month button in header */
+        .fp-month-btn {
+            background: none; border: none; cursor: pointer;
+            color: #fff; font-weight: 700; font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 2px 4px; border-radius: 4px;
+            transition: background .15s;
+        }
+        .fp-month-btn:hover { background: rgba(255,255,255,.15); }
+        /* Month picker panel */
+        .fp-month-panel {
+            display: none;
+            position: absolute;
+            top: 46px; left: 0; right: 0;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 var(--radius) var(--radius);
+            box-shadow: 0 8px 24px rgba(0,0,0,.15);
+            z-index: 10;
+            padding: 10px 8px 12px;
+        }
+        .fp-month-panel.open { display: block; }
+        .fp-month-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+        }
+        .fp-month-cell {
+            background: none; border: 1px solid transparent;
+            border-radius: 6px; padding: 7px 4px;
+            font-size: 12px; font-weight: 500;
+            color: var(--navy); cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            text-align: center; transition: all .12s;
+        }
+        .fp-month-cell:hover   { background: var(--navy-pale); border-color: var(--navy-border); }
+        .fp-month-cell.current { background: var(--navy); color: #fff; border-color: var(--navy); }
+        /* Year input styling */
+        .flatpickr-current-month input.cur-year {
+            color: #fff !important; font-weight: 700 !important;
+            font-size: 14px !important; padding: 0 2px !important;
+            border-bottom: 1px dashed rgba(255,255,255,.4) !important;
         }
         .flatpickr-current-month input.cur-year {
             color: #fff !important;
