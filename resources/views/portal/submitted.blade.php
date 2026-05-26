@@ -147,6 +147,14 @@
             <a href="{{ route('portal.track') }}?ref={{ $number }}" class="btn btn-outline">
                 <i class="fas fa-magnifying-glass"></i> Track Status
             </a>
+            @php
+                $submissionContact = $type === 'blotter'
+                    ? ($record->complainant_contact ?? '')
+                    : ($record->owner_contact ?? '');
+            @endphp
+            <a href="{{ route('portal.submissions') }}?contact={{ urlencode($submissionContact) }}#{{ $type }}" class="btn btn-outline">
+                <i class="fas fa-folder-open"></i> My Submissions
+            </a>
             @if($type === 'blotter')
                 <a href="{{ route('portal.blotter') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> File Another Report

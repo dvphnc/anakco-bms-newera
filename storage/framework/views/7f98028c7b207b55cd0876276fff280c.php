@@ -903,6 +903,7 @@
         <a href="<?php echo e(route('portal.index')); ?>"><i class="fas fa-home fa-fw"></i> Home</a>
         <a href="<?php echo e(route('portal.about')); ?>"><i class="fas fa-landmark fa-fw"></i> About Us</a>
         <a href="<?php echo e(route('portal.track')); ?>"><i class="fas fa-search fa-fw"></i> Track My Status</a>
+        <a href="<?php echo e(route('portal.submissions')); ?>"><i class="fas fa-folder-open fa-fw"></i> My Submissions</a>
         <div class="drawer-divider"></div>
         <a href="<?php echo e(route('portal.request')); ?>" class="drawer-cta">
             <i class="fas fa-file-arrow-up fa-fw"></i> Request a Document
@@ -952,6 +953,9 @@
         </a>
         <a href="<?php echo e(route('portal.track')); ?>" class="<?php echo e(request()->routeIs('portal.track*') ? 'nav-active' : ''); ?>">
             <i class="fas fa-search"></i> Track Status
+        </a>
+        <a href="<?php echo e(route('portal.submissions')); ?>" class="<?php echo e(request()->routeIs('portal.submissions') ? 'nav-active' : ''); ?>">
+            <i class="fas fa-folder-open"></i> My Submissions
         </a>
         <a href="<?php echo e(route('portal.request')); ?>" class="nav-cta <?php echo e(request()->routeIs('portal.request') || request()->routeIs('portal.store') ? 'nav-active' : ''); ?>">
             <i class="fas fa-file-arrow-up"></i> Request Document
@@ -1010,6 +1014,7 @@
             <ul>
                 <li><a href="<?php echo e(route('portal.index')); ?>">Home</a></li>
                 <li><a href="<?php echo e(route('portal.track')); ?>">Track My Request</a></li>
+                <li><a href="<?php echo e(route('portal.submissions')); ?>">My Submissions</a></li>
                 <li><a href="<?php echo e(route('portal.about')); ?>">About Us</a></li>
                 <li><a href="<?php echo e(route('portal.index')); ?>#faq">FAQs</a></li>
                 <li><a href="#">Privacy Policy</a></li>
