@@ -925,11 +925,81 @@
         .fp-picker-cell:hover   { background: var(--navy-pale); border-color: var(--navy-border); }
         .fp-picker-cell.current { background: var(--navy); color: #fff; border-color: var(--navy); }
 
-        /* ── Hide native year input + arrows (replaced by button) ── */
-        .flatpickr-current-month input.cur-year,
-        .flatpickr-current-month .arrowUp,
-        .flatpickr-current-month .arrowDown,
+        /* ── Hide native year input + arrows (replaced by static display) ── */
         .numInputWrapper { display: none !important; }
+
+        /* ── Year static badge ── */
+        .fp-year-display {
+            color: #fff; font-weight: 700; font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            padding: 2px 10px;
+            border: 1.5px solid rgba(255,255,255,.35);
+            border-radius: 6px;
+            user-select: none;
+        }
+
+        /* ══════════════════════════════════════════
+           CUSTOM PORTAL SELECT DROPDOWN
+        ══════════════════════════════════════════ */
+        .p-select-wrap { position: relative; }
+        /* Trigger button */
+        .p-select-trigger {
+            width: 100%; min-height: 48px;
+            padding: .65rem 2.5rem .65rem 1rem;
+            border: 1.5px solid #d1d5db;
+            border-radius: var(--radius-sm);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem; color: var(--text);
+            background: #fff;
+            cursor: pointer; text-align: left;
+            display: flex; align-items: center;
+            transition: border-color .2s, box-shadow .2s;
+            position: relative;
+        }
+        .p-select-trigger:focus,
+        .p-select-trigger.open {
+            outline: none;
+            border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(13,33,68,.1);
+        }
+        .p-select-trigger .p-select-val {
+            flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .p-select-trigger .p-select-val.placeholder { color: #9ca3af; }
+        .p-select-trigger .p-select-arrow {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            color: #9ca3af; font-size: 11px; pointer-events: none;
+            transition: transform .2s;
+        }
+        .p-select-trigger.open .p-select-arrow { transform: translateY(-50%) rotate(180deg); }
+        /* Dropdown panel */
+        .p-select-panel {
+            display: none;
+            position: fixed;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 28px rgba(0,0,0,.16);
+            z-index: 99999;
+            overflow: hidden;
+        }
+        .p-select-panel.open { display: block; }
+        .p-select-list {
+            max-height: 240px; overflow-y: auto;
+            padding: 4px 0;
+        }
+        .p-select-item {
+            padding: 10px 14px;
+            font-size: .9rem; font-family: 'Poppins', sans-serif;
+            cursor: pointer; color: var(--text);
+            transition: background .1s;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .p-select-item:hover  { background: var(--navy-pale); color: var(--navy); }
+        .p-select-item.selected { background: var(--navy); color: #fff; font-weight: 600; }
+        .p-select-item.is-placeholder { color: #9ca3af; font-style: italic; }
+        /* Error state */
+        .p-select-trigger.is-invalid { border-color: var(--crimson) !important; }
         .flatpickr-prev-month svg,
         .flatpickr-next-month svg { fill: rgba(255,255,255,.8) !important; }
         .flatpickr-prev-month:hover svg,
