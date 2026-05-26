@@ -217,6 +217,7 @@ class DocumentController extends Controller
             'status'           => 'required|in:' . implode(',', Document::$statuses),
             'requestor_contact'=> 'nullable|string|max:255',
             'status_message'   => 'nullable|string|max:500',
+            'pickup_date'      => 'nullable|date',
         ];
 
         if ($request->boolean('is_representative')) {

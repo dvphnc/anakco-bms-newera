@@ -328,6 +328,23 @@
     // Resident pre-selection is handled globally in app.blade.php
     // via the data-initial-id / data-initial-text attributes on the select.
 
+    /* ── Pickup Date: show/hide based on status ─────────────── */
+    var statusSelPd   = document.getElementById('statusSelect');
+    var pickupGroup   = document.getElementById('pickupDateGroup');
+    var pickupInput   = document.getElementById('pickupDateInput');
+
+    function syncPickupDateVisibility() {
+        if (!statusSelPd || !pickupGroup) return;
+        var isReady = statusSelPd.value === 'Ready';
+        pickupGroup.style.display = isReady ? '' : 'none';
+        if (!isReady && pickupInput) pickupInput.value = '';
+    }
+
+    if (statusSelPd) {
+        statusSelPd.addEventListener('change', syncPickupDateVisibility);
+    }
+    syncPickupDateVisibility(); // run on load
+
     @if($document->source === 'portal' && $document->status !== 'Released')
     /* ── Status-change message: auto-focus textarea when status changes ─ */
     var statusSel   = document.getElementById('statusSelect');
