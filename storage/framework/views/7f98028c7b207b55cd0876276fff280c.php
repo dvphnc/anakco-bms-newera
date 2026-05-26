@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Resident Portal') — Barangay New Era</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <title><?php echo $__env->yieldContent('title', 'Resident Portal'); ?> — Barangay New Era</title>
+    <link rel="icon" type="image/x-icon" href="<?php echo e(asset('favicon.ico')); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <script>
     // ── Axios CSRF interceptor (portal) ──────────────────────────────────
     axios.interceptors.request.use(function (config) {
@@ -826,24 +826,24 @@
         }
 
     </style>
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body>
 
-{{-- Scroll progress bar --}}
+
 <div id="scroll-progress" aria-hidden="true"></div>
 
 
-{{-- ═══ SPLASH SCREEN ═══ --}}
+
 <div id="splash" role="status" aria-label="Loading portal">
     <div class="splash-coin">
         <div class="splash-coin-inner">
             <div class="splash-front">
-                <img src="{{ asset('images/bne-logo.png') }}" alt="Barangay New Era"
+                <img src="<?php echo e(asset('images/bne-logo.png')); ?>" alt="Barangay New Era"
                      onerror="this.style.display='none'">
             </div>
             <div class="splash-back">
-                <img src="{{ asset('images/qc-seal.png') }}" alt="Quezon City Seal"
+                <img src="<?php echo e(asset('images/qc-seal.png')); ?>" alt="Quezon City Seal"
                      onerror="this.style.display='none'">
             </div>
         </div>
@@ -859,10 +859,10 @@
     </div>
 </div>
 
-{{-- ═══ TOAST ═══ --}}
+
 <div id="portalToast" role="status" aria-live="polite"></div>
 
-{{-- ═══ COMMAND PALETTE ═══ --}}
+
 <div id="portalCmdOverlay" class="portal-cmd-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Quick search">
     <div class="portal-cmd-box">
         <div class="cmd-input-row">
@@ -882,13 +882,13 @@
     </div>
 </div>
 
-{{-- ═══ MOBILE DRAWER ═══ --}}
+
 <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeMobileNav()"></div>
 <div class="drawer-panel"    id="drawerPanel"    role="dialog" aria-modal="true" aria-label="Navigation menu">
     <div class="drawer-head">
         <div class="portal-brand">
             <div class="brand-seal">
-                @include('partials._portal_seal')
+                <?php echo $__env->make('partials._portal_seal', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             </div>
             <div class="portal-brand-text">
                 <strong>Barangay New Era</strong>
@@ -900,25 +900,25 @@
         </button>
     </div>
     <nav class="drawer-nav">
-        <a href="{{ route('portal.index') }}"><i class="fas fa-home fa-fw"></i> Home</a>
-        <a href="{{ route('portal.about') }}"><i class="fas fa-landmark fa-fw"></i> About Us</a>
-        <a href="{{ route('portal.track') }}"><i class="fas fa-search fa-fw"></i> Track My Status</a>
-        <a href="{{ route('portal.submissions') }}"><i class="fas fa-folder-open fa-fw"></i> My Submissions</a>
+        <a href="<?php echo e(route('portal.index')); ?>"><i class="fas fa-home fa-fw"></i> Home</a>
+        <a href="<?php echo e(route('portal.about')); ?>"><i class="fas fa-landmark fa-fw"></i> About Us</a>
+        <a href="<?php echo e(route('portal.track')); ?>"><i class="fas fa-search fa-fw"></i> Track My Status</a>
+        <a href="<?php echo e(route('portal.submissions')); ?>"><i class="fas fa-folder-open fa-fw"></i> My Submissions</a>
         <div class="drawer-divider"></div>
-        <a href="{{ route('portal.request') }}" class="drawer-cta">
+        <a href="<?php echo e(route('portal.request')); ?>" class="drawer-cta">
             <i class="fas fa-file-arrow-up fa-fw"></i> Request a Document
         </a>
     </nav>
 </div>
 
-{{-- ═══ GOVERNMENT STRIP ═══ --}}
+
 <div class="gov-strip" role="banner">
     <div class="gov-strip-inner">
         <div class="gov-strip-left">
-            <img src="{{ asset('images/republika-seal.png') }}"
+            <img src="<?php echo e(asset('images/republika-seal.png')); ?>"
                  alt="Republika ng Pilipinas"
                  class="gov-strip-seal">
-            <img src="{{ asset('images/qc-seal.png') }}"
+            <img src="<?php echo e(asset('images/qc-seal.png')); ?>"
                  alt="Quezon City"
                  class="gov-strip-seal">
             <span class="gov-strip-name">Republika ng Pilipinas</span>
@@ -931,12 +931,12 @@
     </div>
 </div>
 
-{{-- ═══ STICKY HEADER ═══ --}}
+
 <header class="portal-header">
 
-    <a href="{{ route('portal.index') }}" class="portal-brand">
+    <a href="<?php echo e(route('portal.index')); ?>" class="portal-brand">
         <div class="brand-seal">
-            @include('partials._portal_seal')
+            <?php echo $__env->make('partials._portal_seal', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         </div>
         <div class="portal-brand-text">
             <strong>Barangay New Era</strong>
@@ -945,24 +945,24 @@
     </a>
 
     <nav class="portal-nav" aria-label="Main navigation">
-        <a href="{{ route('portal.index') }}" class="{{ request()->routeIs('portal.index') ? 'nav-active' : '' }}">
+        <a href="<?php echo e(route('portal.index')); ?>" class="<?php echo e(request()->routeIs('portal.index') ? 'nav-active' : ''); ?>">
             <i class="fas fa-home"></i> Home
         </a>
-        <a href="{{ route('portal.about') }}" class="{{ request()->routeIs('portal.about') ? 'nav-active' : '' }}">
+        <a href="<?php echo e(route('portal.about')); ?>" class="<?php echo e(request()->routeIs('portal.about') ? 'nav-active' : ''); ?>">
             <i class="fas fa-landmark"></i> About Us
         </a>
-        <a href="{{ route('portal.track') }}" class="{{ request()->routeIs('portal.track*') ? 'nav-active' : '' }}">
+        <a href="<?php echo e(route('portal.track')); ?>" class="<?php echo e(request()->routeIs('portal.track*') ? 'nav-active' : ''); ?>">
             <i class="fas fa-search"></i> Track Status
         </a>
-        <a href="{{ route('portal.submissions') }}" class="{{ request()->routeIs('portal.submissions') ? 'nav-active' : '' }}">
+        <a href="<?php echo e(route('portal.submissions')); ?>" class="<?php echo e(request()->routeIs('portal.submissions') ? 'nav-active' : ''); ?>">
             <i class="fas fa-folder-open"></i> My Submissions
         </a>
-        <a href="{{ route('portal.request') }}" class="nav-cta {{ request()->routeIs('portal.request') || request()->routeIs('portal.store') ? 'nav-active' : '' }}">
+        <a href="<?php echo e(route('portal.request')); ?>" class="nav-cta <?php echo e(request()->routeIs('portal.request') || request()->routeIs('portal.store') ? 'nav-active' : ''); ?>">
             <i class="fas fa-file-arrow-up"></i> Request Document
         </a>
     </nav>
 
-    {{-- Ctrl+K trigger --}}
+    
     <button class="cmd-trigger" onclick="openCmdPalette()" title="Quick search (Ctrl+K)" aria-label="Open quick search">
         <i class="fas fa-search"></i>
         Quick Search
@@ -974,18 +974,18 @@
     </button>
 </header>
 
-{{-- ═══ PAGE CONTENT ═══ --}}
+
 <main class="portal-main" id="main-content">
-    @yield('content')
+    <?php echo $__env->yieldContent('content'); ?>
 </main>
 
-{{-- ═══ PORTAL FOOTER ═══ --}}
+
 <footer class="portal-footer" role="contentinfo">
     <div class="portal-footer-body">
 
-        {{-- Column 1: Big Republika seal + brand text (eGov PH style) --}}
+        
         <div class="pf-brand">
-            <img src="{{ asset('images/republika-seal.png') }}"
+            <img src="<?php echo e(asset('images/republika-seal.png')); ?>"
                  alt="Republika ng Pilipinas"
                  class="pf-big-seal">
             <div class="pf-brand-text">
@@ -995,33 +995,33 @@
             </div>
         </div>
 
-        {{-- Column 2: Services --}}
+        
         <div class="pf-col">
             <h5>Services</h5>
             <ul>
-                <li><a href="{{ route('portal.request') }}?type=Barangay+Clearance">Barangay Clearance</a></li>
-                <li><a href="{{ route('portal.request') }}?type=Certificate+of+Indigency">Cert. of Indigency</a></li>
-                <li><a href="{{ route('portal.request') }}?type=Certificate+of+Residency">Cert. of Residency</a></li>
-                <li><a href="{{ route('portal.request') }}?type=Business+Clearance">Business Clearance</a></li>
-                <li><a href="{{ route('portal.blotter') }}">File Blotter Report</a></li>
-                <li><a href="{{ route('portal.business') }}">Business Permit</a></li>
+                <li><a href="<?php echo e(route('portal.request')); ?>?type=Barangay+Clearance">Barangay Clearance</a></li>
+                <li><a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Indigency">Cert. of Indigency</a></li>
+                <li><a href="<?php echo e(route('portal.request')); ?>?type=Certificate+of+Residency">Cert. of Residency</a></li>
+                <li><a href="<?php echo e(route('portal.request')); ?>?type=Business+Clearance">Business Clearance</a></li>
+                <li><a href="<?php echo e(route('portal.blotter')); ?>">File Blotter Report</a></li>
+                <li><a href="<?php echo e(route('portal.business')); ?>">Business Permit</a></li>
             </ul>
         </div>
 
-        {{-- Column 3: Quick Links --}}
+        
         <div class="pf-col">
             <h5>Quick Links</h5>
             <ul>
-                <li><a href="{{ route('portal.index') }}">Home</a></li>
-                <li><a href="{{ route('portal.track') }}">Track My Request</a></li>
-                <li><a href="{{ route('portal.submissions') }}">My Submissions</a></li>
-                <li><a href="{{ route('portal.about') }}">About Us</a></li>
-                <li><a href="{{ route('portal.index') }}#faq">FAQs</a></li>
+                <li><a href="<?php echo e(route('portal.index')); ?>">Home</a></li>
+                <li><a href="<?php echo e(route('portal.track')); ?>">Track My Request</a></li>
+                <li><a href="<?php echo e(route('portal.submissions')); ?>">My Submissions</a></li>
+                <li><a href="<?php echo e(route('portal.about')); ?>">About Us</a></li>
+                <li><a href="<?php echo e(route('portal.index')); ?>#faq">FAQs</a></li>
                 <li><a href="#">Privacy Policy</a></li>
             </ul>
         </div>
 
-        {{-- Column 4: Developed By --}}
+        
         <div class="pf-col">
             <h5>Developed By</h5>
             <div class="pf-devby-name">AnakCo</div>
@@ -1031,10 +1031,10 @@
     </div>
     <div class="portal-footer-bottom">
         <div class="portal-footer-bottom-inner">
-            <span class="pf-copy">© {{ date('Y') }} Barangay New Era, District VI, Quezon City. All rights reserved.</span>
+            <span class="pf-copy">© <?php echo e(date('Y')); ?> Barangay New Era, District VI, Quezon City. All rights reserved.</span>
             <div class="pf-legal">
                 <a href="#">Privacy Policy</a>
-                <a href="{{ route('portal.about') }}">Contact Us</a>
+                <a href="<?php echo e(route('portal.about')); ?>">Contact Us</a>
             </div>
         </div>
     </div>
@@ -1062,17 +1062,17 @@ function closeMobileNav() {
 ════════════════════════════════════════════════ */
 (function () {
     var ACTIONS = [
-        { icon: 'fas fa-file-arrow-up',          label: 'Request a Document',         sub: 'Start a new barangay document request',        href: '{{ route("portal.request") }}' },
-        { icon: 'fas fa-file-shield',        label: 'Barangay Clearance',          sub: 'Certificate of good standing',                  href: '{{ route("portal.request") }}?type=Barangay+Clearance' },
-        { icon: 'fas fa-hand-holding-heart', label: 'Certificate of Indigency',    sub: 'For government assistance programs',            href: '{{ route("portal.request") }}?type=Certificate+of+Indigency' },
-        { icon: 'fas fa-house-circle-check', label: 'Certificate of Residency',    sub: 'Proof of residence document',                   href: '{{ route("portal.request") }}?type=Certificate+of+Residency' },
-        { icon: 'fas fa-store',              label: 'Business Clearance',          sub: 'For business registration and renewal',         href: '{{ route("portal.request") }}?type=Business+Clearance' },
-        { icon: 'fas fa-gavel',              label: 'File a Blotter Report',       sub: 'Report an incident to the barangay',            href: '{{ route("portal.blotter") }}' },
-        { icon: 'fas fa-file-contract',      label: 'Business Permit Application', sub: 'Apply for new permit or renewal',               href: '{{ route("portal.business") }}' },
-        { icon: 'fas fa-search',             label: 'Track Appointment Status',    sub: 'Look up an existing appointment number',        href: '{{ route("portal.track") }}' },
-        { icon: 'fas fa-home',               label: 'Portal Home',                 sub: 'Back to the main portal page',                  href: '{{ route("portal.index") }}' },
-        { icon: 'fas fa-landmark',           label: 'About Us',                    sub: 'Officials, mission, vision & contact info',     href: '{{ route("portal.about") }}' },
-        { icon: 'fas fa-circle-question',    label: 'Frequently Asked Questions',  sub: 'Common questions about barangay documents',     href: '{{ route("portal.index") }}#faq' },
+        { icon: 'fas fa-file-arrow-up',          label: 'Request a Document',         sub: 'Start a new barangay document request',        href: '<?php echo e(route("portal.request")); ?>' },
+        { icon: 'fas fa-file-shield',        label: 'Barangay Clearance',          sub: 'Certificate of good standing',                  href: '<?php echo e(route("portal.request")); ?>?type=Barangay+Clearance' },
+        { icon: 'fas fa-hand-holding-heart', label: 'Certificate of Indigency',    sub: 'For government assistance programs',            href: '<?php echo e(route("portal.request")); ?>?type=Certificate+of+Indigency' },
+        { icon: 'fas fa-house-circle-check', label: 'Certificate of Residency',    sub: 'Proof of residence document',                   href: '<?php echo e(route("portal.request")); ?>?type=Certificate+of+Residency' },
+        { icon: 'fas fa-store',              label: 'Business Clearance',          sub: 'For business registration and renewal',         href: '<?php echo e(route("portal.request")); ?>?type=Business+Clearance' },
+        { icon: 'fas fa-gavel',              label: 'File a Blotter Report',       sub: 'Report an incident to the barangay',            href: '<?php echo e(route("portal.blotter")); ?>' },
+        { icon: 'fas fa-file-contract',      label: 'Business Permit Application', sub: 'Apply for new permit or renewal',               href: '<?php echo e(route("portal.business")); ?>' },
+        { icon: 'fas fa-search',             label: 'Track Appointment Status',    sub: 'Look up an existing appointment number',        href: '<?php echo e(route("portal.track")); ?>' },
+        { icon: 'fas fa-home',               label: 'Portal Home',                 sub: 'Back to the main portal page',                  href: '<?php echo e(route("portal.index")); ?>' },
+        { icon: 'fas fa-landmark',           label: 'About Us',                    sub: 'Officials, mission, vision & contact info',     href: '<?php echo e(route("portal.about")); ?>' },
+        { icon: 'fas fa-circle-question',    label: 'Frequently Asked Questions',  sub: 'Common questions about barangay documents',     href: '<?php echo e(route("portal.index")); ?>#faq' },
     ];
 
     var overlay, input, results, selectedIdx = -1;
@@ -1134,7 +1134,7 @@ function closeMobileNav() {
 
         /* If it looks like an appointment number, put a track shortcut first */
         if (/^apt/i.test(q) || /^\d{4,}/.test(q)) {
-            var trackUrl = '{{ route("portal.track") }}?apt=' + encodeURIComponent(q.toUpperCase());
+            var trackUrl = '<?php echo e(route("portal.track")); ?>?apt=' + encodeURIComponent(q.toUpperCase());
             html += '<div class="cmd-section-head">Track Appointment</div>';
             html += '<div class="cmd-item" data-href="' + esc(trackUrl) + '">'
                 + '<div class="cmd-item-icon"><i class="fas fa-search"></i></div>'
@@ -1194,9 +1194,9 @@ window.portalToast = function (message, type) {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    @if(session('success')) portalToast('{{ addslashes(session('success')) }}', 'success'); @endif
-    @if(session('error'))   portalToast('{{ addslashes(session('error')) }}',   'error');   @endif
-    @if(session('warning')) portalToast('{{ addslashes(session('warning')) }}', 'warning'); @endif
+    <?php if(session('success')): ?> portalToast('<?php echo e(addslashes(session('success'))); ?>', 'success'); <?php endif; ?>
+    <?php if(session('error')): ?>   portalToast('<?php echo e(addslashes(session('error'))); ?>',   'error');   <?php endif; ?>
+    <?php if(session('warning')): ?> portalToast('<?php echo e(addslashes(session('warning'))); ?>', 'warning'); <?php endif; ?>
 });
 
 /* ════════════════════════════════════════════════
@@ -1211,7 +1211,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 2800);
 })();
 </script>
-@stack('scripts')
+<?php echo $__env->yieldPushContent('scripts'); ?>
 
 <script>
 // ── Scroll progress bar ─────────────────────────────────────────────
@@ -1228,4 +1228,4 @@ document.addEventListener('DOMContentLoaded', function () {
     updateProgress();
 })();
 </script>
-</bo
+</bo<?php /**PATH D:\laragon\www\anakco_bms\resources\views/layouts/portal.blade.php ENDPATH**/ ?>
