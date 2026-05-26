@@ -21,13 +21,6 @@
     </div>
 </div>
 
-@if(session('success'))
-<div class="alert alert-success mb-6"><i class="fas fa-check-circle"></i> {{ session('success') }}</div>
-@endif
-@if(session('error'))
-<div class="alert alert-danger mb-6"><i class="fas fa-exclamation-circle"></i> {{ session('error') }}</div>
-@endif
-
 <div class="grid-2 mb-6" style="grid-template-columns:2fr 1fr">
 
     {{-- Backup List --}}

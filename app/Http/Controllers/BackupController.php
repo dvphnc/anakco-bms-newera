@@ -101,7 +101,8 @@ class BackupController extends Controller
                 return back()->with('error', 'Backup failed'.$detail);
             }
 
-            file_put_contents($fullPath, $sqlContent);
+            // Store through the same Storage layer used by index() so the file is always discoverable
+            Storage::disk($this->backupDisk)->put($this->backupPath.'/'.$filename, $sqlContent);
 
             // Keep only last 10 backups
             $this->pruneOldBackups();
@@ -153,11 +154,13 @@ class BackupController extends Controller
         ]);
 
         $filename = $request->input('filename');
-        $path = storage_path('app/'.$this->backupPath.'/'.$filename);
+        $storagePath = $this->backupPath.'/'.$filename;
 
-        if (! file_exists($path)) {
+        if (! Storage::disk($this->backupDisk)->exists($storagePath)) {
             return back()->with('error', 'Backup file not found.');
         }
+
+        $path = Storage::disk($this->backupDisk)->path($storagePath);
 
         try {
             $db   = config('database.connections.mysql.database');
