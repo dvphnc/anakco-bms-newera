@@ -97,7 +97,23 @@ class AppointmentController extends Controller
                         return '<div style="display:flex;justify-content:flex-end">'.$deleteBtn.'</div>';
                     }
 
-                    // ── Pending / Processing / Ready: Issue Document + delete ──
+                    // ── Processing / Ready: document exists in Document Issuance — show View Record ──
+                    if (in_array($a->status, ['Processing', 'Ready'])) {
+                        $viewUrl = $a->document
+                            ? route('documents.show', $a->document)
+                            : route('documents.index');
+                        return '<div style="display:flex;justify-content:flex-end;gap:6px">
+                                    <a href="'.e($viewUrl).'" target="_blank"
+                                       class="btn btn-secondary btn-sm"
+                                       style="font-size:12px;padding:0 10px;height:30px;
+                                              display:inline-flex;align-items:center;gap:5px">
+                                        <i class="fas fa-file-lines"></i> View Record
+                                    </a>
+                                    '.$deleteBtn.'
+                                </div>';
+                    }
+
+                    // ── Pending: Accept & Process (moves to Document Issuance) ──
                     return '<div style="display:flex;justify-content:flex-end;gap:6px">
                                 <button class="btn btn-sm apt-issue-btn"
                                         style="height:30px;padding:0 12px;font-size:12px;font-weight:600;
@@ -109,10 +125,8 @@ class AppointmentController extends Controller
                                         data-name="'.e($a->resident_name).'"
                                         data-type="'.e($a->document_type).'"
                                         data-purpose="'.e($a->purpose ?? '').'"
-                                        data-date="'.($a->preferred_date ? $a->preferred_date->format('m/d/Y') : '—').'"
-                                        data-fee="'.e($a->document?->fee_paid ?? '').'"
-                                        data-or="'.e($a->document?->or_number ?? '').'">
-                                    <i class="fas fa-file-circle-check" style="font-size:11px"></i> Issue Document
+                                        data-date="'.($a->preferred_date ? $a->preferred_date->format('m/d/Y') : '—').'">
+                                    <i class="fas fa-file-circle-check" style="font-size:11px"></i> Accept &amp; Process
                                 </button>
                                 '.$deleteBtn.'
                             </div>';
