@@ -148,7 +148,7 @@ class BlotterController extends Controller
             'respondent_contact'     => 'nullable|string|max:20',
             'respondent_resident_id' => 'nullable|exists:residents,id',
             'responding_officer'     => 'nullable|string|max:255',
-            'status' => 'required|in:Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
+            'status' => 'required|in:Active,Under Investigation,Mediated,Settled,Referred to Higher Authority',
             'resolution_notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120',
         ]);
@@ -211,10 +211,20 @@ class BlotterController extends Controller
 
         // Auto-set settled_at when moving into Settled
         if ($validated['status'] === 'Settled') {
+<<<<<<< HEAD
             if (empty($validated['settled_at']) && $blotter->status !== 'Settled') {
                 $validated['settled_at'] = now();
             }
         } else {
+=======
+            if (! empty($validated['settled_at'])) {
+                // keep the staff-supplied date
+            } elseif ($blotter->status !== 'Settled') {
+                $validated['settled_at'] = now();
+            }
+        } else {
+            // Clear settled_at when moving away from Settled
+>>>>>>> claude/festive-lovelace-684745
             $validated['settled_at'] = null;
         }
 
