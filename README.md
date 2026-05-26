@@ -236,15 +236,11 @@ April 2025       Business permits, officials, committees, reports, resident port
 May 2025         Appointments queue, portal tracker, email notifications, UX polish
 May 26, 2025     Final submission — all features complete
 ```
-![wave](.github/divider.svg)
 
 <div align="center">
 
-
-
-
 ![wave](.github/readme-wave.svg)
 
-<sub>© 2025 Barangay New Era BMS · IPT Group Project · New Era University Philippines<br/>AnakCo. · Joana Daphne Sy — Scrum Master & Full-Stack Developer · All Rights Reserved.</sub>
+<sub>© 2025 Barangay New Era BMS · IPT Group Project · New Era University <br/>AnakCo. · All Rights Reserved.</sub>
 
 </div>
