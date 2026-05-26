@@ -253,13 +253,14 @@
     }
 
     function updatePortalBadges(data) {
-        setBadge('pblBadge',  data.blotter   || 0);
-        setBadge('pbizBadge', data.business  || 0);
-        // Appointments badge = total of all pending portal submissions
+        // Module sidebar badges show in-progress counts (Active blotter, For Review business)
+        setBadge('pblBadge',  data.blotter_active || 0);
+        setBadge('pbizBadge', data.biz_for_review || 0);
+        // Appointments badge = total Pending (new, not yet triaged)
         var total = (data.documents || 0) + (data.blotter || 0) + (data.business || 0);
         setBadge('portalPendingBadge', total);
 
-        // Also keep the Appointments page tab badges in sync if that page is open
+        // Keep the Appointments page tab badges in sync (show Pending counts per tab)
         var tabBlotter = document.getElementById('tabBadgeBlotter');
         var tabBiz     = document.getElementById('tabBadgeBiz');
         if (tabBlotter) tabBlotter.textContent = data.blotter  || 0;

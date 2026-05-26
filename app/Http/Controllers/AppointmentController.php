@@ -253,11 +253,13 @@ class AppointmentController extends Controller
     public function portalPendingCount()
     {
         return response()->json([
-            // All three use the same logic: count only Pending submissions
-            // (new portal entries staff haven't acted on yet — mirrors Document Issuance)
-            'documents' => DocumentAppointment::where('status', 'Pending')->where('source', 'portal')->count(),
-            'blotter'   => BlotterCase::where('source', 'portal')->where('status', 'Pending')->count(),
-            'business'  => Business::where('source', 'portal')->where('status', 'Pending')->count(),
+            // Pending = new portal submissions not yet acted on (drives Appointments badge)
+            'documents'      => DocumentAppointment::where('status', 'Pending')->where('source', 'portal')->count(),
+            'blotter'        => BlotterCase::where('source', 'portal')->where('status', 'Pending')->count(),
+            'business'       => Business::where('source', 'portal')->where('status', 'Pending')->count(),
+            // In-progress = drives module sidebar badges
+            'blotter_active' => BlotterCase::where('source', 'portal')->where('status', 'Active')->count(),
+            'biz_for_review' => Business::where('source', 'portal')->where('status', 'For Review')->count(),
         ]);
     }
 
