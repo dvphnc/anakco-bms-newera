@@ -79,7 +79,8 @@
       "Bash(del test_blotter_ajax.php test_blotter2.php test_blotter3.php test_blotter4.php)",
       "Bash(Remove-Item -Force \"D:\\\\laragon\\\\www\\\\anakco_bms\\\\test_blotter_ajax.php\",\"D:\\\\laragon\\\\www\\\\anakco_bms\\\\test_blotter2.php\",\"D:\\\\laragon\\\\www\\\\anakco_bms\\\\test_blotter3.php\",\"D:\\\\laragon\\\\www\\\\anakco_bms\\\\test_blotter4.php\" -ErrorAction SilentlyContinue)",
       "Bash(python -c \"import sys,json; tables=[t for t in json.load\\(sys.stdin\\)['tables'] if t['name']=='businesses']; print\\(tables\\)\")",
-      "Bash(git merge *)"
+      "Bash(git merge *)",
+      "Bash(git add *)"
     ]
   }
 }
