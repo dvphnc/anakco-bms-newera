@@ -346,10 +346,14 @@ class ResidentPortalController extends Controller
 
     private function trackBlotterPayload(BlotterCase $c): array
     {
-        $steps     = ['Pending', 'Active', 'Settled'];
+        // Full linear steps — covers all non-terminal statuses
+        $steps     = ['Pending', 'Active', 'Under Investigation', 'Mediated', 'Settled'];
         $stepIndex = array_search($c->status, $steps);
-        if (in_array($c->status, ['Closed', 'Referred to Higher Authority', 'Mediated'])) {
-            $stepIndex = 2;
+
+        // "Referred to Higher Authority" is a terminal branch — treated as step 4 (Settled slot)
+        // so the stepper still shows progress up to the last real step
+        if ($stepIndex === false) {
+            $stepIndex = 4; // end of the line
         }
 
         $logs = BlotterStatusLog::where('blotter_case_id', $c->id)
@@ -377,8 +381,10 @@ class ResidentPortalController extends Controller
             'created_at'       => $c->created_at->format('m/d/Y g:i A'),
             'updated_at'       => $c->updated_at->format('m/d/Y g:i A'),
             'status'           => $c->status,
-            'cancelled'        => $c->status === 'Closed',
-            'step_index'       => $stepIndex === false ? 0 : (int) $stepIndex,
+            // "referred" is a terminal branch, not a cancellation
+            'referred'         => $c->status === 'Referred to Higher Authority',
+            'cancelled'        => false,
+            'step_index'       => (int) $stepIndex,
             'steps'            => $steps,
             'logs'             => $logs,
         ];
