@@ -26,7 +26,7 @@
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
         <a href="<?php echo e(route('blotter.create')); ?>" class="btn btn-primary">
-            <i class="fas fa-file-plus"></i> File Case
+            <i class="fas fa-gavel"></i> File Case
         </a>
     </div>
 </div>
