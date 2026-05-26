@@ -879,18 +879,19 @@
         .flatpickr-current-month .flatpickr-monthDropdown-months {
             display: none !important;
         }
-        /* Custom month button in header */
-        .fp-month-btn {
+        /* ── Custom header buttons (shared base) ── */
+        .fp-month-btn, .fp-year-btn {
             background: none; border: none; cursor: pointer;
             color: #fff; font-weight: 700; font-size: 14px;
             font-family: 'Poppins', sans-serif;
             display: inline-flex; align-items: center; gap: 5px;
-            padding: 2px 4px; border-radius: 4px;
+            padding: 2px 6px; border-radius: 4px;
             transition: background .15s;
         }
-        .fp-month-btn:hover { background: rgba(255,255,255,.15); }
-        /* Month picker panel — fixed to body so it escapes overflow clipping */
-        .fp-month-panel {
+        .fp-month-btn:hover, .fp-year-btn:hover { background: rgba(255,255,255,.15); }
+
+        /* ── Shared picker panel — body-fixed to escape overflow clipping ── */
+        .fp-picker-panel {
             display: none;
             position: fixed;
             background: #fff;
@@ -901,11 +902,19 @@
             padding: 10px 8px 12px;
             min-width: 200px;
         }
-        .fp-month-panel.open { display: block; }
+        .fp-picker-panel.open { display: block; }
+
+        /* ── Month grid ── */
         .fp-month-grid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
         }
-        .fp-month-cell {
+        /* ── Year grid ── */
+        .fp-year-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+            max-height: 180px; overflow-y: auto;
+        }
+        /* ── Shared cell style ── */
+        .fp-picker-cell {
             background: none; border: 1px solid transparent;
             border-radius: 6px; padding: 7px 4px;
             font-size: 12px; font-weight: 500;
@@ -913,21 +922,14 @@
             font-family: 'Poppins', sans-serif;
             text-align: center; transition: all .12s;
         }
-        .fp-month-cell:hover   { background: var(--navy-pale); border-color: var(--navy-border); }
-        .fp-month-cell.current { background: var(--navy); color: #fff; border-color: var(--navy); }
-        /* Year input styling */
-        .flatpickr-current-month input.cur-year {
-            color: #fff !important; font-weight: 700 !important;
-            font-size: 14px !important; padding: 0 2px !important;
-            border-bottom: 1px dashed rgba(255,255,255,.4) !important;
-        }
-        .flatpickr-current-month input.cur-year {
-            color: #fff !important;
-            font-weight: 600 !important;
-            font-size: 14px !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
+        .fp-picker-cell:hover   { background: var(--navy-pale); border-color: var(--navy-border); }
+        .fp-picker-cell.current { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+        /* ── Hide native year input + arrows (replaced by button) ── */
+        .flatpickr-current-month input.cur-year,
+        .flatpickr-current-month .arrowUp,
+        .flatpickr-current-month .arrowDown,
+        .numInputWrapper { display: none !important; }
         .flatpickr-prev-month svg,
         .flatpickr-next-month svg { fill: rgba(255,255,255,.8) !important; }
         .flatpickr-prev-month:hover svg,
