@@ -115,12 +115,11 @@ class BlotterController extends Controller
         }
 
         $incidentTypes = ['Noise Complaint', 'Physical Assault', 'Verbal Abuse', 'Theft', 'Trespassing', 'Domestic Dispute', 'Property Damage', 'Threat', 'Other'];
-        $statuses = ['Active', 'Under Investigation', 'Mediated', 'Settled', 'Closed', 'Referred to Higher Authority'];
+        $statuses = ['Active', 'Under Investigation', 'Mediated', 'Settled', 'Referred to Higher Authority'];
         $summaryCounts = [
-            'Active' => BlotterCase::where('status', 'Active')->count(),
+            'Active'              => BlotterCase::where('status', 'Active')->count(),
             'Under Investigation' => BlotterCase::where('status', 'Under Investigation')->count(),
-            'Settled' => BlotterCase::where('status', 'Settled')->count(),
-            'Closed' => BlotterCase::where('status', 'Closed')->count(),
+            'Settled'             => BlotterCase::where('status', 'Settled')->count(),
         ];
 
         return view('blotter.blotter-index', compact('incidentTypes', 'statuses', 'summaryCounts'));
@@ -181,7 +180,7 @@ class BlotterController extends Controller
     {
         $residents = Resident::active()->orderBy('last_name')->get();
         $incidentTypes = ['Noise Complaint', 'Physical Assault', 'Verbal Abuse', 'Theft', 'Trespassing', 'Domestic Dispute', 'Property Damage', 'Threat', 'Other'];
-        $statuses = ['Active', 'Under Investigation', 'Mediated', 'Settled', 'Closed', 'Referred to Higher Authority'];
+        $statuses = ['Active', 'Under Investigation', 'Mediated', 'Settled', 'Referred to Higher Authority'];
 
         return view('blotter.blotter-edit', compact('blotter', 'residents', 'incidentTypes', 'statuses'));
     }
@@ -202,7 +201,7 @@ class BlotterController extends Controller
             'respondent_contact'     => 'nullable|string|max:20',
             'respondent_resident_id' => 'nullable|exists:residents,id',
             'responding_officer'     => 'nullable|string|max:255',
-            'status'                 => 'required|in:Pending,Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
+            'status'                 => 'required|in:Pending,Active,Under Investigation,Mediated,Settled,Referred to Higher Authority',
             'resolution_notes'       => 'nullable|string',
             'settled_at'             => 'nullable|date',
             'status_message'         => 'nullable|string|max:500',
