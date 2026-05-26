@@ -119,6 +119,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:Admin,Secretary');
     Route::patch('documents/{document}/status', [DocumentController::class, 'quickStatus'])
         ->name('documents.quickStatus')->middleware('role:Admin,Secretary');
+    Route::get('documents/generate-or-number', [DocumentController::class, 'generateOrPreview'])
+        ->name('documents.generateOrNumber')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Blotter Cases — Admin + Secretary only
