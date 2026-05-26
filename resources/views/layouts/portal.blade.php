@@ -883,7 +883,11 @@
             padding: 0 2px !important;
             margin: 0 !important;
             border: none !important;
-            appearance: auto !important;
+            /* Prevent native dropdown from opening and overlapping the calendar */
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            appearance: none !important;
+            pointer-events: none !important;
         }
         .flatpickr-current-month input.cur-year {
             color: #fff !important;
