@@ -581,15 +581,25 @@
 
     function renderStepper(d) {
         if (!d.steps || !d.steps.length) return '';
+        // "Referred to Higher Authority" gets its own banner — no confusing stepper
+        if (d.referred) return '';
 
         var isCancelled = d.cancelled;
 
-        // Per-step custom colors for active state
+        // Per-step custom colors for "current" dot
         var stepColors = {
-            'Pending':    { bg: '#C8861A', border: '#C8861A', shadow: 'rgba(200,134,26,.25)' },
-            'Processing': { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
-            'Ready':      { bg: '#16a34a', border: '#16a34a', shadow: 'rgba(22,163,74,.25)' },
-            'Released':   { bg: '#0D2144', border: '#0D2144', shadow: 'rgba(13,33,68,.25)' },
+            // Document steps
+            'Pending':              { bg: '#C8861A', border: '#C8861A', shadow: 'rgba(200,134,26,.25)' },
+            'Processing':           { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
+            'Ready':                { bg: '#16a34a', border: '#16a34a', shadow: 'rgba(22,163,74,.25)' },
+            'Released':             { bg: '#0D2144', border: '#0D2144', shadow: 'rgba(13,33,68,.25)' },
+            // Blotter steps
+            'Active':               { bg: '#dc2626', border: '#dc2626', shadow: 'rgba(220,38,38,.25)' },
+            'Under Investigation':  { bg: '#d97706', border: '#d97706', shadow: 'rgba(217,119,6,.25)' },
+            'Mediated':             { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
+            'Settled':              { bg: '#16a34a', border: '#16a34a', shadow: 'rgba(22,163,74,.25)' },
+            // Business steps
+            'For Review':           { bg: '#2563eb', border: '#2563eb', shadow: 'rgba(37,99,235,.25)' },
         };
 
         var dots = d.steps.map(function (step, i) {
