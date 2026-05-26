@@ -68,15 +68,15 @@
                 Document Requests
                 <span class="apt-tab-badge" id="tabBadgeDocs">{{ $totalCount }}</span>
             </button>
-            <button class="apt-tab" data-tab="business" onclick="switchTab('business')">
-                <i class="fas fa-store"></i>
-                Business Permits
-                <span class="apt-tab-badge" id="tabBadgeBiz">{{ $bizTotal }}</span>
-            </button>
             <button class="apt-tab" data-tab="blotter" onclick="switchTab('blotter')">
                 <i class="fas fa-shield-halved"></i>
                 Blotter Reports
                 <span class="apt-tab-badge" id="tabBadgeBlotter">{{ $blotterTotal }}</span>
+            </button>
+            <button class="apt-tab" data-tab="business" onclick="switchTab('business')">
+                <i class="fas fa-store"></i>
+                Business Permits
+                <span class="apt-tab-badge" id="tabBadgeBiz">{{ $bizTotal }}</span>
             </button>
         </div>
         <button class="apt-tab-more" id="aptTabMore" onclick="scrollTabBar()" title="Scroll tabs">
