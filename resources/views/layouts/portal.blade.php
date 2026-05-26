@@ -889,18 +889,17 @@
             transition: background .15s;
         }
         .fp-month-btn:hover { background: rgba(255,255,255,.15); }
-        /* Month picker panel */
+        /* Month picker panel — fixed to body so it escapes overflow clipping */
         .fp-month-panel {
             display: none;
-            position: absolute;
-            top: 46px; left: 0; right: 0;
+            position: fixed;
             background: #fff;
             border: 1px solid var(--border);
-            border-top: none;
-            border-radius: 0 0 var(--radius) var(--radius);
-            box-shadow: 0 8px 24px rgba(0,0,0,.15);
-            z-index: 10;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 28px rgba(0,0,0,.18);
+            z-index: 99999;
             padding: 10px 8px 12px;
+            min-width: 200px;
         }
         .fp-month-panel.open { display: block; }
         .fp-month-grid {
@@ -1411,15 +1410,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         renderBtn();
 
-        // ── Month panel ───────────────────────────────────────────
+        // ── Month panel — appended to body to escape overflow clipping ──
         var panel = document.createElement('div');
         panel.className = 'fp-month-panel';
-        cal.style.position = 'relative';   // anchor for absolute panel
-        cal.appendChild(panel);
+        document.body.appendChild(panel);
 
         var grid = document.createElement('div');
         grid.className = 'fp-month-grid';
         panel.appendChild(grid);
+
+        function positionPanel() {
+            var rect = cal.getBoundingClientRect();
+            panel.style.top   = (rect.top + 46 + window.scrollY) + 'px';
+            panel.style.left  = rect.left + 'px';
+            panel.style.width = rect.width + 'px';
+        }
 
         function renderGrid() {
             grid.innerHTML = '';
@@ -1439,18 +1444,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
         btn.addEventListener('click', function (e) {
             e.stopPropagation();
+            if (panel.classList.contains('open')) {
+                panel.classList.remove('open');
+                return;
+            }
             renderGrid();
-            panel.classList.toggle('open');
+            positionPanel();
+            panel.classList.add('open');
         });
 
         // Close panel on outside click
         document.addEventListener('click', function (e) {
-            if (!cal.contains(e.target)) panel.classList.remove('open');
+            if (!panel.contains(e.target) && e.target !== btn) {
+                panel.classList.remove('open');
+            }
         });
 
         // Update button label when arrows change the month
         fp.config.onMonthChange.push(function () {
             renderBtn();
+            panel.classList.remove('open');
+        });
+
+        // Clean up panel when calendar closes
+        fp.config.onClose.push(function () {
             panel.classList.remove('open');
         });
 
