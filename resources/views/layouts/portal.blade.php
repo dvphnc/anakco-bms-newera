@@ -1594,6 +1594,122 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <script>
+// ── Custom portal select dropdowns ──────────────────────────────────
+(function () {
+    function buildCustomSelect(native) {
+        // Wrap native select in a relative container
+        var wrap = document.createElement('div');
+        wrap.className = 'p-select-wrap';
+        native.parentNode.insertBefore(wrap, native);
+        wrap.appendChild(native);
+        native.style.display = 'none'; // hidden; still submits with the form
+
+        // Build trigger button
+        var trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'p-select-trigger';
+        trigger.setAttribute('aria-haspopup', 'listbox');
+
+        var valSpan = document.createElement('span');
+        valSpan.className = 'p-select-val placeholder';
+        var arrow = document.createElement('i');
+        arrow.className = 'fas fa-chevron-down p-select-arrow';
+        trigger.appendChild(valSpan);
+        trigger.appendChild(arrow);
+        wrap.appendChild(trigger);
+
+        // Build dropdown panel (body-fixed)
+        var panel = document.createElement('div');
+        panel.className = 'p-select-panel';
+        var list  = document.createElement('div');
+        list.className = 'p-select-list';
+        panel.appendChild(list);
+        document.body.appendChild(panel);
+
+        // Sync label from native select
+        function syncLabel() {
+            var sel = native.options[native.selectedIndex];
+            if (sel && sel.value !== '') {
+                valSpan.textContent = sel.text;
+                valSpan.classList.remove('placeholder');
+            } else {
+                valSpan.textContent = native.options[0] ? native.options[0].text : '— Select —';
+                valSpan.classList.add('placeholder');
+            }
+        }
+        syncLabel();
+
+        // Build item list
+        function renderList() {
+            list.innerHTML = '';
+            Array.from(native.options).forEach(function (opt) {
+                var item = document.createElement('div');
+                item.className = 'p-select-item'
+                    + (opt.value === '' ? ' is-placeholder' : '')
+                    + (opt.value === native.value ? ' selected' : '');
+                item.textContent = opt.text;
+                item.dataset.value = opt.value;
+                item.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    native.value = opt.value;
+                    native.dispatchEvent(new Event('change', { bubbles: true }));
+                    syncLabel();
+                    closePanel();
+                    // Clear error state if any
+                    trigger.classList.remove('is-invalid');
+                    var errEl = document.getElementById('err-' + native.id);
+                    if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+                });
+                list.appendChild(item);
+            });
+        }
+
+        function positionPanel() {
+            var r = trigger.getBoundingClientRect();
+            panel.style.top   = (r.bottom + window.scrollY) + 'px';
+            panel.style.left  = r.left + 'px';
+            panel.style.width = r.width + 'px';
+        }
+
+        function openPanel() {
+            // Close any other open panels
+            document.querySelectorAll('.p-select-panel.open').forEach(function (p) {
+                p.classList.remove('open');
+            });
+            document.querySelectorAll('.p-select-trigger.open').forEach(function (t) {
+                t.classList.remove('open');
+            });
+            renderList();
+            positionPanel();
+            panel.classList.add('open');
+            trigger.classList.add('open');
+        }
+        function closePanel() {
+            panel.classList.remove('open');
+            trigger.classList.remove('open');
+        }
+
+        trigger.addEventListener('click', function (e) {
+            e.stopPropagation();
+            panel.classList.contains('open') ? closePanel() : openPanel();
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!panel.contains(e.target) && e.target !== trigger) closePanel();
+        });
+
+        // Expose error setter for form validation
+        native._setInvalid = function (msg) { trigger.classList.add('is-invalid'); };
+        native._clearInvalid = function ()  { trigger.classList.remove('is-invalid'); };
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('select.form-control').forEach(buildCustomSelect);
+    });
+})();
+</script>
+
+<script>
 // ── Scroll progress bar ─────────────────────────────────────────────
 (function () {
     var bar = document.getElementById('scroll-progress');
