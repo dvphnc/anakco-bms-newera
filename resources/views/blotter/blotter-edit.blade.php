@@ -263,7 +263,7 @@
         var isClosing  = CLOSING.indexOf(s) !== -1;
         var isTerminal = TERMINAL.indexOf(s) !== -1;
 
-        // Settled date: show for Settled / Closed only
+        // Settled date: show only when status = Settled
         if (settledGroup) settledGroup.style.display = isClosing ? '' : 'none';
 
         // Resolution notes: highlight when terminal status
