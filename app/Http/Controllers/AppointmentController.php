@@ -188,6 +188,51 @@ class AppointmentController extends Controller
         return back()->with('success', "Appointment status updated to {$appointment->status}.");
     }
 
+    /* ─────────────────────────────────────────────────────────────────────
+     |  SERVER-SENT EVENTS — live badge counts (pushes every ~4 s)
+     |  Only sends a new frame when a count actually changes.
+     |────────────────────────────────────────────────────────────────────── */
+    public function ssePortalBadges()
+    {
+        return response()->stream(function () {
+            // Flush any output buffers so headers are sent immediately
+            while (ob_get_level() > 0) ob_end_clean();
+
+            set_time_limit(0);
+            ignore_user_abort(true);
+
+            $last = null;
+
+            while (true) {
+                if (connection_aborted()) break;
+
+                $current = [
+                    'documents' => DocumentAppointment::where('status', 'Pending')->where('source', 'portal')->count(),
+                    'blotter'   => BlotterCase::where('source', 'portal')->where('status', 'Pending')->count(),
+                    'business'  => Business::where('source', 'portal')->where('status', 'Pending')->count(),
+                ];
+
+                // Heartbeat comment keeps connection alive; data only sent on change
+                if ($current !== $last) {
+                    echo 'data: ' . json_encode($current) . "\n\n";
+                    $last = $current;
+                } else {
+                    echo ": heartbeat\n\n";
+                }
+
+                if (ob_get_level() > 0) ob_flush();
+                flush();
+
+                sleep(4);
+            }
+        }, 200, [
+            'Content-Type'      => 'text/event-stream',
+            'Cache-Control'     => 'no-cache, no-store, must-revalidate',
+            'X-Accel-Buffering' => 'no',   // Tell nginx: do not buffer this stream
+            'Connection'        => 'keep-alive',
+        ]);
+    }
+
     public function portalPendingCount()
     {
         return response()->json([
