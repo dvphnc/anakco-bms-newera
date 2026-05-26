@@ -668,6 +668,22 @@
             '<div class="cb-text">' + text + '</div></div>' +
             '</div>';
     }
+    function referredBanner(resolutionNotes) {
+        var noteText = resolutionNotes
+            ? esc(resolutionNotes)
+            : 'The Barangay has completed its process and escalated this case to the appropriate authority.';
+        return '<div class="referred-banner">' +
+            '<div class="rb-icon"><i class="fas fa-arrow-up-right-from-square"></i></div>' +
+            '<div>' +
+                '<div class="rb-title">Case Referred to Higher Authority</div>' +
+                '<div class="rb-text">' + noteText + '</div>' +
+                '<div style="margin-top:.45rem;font-size:.75rem;color:#7c3aed;font-weight:600">' +
+                    '<i class="fas fa-circle-info" style="margin-right:3px"></i>' +
+                    'This case has been escalated to police, courts, or other agencies. Visit the Barangay Hall for further assistance.' +
+                '</div>' +
+            '</div>' +
+            '</div>';
+    }
 
     /* ── Info grids per type ── */
     function infoGridDocument(d) {
@@ -752,7 +768,9 @@
             '</div>';
 
         var banner = '';
-        if (d.cancelled) {
+        if (d.referred) {
+            banner = referredBanner(d.resolution_notes);
+        } else if (d.cancelled) {
             if (d.type === 'blotter') {
                 banner = closedBanner('This blotter case has been closed.', d.resolution_notes || 'The case has been resolved.', 'fa-shield-halved');
             } else if (d.type === 'business') {
