@@ -380,49 +380,160 @@ unset($__errorArgs, $__bag); ?>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('scripts'); ?>
+<style>
+/* ── Live-refresh footer ────────────────────────────────── */
+.live-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+    padding: .55rem 1rem;
+    background: #f9fafb;
+    border-top: 1px solid #f0f1f3;
+    font-size: .7rem; color: #9ca3af;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+.live-dot {
+    display: inline-block; width: 7px; height: 7px;
+    border-radius: 50%; background: #22c55e;
+    margin-right: 4px;
+    animation: livepulse 1.6s ease-in-out infinite;
+}
+@keyframes livepulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:.4; transform:scale(1.4); }
+}
+.live-bar.stopped .live-dot { background:#9ca3af; animation:none; }
+.live-bar button {
+    background: none; border: none; cursor: pointer;
+    font-size: .7rem; color: #6b7280; font-weight: 600; padding: 0;
+}
+.live-bar button:hover { color: var(--navy); }
+/* flash when status changes */
+@keyframes statusFlash {
+    0%   { background: rgba(200,134,26,.18); }
+    100% { background: var(--navy); }
+}
+.result-header.flashing { animation: statusFlash .6s ease-out; }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 (function () {
-    var form      = document.getElementById('trackForm');
-    var input     = document.getElementById('trackInput');
-    var btn       = document.getElementById('trackBtn');
-    var resultDiv = document.getElementById('trackResult');
-    var serverRes = document.getElementById('serverResult');
+    var form         = document.getElementById('trackForm');
+    var input        = document.getElementById('trackInput');
+    var btn          = document.getElementById('trackBtn');
+    var resultDiv    = document.getElementById('trackResult');
+    var serverRes    = document.getElementById('serverResult');
 
     if (!form) return;
     if (serverRes) serverRes.style.display = 'none';
+
+    var POLL_MS     = 15000;   // refresh every 15 s
+    var pollTimer   = null;
+    var lastStatus  = null;
+    var lastChecked = null;
+    var currentNum  = null;
+    var TERMINAL    = ['Released','Cancelled','Settled','Closed','Referred to Higher Authority'];
 
     if (input.value.trim()) doSearch(input.value.trim());
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
+        stopPolling();
+        lastStatus = null;
         doSearch(input.value.trim());
     });
 
+    /* ── One-shot search (shows spinner on button) ───────────── */
     function doSearch(number) {
         if (!number) return;
+        currentNum    = number.toUpperCase();
         btn.disabled  = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching…';
         resultDiv.style.display = 'none';
 
-        axios.get('<?php echo e(route('portal.track.lookup')); ?>', { params: { number: number.toUpperCase() } })
-            .then(function (res) {
-                resultDiv.innerHTML = renderResult(res.data);
-                resultDiv.style.display = 'block';
-            })
-            .catch(function () {
-                resultDiv.innerHTML =
-                    '<div class="not-found">' +
-                    '<div class="nf-icon"><i class="fas fa-wifi"></i></div>' +
-                    '<h3>Connection Error</h3>' +
-                    '<p>Could not reach the server. Please try again.</p>' +
-                    '</div>';
-                resultDiv.style.display = 'block';
-            })
+        fetchStatus(currentNum, true)
             .finally(function () {
                 btn.disabled  = false;
                 btn.innerHTML = '<i class="fas fa-search"></i> Track';
             });
+    }
+
+    /* ── Background silent refresh ───────────────────────────── */
+    function silentRefresh() {
+        if (!currentNum) return;
+        fetchStatus(currentNum, false);
+    }
+
+    /* ── Core fetch ──────────────────────────────────────────── */
+    function fetchStatus(number, isUserTriggered) {
+        return axios.get('<?php echo e(route('portal.track.lookup')); ?>', { params: { number: number } })
+            .then(function (res) {
+                var d = res.data;
+                lastChecked = new Date();
+
+                var statusChanged = d.found && lastStatus !== null && d.status !== lastStatus;
+                lastStatus = d.found ? d.status : null;
+
+                resultDiv.innerHTML = renderResult(d);
+                resultDiv.style.display = 'block';
+
+                if (statusChanged) {
+                    var hdr = resultDiv.querySelector('.result-header');
+                    if (hdr) { hdr.classList.add('flashing'); setTimeout(function(){ hdr.classList.remove('flashing'); }, 700); }
+                }
+
+                // Start / stop polling based on terminal status
+                var terminal = d.found && TERMINAL.indexOf(d.status) !== -1;
+                if (!terminal && d.found) {
+                    startPolling();
+                } else {
+                    stopPolling();
+                    updateLiveBar(true);
+                }
+            })
+            .catch(function () {
+                if (isUserTriggered) {
+                    resultDiv.innerHTML =
+                        '<div class="not-found">' +
+                        '<div class="nf-icon"><i class="fas fa-wifi"></i></div>' +
+                        '<h3>Connection Error</h3>' +
+                        '<p>Could not reach the server. Please try again.</p>' +
+                        '</div>';
+                    resultDiv.style.display = 'block';
+                } else {
+                    // silent fail — just update the timestamp
+                    updateLiveBar(false);
+                }
+            });
+    }
+
+    /* ── Poll management ─────────────────────────────────────── */
+    function startPolling() {
+        stopPolling();
+        pollTimer = setInterval(function () {
+            silentRefresh();
+        }, POLL_MS);
+    }
+    function stopPolling() {
+        if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+    }
+
+    /* ── Update live bar without re-rendering the whole card ─── */
+    function updateLiveBar(stopped) {
+        var bar = resultDiv.querySelector('.live-bar');
+        if (!bar) return;
+        var dot = bar.querySelector('.live-dot');
+        var ts  = bar.querySelector('.live-ts');
+        if (stopped) {
+            bar.classList.add('stopped');
+            if (dot) dot.style.display = 'none';
+        }
+        if (ts && lastChecked) ts.textContent = 'Updated ' + formatAgo(lastChecked);
+    }
+
+    function formatAgo(date) {
+        var s = Math.round((Date.now() - date.getTime()) / 1000);
+        if (s < 5)  return 'just now';
+        if (s < 60) return s + 's ago';
+        return Math.floor(s/60) + 'm ago';
     }
 
     /* ── Helpers ── */
@@ -640,13 +751,44 @@ unset($__errorArgs, $__bag); ?>
 
         var timeline = renderTimeline(d.logs || []);
 
+        var terminal = TERMINAL.indexOf(d.status) !== -1;
+        var liveBar  = terminal
+            ? '<div class="live-bar stopped">' +
+                '<span><span class="live-dot" style="display:none"></span>' +
+                '<span class="live-ts">Status finalised</span></span>' +
+              '</div>'
+            : '<div class="live-bar">' +
+                '<span><span class="live-dot"></span>' +
+                '<span class="live-ts">Live · checking every 15s</span></span>' +
+                '<button type="button" onclick="window._manualRefresh()" title="Refresh now">' +
+                '<i class="fas fa-rotate-right" style="margin-right:3px"></i>Refresh</button>' +
+              '</div>';
+
         return '<div class="result-card">' +
             header +
             '<div class="result-body">' +
                 banner + progress + grid + timeline +
             '</div>' +
+            liveBar +
             '</div>';
     }
+
+    // Expose manual refresh for the "Refresh" button
+    window._manualRefresh = function () {
+        if (!currentNum) return;
+        stopPolling();
+        lastStatus = null;
+        fetchStatus(currentNum, false).then(function () {
+            if (lastStatus && TERMINAL.indexOf(lastStatus) === -1) startPolling();
+        });
+    };
+
+    // Tick the "Updated Xs ago" label every 5 seconds without re-rendering
+    setInterval(function () {
+        if (!lastChecked) return;
+        var bar = resultDiv.querySelector('.live-bar:not(.stopped) .live-ts');
+        if (bar) bar.textContent = 'Live · updated ' + formatAgo(lastChecked);
+    }, 5000);
 })();
 </script>
 <?php $__env->stopPush(); ?>
