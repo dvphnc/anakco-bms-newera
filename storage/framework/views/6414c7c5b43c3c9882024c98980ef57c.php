@@ -155,6 +155,46 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
             </div>
+
+            
+            <div class="form-group" id="pickupDateGroup"
+                 style="<?php echo e(old('status', $document->status) === 'Ready' ? '' : 'display:none'); ?>">
+                <label class="form-label">
+                    <i class="fas fa-calendar-check" style="color:#16a34a;font-size:11px;margin-right:4px"></i>
+                    Pick-up Date
+                    <span class="help-icon" data-tippy-content="Tell the resident when their document will be ready for pick-up. This date will appear in the portal tracker.">?</span>
+                </label>
+                <?php
+                    $existingPickup = null;
+                    if ($document->appointment_id) {
+                        $existingPickup = \App\Models\DocumentAppointment::find($document->appointment_id)?->pickup_date?->format('Y-m-d');
+                    }
+                ?>
+                <input type="date" name="pickup_date" id="pickupDateInput"
+                       class="form-control <?php $__errorArgs = ['pickup_date'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                       value="<?php echo e(old('pickup_date', $existingPickup)); ?>"
+                       style="border-color:#86efac">
+                <div style="font-size:11.5px;color:#16a34a;margin-top:5px;display:flex;align-items:center;gap:4px">
+                    <i class="fas fa-circle-info" style="font-size:10px"></i>
+                    Resident will see this date highlighted in their portal tracker.
+                </div>
+                <?php $__errorArgs = ['pickup_date'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> <?php echo e($message); ?></span><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+            </div>
+
             <div class="form-group">
                 <label class="form-label">
                     Fee (₱)
@@ -401,6 +441,23 @@ unset($__errorArgs, $__bag); ?>
 
     // Resident pre-selection is handled globally in app.blade.php
     // via the data-initial-id / data-initial-text attributes on the select.
+
+    /* ── Pickup Date: show/hide based on status ─────────────── */
+    var statusSelPd   = document.getElementById('statusSelect');
+    var pickupGroup   = document.getElementById('pickupDateGroup');
+    var pickupInput   = document.getElementById('pickupDateInput');
+
+    function syncPickupDateVisibility() {
+        if (!statusSelPd || !pickupGroup) return;
+        var isReady = statusSelPd.value === 'Ready';
+        pickupGroup.style.display = isReady ? '' : 'none';
+        if (!isReady && pickupInput) pickupInput.value = '';
+    }
+
+    if (statusSelPd) {
+        statusSelPd.addEventListener('change', syncPickupDateVisibility);
+    }
+    syncPickupDateVisibility(); // run on load
 
     <?php if($document->source === 'portal' && $document->status !== 'Released'): ?>
     /* ── Status-change message: auto-focus textarea when status changes ─ */

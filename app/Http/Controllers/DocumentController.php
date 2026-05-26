@@ -263,16 +263,19 @@ class DocumentController extends Controller
         }
 
         $statusMessage = $validated['status_message'] ?? null;
+        $pickupDate    = $validated['pickup_date'] ?? null;
         unset($validated['status_message']);  // not a document column
+        unset($validated['pickup_date']);     // lives on appointment, not document
 
         $oldStatus = $document->status;
         $oldData   = $document->getOriginal();
         $document->update($validated);
         $this->logActivity('updated', $document, $oldData, $document->fresh()->toArray());
 
-        // ── Portal notification when status changes ──────────────────
+        // ── Sync appointment (portal) when status or pickup_date changes ──
         $newStatus = $document->status;
-        if ($oldStatus !== $newStatus && $document->source === 'portal' && $document->appointment_id) {
+        $aptChanged = ($oldStatus !== $newStatus) || ($pickupDate !== null && $document->source === 'portal' && $document->appointment_id);
+        if ($aptChanged && $document->source === 'portal' && $document->appointment_id) {
             $appointment = DocumentAppointment::find($document->appointment_id);
             if ($appointment) {
                 // Sync appointment status + store portal message
@@ -282,6 +285,12 @@ class DocumentController extends Controller
                 }
                 if ($statusMessage) {
                     $aptUpdate['notes'] = $statusMessage;
+                }
+                // Pickup date: set when Ready, clear when leaving Ready
+                if ($newStatus === 'Ready') {
+                    $aptUpdate['pickup_date'] = $pickupDate ?: null;
+                } elseif ($newStatus !== 'Ready') {
+                    $aptUpdate['pickup_date'] = null;
                 }
                 DocumentAppointment::where('id', $appointment->id)->update($aptUpdate);
 
