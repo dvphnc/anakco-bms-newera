@@ -210,15 +210,12 @@ class BlotterController extends Controller
         $statusMessage = $validated['status_message'] ?? null;
         unset($validated['status_message']);
 
-        // Auto-set settled_at when moving into a closed status
-        if (in_array($validated['status'], ['Settled', 'Closed'])) {
-            if (! empty($validated['settled_at'])) {
-                // keep the staff-supplied date
-            } elseif (! in_array($blotter->status, ['Settled', 'Closed'])) {
+        // Auto-set settled_at when moving into Settled
+        if ($validated['status'] === 'Settled') {
+            if (empty($validated['settled_at']) && $blotter->status !== 'Settled') {
                 $validated['settled_at'] = now();
             }
         } else {
-            // Clear settled_at when moving away from settled/closed
             $validated['settled_at'] = null;
         }
 
@@ -280,10 +277,10 @@ class BlotterController extends Controller
     public function quickStatus(Request $request, BlotterCase $blotter)
     {
         $validated = $request->validate([
-            'status'           => 'required|in:Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
+            'status'           => 'required|in:Active,Under Investigation,Mediated,Settled,Referred to Higher Authority',
             'resolution_notes' => 'nullable|string|max:1000',
         ]);
-        if (in_array($validated['status'], ['Settled', 'Closed']) && ! in_array($blotter->status, ['Settled', 'Closed'])) {
+        if ($validated['status'] === 'Settled' && $blotter->status !== 'Settled') {
             $validated['settled_at'] = now();
         }
         $old = $blotter->getOriginal();
