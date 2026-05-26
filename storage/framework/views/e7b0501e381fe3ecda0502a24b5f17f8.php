@@ -26,55 +26,10 @@
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
         <a href="<?php echo e(route('businesses.create')); ?>" class="btn btn-primary">
-            <i class="fas fa-file-plus"></i> Issue Permit
+            <i class="fas fa-stamp"></i> Issue Permit
         </a>
     </div>
 </div>
-
-
-<?php
-    $bizAlertCount = ($summaryCounts['Overdue'] > 0 ? 1 : 0) + ($summaryCounts['ExpiringSoon'] > 0 ? 1 : 0);
-?>
-<?php if($bizAlertCount): ?>
-<div class="alert-tray open no-print mb-6">
-    <div class="alert-tray-hdr" onclick="this.closest('.alert-tray').classList.toggle('open')">
-        <i class="fas fa-bell tray-icon"></i>
-        <span><?php echo e($bizAlertCount); ?> Notice<?php echo e($bizAlertCount > 1 ? 's' : ''); ?> — Business Permit Alert<?php echo e($bizAlertCount > 1 ? 's' : ''); ?></span>
-        <i class="fas fa-chevron-down tray-caret"></i>
-    </div>
-    <div class="alert-tray-body">
-
-        <?php if($summaryCounts['Overdue'] > 0): ?>
-        <div class="alert-item alert-permit">
-            <i class="fas fa-triangle-exclamation"></i>
-            <span>
-                <strong><?php echo e($summaryCounts['Overdue']); ?> Active Permit<?php echo e($summaryCounts['Overdue'] > 1 ? 's' : ''); ?> Overdue —</strong>
-                <?php echo e($overdueBusinesses->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(' · ')); ?><?php echo e($summaryCounts['Overdue'] > 3 ? ' +' . ($summaryCounts['Overdue'] - 3) . ' more' : ''); ?>
-
-            </span>
-            <button class="alert-link" style="background:none;cursor:pointer" onclick="toggleFilters('businesses');quickFilter('expiryFilter','expired')">
-                <i class="fas fa-filter" style="font-size:11px;margin-right:4px"></i> Show Overdue
-            </button>
-        </div>
-        <?php endif; ?>
-
-        <?php if($summaryCounts['ExpiringSoon'] > 0): ?>
-        <div class="alert-item alert-senior">
-            <i class="fas fa-clock"></i>
-            <span>
-                <strong><?php echo e($summaryCounts['ExpiringSoon']); ?> Permit<?php echo e($summaryCounts['ExpiringSoon'] > 1 ? 's' : ''); ?> Expiring Within 30 Days —</strong>
-                <?php echo e($expiringBusinesses->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(' · ')); ?><?php echo e($summaryCounts['ExpiringSoon'] > 3 ? ' +' . ($summaryCounts['ExpiringSoon'] - 3) . ' more' : ''); ?>
-
-            </span>
-            <button class="alert-link" style="background:none;cursor:pointer" onclick="toggleFilters('businesses');quickFilter('expiryFilter','expiring_soon')">
-                <i class="fas fa-filter" style="font-size:11px;margin-right:4px"></i> Show Expiring
-            </button>
-        </div>
-        <?php endif; ?>
-
-    </div>
-</div>
-<?php endif; ?>
 
 
 <div class="grid-4 mb-6">
