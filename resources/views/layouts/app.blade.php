@@ -777,7 +777,11 @@
 
         $('.select2-resident').each(function() {
             if ($(this).data('select2')) return;
-            $(this).select2({
+            var $el      = $(this);
+            var preId    = $el.data('initial-id');
+            var preText  = $el.data('initial-text');
+
+            $el.select2({
                 ajax: {
                     url: '/select2/residents',
                     dataType: 'json',
@@ -795,7 +799,7 @@
                     }
                 },
                 minimumInputLength: 1,
-                placeholder: $(this).data('placeholder') || 'Type to search resident...',
+                placeholder: $el.data('placeholder') || 'Type to search resident...',
                 allowClear: true,
                 language: {
                     inputTooShort: function() { return 'Type at least 1 character to search...'; },
@@ -803,6 +807,18 @@
                     noResults: function() { return 'No residents found'; }
                 }
             });
+
+            // Pre-populate a linked resident immediately after init.
+            // Works for both edit forms (server-rendered option) and fallback (text only).
+            if (preId) {
+                if ($el.find('option[value="' + preId + '"]').length) {
+                    // Option already in DOM (server-rendered) — just set the value
+                    $el.val(String(preId)).trigger('change');
+                } else if (preText) {
+                    // Option was cleared — re-inject it (e.g. Select2 on a fresh element)
+                    $el.append(new Option(preText, String(preId), true, true)).trigger('change');
+                }
+            }
         });
     });
     </script>
