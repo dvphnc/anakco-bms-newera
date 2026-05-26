@@ -268,5 +268,54 @@ $(function () {
         allowClear: true
     }));
 });
+
+/* ── Photo drag-and-drop ── */
+(function () {
+    var zone  = document.getElementById('photoDropZone');
+    var input = document.getElementById('photoFileInput');
+
+    zone.addEventListener('click', function () { input.click(); });
+
+    zone.addEventListener('dragover', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = 'var(--navy)';
+        zone.style.backgroundColor = 'rgba(13,33,68,.04)';
+    });
+    zone.addEventListener('dragleave', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = '';
+        zone.style.backgroundColor = '';
+    });
+    zone.addEventListener('drop', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = '';
+        zone.style.backgroundColor = '';
+        var files = e.dataTransfer.files;
+        if (files.length) { var dt = new DataTransfer(); dt.items.add(files[0]); input.files = dt.files; showResidentPhoto(files[0]); }
+    });
+    input.addEventListener('change', function () { if (input.files[0]) showResidentPhoto(input.files[0]); });
+
+    function showResidentPhoto(file) {
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+            var preview = document.getElementById('photoDropPreview');
+            preview.src = ev.target.result;
+            preview.style.display = 'block';
+            document.getElementById('photoDropIcon').style.display = 'none';
+            document.getElementById('photoDropName').textContent = '✔ ' + file.name;
+            document.getElementById('photoDropName').style.display = 'block';
+            document.getElementById('photoClearBtn').style.display = 'inline-block';
+        };
+        reader.readAsDataURL(file);
+    }
+}());
+function clearResidentPhoto() {
+    document.getElementById('photoFileInput').value = '';
+    document.getElementById('photoDropPreview').style.display = 'none';
+    document.getElementById('photoDropPreview').src = '';
+    document.getElementById('photoDropIcon').style.display = 'block';
+    document.getElementById('photoDropName').style.display = 'none';
+    document.getElementById('photoClearBtn').style.display = 'none';
+}
 </script>
 @endpush
