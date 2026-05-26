@@ -91,9 +91,7 @@
                 @else
                     <select name="status" id="statusSelect" class="form-control @error('status') is-invalid @enderror">
                         @foreach(\App\Models\Document::$statuses as $s)
-                            @if($s !== 'Released' || $document->status === 'Released')
-                                <option value="{{ $s }}" {{ old('status', $document->status) === $s ? 'selected' : '' }}>{{ $s }}</option>
-                            @endif
+                            <option value="{{ $s }}" {{ old('status', $document->status) === $s ? 'selected' : '' }}>{{ $s }}</option>
                         @endforeach
                     </select>
                 @endif
