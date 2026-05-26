@@ -191,16 +191,11 @@ class AppointmentController extends Controller
     public function portalPendingCount()
     {
         return response()->json([
+            // All three use the same logic: count only Pending submissions
+            // (new portal entries staff haven't acted on yet — mirrors Document Issuance)
             'documents' => DocumentAppointment::where('status', 'Pending')->where('source', 'portal')->count(),
-            // Only count blotter cases that have been activated (not still sitting as Pending in Appointments)
-            'blotter'   => BlotterCase::where('source', 'portal')
-                ->where('status', '!=', 'Pending')
-                ->whereNotIn('status', ['Settled', 'Closed'])
-                ->count(),
-            // Count portal business applications that are still pending (not yet issued)
-            'business'  => Business::where('source', 'portal')
-                ->whereIn('status', ['Pending', 'For Review'])
-                ->count(),
+            'blotter'   => BlotterCase::where('source', 'portal')->where('status', 'Pending')->count(),
+            'business'  => Business::where('source', 'portal')->where('status', 'Pending')->count(),
         ]);
     }
 
