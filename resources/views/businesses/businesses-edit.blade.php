@@ -202,7 +202,75 @@
 </form>
 
 @push('scripts')
+<style>
+#orAutoBtn:hover { background: rgba(13,33,68,.14) !important; }
+</style>
 <script>
+/* ── OR auto-generate (same pattern as Document edit) ─────── */
+(function () {
+    var _generateOrUrl = '{{ route('documents.generateOrNumber') }}';
+    var feeInput = document.getElementById('feeInput');
+    var orInput  = document.getElementById('orInput');
+    var orBtn    = document.getElementById('orAutoBtn');
+    var orHint   = document.getElementById('orAutoHint');
+
+    function syncOrUi() {
+        var fee   = parseFloat(feeInput ? feeInput.value : 0) || 0;
+        var orVal = orInput ? orInput.value.trim() : '';
+        if (fee > 0 && !orVal) {
+            if (orBtn)  orBtn.style.display  = '';
+            if (orHint) orHint.style.display = '';
+        } else {
+            if (orBtn)  orBtn.style.display  = 'none';
+            if (orHint) orHint.style.display = 'none';
+        }
+    }
+    if (feeInput) feeInput.addEventListener('input', syncOrUi);
+    if (orInput)  orInput.addEventListener('input', syncOrUi);
+    syncOrUi();
+
+    window.autoFillOrNumber = function () {
+        if (orBtn) { orBtn.disabled = true; orBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:10px"></i>'; }
+        axios.get(_generateOrUrl)
+            .then(function (res) {
+                if (res.data.or_number) {
+                    orInput.value = res.data.or_number;
+                    syncOrUi();
+                }
+            })
+            .catch(function () { alert('Could not generate OR number. Please try again.'); })
+            .finally(function () {
+                if (orBtn) { orBtn.disabled = false; orBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles" style="font-size:10px"></i> Auto-fill'; }
+            });
+    };
+}());
+
+/* ── Status-dependent permit dates + portal message ──────── */
+(function () {
+    var statusSel   = document.getElementById('statusSelect');
+    var datesGroup  = document.getElementById('permitDatesGroup');
+    var msgArea     = document.getElementById('statusMessageArea');
+    var origStatus  = '{{ $business->getRawOriginal('status') }}';
+
+    function syncStatusUi() {
+        if (!statusSel) return;
+        var s = statusSel.value;
+        if (datesGroup) datesGroup.style.display = (s === 'Active') ? '' : 'none';
+    }
+
+    if (statusSel) {
+        statusSel.addEventListener('change', function () {
+            syncStatusUi();
+            if (msgArea && statusSel.value !== origStatus) {
+                msgArea.closest('.form-group').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                setTimeout(function () { msgArea.focus(); }, 250);
+            }
+        });
+    }
+    syncStatusUi();
+}());
+
+/* ── Owner resident auto-fill ─────────────────────────────── */
 $('#owner_resident_id').on('select2:select', function(e) {
     const text = e.params.data.text;
     const parts = text.split(' — ');
