@@ -460,8 +460,8 @@
         </div>
     </div>
     <div class="rpt-fullwidth">
-        <span class="lbl">Incident Location</span>
-        <span class="val">{{ $blotter->incident_location ?? '—' }}</span>
+        <div class="lbl">Incident Location</div>
+        <div class="val">{{ $blotter->incident_location ?? '—' }}</div>
     </div>
 
     {{-- Parties --}}
@@ -523,8 +523,8 @@
     </div>
     @if($blotter->resolution_notes)
     <div class="rpt-fullwidth">
-        <span class="lbl">Resolution Notes</span>
-        <span class="val">{{ $blotter->resolution_notes }}</span>
+        <div class="lbl">Resolution Notes</div>
+        <div class="val">{{ $blotter->resolution_notes }}</div>
     </div>
     @endif
     @endif
