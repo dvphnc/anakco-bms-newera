@@ -131,8 +131,8 @@
                 <div style="font-size:13px;color:#6b7280;margin-bottom:4px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
                 <div style="font-size:12px;color:#9ca3af">JPG, PNG, PDF, DOC — max 5MB</div>
                 <div id="blotterDropName" style="display:none;margin-top:8px;font-size:13px;font-weight:600;color:var(--navy)"></div>
-                <input type="file" id="blotterFileInput" name="attachment" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" style="display:none">
             </div>
+            <input type="file" id="blotterFileInput" name="attachment" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" style="display:none">
             <button type="button" id="blotterClearBtn" onclick="clearBlotterFile()" style="display:none;margin-top:8px;background:none;border:none;color:#c0392b;font-size:13px;cursor:pointer;padding:0"><i class="fas fa-times"></i> Remove file</button>
             <div class="form-error" id="err-attachment" style="display:none"></div>
         </div>
@@ -158,49 +158,50 @@
 
 @push('scripts')
 <script>
+/* ── File attachment drag-and-drop (global so onclick can reach helpers) ── */
+(function () {
+    var zone  = document.getElementById('blotterDropZone');
+    var input = document.getElementById('blotterFileInput');
+    if (!zone || !input) return;
+
+    zone.addEventListener('click', function () { input.click(); });
+
+    zone.addEventListener('dragover', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = 'var(--navy)';
+        zone.style.backgroundColor = 'rgba(13,33,68,.04)';
+    });
+    zone.addEventListener('dragleave', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = '';
+        zone.style.backgroundColor = '';
+    });
+    zone.addEventListener('drop', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = '';
+        zone.style.backgroundColor = '';
+        var files = e.dataTransfer.files;
+        if (files.length) { var dt = new DataTransfer(); dt.items.add(files[0]); input.files = dt.files; showBlotterFile(files[0]); }
+    });
+    input.addEventListener('change', function () { if (input.files[0]) showBlotterFile(input.files[0]); });
+}());
+
+function showBlotterFile(file) {
+    document.getElementById('blotterDropName').textContent = '✔ ' + file.name;
+    document.getElementById('blotterDropName').style.display = 'block';
+    document.getElementById('blotterDropIcon').style.display = 'none';
+    document.getElementById('blotterClearBtn').style.display = 'inline-block';
+}
+function clearBlotterFile() {
+    document.getElementById('blotterFileInput').value = '';
+    document.getElementById('blotterDropName').style.display = 'none';
+    document.getElementById('blotterDropIcon').style.display = 'block';
+    document.getElementById('blotterClearBtn').style.display = 'none';
+}
+
+/* ── Form logic ── */
 (function () {
     ['portal_name','portal_contact','portal_email'].forEach(function (k) { localStorage.removeItem(k); });
-
-    /* ── File attachment drag-and-drop ── */
-    (function () {
-        var zone  = document.getElementById('blotterDropZone');
-        var input = document.getElementById('blotterFileInput');
-        if (!zone || !input) return;
-
-        zone.addEventListener('click', function () { input.click(); });
-
-        zone.addEventListener('dragover', function (e) {
-            e.preventDefault(); e.stopPropagation();
-            zone.style.borderColor     = 'var(--navy)';
-            zone.style.backgroundColor = 'rgba(13,33,68,.04)';
-        });
-        zone.addEventListener('dragleave', function (e) {
-            e.preventDefault(); e.stopPropagation();
-            zone.style.borderColor     = '';
-            zone.style.backgroundColor = '';
-        });
-        zone.addEventListener('drop', function (e) {
-            e.preventDefault(); e.stopPropagation();
-            zone.style.borderColor     = '';
-            zone.style.backgroundColor = '';
-            var files = e.dataTransfer.files;
-            if (files.length) { var dt = new DataTransfer(); dt.items.add(files[0]); input.files = dt.files; showBlotterFile(files[0]); }
-        });
-        input.addEventListener('change', function () { if (input.files[0]) showBlotterFile(input.files[0]); });
-    }());
-
-    function showBlotterFile(file) {
-        document.getElementById('blotterDropName').textContent = '✔ ' + file.name;
-        document.getElementById('blotterDropName').style.display = 'block';
-        document.getElementById('blotterDropIcon').style.display = 'none';
-        document.getElementById('blotterClearBtn').style.display = 'inline-block';
-    }
-    function clearBlotterFile() {
-        document.getElementById('blotterFileInput').value = '';
-        document.getElementById('blotterDropName').style.display = 'none';
-        document.getElementById('blotterDropIcon').style.display = 'block';
-        document.getElementById('blotterClearBtn').style.display = 'none';
-    }
 
     function clearErrors() {
         document.querySelectorAll('.form-error[id^="err-"]').forEach(function (el) {

@@ -135,8 +135,8 @@
                 <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
                 <div style="font-size:12px;color:var(--text-subtle)">JPG, PNG, WEBP — max 2MB</div>
                 <div id="photoDropName" style="display:none;margin-top:6px;font-size:13px;font-weight:600;color:var(--navy)"></div>
-                <input type="file" name="photo_path" id="photo-upload" accept="image/*" style="display:none">
             </div>
+            <input type="file" name="photo_path" id="photo-upload" accept="image/*" style="display:none">
             <button type="button" id="photoClearBtn" onclick="clearOfficialPhoto()" style="display:none;margin-top:6px;background:none;border:none;color:var(--danger,#c0392b);font-size:13px;cursor:pointer;padding:0"><i class="fas fa-times"></i> Remove new photo</button>
         </div>
 
