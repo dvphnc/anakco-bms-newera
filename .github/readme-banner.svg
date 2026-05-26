@@ -120,7 +120,7 @@
     font-family="'Helvetica Neue', Arial, sans-serif"
     font-size="76" font-weight="200" letter-spacing="18"
     fill="url(#titleShimmer)" opacity="0">
-    BMS
+    Barangay Management System
     <animate attributeName="opacity" from="0" to="1" dur="1s" begin="0.5s" fill="freeze"/>
   </text>
 
