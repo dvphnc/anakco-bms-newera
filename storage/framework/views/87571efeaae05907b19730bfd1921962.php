@@ -205,6 +205,7 @@
             <table id="bizTable" style="width:100%">
                 <thead>
                     <tr>
+                        <th>BP Number</th>
                         <th>Owner</th>
                         <th>Business</th>
                         <th>Type</th>
@@ -271,6 +272,7 @@
             <table id="blotterTable" style="width:100%">
                 <thead>
                     <tr>
+                        <th>Case Number</th>
                         <th>Complainant</th>
                         <th>Incident Type</th>
                         <th>Location / Date</th>
@@ -849,6 +851,7 @@ $(document).ready(function () {
             }
         },
         columns: [
+            { data: 'number_col',    name: 'permit_number',  width: '130px' },
             { data: 'owner_col',     name: 'owner_name',     orderable: false },
             { data: 'biz_col',       name: 'business_name' },
             { data: 'type_col',      name: 'business_type',  orderable: false, width: '120px' },
@@ -895,6 +898,7 @@ $(document).ready(function () {
             }
         },
         columns: [
+            { data: 'number_col',      name: 'case_number',      width: '130px' },
             { data: 'complainant_col', name: 'complainant_name', orderable: false },
             { data: 'type_col',        name: 'incident_type',    orderable: false, width: '130px' },
             { data: 'incident_col',    name: 'incident_location', orderable: false },
