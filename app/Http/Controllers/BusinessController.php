@@ -175,8 +175,8 @@ class BusinessController extends Controller
         }
 
         $businessTypes = ['Sari-Sari Store', 'Restaurant / Carinderia', 'Salon / Barbershop', 'Repair Shop', 'Pharmacy / Drugstore', 'Laundry', 'Printing / Photocopy', 'Retail Store', 'Online Selling / E-commerce', 'Other'];
-        // Base scope: exclude portal submissions that haven't been issued yet
-        $issued = fn ($q) => $q->where(fn ($q2) => $q2->where('source', '!=', 'portal')->orWhereNotNull('permit_date'));
+        // Base scope: exclude portal submissions that are still Pending
+        $issued = fn ($q) => $q->where(fn ($q2) => $q2->where('source', '!=', 'portal')->orWhere('status', '!=', 'Pending'));
 
         $summaryCounts = [
             'Active'      => Business::where('status', 'Active')->tap($issued)->count(),
