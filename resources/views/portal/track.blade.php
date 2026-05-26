@@ -210,10 +210,12 @@
 .tl-dot-ready      { border-color: #16a34a;      background: rgba(22,163,74,.1); }
 .tl-dot-released   { border-color: #6b7280;      background: rgba(107,114,128,.1); }
 .tl-dot-cancelled  { border-color: #dc2626;      background: rgba(220,38,38,.1); }
-.tl-dot-active     { border-color: #dc2626;      background: rgba(220,38,38,.1); }
-.tl-dot-settled    { border-color: #16a34a;      background: rgba(22,163,74,.1); }
-.tl-dot-mediated   { border-color: #2563eb;      background: rgba(37,99,235,.1); }
-.tl-dot-closed     { border-color: #6b7280;      background: rgba(107,114,128,.1); }
+.tl-dot-active                      { border-color: #dc2626;  background: rgba(220,38,38,.1); }
+.tl-dot-settled                     { border-color: #16a34a;  background: rgba(22,163,74,.1); }
+.tl-dot-mediated                    { border-color: #2563eb;  background: rgba(37,99,235,.1); }
+.tl-dot-closed                      { border-color: #6b7280;  background: rgba(107,114,128,.1); }
+.tl-dot-under-investigation         { border-color: #d97706;  background: rgba(217,119,6,.1); }
+.tl-dot-referred-to-higher-authority{ border-color: #7c3aed;  background: rgba(124,58,237,.1); }
 
 .tl-card {
     background: #fff;
