@@ -104,13 +104,13 @@
         <div class="form-section-title">Photo</div>
         <div class="form-group" style="max-width:320px">
             <label class="form-label">Official Photo <span style="color:#9ca3af;font-weight:400">(optional)</span></label>
-            <div id="photoDropZone" style="border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s">
+            <label for="photo-upload" id="photoDropZone" style="display:block;border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s">
                 <i class="fas fa-camera" id="photoDropIcon" style="font-size:28px;color:var(--text-muted);margin-bottom:8px;display:block"></i>
                 <img id="photoDropPreview" src="" alt="" style="display:none;width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 8px;border:2px solid var(--border)">
                 <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
                 <div style="font-size:12px;color:var(--text-subtle)">JPG, PNG, WEBP — max 2MB</div>
                 <div id="photoDropName" style="display:none;margin-top:8px;font-size:13px;font-weight:600;color:var(--navy)"></div>
-            </div>
+            </label>
             <input type="file" id="photo-upload" name="photo_path" accept="image/*" style="display:none">
             <button type="button" id="photoClearBtn" onclick="clearOfficialPhoto()" style="display:none;margin-top:8px;background:none;border:none;color:var(--danger,#c0392b);font-size:13px;cursor:pointer;padding:0"><i class="fas fa-times"></i> Remove photo</button>
         </div>
@@ -181,7 +181,7 @@ $(function () {
     var input = document.getElementById('photo-upload');
     if (!zone || !input) return;
 
-    zone.addEventListener('click', function () { input.click(); });
+    /* click-to-browse handled natively by <label for="photo-upload"> */
 
     zone.addEventListener('dragover', function (e) {
         e.preventDefault(); e.stopPropagation();
@@ -200,7 +200,7 @@ $(function () {
         var files = e.dataTransfer.files;
         if (files.length) { var dt = new DataTransfer(); dt.items.add(files[0]); input.files = dt.files; showOfficialPhoto(files[0]); }
     });
-    input.addEventListener('change', function () { if (input.files[0]) showOfficialPhoto(input.files[0]); });
+    input.addEventListener('change', function () { if (this.files[0]) showOfficialPhoto(this.files[0]); });
 }());
 
 function showOfficialPhoto(file) {

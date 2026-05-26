@@ -290,8 +290,9 @@ $(function () {
                 $('#current-photo-preview').css('opacity', '1');
             }
         });
+        /* showResidentPhoto is called by the native change listener in the IIFE below */
         $photoInput.on('change', function () {
-            if (this.value) { $removeCb.prop('checked', false).trigger('change'); showResidentPhoto(this.files[0]); }
+            if (this.value) $removeCb.prop('checked', false).trigger('change');
         });
     }
 
