@@ -826,6 +826,23 @@
         }
 
     </style>
+    {{-- Flatpickr — forces MM/DD/YYYY on all date inputs regardless of OS locale --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        /* Match portal .form-control styling on the Flatpickr alt input */
+        .flatpickr-input.form-control[readonly] { background: #fff; cursor: pointer; }
+        .flatpickr-calendar { font-family: 'Poppins', sans-serif; border-radius: var(--radius); box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
+        .flatpickr-day.selected, .flatpickr-day.selected:hover { background: var(--navy); border-color: var(--navy); }
+        .flatpickr-day:hover { background: var(--navy-pale); }
+        .flatpickr-months .flatpickr-month { background: var(--navy); color: #fff; border-radius: var(--radius) var(--radius) 0 0; }
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year { color: #fff; }
+        .flatpickr-weekday { color: var(--navy); font-weight: 600; }
+        .flatpickr-prev-month svg, .flatpickr-next-month svg { fill: #fff; }
+        .flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg { fill: var(--gold); }
+        .flatpickr-day.today { border-color: var(--gold); }
+        .flatpickr-day.today:hover { background: var(--gold-pale); }
+    </style>
     @stack('styles')
 </head>
 <body>
