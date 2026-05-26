@@ -344,32 +344,6 @@ class ResidentPortalController extends Controller
         ];
     }
 
-    private function trackBusinessPayload(Business $b): array
-    {
-        $steps     = ['Pending', 'For Review', 'Active'];
-        $stepIndex = array_search($b->status, $steps);
-
-        return [
-            'found'            => true,
-            'type'             => 'business',
-            'reference_number' => $b->permit_number,
-            'owner_name'       => $b->owner_name,
-            'business_name'    => $b->business_name,
-            'business_type'    => $b->business_type,
-            'business_address' => $b->business_address,
-            'appointment_date' => $b->preferred_date?->format('m/d/Y'),
-            'permit_date'      => $b->permit_date?->format('m/d/Y'),
-            'expiry_date'      => $b->expiry_date?->format('m/d/Y'),
-            'created_at'       => $b->created_at->format('m/d/Y g:i A'),
-            'updated_at'       => $b->updated_at->format('m/d/Y g:i A'),
-            'status'           => $b->status,
-            'cancelled'        => $b->status === 'Cancelled',
-            'step_index'       => $stepIndex === false ? -1 : (int) $stepIndex,
-            'steps'            => $steps,
-            'logs'             => [],
-        ];
-    }
-
     private function trackBlotterPayload(BlotterCase $c): array
     {
         $steps     = ['Pending', 'Active', 'Settled'];

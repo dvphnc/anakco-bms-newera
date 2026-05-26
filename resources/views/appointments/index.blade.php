@@ -210,6 +210,7 @@
             <table id="bizTable" style="width:100%">
                 <thead>
                     <tr>
+                        <th>BP Number</th>
                         <th>Owner</th>
                         <th>Business</th>
                         <th>Type</th>
