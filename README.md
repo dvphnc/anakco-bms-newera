@@ -241,7 +241,7 @@ May 26, 2025     Final submission — all features complete
 
 <div align="center">
 
-![wave](.github/readme-wave.svg)
+![wave](.github/divider.svg)
 
 <sub>© 2025 Barangay New Era BMS · IPT Group Project · New Era University Philippines<br/>AnakCo. · Joana Daphne Sy — Scrum Master & Full-Stack Developer · All Rights Reserved.</sub>
 
