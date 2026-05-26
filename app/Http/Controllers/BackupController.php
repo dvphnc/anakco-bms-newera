@@ -175,24 +175,49 @@ class BackupController extends Controller
             $mysql = $this->resolveMysqlBin('mysql');
             if (! $mysql) {
                 return back()->with('error',
-                    'mysql client not found. Ensure Laragon MySQL bin is in PATH, or add MYSQL_PATH to your .env.');
+                    'mysql client not found. Add MYSQL_PATH to your .env pointing to mysql.exe.');
             }
 
-            $env     = PHP_OS_FAMILY === 'Windows' ? "set MYSQL_PWD={$pass} && " : "MYSQL_PWD={$pass} ";
-            $command = $env.sprintf(
-                '%s --host=%s --port=%s --user=%s %s < %s 2>&1',
-                escapeshellarg($mysql),
-                escapeshellarg($host),
-                escapeshellarg($port),
-                escapeshellarg($user),
-                escapeshellarg($db),
-                escapeshellarg($path)
+            // Temp credentials file — MYSQL_PWD is not supported on Windows MySQL 8
+            $tmpCnf = tempnam(sys_get_temp_dir(), 'bms_mysql_') . '.cnf';
+            file_put_contents($tmpCnf,
+                "[client]\n" .
+                "host={$host}\n" .
+                "port={$port}\n" .
+                "user={$user}\n" .
+                "password={$pass}\n"
             );
 
-            exec($command, $output, $returnCode);
+            $command = sprintf(
+                '%s --defaults-extra-file=%s %s',
+                escapeshellarg($mysql),
+                escapeshellarg($tmpCnf),
+                escapeshellarg($db)
+            );
+
+            $descriptors = [
+                0 => ['file', $path, 'r'],  // stdin  ← SQL file
+                1 => ['pipe', 'w'],          // stdout
+                2 => ['pipe', 'w'],          // stderr → error messages
+            ];
+
+            $proc = proc_open($command, $descriptors, $pipes);
+
+            if (! is_resource($proc)) {
+                @unlink($tmpCnf);
+                return back()->with('error', 'Restore failed: could not start mysql process.');
+            }
+
+            stream_get_contents($pipes[1]);
+            $errContent = stream_get_contents($pipes[2]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            $returnCode = proc_close($proc);
+            @unlink($tmpCnf);
 
             if ($returnCode !== 0) {
-                return back()->with('error', 'Restore failed: '.implode(' ', array_slice($output, 0, 5)));
+                $detail = $errContent ? trim(substr($errContent, 0, 300)) : 'unknown error';
+                return back()->with('error', 'Restore failed: '.$detail);
             }
 
             return back()->with('success', "Database restored from: {$filename}");
