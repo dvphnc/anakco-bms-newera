@@ -98,7 +98,7 @@
                   style="display:none;background:var(--crimson);color:#fff;font-size:9px;
                          font-weight:700;padding:1px 6px;border-radius:99px;min-width:18px;
                          text-align:center;line-height:16px;margin-left:auto"
-                  title="Portal document requests pending"></span>
+                  title="Total portal submissions pending (documents + blotter + business)"></span>
         </a>
 
         <a href="{{ route('portal.index') }}" target="_blank"
@@ -253,9 +253,11 @@
     }
 
     function updatePortalBadges(data) {
-        setBadge('pblBadge',           data.blotter   || 0);
-        setBadge('pbizBadge',          data.business  || 0);
-        setBadge('portalPendingBadge', data.documents || 0);
+        setBadge('pblBadge',  data.blotter   || 0);
+        setBadge('pbizBadge', data.business  || 0);
+        // Appointments badge = total of all pending portal submissions
+        var total = (data.documents || 0) + (data.blotter || 0) + (data.business || 0);
+        setBadge('portalPendingBadge', total);
 
         // Also keep the Appointments page tab badges in sync if that page is open
         var tabBlotter = document.getElementById('tabBadgeBlotter');
