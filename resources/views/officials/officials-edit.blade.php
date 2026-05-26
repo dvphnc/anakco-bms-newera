@@ -129,15 +129,15 @@
             </div>
             @endif
             <label class="form-label">Upload New Photo</label>
-            <label for="photo-upload" id="photoDropZone" style="display:block;border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;max-width:280px">
-                <i class="fas fa-camera" id="photoDropIcon" style="font-size:24px;color:var(--text-muted);margin-bottom:6px;display:block"></i>
-                <img id="photoDropPreview" src="" alt="" style="display:none;width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto 6px;border:2px solid var(--border)">
-                <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
-                <div style="font-size:12px;color:var(--text-subtle)">JPG, PNG, WEBP — max 2MB</div>
-                <div id="photoDropName" style="display:none;margin-top:6px;font-size:13px;font-weight:600;color:var(--navy)"></div>
+            <label for="photo-upload" id="photoDropZone" style="display:block;border:2px dashed var(--border);border-radius:var(--radius);padding:18px;text-align:center;cursor:pointer;transition:border-color .2s,border-style .2s,background .2s;max-width:260px">
+                <i class="fas fa-camera" id="photoDropIcon" style="font-size:22px;color:var(--text-muted);margin-bottom:6px;display:block"></i>
+                <img id="photoDropPreview" src="" alt="" style="display:none;width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto 8px;border:2px solid var(--border)">
+                <div id="photoDropHint" style="font-size:13px;color:var(--text-muted);margin-bottom:3px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
+                <div id="photoDropSub" style="font-size:12px;color:var(--text-subtle)">JPG, PNG, WEBP — max 2MB</div>
+                <div id="photoDropName" style="display:none;margin-top:4px;font-size:13px;font-weight:600;color:var(--navy)"></div>
             </label>
             <input type="file" name="photo_path" id="photo-upload" accept="image/*" style="display:none">
-            <button type="button" id="photoClearBtn" onclick="clearOfficialPhoto()" style="display:none;margin-top:6px;background:none;border:none;color:var(--danger,#c0392b);font-size:13px;cursor:pointer;padding:0"><i class="fas fa-times"></i> Remove new photo</button>
+            <button type="button" id="photoClearBtn" onclick="clearOfficialPhoto()" style="display:none;margin-top:8px;width:260px;max-width:100%;background:none;border:1px solid var(--danger,#e53e3e);border-radius:var(--radius-sm,6px);color:var(--danger,#c0392b);font-size:12px;cursor:pointer;padding:5px 10px"><i class="fas fa-times"></i> Remove new photo</button>
         </div>
 
     </div>
