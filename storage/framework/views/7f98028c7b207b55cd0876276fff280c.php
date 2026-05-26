@@ -1646,7 +1646,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var item = document.createElement('div');
                 item.className = 'p-select-item'
                     + (opt.value === '' ? ' is-placeholder' : '')
-                    + (opt.value === native.value ? ' selected' : '');
+                    + (opt.value !== '' && opt.value === native.value ? ' selected' : '');
                 item.textContent = opt.text;
                 item.dataset.value = opt.value;
                 item.addEventListener('click', function (e) {
@@ -1666,7 +1666,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function positionPanel() {
             var r = trigger.getBoundingClientRect();
-            panel.style.top   = (r.bottom + window.scrollY) + 'px';
+            panel.style.top   = r.bottom + 'px';   // fixed = viewport coords, no scrollY
             panel.style.left  = r.left + 'px';
             panel.style.width = r.width + 'px';
         }

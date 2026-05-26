@@ -1646,7 +1646,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var item = document.createElement('div');
                 item.className = 'p-select-item'
                     + (opt.value === '' ? ' is-placeholder' : '')
-                    + (opt.value === native.value ? ' selected' : '');
+                    + (opt.value !== '' && opt.value === native.value ? ' selected' : '');
                 item.textContent = opt.text;
                 item.dataset.value = opt.value;
                 item.addEventListener('click', function (e) {
