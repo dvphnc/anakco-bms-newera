@@ -67,15 +67,15 @@
                 Document Requests
                 <span class="apt-tab-badge" id="tabBadgeDocs"><?php echo e($totalCount); ?></span>
             </button>
-            <button class="apt-tab" data-tab="business" onclick="switchTab('business')">
-                <i class="fas fa-store"></i>
-                Business Permits
-                <span class="apt-tab-badge" id="tabBadgeBiz"><?php echo e($bizTotal); ?></span>
-            </button>
             <button class="apt-tab" data-tab="blotter" onclick="switchTab('blotter')">
                 <i class="fas fa-shield-halved"></i>
                 Blotter Reports
                 <span class="apt-tab-badge" id="tabBadgeBlotter"><?php echo e($blotterTotal); ?></span>
+            </button>
+            <button class="apt-tab" data-tab="business" onclick="switchTab('business')">
+                <i class="fas fa-store"></i>
+                Business Permits
+                <span class="apt-tab-badge" id="tabBadgeBiz"><?php echo e($bizTotal); ?></span>
             </button>
         </div>
         <button class="apt-tab-more" id="aptTabMore" onclick="scrollTabBar()" title="Scroll tabs">
