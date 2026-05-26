@@ -1110,12 +1110,13 @@ $(document).ready(function () {
             closeConvertModal();
             docTable.ajax.reload(null, false);
             bmsToast('📧 ' + (res.data.message || 'Document issued successfully.'), 'success');
-            // Update stat cards
+            // Update stat cards + tab badge
             if (res.data.counts) {
                 var c = res.data.counts;
                 if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending  ?? 0;
                 if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
                 if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
+                document.getElementById('tabBadgeDocs').textContent = c.Pending ?? 0;
             }
             if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
@@ -1286,13 +1287,13 @@ $(document).ready(function () {
                 bmsToast(res.data.message || 'Appointment deleted.', 'success');
                 if (res.data.total !== undefined) {
                     document.getElementById('statApptTotal').textContent = res.data.total;
-                    document.getElementById('tabBadgeDocs').textContent  = res.data.total;
                 }
                 if (res.data.counts) {
                     var c = res.data.counts;
                     if (document.getElementById('statAptPending'))  document.getElementById('statAptPending').textContent  = c.Pending  ?? 0;
                     if (document.getElementById('statAptReady'))    document.getElementById('statAptReady').textContent    = c.Ready    ?? 0;
                     if (document.getElementById('statAptReleased')) document.getElementById('statAptReleased').textContent = c.Released ?? 0;
+                    document.getElementById('tabBadgeDocs').textContent = c.Pending ?? 0;
                 }
                 if (window.refreshPortalBadges) window.refreshPortalBadges();
             })
