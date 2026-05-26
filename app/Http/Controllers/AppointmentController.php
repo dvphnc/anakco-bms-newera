@@ -262,43 +262,31 @@ class AppointmentController extends Controller
     {
         $existingDoc = Document::where('appointment_id', $appointment->id)->first();
 
-        // Guard: already released — show the record instead
-        if ($existingDoc && $existingDoc->status === 'Released') {
+        // Guard: already processing or beyond — show the record instead
+        if ($existingDoc && in_array($existingDoc->status, ['Processing', 'Ready', 'Released'])) {
             return response()->json([
                 'success'  => false,
-                'message'  => 'This document has already been issued.',
+                'message'  => 'This request has already been accepted and is in Document Issuance.',
                 'view_url' => route('documents.show', $existingDoc),
             ], 422);
         }
 
         $validated = $request->validate([
-            'fee_paid'    => 'nullable|numeric|min:0',
-            'or_number'   => 'nullable|string|max:100',
             'notes'       => 'nullable|string|max:500',
             'resident_id' => 'nullable|integer|exists:residents,id',
         ]);
 
-        // Auto-generate OR number if fee > 0 and staff did not supply one
-        $feePaid  = $validated['fee_paid'] ?? 0;
-        $orNumber = $validated['or_number'] ?? null;
-        if ($feePaid > 0 && ! $orNumber) {
-            $orNumber = Document::generateOrNumber();
-        }
-
         if ($existingDoc) {
-            // Portal placeholder exists — upgrade it in-place
+            // Portal placeholder exists — set to Processing
             $existingDoc->update([
-                'fee_paid'    => $feePaid,
-                'or_number'   => $orNumber,
                 'resident_id' => $validated['resident_id'] ?? $existingDoc->resident_id,
-                'status'      => 'Released',
+                'status'      => 'Processing',
                 'issued_by'   => auth()->id(),
-                'released_at' => now(),
             ]);
             $document = $existingDoc->fresh();
             $this->logActivity('updated', $document);
         } else {
-            // No pre-existing doc — create one fresh
+            // No pre-existing doc — create one at Processing stage
             $document = Document::create([
                 'doc_number'             => Document::generateDocNumber(),
                 'appointment_id'         => $appointment->id,
@@ -310,36 +298,32 @@ class AppointmentController extends Controller
                 'requestor_contact'      => $appointment->requestor_contact,
                 'document_type'          => $appointment->document_type,
                 'purpose'                => $appointment->purpose,
-                'fee_paid'               => $feePaid,
-                'or_number'              => $orNumber,
-                'status'                 => 'Released',
+                'status'                 => 'Processing',
                 'issued_by'              => auth()->id(),
-                'released_at'            => now(),
             ]);
             $this->logActivity('created', $document);
         }
 
-        // Release the appointment and write audit log
+        // Advance appointment to Processing and write audit log
         $fromStatus = $appointment->status;
 
         AppointmentStatusLog::create([
             'appointment_id' => $appointment->id,
             'from_status'    => $fromStatus,
-            'to_status'      => 'Released',
+            'to_status'      => 'Processing',
             'changed_by'     => auth()->user()->name,
-            'note'           => $validated['notes'] ?? ('Document '.$document->doc_number.' issued.'),
+            'note'           => $validated['notes'] ?? ('Accepted — Document '.$document->doc_number.' created for processing.'),
         ]);
 
         $appointment->update([
-            'status'       => 'Released',
-            'released_at'  => now(),
+            'status'       => 'Processing',
             'processed_by' => auth()->user()->name,
             'notes'        => $validated['notes'] ?? $appointment->notes,
         ]);
 
         $this->logActivity('updated', $appointment);
 
-        // Send email notification to resident
+        // Notify resident: request is now being processed
         if ($appointment->email) {
             try {
                 \Illuminate\Support\Facades\Mail::to($appointment->email)
@@ -347,12 +331,12 @@ class AppointmentController extends Controller
                         type:          'document',
                         requestNumber: $appointment->appointment_number,
                         residentName:  $appointment->resident_name,
-                        newStatus:     'Released',
-                        notes:         $validated['notes'] ?? null,
+                        newStatus:     'Processing',
+                        notes:         $validated['notes'] ?? 'Your document request has been accepted and is now being processed.',
                         preferredDate: $appointment->preferred_date?->format('Y-m-d'),
                     ));
             } catch (\Exception $e) {
-                logger()->warning('Issue document email failed: '.$e->getMessage());
+                logger()->warning('Accept & Process email failed: '.$e->getMessage());
             }
         }
 
@@ -365,10 +349,8 @@ class AppointmentController extends Controller
 
         return response()->json([
             'success'    => true,
-            'message'    => "Document {$document->doc_number} issued successfully."
-                            .($document->or_number ? " OR No.: {$document->or_number}" : ''),
+            'message'    => "Appointment accepted — Document {$document->doc_number} is now in Document Issuance.",
             'doc_number' => $document->doc_number,
-            'or_number'  => $document->or_number,
             'doc_id'     => $document->id,
             'view_url'   => route('documents.show', $document),
             'counts'     => [
