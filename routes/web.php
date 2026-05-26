@@ -234,6 +234,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     Route::get('portal/pending-count', [AppointmentController::class, 'portalPendingCount'])
         ->name('portal.pending-count')->middleware('role:Admin,Secretary');
+    // Server-Sent Events — live badge stream (Admin + Secretary)
+    Route::get('portal/badge-stream', [AppointmentController::class, 'ssePortalBadges'])
+        ->name('portal.badge-stream')->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
     // Reports — Admin + Secretary only
