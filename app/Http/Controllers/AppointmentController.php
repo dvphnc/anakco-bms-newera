@@ -501,14 +501,25 @@ class AppointmentController extends Controller
                               data-status-url="'.e($statusUrl).'"
                               data-issue-url="'.e($issueUrl).'"';
 
-                if (in_array($b->status, ['Pending', 'For Review'])) {
+                if ($b->status === 'Pending') {
                     return '<div style="display:flex;justify-content:flex-end;gap:6px">
                                 <button class="btn btn-success btn-sm biz-issue-btn"
                                         style="font-size:12px;padding:0 12px;height:30px;
                                                display:inline-flex;align-items:center;gap:5px"
                                         '.$dataAttrs.'>
-                                    <i class="fas fa-stamp"></i> Issue Permit
+                                    <i class="fas fa-magnifying-glass" style="font-size:10px"></i> Mark For Review
                                 </button>
+                                '.$deleteBtn.'
+                            </div>';
+                }
+
+                if ($b->status === 'For Review') {
+                    return '<div style="display:flex;justify-content:flex-end;gap:6px">
+                                <a href="'.e($viewUrl).'" target="_blank"
+                                   class="btn btn-secondary btn-sm"
+                                   style="font-size:12px;padding:0 10px;height:30px;display:inline-flex;align-items:center;gap:5px">
+                                    <i class="fas fa-store" style="font-size:10px"></i> View in Permits
+                                </a>
                                 '.$deleteBtn.'
                             </div>';
                 }
