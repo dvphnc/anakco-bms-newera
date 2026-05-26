@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', $business->business_name)
 
@@ -159,10 +159,10 @@
                         ['label' => 'Status',           'value' => $business->status],
                         ['label' => 'Owner Name',       'value' => $business->owner_name],
                         ['label' => 'Owner Contact',    'value' => $business->owner_contact ?? '—'],
-                        ['label' => 'Permit Date',      'value' => $business->permit_date ? \Carbon\Carbon::parse($business->permit_date)->format('F d, Y') : '—'],
-                        ['label' => 'Expiry Date',      'value' => $business->expiry_date ? \Carbon\Carbon::parse($business->expiry_date)->format('F d, Y') : '—'],
+                        ['label' => 'Permit Date',      'value' => $business->permit_date ? \Carbon\Carbon::parse($business->permit_date)->format('m/d/Y') : '—'],
+                        ['label' => 'Expiry Date',      'value' => $business->expiry_date ? \Carbon\Carbon::parse($business->expiry_date)->format('m/d/Y') : '—'],
                         ['label' => 'Issued By',        'value' => $business->issuedBy->name ?? '—'],
-                        ['label' => 'Date Registered',  'value' => $business->created_at->format('F d, Y')],
+                        ['label' => 'Date Registered',  'value' => $business->created_at->format('m/d/Y')],
                     ];
                 @endphp
                 @foreach($details as $d)
@@ -366,8 +366,8 @@
                     <div class="permit-row"><span class="lbl">Business Address:</span><span class="val">{{ $business->business_address }}</span></div>
                     <div class="permit-row"><span class="lbl">Owner / Operator:</span><span class="val"><strong>{{ $business->owner_name }}</strong></span></div>
                     <div class="permit-row"><span class="lbl">Contact Number:</span><span class="val">{{ $business->owner_contact ?? '—' }}</span></div>
-                    <div class="permit-row"><span class="lbl">Date Issued:</span><span class="val">{{ $permitDate?->format('F d, Y') ?? '—' }}</span></div>
-                    <div class="permit-row"><span class="lbl">Valid Until:</span><span class="val"><strong>{{ $permitExpiry?->format('F d, Y') ?? '—' }}</strong></span></div>
+                    <div class="permit-row"><span class="lbl">Date Issued:</span><span class="val">{{ $permitDate?->format('m/d/Y') ?? '—' }}</span></div>
+                    <div class="permit-row"><span class="lbl">Valid Until:</span><span class="val"><strong>{{ $permitExpiry?->format('m/d/Y') ?? '—' }}</strong></span></div>
                     <div class="permit-row"><span class="lbl">Status:</span><span class="val"><strong>{{ $business->status }}</strong></span></div>
                 </div>
                 <div class="permit-qr">
@@ -381,7 +381,7 @@
             {{-- Validity notice --}}
             <div class="permit-validity">
                 This barangay business clearance is issued to the above-named establishment and is
-                <strong>valid from {{ $permitDate?->format('F d, Y') ?? '—' }} to {{ $permitExpiry?->format('F d, Y') ?? '—' }}</strong>,
+                <strong>valid from {{ $permitDate?->format('m/d/Y') ?? '—' }} to {{ $permitExpiry?->format('m/d/Y') ?? '—' }}</strong>,
                 subject to compliance with all applicable barangay ordinances and regulations.
             </div>
 

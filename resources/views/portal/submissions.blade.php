@@ -1,4 +1,4 @@
-@extends('layouts.portal')
+﻿@extends('layouts.portal')
 @section('title', 'My Submissions')
 
 @push('styles')
@@ -275,10 +275,10 @@
                         <div class="sub-card-title">{{ $case->incident_type }}</div>
                         <div class="sub-card-meta">
                             <i class="fas fa-calendar-days" style="width:12px"></i>
-                            Incident: {{ $case->incident_date ? \Carbon\Carbon::parse($case->incident_date)->format('M d, Y') : '—' }}
+                            Incident: {{ $case->incident_date ? \Carbon\Carbon::parse($case->incident_date)->format('m/d/Y') : '—' }}
                             &ensp;·&ensp;
                             <i class="fas fa-clock" style="width:12px"></i>
-                            Submitted: {{ $case->created_at->format('M d, Y') }}
+                            Submitted: {{ $case->created_at->format('m/d/Y') }}
                         </div>
                     </div>
                     <div class="sub-card-right">
@@ -329,7 +329,7 @@
                             {{ $biz->business_type }}
                             &ensp;·&ensp;
                             <i class="fas fa-clock" style="width:12px"></i>
-                            Submitted: {{ $biz->created_at->format('M d, Y') }}
+                            Submitted: {{ $biz->created_at->format('m/d/Y') }}
                         </div>
                     </div>
                     <div class="sub-card-right">

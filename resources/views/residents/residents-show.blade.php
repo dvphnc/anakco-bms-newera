@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', $resident->full_name)
 @section('page-title', 'Residents')
@@ -161,7 +161,7 @@
                                 ['label' => 'Last Name',       'value' => $resident->last_name],
                                 ['label' => 'First Name',      'value' => $resident->first_name],
                                 ['label' => 'Middle Name',     'value' => $resident->middle_name ?: '—'],
-                                ['label' => 'Date of Birth',   'value' => $resident->birthdate?->format('F d, Y')],
+                                ['label' => 'Date of Birth',   'value' => $resident->birthdate?->format('m/d/Y')],
                                 ['label' => 'Age',             'value' => $resident->age ? $resident->age . ' years old' : '—'],
                                 ['label' => 'Gender',          'value' => $resident->gender],
                                 ['label' => 'Civil Status',    'value' => $resident->civil_status],
@@ -173,8 +173,8 @@
                                 ['label' => 'Household',       'value' => $resident->household?->household_number . ' — ' . ($resident->household?->household_head) ?: '—'],
                                 ['label' => 'Address',         'value' => $resident->address],
                                 ['label' => 'Yrs of Residency','value' => $resident->years_of_residency ? $resident->years_of_residency . ' years' : '—'],
-                                ['label' => 'Registered',      'value' => $resident->created_at->format('F d, Y')],
-                                ['label' => 'Last Updated',     'value' => $resident->updated_at->format('F d, Y')],
+                                ['label' => 'Registered',      'value' => $resident->created_at->format('m/d/Y')],
+                                ['label' => 'Last Updated',     'value' => $resident->updated_at->format('m/d/Y')],
                             ];
                         @endphp
                         @foreach($details as $detail)
@@ -197,7 +197,7 @@
                         <div>
                             <div class="td-mono">{{ $doc->doc_number }}</div>
                             <div style="font-weight:600;font-size:14px;margin-top:2px">{{ $doc->document_type }}</div>
-                            <div class="td-muted" style="margin-top:2px">{{ $doc->created_at->format('M d, Y') }}</div>
+                            <div class="td-muted" style="margin-top:2px">{{ $doc->created_at->format('m/d/Y') }}</div>
                         </div>
                         <div style="display:flex;align-items:center;gap:10px">
                             @php
@@ -229,7 +229,7 @@
                         <div>
                             <div class="td-mono">{{ $case->case_number }}</div>
                             <div style="font-weight:600;font-size:14px;margin-top:2px">{{ $case->incident_type }}</div>
-                            <div class="td-muted" style="margin-top:2px">{{ $case->incident_date?->format('M d, Y') }}</div>
+                            <div class="td-muted" style="margin-top:2px">{{ $case->incident_date?->format('m/d/Y') }}</div>
                         </div>
                         <div style="display:flex;align-items:center;gap:10px">
                             <span class="badge {{ $case->status_badge }}">{{ $case->status }}</span>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -50,7 +50,7 @@ tbody td { padding:5px 7px; border-bottom:1px solid #e5e7eb; vertical-align:top;
 </div>
 <div class="report-title">Households Master List</div>
 <div class="report-sub">
-    As of {{ now()->format('F d, Y') }}
+    As of {{ now()->format('m/d/Y') }}
     @if(!empty($filters['purok_id'])) &nbsp;·&nbsp; Purok ID: <strong>{{ $filters['purok_id'] }}</strong> @endif
     @if(!empty($filters['voter'])) &nbsp;·&nbsp; Voter HH: <strong>{{ ucfirst($filters['voter']) }}</strong> @endif
     @if(!empty($filters['s'])) &nbsp;·&nbsp; Search: <strong>{{ $filters['s'] }}</strong> @endif

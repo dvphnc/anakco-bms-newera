@@ -1,4 +1,4 @@
-@php
+﻿@php
 $moduleMap = [
     'App\Models\Resident'    => ['label' => 'Residents',  'icon' => 'fa-users',        'color' => '#1d76db', 'slug' => 'residents'],
     'App\Models\Household'   => ['label' => 'Households', 'icon' => 'fa-house',        'color' => '#5319e7', 'slug' => 'households'],
@@ -25,7 +25,7 @@ $routeMap = [
     $module = $moduleMap[$log->loggable_type] ?? ['label' => 'Record', 'icon' => 'fa-circle', 'color' => '#9ca3af', 'slug' => ''];
     $actionColor = match($log->action) { 'created' => '#2e6b47', 'deleted' => '#8b2e2e', default => '#7a5200' };
     $actionBg    = match($log->action) { 'created' => '#e6f2ec', 'deleted' => '#f5e8e8', default => '#fdf0d5' };
-    $dateStr = $log->created_at->isToday() ? 'Today' : ($log->created_at->isYesterday() ? 'Yesterday' : $log->created_at->format('M d, Y'));
+    $dateStr = $log->created_at->isToday() ? 'Today' : ($log->created_at->isYesterday() ? 'Yesterday' : $log->created_at->format('m/d/Y'));
     $changes = collect($log->changes ?? [])->filter(fn($v, $k) => !in_array($k, $skipFields))->take(4);
     $routeName = $routeMap[$log->loggable_type] ?? null;
 @endphp
@@ -55,7 +55,7 @@ $routeMap = [
                     if (is_null($v) || $v === '') return '—';
                     if (is_array($v)) return '[file]';
                     if (is_string($v) && preg_match('/^\d{4}-\d{2}-\d{2}/', $v)) {
-                        try { return \Carbon\Carbon::parse($v)->format('M d, Y'); } catch (\Exception $e) {}
+                        try { return \Carbon\Carbon::parse($v)->format('m/d/Y'); } catch (\Exception $e) {}
                     }
                     return \Illuminate\Support\Str::limit((string)$v, 24);
                 };

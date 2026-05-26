@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -51,7 +51,7 @@ tbody td { padding:5px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top;
 </div>
 <div class="report-title">Blotter Cases Report</div>
 <div class="report-sub">
-    As of {{ now()->format('F d, Y') }}
+    As of {{ now()->format('m/d/Y') }}
     @if(!empty($filters['status'])) &nbsp;·&nbsp; Status: <strong>{{ $filters['status'] }}</strong> @endif
     @if(!empty($filters['incident_type'])) &nbsp;·&nbsp; Type: <strong>{{ $filters['incident_type'] }}</strong> @endif
     @if(!empty($filters['date_from'])) &nbsp;·&nbsp; From: <strong>{{ $filters['date_from'] }}</strong> @endif

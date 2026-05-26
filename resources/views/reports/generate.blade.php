@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 @section('title', 'Generate Reports')
 
 @section('content')
@@ -184,7 +184,7 @@
                 <span class="card-title" style="font-size:13px">
                     <i class="fas fa-calendar-day" style="color:var(--gold)"></i> Snapshot
                 </span>
-                <span style="font-size:12px;color:var(--text-muted)">{{ now()->format('M d, Y') }}</span>
+                <span style="font-size:12px;color:var(--text-muted)">{{ now()->format('m/d/Y') }}</span>
             </div>
             <div class="card-body" style="padding:12px 16px">
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Today</div>

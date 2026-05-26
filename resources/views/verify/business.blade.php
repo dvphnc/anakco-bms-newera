@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -226,12 +226,12 @@
             </div>
             <div class="detail-row">
                 <span class="detail-label">Date Issued</span>
-                <span class="detail-value">{{ $business->permit_date ? \Carbon\Carbon::parse($business->permit_date)->format('F d, Y') : '—' }}</span>
+                <span class="detail-value">{{ $business->permit_date ? \Carbon\Carbon::parse($business->permit_date)->format('m/d/Y') : '—' }}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Valid Until</span>
                 <span class="detail-value {{ $isExpired ? 'expired-text' : 'valid-text' }}">
-                    {{ $expiry?->format('F d, Y') ?? '—' }}
+                    {{ $expiry?->format('m/d/Y') ?? '—' }}
                     @if($isValid) &nbsp;<i class="fas fa-check-circle"></i> @endif
                     @if($isExpired) &nbsp;<i class="fas fa-times-circle"></i> @endif
                 </span>
@@ -249,7 +249,7 @@
         {{-- Footer --}}
         <div class="verify-footer">
             <strong>Barangay New Era</strong> — New Era, Quezon City, Metro Manila<br>
-            Verified on {{ now()->format('F d, Y \a\t h:i A') }}<br>
+            Verified on {{ now()->format('m/d/Y g:i A') }}<br>
             This verification is issued by the official Barangay New Era Management System.
         </div>
 

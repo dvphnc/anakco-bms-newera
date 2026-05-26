@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 @section('title', $committee['name'])
 
 @push('styles')
@@ -631,7 +631,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td style="font-weight:600">{{ $rec->title }}</td>
                     <td><span class="badge badge-navy">{{ $rec->record_type }}</span></td>
                     <td class="td-muted">{{ $rec->description ?? '—' }}</td>
-                    <td class="td-muted">{{ $rec->created_at->format('M d, Y') }}</td>
+                    <td class="td-muted">{{ $rec->created_at->format('m/d/Y') }}</td>
                     <td>
                         @if($rec->file_path)
                         <a href="{{ asset('storage/'.$rec->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>
@@ -712,7 +712,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         <div style="font-weight:600">{{ $act->title }}</div>
                         @if($act->description)<div class="td-muted">{{ $act->description }}</div>@endif
                     </td>
-                    <td class="td-muted">{{ \Carbon\Carbon::parse($act->activity_date)->format('M d, Y') }}</td>
+                    <td class="td-muted">{{ \Carbon\Carbon::parse($act->activity_date)->format('m/d/Y') }}</td>
                     <td class="td-muted">{{ $act->location ?? '—' }}</td>
                     <td style="font-weight:600;color:var(--navy)">{{ number_format($act->participants_count) }}</td>
                     <td><span class="badge {{ match($act->status) { 'Completed'=>'badge-green','Ongoing'=>'badge-yellow','Cancelled'=>'badge-red',default=>'badge-gray' } }}">{{ $act->status }}</span></td>
@@ -786,7 +786,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         <div class="acc-card-title">{{ $acc->title }}</div>
                         @if($acc->description)<div class="td-muted" style="font-size:14px;margin-bottom:4px">{{ $acc->description }}</div>@endif
                         <div class="acc-card-meta">
-                            <span><i class="fas fa-calendar-alt" style="margin-right:4px"></i>{{ \Carbon\Carbon::parse($acc->activity_date)->format('M d, Y') }}</span>
+                            <span><i class="fas fa-calendar-alt" style="margin-right:4px"></i>{{ \Carbon\Carbon::parse($acc->activity_date)->format('m/d/Y') }}</span>
                             @if($acc->location)<span><i class="fas fa-location-dot" style="margin-right:4px"></i>{{ $acc->location }}</span>@endif
                             @if($acc->participants_count)<span><i class="fas fa-users" style="margin-right:4px"></i>{{ number_format($acc->participants_count) }} beneficiaries</span>@endif
                         </div>
@@ -869,7 +869,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     data-notes="{{ addslashes($att->notes ?? '') }}"
                 >
                     <td style="font-weight:600">{{ $att->event_name }}</td>
-                    <td class="td-muted">{{ \Carbon\Carbon::parse($att->event_date)->format('M d, Y') }}</td>
+                    <td class="td-muted">{{ \Carbon\Carbon::parse($att->event_date)->format('m/d/Y') }}</td>
                     <td class="td-muted">{{ $att->venue ?? '—' }}</td>
                     <td style="text-align:right;font-weight:700;color:var(--navy)">{{ number_format($att->total_attendees) }}</td>
                     <td class="td-muted">{{ $att->notes ?? '—' }}</td>
@@ -1017,9 +1017,9 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         @if($p->description)<div style="font-size:11px;color:var(--text-muted);margin-top:2px">{{ Str::limit($p->description, 60) }}</div>@endif
                     </td>
                     <td><span class="badge badge-navy">{{ $p->partner_type }}</span></td>
-                    <td class="td-muted">{{ $p->mou_date?->format('M d, Y') ?? '—' }}</td>
+                    <td class="td-muted">{{ $p->mou_date?->format('m/d/Y') ?? '—' }}</td>
                     <td class="{{ $p->validity_date && $p->validity_date->isPast() ? 'td-danger' : 'td-muted' }}">
-                        {{ $p->validity_date?->format('M d, Y') ?? '—' }}
+                        {{ $p->validity_date?->format('m/d/Y') ?? '—' }}
                         @if($p->validity_date && $p->validity_date->isPast()) <span style="font-size:11px">(expired)</span> @endif
                     </td>
                     <td class="td-muted">{{ $p->contact_person ?? '—' }}</td>
@@ -1167,7 +1167,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     data-findings="{{ addslashes($p->findings ?? '') }}"
                     data-by="{{ addslashes($p->reported_by ?? '') }}"
                 >
-                    <td class="td-muted">{{ $p->patrol_date->format('M d, Y') }}</td>
+                    <td class="td-muted">{{ $p->patrol_date->format('m/d/Y') }}</td>
                     <td><span class="badge badge-navy">{{ $p->shift ?? '—' }}</span></td>
                     <td style="font-weight:600">{{ $p->area_covered }}</td>
                     <td style="font-weight:600;color:var(--navy)">{{ $p->personnel_count }}</td>
@@ -1251,7 +1251,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td><span class="badge badge-blue">{{ $h->program ?? '—' }}</span></td>
                     <td class="td-muted">{{ $h->diagnosis ?? '—' }}</td>
                     <td class="td-muted">{{ $h->attended_by ?? '—' }}</td>
-                    <td class="td-muted">{{ $h->visit_date->format('M d, Y') }}</td>
+                    <td class="td-muted">{{ $h->visit_date->format('m/d/Y') }}</td>
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('health', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
@@ -1490,7 +1490,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 >
                     <td style="font-weight:600">{{ $p->program_name }}</td>
                     <td class="td-muted">{{ $p->program_type ?? '—' }}</td>
-                    <td class="td-muted">{{ $p->program_date->format('M d, Y') }}</td>
+                    <td class="td-muted">{{ $p->program_date->format('m/d/Y') }}</td>
                     <td class="td-muted">{{ $p->location ?? '—' }}</td>
                     <td style="font-weight:600;color:var(--navy)">{{ $p->volunteers }}</td>
                     <td style="font-weight:600;color:#16a34a">{{ $p->trees_planted ?? '—' }}</td>
@@ -1570,7 +1570,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td class="td-muted">{{ $b->program_name }}</td>
                     <td class="td-muted">{{ $b->program_type ?? '—' }}</td>
                     <td style="font-weight:600;color:var(--navy)">{{ $b->amount_received ? '₱'.number_format($b->amount_received,2) : '—' }}</td>
-                    <td class="td-muted">{{ $b->date_enrolled?->format('M d, Y') ?? '—' }}</td>
+                    <td class="td-muted">{{ $b->date_enrolled?->format('m/d/Y') ?? '—' }}</td>
                     <td><span class="badge {{ match($b->status) { 'Active'=>'badge-green','Completed'=>'badge-blue',default=>'badge-red' } }}">{{ $b->status }}</span></td>
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
@@ -1647,7 +1647,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td class="td-mono">{{ $t->plate_number ?? '—' }}</td>
                     <td class="td-muted">{{ $t->toda_name ?? '—' }}</td>
                     <td class="td-muted">{{ $t->route ?? '—' }}</td>
-                    <td class="td-muted {{ $t->expiry_date && $t->expiry_date->isPast() ? 'td-danger' : '' }}">{{ $t->expiry_date?->format('M d, Y') ?? '—' }}</td>
+                    <td class="td-muted {{ $t->expiry_date && $t->expiry_date->isPast() ? 'td-danger' : '' }}">{{ $t->expiry_date?->format('m/d/Y') ?? '—' }}</td>
                     <td><span class="badge {{ match($t->status) { 'Active'=>'badge-green','Expired'=>'badge-red',default=>'badge-yellow' } }}">{{ $t->status }}</span></td>
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
@@ -1720,7 +1720,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     data-by="{{ addslashes($e->reported_by ?? '') }}"
                 >
                     <td style="font-weight:600">{{ $e->incident_type }}</td>
-                    <td class="td-muted">{{ $e->incident_date->format('M d, Y') }}</td>
+                    <td class="td-muted">{{ $e->incident_date->format('m/d/Y') }}</td>
                     <td class="td-muted">{{ $e->location }}</td>
                     <td style="font-weight:600;color:var(--crimson)">{{ number_format($e->affected_families) }}</td>
                     <td style="font-weight:600;color:var(--crimson)">{{ number_format($e->affected_persons) }}</td>
@@ -1878,7 +1878,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td style="text-align:right;font-weight:700;color:var(--navy)">{{ number_format($rs->quantity) }}</td>
                     <td class="td-muted">{{ $rs->unit ?? '—' }}</td>
                     <td class="td-muted">{{ $rs->source ?? '—' }}</td>
-                    <td class="td-muted">{{ $rs->date_received?->format('M d, Y') ?? '—' }}</td>
+                    <td class="td-muted">{{ $rs->date_received?->format('m/d/Y') ?? '—' }}</td>
                     <td><span class="badge {{ match($rs->status) { 'Available'=>'badge-green','Distributed'=>'badge-yellow',default=>'badge-gray' } }}">{{ $rs->status }}</span></td>
                     <td class="td-muted">{{ $rs->remarks ?? '—' }}</td>
                     <td>
@@ -1959,7 +1959,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 >
                     <td style="font-weight:600">{{ $tr->title }}</td>
                     <td><span class="badge badge-navy">{{ $tr->training_type }}</span></td>
-                    <td class="td-muted">{{ $tr->training_date->format('M d, Y') }}</td>
+                    <td class="td-muted">{{ $tr->training_date->format('m/d/Y') }}</td>
                     <td class="td-muted">{{ $tr->duration ?? '—' }}</td>
                     <td class="td-muted">{{ $tr->venue ?? '—' }}</td>
                     <td class="td-muted">{{ $tr->facilitator ?? '—' }}</td>
@@ -2377,7 +2377,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         @if($med->isLowStock())<span class="low-badge">Low</span>@endif
                     </td>
                     <td style="padding:.8rem 1rem;vertical-align:middle" class="{{ $expiryClass }}">
-                        {{ $med->expiry_date?->format('M d, Y') ?? '—' }}
+                        {{ $med->expiry_date?->format('m/d/Y') ?? '—' }}
                         @if($med->isExpired())<span class="low-badge">Expired</span>
                         @elseif($med->isExpiringSoon())<span class="expiring-badge">Soon</span>@endif
                     </td>
@@ -2417,7 +2417,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     'after'       => $l->stock_after,
                     'reason'      => $l->reason,
                     'by'          => $l->performed_by,
-                    'date'        => $l->created_at->format('M d, Y h:i A'),
+                    'date'        => $l->created_at->format('m/d/Y g:i A'),
                     'beneficiary' => $l->beneficiary_name,
                     'purpose'     => $l->purpose,
                 ];
@@ -2432,7 +2432,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 'barcode'       => $m->barcode,
                 'current_stock' => $m->current_stock,
                 'reorder_level' => $m->reorder_level,
-                'expiry_date'   => $m->expiry_date?->format('M d, Y'),
+                'expiry_date'   => $m->expiry_date?->format('m/d/Y'),
                 'supplier'      => $m->supplier,
                 'batch_number'  => $m->batch_number,
                 'logs'          => $logs,
@@ -2502,7 +2502,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td class="td-muted">{{ $sw->assigned_zone ?? '—' }}</td>
                     <td class="td-muted">{{ $sw->schedule ?? '—' }}</td>
                     <td class="td-muted">{{ $sw->contact_number ?? '—' }}</td>
-                    <td class="td-muted">{{ $sw->date_assigned?->format('M d, Y') ?? '—' }}</td>
+                    <td class="td-muted">{{ $sw->date_assigned?->format('m/d/Y') ?? '—' }}</td>
                     <td><span class="badge {{ $sw->status === 'Active' ? 'badge-green' : ($sw->status === 'On Leave' ? 'badge-yellow' : 'badge-gray') }}">{{ $sw->status }}</span></td>
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
@@ -2578,8 +2578,8 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td class="td-muted" style="max-width:200px;white-space:normal">{{ $ct->scope_of_work ?? '—' }}</td>
                     <td style="font-weight:600;color:var(--navy)">{{ $ct->contract_amount ? '₱'.number_format($ct->contract_amount, 2) : '—' }}</td>
                     <td class="td-muted">
-                        @if($ct->start_date && $ct->end_date) {{ $ct->start_date->format('M d') }} – {{ $ct->end_date->format('M d, Y') }}
-                        @elseif($ct->start_date) From {{ $ct->start_date->format('M d, Y') }}
+                        @if($ct->start_date && $ct->end_date) {{ $ct->start_date->format('M d') }} – {{ $ct->end_date->format('m/d/Y') }}
+                        @elseif($ct->start_date) From {{ $ct->start_date->format('m/d/Y') }}
                         @else —
                         @endif
                     </td>
@@ -2674,7 +2674,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td><span class="badge {{ match($fin->type) { 'Budget'=>'badge-navy','Utilization'=>'badge-yellow','Liquidation'=>'badge-green' } }}">{{ $fin->type }}</span></td>
                     <td class="td-muted">{{ $fin->fund_source ?? '—' }}</td>
                     <td style="text-align:right;font-weight:700;color:var(--navy)">₱{{ number_format($fin->amount, 2) }}</td>
-                    <td class="td-muted">{{ $fin->date->format('M d, Y') }}</td>
+                    <td class="td-muted">{{ $fin->date->format('m/d/Y') }}</td>
                     <td class="td-mono">{{ $fin->reference_number ?? '—' }}</td>
                     <td>@if($fin->file_path)<a href="{{ asset('storage/'.$fin->file_path) }}" target="_blank" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-download"></i></a>@else<span class="td-muted">—</span>@endif</td>
                     <td>

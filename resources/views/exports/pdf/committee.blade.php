@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -146,7 +146,7 @@ tbody td:last-child { border-right: none; }
 </div>
 
 <div class="report-title">{{ strtoupper($committeeName) }} Committee Report</div>
-<div class="report-sub">As of {{ now()->format('F d, Y') }}</div>
+<div class="report-sub">As of {{ now()->format('m/d/Y') }}</div>
 
 <div class="meta-bar">
     <span>Generated: <strong>{{ $generatedAt }}</strong></span>

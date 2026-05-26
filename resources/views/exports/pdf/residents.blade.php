@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -133,7 +133,7 @@ tbody td {
 
 <div class="report-title">Residents Master List</div>
 <div class="report-sub">
-    As of {{ now()->format('F d, Y') }}
+    As of {{ now()->format('m/d/Y') }}
     @if(!empty($filters['gender'])) &nbsp;·&nbsp; Gender: <strong>{{ $filters['gender'] }}</strong> @endif
     @if(!empty($filters['status'])) &nbsp;·&nbsp; Status: <strong>{{ $filters['status'] }}</strong> @endif
     @if(!empty($filters['purok_id'])) &nbsp;·&nbsp; Purok ID: <strong>{{ $filters['purok_id'] }}</strong> @endif

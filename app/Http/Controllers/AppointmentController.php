@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -41,17 +41,17 @@ class AppointmentController extends Controller
                     if ($a->pickup_date) {
                         return '<div style="font-size:12.5px;font-weight:600;color:#16a34a">'.
                                '<i class="fas fa-calendar-check" style="font-size:10px;margin-right:3px"></i>'.
-                               \Carbon\Carbon::parse($a->pickup_date)->format('M d, Y').'</div>'.
+                               \Carbon\Carbon::parse($a->pickup_date)->format('m/d/Y').'</div>'.
                                '<div style="font-size:10.5px;color:#9ca3af;margin-top:1px">Ready for Pick-up</div>';
                     }
                     if ($a->preferred_date) {
                         return '<div style="font-size:12.5px;color:var(--text-muted)">'.
-                               \Carbon\Carbon::parse($a->preferred_date)->format('M d, Y').'</div>'.
+                               \Carbon\Carbon::parse($a->preferred_date)->format('m/d/Y').'</div>'.
                                '<div style="font-size:10.5px;color:#9ca3af;margin-top:1px">Preferred</div>';
                     }
                     return '<span class="td-muted">—</span>';
                 })
-                ->addColumn('submitted_col', fn ($a) => '<span class="td-muted">'.$a->created_at->format('M d, Y').'</span>')
+                ->addColumn('submitted_col', fn ($a) => '<span class="td-muted">'.$a->created_at->format('m/d/Y').'</span>')
                 ->addColumn('status_col', function ($a) {
                     $cls = match ($a->status) {
                         'Pending'    => 'badge-yellow',
@@ -109,7 +109,7 @@ class AppointmentController extends Controller
                                         data-name="'.e($a->resident_name).'"
                                         data-type="'.e($a->document_type).'"
                                         data-purpose="'.e($a->purpose ?? '').'"
-                                        data-date="'.($a->preferred_date ? $a->preferred_date->format('M d, Y') : '—').'"
+                                        data-date="'.($a->preferred_date ? $a->preferred_date->format('m/d/Y') : '—').'"
                                         data-fee="'.e($a->document?->fee_paid ?? '').'"
                                         data-or="'.e($a->document?->or_number ?? '').'">
                                     <i class="fas fa-file-circle-check" style="font-size:11px"></i> Issue Document
@@ -452,9 +452,9 @@ class AppointmentController extends Controller
                 $date = \Carbon\Carbon::parse($b->preferred_date);
                 $past = $date->isPast() && ! in_array($b->status, ['Active', 'Cancelled']);
                 $style = $past ? 'color:#b45309;font-weight:600' : 'color:var(--text-muted)';
-                return '<span style="'.$style.'">'.$date->format('M d, Y').'</span>';
+                return '<span style="'.$style.'">'.$date->format('m/d/Y').'</span>';
             })
-            ->addColumn('submitted_col', fn ($b) => '<span class="td-muted">'.$b->created_at->format('M d, Y').'</span>')
+            ->addColumn('submitted_col', fn ($b) => '<span class="td-muted">'.$b->created_at->format('m/d/Y').'</span>')
             ->addColumn('status_col', function ($b) {
                 $cls = match ($b->status) {
                     'Active'     => 'badge-green',
@@ -472,7 +472,7 @@ class AppointmentController extends Controller
                 $issueUrl     = route('appointments.bizIssue', $b);
                 $statusUrl    = route('appointments.bizStatus', $b);
                 $deleteUrl    = route('appointments.bizDestroy', $b);
-                $apptDateFmt  = $b->preferred_date ? \Carbon\Carbon::parse($b->preferred_date)->format('M d, Y') : '—';
+                $apptDateFmt  = $b->preferred_date ? \Carbon\Carbon::parse($b->preferred_date)->format('m/d/Y') : '—';
 
                 $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon biz-delete-btn"
                                       style="height:30px;width:30px;padding:0;flex-shrink:0;
@@ -571,7 +571,7 @@ class AppointmentController extends Controller
                     residentName:  $business->owner_name,
                     newStatus:     'Active',
                     notes:         'Your business permit has been issued. Permit valid until '
-                                   .\Carbon\Carbon::parse($validated['expiry_date'])->format('F d, Y').'.',
+                                   .\Carbon\Carbon::parse($validated['expiry_date'])->format('m/d/Y').'.',
                     preferredDate: $business->preferred_date?->format('Y-m-d'),
                 ));
             } catch (\Exception $e) {
@@ -650,11 +650,11 @@ class AppointmentController extends Controller
             ->addColumn('type_col', fn ($c) => '<span class="badge badge-navy">'.e($c->incident_type).'</span>')
             ->addColumn('incident_col', function ($c) {
                 $date = $c->incident_date
-                    ? \Carbon\Carbon::parse($c->incident_date)->format('M d, Y') : '—';
+                    ? \Carbon\Carbon::parse($c->incident_date)->format('m/d/Y') : '—';
                 return '<div style="font-size:13px">'.e($c->incident_location).'</div>
                         <div class="td-muted" style="font-size:11.5px">'.$date.'</div>';
             })
-            ->addColumn('submitted_col', fn ($c) => '<span class="td-muted">'.$c->created_at->format('M d, Y').'</span>')
+            ->addColumn('submitted_col', fn ($c) => '<span class="td-muted">'.$c->created_at->format('m/d/Y').'</span>')
             ->addColumn('status_col', function ($c) {
                 $cls = match ($c->status) {
                     'Pending'                      => 'badge-yellow',
@@ -691,7 +691,7 @@ class AppointmentController extends Controller
                                         data-num="'.e($c->case_number).'"
                                         data-complainant="'.e($c->complainant_name).'"
                                         data-type="'.e($c->incident_type).'"
-                                        data-date="'.($c->incident_date ? \Carbon\Carbon::parse($c->incident_date)->format('M d, Y') : '—').'"
+                                        data-date="'.($c->incident_date ? \Carbon\Carbon::parse($c->incident_date)->format('m/d/Y') : '—').'"
                                         data-url="'.$activateUrl.'">
                                     <i class="fas fa-shield-halved"></i> Activate
                                 </button>

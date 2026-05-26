@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 @section('title', 'Edit Document')
 @section('content')
 
@@ -142,7 +142,7 @@
                     </div>
                     <div>
                         <div style="font-weight:600">{{ $document->issuedBy->name ?? auth()->user()->name }}</div>
-                        <div class="td-muted">{{ $document->issuedBy->role ?? auth()->user()->role }} — Issued on {{ $document->created_at->format('F d, Y') }}</div>
+                        <div class="td-muted">{{ $document->issuedBy->role ?? auth()->user()->role }} — Issued on {{ $document->created_at->format('m/d/Y') }}</div>
                     </div>
                 </div>
                 <input type="hidden" name="issued_by" value="{{ $document->issued_by ?? auth()->id() }}">
@@ -163,7 +163,7 @@
                         <div style="font-weight:700;font-family:monospace;color:var(--navy);font-size:14px;letter-spacing:.03em">
                             {{ $document->doc_number }}
                         </div>
-                        <div class="td-muted">{{ $document->document_type }} · {{ $document->created_at->format('M d, Y') }}</div>
+                        <div class="td-muted">{{ $document->document_type }} · {{ $document->created_at->format('m/d/Y') }}</div>
                     </div>
                 </div>
             </div>

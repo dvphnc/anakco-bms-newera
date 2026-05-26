@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -221,7 +221,7 @@ class CommitteeController extends Controller
                 . '<td><div style="font-weight:600">' . e($act->title) . '</div>'
                 . ($act->description ? '<div class="td-muted">' . e($act->description) . '</div>' : '')
                 . '</td>'
-                . '<td class="td-muted">' . $act->activity_date->format('M d, Y') . '</td>'
+                . '<td class="td-muted">' . $act->activity_date->format('m/d/Y') . '</td>'
                 . '<td class="td-muted">' . e($act->location ?? '—') . '</td>'
                 . '<td style="font-weight:600;color:var(--navy)">' . number_format($act->participants_count ?? 0) . '</td>'
                 . '<td><span class="badge ' . $badgeCls . '">' . e($act->status) . '</span></td>'
@@ -261,7 +261,7 @@ class CommitteeController extends Controller
             $att   = \App\Models\CommitteeAttendance::where('committee_slug', $slug)->latest()->first();
             $rowHtml = '<tr>'
                 . '<td style="font-weight:600">' . e($att->event_name) . '</td>'
-                . '<td class="td-muted">' . \Carbon\Carbon::parse($att->event_date)->format('M d, Y') . '</td>'
+                . '<td class="td-muted">' . \Carbon\Carbon::parse($att->event_date)->format('m/d/Y') . '</td>'
                 . '<td class="td-muted">' . e($att->venue ?? '—') . '</td>'
                 . '<td style="text-align:right;font-weight:700;color:var(--navy)">' . number_format($att->total_attendees) . '</td>'
                 . '<td class="td-muted">' . e($att->notes ?? '—') . '</td>'
@@ -634,7 +634,7 @@ class CommitteeController extends Controller
                     'beneficiary' => $beneficiaryName,
                     'purpose'     => $v['purpose'] ?? null,
                     'by'          => auth()->user()->name,
-                    'date'        => now()->format('M d, Y h:i A'),
+                    'date'        => now()->format('m/d/Y g:i A'),
                 ],
             ]);
         }
@@ -672,8 +672,8 @@ class CommitteeController extends Controller
                 . ($p->description ? '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">' . \Illuminate\Support\Str::limit($p->description, 60) . '</div>' : '')
                 . '</td>'
                 . '<td><span class="badge badge-navy">' . e($p->partner_type) . '</span></td>'
-                . '<td class="td-muted">' . ($p->mou_date?->format('M d, Y') ?? '—') . '</td>'
-                . '<td class="td-muted">' . ($p->validity_date?->format('M d, Y') ?? '—') . '</td>'
+                . '<td class="td-muted">' . ($p->mou_date?->format('m/d/Y') ?? '—') . '</td>'
+                . '<td class="td-muted">' . ($p->validity_date?->format('m/d/Y') ?? '—') . '</td>'
                 . '<td class="td-muted">' . e($p->contact_person ?? '—') . '</td>'
                 . '<td class="td-muted">' . e($p->contact_number ?? '—') . '</td>'
                 . '<td><span class="td-muted">—</span></td>'

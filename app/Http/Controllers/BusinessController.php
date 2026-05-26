@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -68,10 +68,10 @@ class BusinessController extends Controller
                 })
                 ->addColumn('permit_date_col', function ($b) {
                     if ($b->permit_date) {
-                        return '<span class="td-muted">'.Carbon::parse($b->permit_date)->format('M d, Y').'</span>';
+                        return '<span class="td-muted">'.Carbon::parse($b->permit_date)->format('m/d/Y').'</span>';
                     }
                     if ($b->preferred_date && $b->source === 'portal') {
-                        return '<span class="td-muted" style="color:#1e40af"><i class="fas fa-calendar-check" style="font-size:10px"></i> '.Carbon::parse($b->preferred_date)->format('M d, Y').'</span>
+                        return '<span class="td-muted" style="color:#1e40af"><i class="fas fa-calendar-check" style="font-size:10px"></i> '.Carbon::parse($b->preferred_date)->format('m/d/Y').'</span>
                                 <div style="font-size:10px;color:#9ca3af">Appt. Date</div>';
                     }
                     return '<span class="td-muted">—</span>';
@@ -84,7 +84,7 @@ class BusinessController extends Controller
                     $today     = Carbon::today();
 
                     if ($b->status !== 'Active') {
-                        return '<span class="td-muted">'.$expiryDay->format('M d, Y').'</span>';
+                        return '<span class="td-muted">'.$expiryDay->format('m/d/Y').'</span>';
                     }
 
                     $isOverdue = $expiryDay->lt($today);
@@ -94,17 +94,17 @@ class BusinessController extends Controller
                         $daysAgo = (int) $today->diffInDays($expiryDay);
 
                         return '<div>
-                            <span style="color:var(--crimson);font-weight:700;font-size:12.5px">'.$expiryDay->format('M d, Y').'</span>
+                            <span style="color:var(--crimson);font-weight:700;font-size:12.5px">'.$expiryDay->format('m/d/Y').'</span>
                             <div style="font-size:10.5px;color:var(--crimson);margin-top:1px"><i class="fas fa-triangle-exclamation"></i> '.$daysAgo.' day'.($daysAgo != 1 ? 's' : '').' overdue</div>
                         </div>';
                     } elseif ($daysLeft <= 30) {
                         return '<div>
-                            <span style="color:#b45309;font-weight:600;font-size:12.5px">'.$expiryDay->format('M d, Y').'</span>
+                            <span style="color:#b45309;font-weight:600;font-size:12.5px">'.$expiryDay->format('m/d/Y').'</span>
                             <div style="font-size:10.5px;color:#b45309;margin-top:1px"><i class="fas fa-clock"></i> '.$daysLeft.' day'.($daysLeft != 1 ? 's' : '').' left</div>
                         </div>';
                     } else {
                         return '<div>
-                            <span style="color:var(--text-muted);font-size:12.5px">'.$expiryDay->format('M d, Y').'</span>
+                            <span style="color:var(--text-muted);font-size:12.5px">'.$expiryDay->format('m/d/Y').'</span>
                             <div style="font-size:10.5px;color:#16a34a;margin-top:1px"><i class="fas fa-circle-check"></i> '.$daysLeft.' days left</div>
                         </div>';
                     }
@@ -141,7 +141,7 @@ class BusinessController extends Controller
                     if ($b->source === 'portal' && in_array($b->status, ['Pending', 'For Review'])) {
                         $issueUrl = route('appointments.bizIssue', $b);
                         $apptDate = $b->preferred_date
-                            ? \Carbon\Carbon::parse($b->preferred_date)->format('M d, Y') : '—';
+                            ? \Carbon\Carbon::parse($b->preferred_date)->format('m/d/Y') : '—';
                         $portalBtn = '<button class="btn btn-success btn-sm biz-issue-btn"
                                               style="font-size:12px;padding:0 10px;height:30px;
                                                      display:inline-flex;align-items:center;gap:5px;white-space:nowrap"
@@ -263,8 +263,8 @@ class BusinessController extends Controller
                 'business_address' => $business->business_address,
                 'owner_name'       => $business->owner_name,
                 'owner_contact'    => $business->owner_contact ?? '—',
-                'permit_date'      => $business->permit_date ? Carbon::parse($business->permit_date)->format('M d, Y') : '—',
-                'expiry_date'      => $expiry ? $expiry->format('M d, Y') : '—',
+                'permit_date'      => $business->permit_date ? Carbon::parse($business->permit_date)->format('m/d/Y') : '—',
+                'expiry_date'      => $expiry ? $expiry->format('m/d/Y') : '—',
                 'expiry_status'    => $expStat,
                 'expiry_days'      => $expDays,
                 'status'           => $business->status,

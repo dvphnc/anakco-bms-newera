@@ -1,4 +1,4 @@
-@extends('layouts.portal')
+﻿@extends('layouts.portal')
 @section('title', 'Request Submitted')
 
 @push('styles')
@@ -150,7 +150,7 @@
 
         <div class="submitted-stamp">
             <i class="fas fa-clock"></i>&nbsp;
-            Submitted on <strong>{{ $appointment->created_at->format('F j, Y') }}</strong>
+            Submitted on <strong>{{ $appointment->created_at->format('m/d/Y') }}</strong>
             at <strong>{{ $appointment->created_at->format('g:i A') }}</strong>
         </div>
 
@@ -175,7 +175,7 @@
             </tr>
             <tr>
                 <td>Preferred Date</td>
-                <td>{{ $appointment->preferred_date->format('F j, Y') }}</td>
+                <td>{{ $appointment->preferred_date->format('m/d/Y') }}</td>
             </tr>
             @if($appointment->purpose)
             <tr>

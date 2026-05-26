@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -200,7 +200,7 @@ class ReportController extends Controller
 
         // Gather data
         $data = $this->gatherData($module, $startDate, $endDate);
-        $generatedAt = now()->format('F d, Y \a\t h:i A');
+        $generatedAt = now()->format('m/d/Y g:i A');
         $generatedBy = auth()->user()->name;
         $officialName = Official::where('position', 'Punong Barangay')->where('is_active', true)->first()?->full_name ?? 'ROBERT S. ROMANO';
         $secretaryName = Official::where('position', 'Barangay Secretary')->where('is_active', true)->first()?->full_name ?? 'JOSEPHINE A. FLORES';

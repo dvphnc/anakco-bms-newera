@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -53,7 +53,7 @@ tr.row-expiring td { background:#fffbeb !important; }
 </div>
 <div class="report-title">Business Permits Report</div>
 <div class="report-sub">
-    As of {{ now()->format('F d, Y') }}
+    As of {{ now()->format('m/d/Y') }}
     @if(!empty($filters['status'])) &nbsp;·&nbsp; Status: <strong>{{ $filters['status'] }}</strong> @endif
     @if(!empty($filters['business_type'])) &nbsp;·&nbsp; Type: <strong>{{ $filters['business_type'] }}</strong> @endif
     @if(!empty($filters['source'])) &nbsp;·&nbsp; Source: <strong>{{ ucfirst($filters['source']) }}</strong> @endif

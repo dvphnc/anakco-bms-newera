@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -24,7 +24,7 @@ class BackupController extends Controller
                     'size' => $this->formatSize(Storage::disk($this->backupDisk)->size($file)),
                     'created' => \Carbon\Carbon::createFromTimestamp(
                         Storage::disk($this->backupDisk)->lastModified($file)
-                    )->format('F d, Y h:i A'),
+                    )->format('m/d/Y g:i A'),
                     'timestamp' => Storage::disk($this->backupDisk)->lastModified($file),
                 ];
             })

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', $document->doc_number)
 
@@ -398,7 +398,7 @@
     $gender       = $resident?->gender ?? 'Male';
     $heShe        = $gender === 'Female' ? 'She' : 'He';
     $hisHer       = $gender === 'Female' ? 'her' : 'his';
-    $birthdate    = $resident?->birthdate ? $resident->birthdate->format('F d, Y') : null;
+    $birthdate    = $resident?->birthdate ? $resident->birthdate->format('m/d/Y') : null;
     $issuedDate   = $document->released_at ?? $document->created_at;
     $purpose      = $document->purpose ?? 'whatever legal purpose it may serve';
     $officialName  = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'ROBERT S. ROMANO';

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'User Management')
 
@@ -100,7 +100,7 @@
                             <span class="badge badge-gray">Unverified</span>
                         @endif
                     </td>
-                    <td class="td-muted">{{ $user->created_at->format('M d, Y') }}</td>
+                    <td class="td-muted">{{ $user->created_at->format('m/d/Y') }}</td>
                     <td>
                         <div style="display:flex;justify-content:flex-end;gap:6px">
                             <button data-edit-btn

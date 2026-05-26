@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Edit User')
 
@@ -95,7 +95,7 @@
                 <div style="font-size:13px;color:var(--text);margin-top:6px;display:flex;align-items:center;gap:8px">
                     @if($user->email_verified_at)
                         <span class="badge badge-green"><i class="fas fa-check" style="margin-right:4px"></i>Verified</span>
-                        <span style="font-size:13px;color:var(--text-subtle)">{{ $user->email_verified_at->format('M d, Y') }}</span>
+                        <span style="font-size:13px;color:var(--text-subtle)">{{ $user->email_verified_at->format('m/d/Y') }}</span>
                         @if(auth()->user()->role === 'Admin')
                         <button type="button" class="btn btn-secondary btn-sm"
                                 onclick="document.getElementById('unverify-form').submit()"
@@ -117,11 +117,11 @@
             </div>
             <div>
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Member Since</div>
-                <div style="font-size:14px;color:var(--text);margin-top:2px">{{ $user->created_at->format('F d, Y') }}</div>
+                <div style="font-size:14px;color:var(--text);margin-top:2px">{{ $user->created_at->format('m/d/Y') }}</div>
             </div>
             <div>
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle)">Last Updated</div>
-                <div style="font-size:14px;color:var(--text);margin-top:2px">{{ $user->updated_at->format('F d, Y') }}</div>
+                <div style="font-size:14px;color:var(--text);margin-top:2px">{{ $user->updated_at->format('m/d/Y') }}</div>
             </div>
         </div>
 

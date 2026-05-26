@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -37,7 +37,7 @@ class BlotterController extends Controller
                 ->addColumn('type_col', fn ($c) => '<span class="badge badge-navy">'.e($c->incident_type).'</span>')
                 ->addColumn('complainant_col', fn ($c) => '<div style="font-weight:600;font-size:13px">'.e($c->complainant_name ?? '—').'</div>')
                 ->addColumn('respondent_col', fn ($c) => '<span class="td-muted">'.e($c->respondent_name ?? '—').'</span>')
-                ->addColumn('date_col', fn ($c) => '<span class="td-muted">'.($c->incident_date ? \Carbon\Carbon::parse($c->incident_date)->format('M d, Y') : '—').'</span>')
+                ->addColumn('date_col', fn ($c) => '<span class="td-muted">'.($c->incident_date ? \Carbon\Carbon::parse($c->incident_date)->format('m/d/Y') : '—').'</span>')
                 ->addColumn('status_col', function ($c) {
                     $cls = match ($c->status) {
                         'Active'                      => 'badge-red',
@@ -82,7 +82,7 @@ class BlotterController extends Controller
                     if ($c->source === 'portal' && $c->status === 'Pending') {
                         $activateUrl  = route('appointments.blotterActivate', $c);
                         $incidentDate = $c->incident_date
-                            ? \Carbon\Carbon::parse($c->incident_date)->format('M d, Y') : '—';
+                            ? \Carbon\Carbon::parse($c->incident_date)->format('m/d/Y') : '—';
                         $portalBtn = '<button class="btn btn-success btn-sm blotter-activate-btn"
                                               style="font-size:12px;padding:0 10px;height:30px;
                                                      display:inline-flex;align-items:center;gap:5px;white-space:nowrap"

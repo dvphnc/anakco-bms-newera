@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', $household->household_number)
 
@@ -94,7 +94,7 @@
                             ['label'=>'Purok',          'value'=>$household->purok->name ?? '—'],
                             ['label'=>'Family Size',    'value'=>$household->family_size ?? '—'],
                             ['label'=>'Voter Household','value'=>$household->is_voter_household ? 'Yes' : 'No'],
-                            ['label'=>'Registered',     'value'=>$household->created_at->format('F d, Y')],
+                            ['label'=>'Registered',     'value'=>$household->created_at->format('m/d/Y')],
                         ];
                     @endphp
                     @foreach($details as $d)

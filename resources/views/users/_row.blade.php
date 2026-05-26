@@ -1,4 +1,4 @@
-@php
+﻿@php
 $roleCls = match($user->role) {
     'Admin'     => 'badge-red',
     'Secretary' => 'badge-yellow',
@@ -18,7 +18,7 @@ $roleCls = match($user->role) {
     <td class="td-muted">{{ $user->email }}</td>
     <td><span class="badge {{ $roleCls }}">{{ $user->role }}</span></td>
     <td><span class="badge badge-gray">Unverified</span></td>
-    <td class="td-muted">{{ $user->created_at->format('M d, Y') }}</td>
+    <td class="td-muted">{{ $user->created_at->format('m/d/Y') }}</td>
     <td>
         <div style="display:flex;justify-content:flex-end;gap:6px">
             <button data-edit-btn

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -170,7 +170,7 @@ class ResidentController extends Controller
             'age'              => $resident->age ?? '—',
             'gender'           => $resident->gender ?? '—',
             'civil_status'     => $resident->civil_status ?? '—',
-            'birthdate'        => $resident->birthdate ? \Carbon\Carbon::parse($resident->birthdate)->format('F d, Y') : '—',
+            'birthdate'        => $resident->birthdate ? \Carbon\Carbon::parse($resident->birthdate)->format('m/d/Y') : '—',
             'address'          => $resident->address ?? '—',
             'contact_number'   => $resident->contact_number ?? '—',
             'email_address'    => $resident->email_address ?? '—',

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', $blotter->case_number)
 
@@ -70,7 +70,7 @@
                     <div>
                         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Incident Date</div>
                         <div style="font-size:15px;font-weight:500;color:var(--text)">
-                            {{ $blotter->incident_date ? \Carbon\Carbon::parse($blotter->incident_date)->format('F d, Y') : '—' }}
+                            {{ $blotter->incident_date ? \Carbon\Carbon::parse($blotter->incident_date)->format('m/d/Y') : '—' }}
                         </div>
                     </div>
                     <div>
@@ -84,7 +84,7 @@
                     @if($blotter->settled_at)
                     <div>
                         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:2px">Settled On</div>
-                        <div style="font-size:15px;color:var(--text-muted)">{{ $blotter->settled_at->format('F d, Y') }}</div>
+                        <div style="font-size:15px;color:var(--text-muted)">{{ $blotter->settled_at->format('m/d/Y') }}</div>
                     </div>
                     @endif
                 </div>
@@ -444,7 +444,7 @@
         </div>
         <div class="rpt-field">
             <span class="lbl">Incident Date</span>
-            <span class="val">{{ $blotter->incident_date ? \Carbon\Carbon::parse($blotter->incident_date)->format('F d, Y') : '—' }}</span>
+            <span class="val">{{ $blotter->incident_date ? \Carbon\Carbon::parse($blotter->incident_date)->format('m/d/Y') : '—' }}</span>
         </div>
         <div class="rpt-field">
             <span class="lbl">Status</span>
@@ -452,7 +452,7 @@
         </div>
         <div class="rpt-field">
             <span class="lbl">Date Filed</span>
-            <span class="val">{{ $blotter->created_at->format('F d, Y') }}</span>
+            <span class="val">{{ $blotter->created_at->format('m/d/Y') }}</span>
         </div>
         <div class="rpt-field">
             <span class="lbl">Filed By</span>
@@ -513,7 +513,7 @@
         @if($blotter->settled_at)
         <div class="rpt-field" style="border-bottom:none">
             <span class="lbl">Date Settled</span>
-            <span class="val">{{ $blotter->settled_at->format('F d, Y') }}</span>
+            <span class="val">{{ $blotter->settled_at->format('m/d/Y') }}</span>
         </div>
         <div class="rpt-field" style="border-bottom:none">
             <span class="lbl">Final Status</span>
@@ -560,7 +560,7 @@
 
         {{-- Footer --}}
         <div class="rpt-footer">
-            <span>Printed by: {{ auth()->user()->name }} — {{ now()->format('F d, Y \a\t h:i A') }}</span>
+            <span>Printed by: {{ auth()->user()->name }} — {{ now()->format('m/d/Y g:i A') }}</span>
             <span>Barangay New Era BMS</span>
         </div>
     </div>

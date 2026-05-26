@@ -1,4 +1,4 @@
-@extends('layouts.portal')
+﻿@extends('layouts.portal')
 @section('title', 'Request Submitted')
 
 @push('styles')
@@ -99,11 +99,11 @@
                 <dt>Incident Type</dt>
                 <dd>{{ $record->incident_type }}</dd>
                 <dt>Incident Date</dt>
-                <dd>{{ $record->incident_date->format('F d, Y') }}</dd>
+                <dd>{{ $record->incident_date->format('m/d/Y') }}</dd>
                 <dt>Status</dt>
                 <dd><span style="color:#c8861a;font-weight:700">Pending</span></dd>
                 <dt>Submitted</dt>
-                <dd>{{ $record->created_at->format('M d, Y g:i A') }}</dd>
+                <dd>{{ $record->created_at->format('m/d/Y g:i A') }}</dd>
                 @if($record->email)
                     <dt>Notification</dt>
                     <dd>Will be sent to {{ $record->email }}</dd>
@@ -116,11 +116,11 @@
                 <dt>Business Type</dt>
                 <dd>{{ $record->business_type }}</dd>
                 <dt>Appointment Date</dt>
-                <dd>{{ $record->preferred_date ? $record->preferred_date->format('F d, Y') : '—' }}</dd>
+                <dd>{{ $record->preferred_date ? $record->preferred_date->format('m/d/Y') : '—' }}</dd>
                 <dt>Status</dt>
                 <dd><span style="color:#c8861a;font-weight:700">Pending</span></dd>
                 <dt>Submitted</dt>
-                <dd>{{ $record->created_at->format('M d, Y g:i A') }}</dd>
+                <dd>{{ $record->created_at->format('m/d/Y g:i A') }}</dd>
                 @if($record->email)
                     <dt>Notification</dt>
                     <dd>Will be sent to {{ $record->email }}</dd>

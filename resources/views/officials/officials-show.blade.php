@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', $official->full_name)
 
@@ -84,9 +84,9 @@
                     ['label'=>'Committee',  'value'=>$official->committee ?? '—'],
                     ['label'=>'Status',     'value'=>$official->is_active ? 'Active' : 'Inactive'],
                     ['label'=>'Contact No.','value'=>$official->contact_number ?? '—'],
-                    ['label'=>'Date Added', 'value'=>$official->created_at->format('F d, Y')],
-                    ['label'=>'Term Start', 'value'=>$official->term_start ? \Carbon\Carbon::parse($official->term_start)->format('F d, Y') : '—'],
-                    ['label'=>'Term End',   'value'=>$official->term_end   ? \Carbon\Carbon::parse($official->term_end)->format('F d, Y')   : '—'],
+                    ['label'=>'Date Added', 'value'=>$official->created_at->format('m/d/Y')],
+                    ['label'=>'Term Start', 'value'=>$official->term_start ? \Carbon\Carbon::parse($official->term_start)->format('m/d/Y') : '—'],
+                    ['label'=>'Term End',   'value'=>$official->term_end   ? \Carbon\Carbon::parse($official->term_end)->format('m/d/Y')   : '—'],
                 ]; @endphp
                 @foreach($details as $d)
                 <div style="padding:10px 0;border-bottom:1px solid var(--border);{{ $loop->even ? 'padding-left:24px' : '' }}">
@@ -105,7 +105,7 @@
     $punong     = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'PUNONG BARANGAY';
     $termShort  = ($official->term_start ? \Carbon\Carbon::parse($official->term_start)->format('Y') : '—') . ' – ' . ($official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('Y') : '—');
     $idNumber   = 'BNE-' . str_pad($official->id, 4, '0', STR_PAD_LEFT) . '-' . date('Y');
-    $validUntil = $official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('M d, Y') : '—';
+    $validUntil = $official->term_end ? \Carbon\Carbon::parse($official->term_end)->format('m/d/Y') : '—';
 
     // Code 39 barcode pattern for each character
     $code39 = [
