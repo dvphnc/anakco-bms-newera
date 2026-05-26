@@ -161,6 +161,47 @@
 (function () {
     ['portal_name','portal_contact','portal_email'].forEach(function (k) { localStorage.removeItem(k); });
 
+    /* ── File attachment drag-and-drop ── */
+    (function () {
+        var zone  = document.getElementById('blotterDropZone');
+        var input = document.getElementById('blotterFileInput');
+        if (!zone || !input) return;
+
+        zone.addEventListener('click', function () { input.click(); });
+
+        zone.addEventListener('dragover', function (e) {
+            e.preventDefault(); e.stopPropagation();
+            zone.style.borderColor     = 'var(--navy)';
+            zone.style.backgroundColor = 'rgba(13,33,68,.04)';
+        });
+        zone.addEventListener('dragleave', function (e) {
+            e.preventDefault(); e.stopPropagation();
+            zone.style.borderColor     = '';
+            zone.style.backgroundColor = '';
+        });
+        zone.addEventListener('drop', function (e) {
+            e.preventDefault(); e.stopPropagation();
+            zone.style.borderColor     = '';
+            zone.style.backgroundColor = '';
+            var files = e.dataTransfer.files;
+            if (files.length) { var dt = new DataTransfer(); dt.items.add(files[0]); input.files = dt.files; showBlotterFile(files[0]); }
+        });
+        input.addEventListener('change', function () { if (input.files[0]) showBlotterFile(input.files[0]); });
+    }());
+
+    function showBlotterFile(file) {
+        document.getElementById('blotterDropName').textContent = '✔ ' + file.name;
+        document.getElementById('blotterDropName').style.display = 'block';
+        document.getElementById('blotterDropIcon').style.display = 'none';
+        document.getElementById('blotterClearBtn').style.display = 'inline-block';
+    }
+    function clearBlotterFile() {
+        document.getElementById('blotterFileInput').value = '';
+        document.getElementById('blotterDropName').style.display = 'none';
+        document.getElementById('blotterDropIcon').style.display = 'block';
+        document.getElementById('blotterClearBtn').style.display = 'none';
+    }
+
     function clearErrors() {
         document.querySelectorAll('.form-error[id^="err-"]').forEach(function (el) {
             el.style.display = 'none'; el.textContent = '';

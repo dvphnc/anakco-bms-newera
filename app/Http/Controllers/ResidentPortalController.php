@@ -155,21 +155,33 @@ class ResidentPortalController extends Controller
             'incident_location'    => 'required|string|max:500',
             'incident_description' => 'required|string|max:2000',
             'respondent_name'      => 'nullable|string|max:255',
+            'attachment'           => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120',
         ]);
 
+        // Handle optional file attachment
+        $filePath         = null;
+        $fileOriginalName = null;
+        if ($request->hasFile('attachment') && $request->file('attachment')->isValid()) {
+            $file             = $request->file('attachment');
+            $filePath         = $file->store('blotter_attachments', 'public');
+            $fileOriginalName = $file->getClientOriginalName();
+        }
+
         $case = BlotterCase::create([
-            'case_number'         => BlotterCase::generateCaseNumber(),
-            'source'              => 'portal',
-            'incident_type'       => $validated['incident_type'],
-            'incident_date'       => $validated['incident_date'],
-            'incident_location'   => $validated['incident_location'],
-            'incident_details'    => $validated['incident_description'],
-            'complainant_name'    => $validated['complainant_name'],
-            'complainant_address' => $validated['address'],
-            'complainant_contact' => $validated['contact_number'],
-            'email'               => $validated['email'] ?? null,
-            'respondent_name'     => $validated['respondent_name'] ?? null,
-            'status'              => 'Pending',
+            'case_number'          => BlotterCase::generateCaseNumber(),
+            'source'               => 'portal',
+            'incident_type'        => $validated['incident_type'],
+            'incident_date'        => $validated['incident_date'],
+            'incident_location'    => $validated['incident_location'],
+            'incident_details'     => $validated['incident_description'],
+            'complainant_name'     => $validated['complainant_name'],
+            'complainant_address'  => $validated['address'],
+            'complainant_contact'  => $validated['contact_number'],
+            'email'                => $validated['email'] ?? null,
+            'respondent_name'      => $validated['respondent_name'] ?? null,
+            'status'               => 'Pending',
+            'file_path'            => $filePath,
+            'file_original_name'   => $fileOriginalName,
         ]);
 
         $redirectUrl = route('portal.submitted', ['type' => 'blotter', 'number' => $case->case_number]);
