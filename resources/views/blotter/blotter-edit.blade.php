@@ -46,7 +46,7 @@
                     <span class="help-icon" data-tippy-content="'Active' = newly filed. 'Under Investigation' = Barangay is looking into it. 'Mediated' = parties have met. 'Settled' = issue resolved. 'Referred' = escalated to police or court.">?</span>
                 </label>
                 <select name="status" id="statusSelect" class="form-control @error('status') is-invalid @enderror">
-                    @foreach(['Pending','Active','Under Investigation','Mediated','Settled','Closed','Referred to Higher Authority'] as $s)
+                    @foreach(['Pending','Active','Under Investigation','Mediated','Settled','Referred to Higher Authority'] as $s)
                         <option value="{{ $s }}" {{ old('status', $blotter->status) === $s ? 'selected' : '' }}>{{ $s }}</option>
                     @endforeach
                 </select>
