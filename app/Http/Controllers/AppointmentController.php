@@ -534,7 +534,7 @@ class AppointmentController extends Controller
             }
         }
 
-        $bizPending = Business::where('source', 'portal')->whereIn('status', ['Pending', 'For Review'])->count();
+        $bizPending = Business::where('source', 'portal')->where('status', 'Pending')->count();
 
         return response()->json([
             'success'     => true,
@@ -573,7 +573,7 @@ class AppointmentController extends Controller
             }
         }
 
-        $bizPending = Business::where('source', 'portal')->whereIn('status', ['Pending', 'For Review'])->count();
+        $bizPending = Business::where('source', 'portal')->where('status', 'Pending')->count();
 
         return response()->json([
             'success'    => true,
