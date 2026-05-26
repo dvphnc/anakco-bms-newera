@@ -12,11 +12,11 @@
 [![Blade](https://img.shields.io/badge/Blade_Templates-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com/docs/blade)
 [![Font Awesome](https://img.shields.io/badge/Font_Awesome_6-528DD7?style=flat-square&logo=fontawesome&logoColor=white)](https://fontawesome.com/)
 [![Made by](https://img.shields.io/badge/Made_by_Joana_Daphne_Sy-0D2144?style=flat-square)](https://github.com/dvphnc)
-[![Status](https://img.shields.io/badge/Status-Capstone_Ready-C8861A?style=flat-square)]()
+[![Status](https://img.shields.io/badge/Status-IPT_Project-C8861A?style=flat-square)]()
 
 </div>
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## What is BMS?
 
@@ -24,9 +24,9 @@ BMS is a full-stack Barangay Management System built to digitize and streamline 
 
 > Barangay offices still run on paper folders, physical logbooks, and manual signatures. This system replaces all of that — one place for resident records, case management, document issuance, and real-time status tracking. Built for the actual staff who use it every day.
 
-This is our group capstone project — built as a team with every feature grounded in real barangay workflows, not textbook exercises.
+This is our group collaboration project for **Integrative Programming And Technologies** — built as a team with every feature grounded in real barangay workflows, not textbook exercises.
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## What We Built
 
@@ -86,7 +86,7 @@ Charts and summary tables across all modules — resident demographics, document
 Role-based access control (Admin, Secretary, Committee), full activity logging with weekly/monthly charts, user management with email verification, database backup and restore, and global AJAX search across residents, documents, cases, and permits — all from the topbar.
 </details>
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## Built With
 
@@ -106,16 +106,16 @@ Font Awesome 6    Icon system throughout the UI
 Poppins           Primary typeface (Google Fonts)
 ```
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## My Role
 
-I served as **Scrum Master and Full-Stack Developer** on this group capstone project — leading sprints, managing the backlog, and owning the end-to-end technical implementation.
+I served as **Scrum Master and Full-Stack Developer** on this group project for Integrative Programming And Technologies — leading sprints, managing the backlog, and owning the end-to-end technical implementation.
 
 **As Scrum Master:**
 - Facilitated sprint planning, daily stand-ups, and retrospectives across the team
 - Maintained and prioritized the product backlog, mapping barangay workflows to deliverable features
-- Tracked progress and kept the team aligned on capstone deadlines
+- Tracked progress and kept the team aligned on project deadlines
 
 **As Full-Stack Developer:**
 - Designed the full database schema — 20+ tables covering residents, documents, blotter, permits, committees, activity logs, and portal submissions
@@ -132,7 +132,7 @@ I served as **Scrum Master and Full-Stack Developer** on this group capstone pro
 - Iterated on every form, table, modal, and print layout to match real barangay workflows
 - Added contextual UX: overdue case badges, expiry warnings, live portal status badges, focus-visible rings, and CSS tooltip labels
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## Run It Locally
 
@@ -179,7 +179,7 @@ Open `http://localhost:8000` — you're in.
 |------|-------|----------|
 | Admin | admin@bms.gov.ph | Admin@12345 |
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## How It's Organized
 
@@ -232,7 +232,7 @@ anakco-bms/
     └── web.php                                all routes with role middleware
 ```
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 ## Timeline
 
@@ -242,13 +242,13 @@ February 2025    Database schema design, design system, wireframes
 March 2025       Core modules — residents, households, documents, blotter
 April 2025       Business permits, officials, committees, reports, resident portal
 May 2025         Appointments queue, portal tracker, email notifications, UX polish
-May 26, 2025     Capstone submission — all features complete
+May 26, 2025     Final submission — all features complete
 ```
 
----
+<img src=".github/divider.svg" width="100%"/>
 
 <div align="center">
 
-<sub>© 2025 Barangay New Era BMS · Group Capstone Project · New Era University<br/>Joana Daphne Sy — Scrum Master & Developer · All Rights Reserved.</sub>
+<sub>© 2025 Barangay New Era BMS · IPT Group Project · New Era University<br/>Joana Daphne Sy — Scrum Master & Developer · All Rights Reserved.</sub>
 
 </div>
