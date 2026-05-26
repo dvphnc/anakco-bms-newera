@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PortalStatusUpdated;
 use App\Models\Document;
 use App\Models\DocumentAppointment;
 use App\Models\Resident;
 use App\Services\DocumentQueueService;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
 
 class DocumentController extends Controller
@@ -206,13 +208,15 @@ class DocumentController extends Controller
     public function update(Request $request, Document $document)
     {
         $rules = [
-            'document_type'     => 'required|string',
-            'purpose'           => 'required|string|max:500',
-            'fee_paid'          => 'nullable|numeric|min:0',
-            'or_number'         => 'nullable|string|max:100',
-            'released_at'       => 'nullable|date',
-            'status'            => 'required|in:' . implode(',', Document::$statuses),
-            'requestor_contact' => 'nullable|string|max:255',
+            'resident_id'      => 'nullable|exists:residents,id',
+            'document_type'    => 'required|string',
+            'purpose'          => 'required|string|max:500',
+            'fee_paid'         => 'nullable|numeric|min:0',
+            'or_number'        => 'nullable|string|max:100',
+            'released_at'      => 'nullable|date',
+            'status'           => 'required|in:' . implode(',', Document::$statuses),
+            'requestor_contact'=> 'nullable|string|max:255',
+            'status_message'   => 'nullable|string|max:500',
         ];
 
         if ($request->boolean('is_representative')) {
@@ -234,14 +238,13 @@ class DocumentController extends Controller
 
         // Auto-fill requestor from resident when no representative
         if (! $request->boolean('is_representative')) {
-            $resident = $document->resident ?? Resident::find($request->input('resident_id'));
-            $validated['requestor_name']         = $resident?->full_name ?? '';
+            $resident = Resident::find($validated['resident_id'] ?? $document->resident_id);
+            $validated['requestor_name']         = $resident?->full_name ?? $document->requestor_name ?? '';
             $validated['requestor_relationship'] = null;
             $validated['requestor_contact']      = null;
         }
 
-        // Guard: Released documents cannot be cancelled or rolled back —
-        // the document was already physically handed to the resident.
+        // Guard: Released documents are immutable
         if ($document->status === 'Released' && $validated['status'] !== 'Released') {
             return back()->withErrors([
                 'status' => 'This document has already been released and cannot be changed. Delete and re-issue if a correction is needed.',
@@ -251,11 +254,64 @@ class DocumentController extends Controller
         if ($validated['status'] === 'Released' && $document->status !== 'Released' && empty($validated['released_at'])) {
             $validated['released_at'] = now();
         }
-        $oldData = $document->getOriginal();
+
+        // Auto-generate OR number if fee > 0 and none supplied
+        $feePaid = (float) ($validated['fee_paid'] ?? 0);
+        if ($feePaid > 0 && empty($validated['or_number'])) {
+            $validated['or_number'] = Document::generateOrNumber();
+        }
+
+        $statusMessage = $validated['status_message'] ?? null;
+        unset($validated['status_message']);  // not a document column
+
+        $oldStatus = $document->status;
+        $oldData   = $document->getOriginal();
         $document->update($validated);
         $this->logActivity('updated', $document, $oldData, $document->fresh()->toArray());
 
+        // ── Portal notification when status changes ──────────────────
+        $newStatus = $document->status;
+        if ($oldStatus !== $newStatus && $document->source === 'portal' && $document->appointment_id) {
+            $appointment = DocumentAppointment::find($document->appointment_id);
+            if ($appointment) {
+                // Sync appointment status + store portal message
+                $aptUpdate = ['status' => $newStatus, 'processed_by' => auth()->user()->name];
+                if ($newStatus === 'Released') {
+                    $aptUpdate['released_at'] = now();
+                }
+                if ($statusMessage) {
+                    $aptUpdate['notes'] = $statusMessage;
+                }
+                DocumentAppointment::where('id', $appointment->id)->update($aptUpdate);
+
+                // Queue resident email
+                if ($appointment->email) {
+                    try {
+                        Mail::to($appointment->email)->queue(new PortalStatusUpdated(
+                            type:          'document',
+                            requestNumber: $appointment->appointment_number,
+                            residentName:  $appointment->resident_name,
+                            newStatus:     $newStatus,
+                            notes:         $statusMessage,
+                            preferredDate: $appointment->preferred_date?->format('Y-m-d'),
+                        ));
+                    } catch (\Exception $e) {
+                        logger()->warning('Document edit status email failed: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
+
         return redirect()->route('documents.index')->with('success', 'Document updated successfully.');
+    }
+
+    /**
+     * Preview the next OR number that would be assigned.
+     * Called via AJAX from the Edit Document form.
+     */
+    public function generateOrPreview()
+    {
+        return response()->json(['or_number' => Document::generateOrNumber()]);
     }
 
     public function quickStatus(Request $request, Document $document)
