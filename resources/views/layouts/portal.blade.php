@@ -1391,29 +1391,93 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 // ── Flatpickr — init all date inputs with MM/DD/YYYY display ────────
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('input[type="date"]').forEach(function (el) {
-        var opts = {
-            dateFormat:    'Y-m-d',   // value sent to server (Laravel date validation)
-            altInput:      true,      // show a separate human-readable input
-            altFormat:     'm/d/Y',   // MM/DD/YYYY display
-            allowInput:    true,
-            disableMobile: true,      // force Flatpickr on mobile too (no native picker)
-            onReady: function (selectedDates, dateStr, instance) {
-                // Set placeholder on the visible alt input
-                if (instance.altInput) {
-                    instance.altInput.placeholder = 'mm/dd/yyyy';
-                }
-            },
-        };
-        // Carry over min/max attributes as Flatpickr minDate/maxDate
-        if (el.min) opts.minDate = el.min;
-        if (el.max) opts.maxDate = el.max;
-        // Copy CSS classes to the alt (visible) input
-        if (el.className) opts.altInputClass = el.className;
-        flatpickr(el, opts);
+(function () {
+    var MONTHS = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+
+    function buildMonthDropdown(fp) {
+        var cal = fp.calendarContainer;
+        var nativeSel = cal.querySelector('.flatpickr-monthDropdown-months');
+        if (!nativeSel) return;
+
+        // ── Month button ──────────────────────────────────────────
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'fp-month-btn';
+
+        function renderBtn() {
+            btn.innerHTML = MONTHS[fp.currentMonth] +
+                ' <i class="fas fa-chevron-down" style="font-size:9px;opacity:.7"></i>';
+        }
+        renderBtn();
+
+        // ── Month panel ───────────────────────────────────────────
+        var panel = document.createElement('div');
+        panel.className = 'fp-month-panel';
+        cal.style.position = 'relative';   // anchor for absolute panel
+        cal.appendChild(panel);
+
+        var grid = document.createElement('div');
+        grid.className = 'fp-month-grid';
+        panel.appendChild(grid);
+
+        function renderGrid() {
+            grid.innerHTML = '';
+            MONTHS.forEach(function (name, idx) {
+                var cell = document.createElement('button');
+                cell.type = 'button';
+                cell.className = 'fp-month-cell' + (idx === fp.currentMonth ? ' current' : '');
+                cell.textContent = name.slice(0, 3);
+                cell.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    fp.changeMonth(idx - fp.currentMonth);
+                    panel.classList.remove('open');
+                });
+                grid.appendChild(cell);
+            });
+        }
+
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            renderGrid();
+            panel.classList.toggle('open');
+        });
+
+        // Close panel on outside click
+        document.addEventListener('click', function (e) {
+            if (!cal.contains(e.target)) panel.classList.remove('open');
+        });
+
+        // Update button label when arrows change the month
+        fp.config.onMonthChange.push(function () {
+            renderBtn();
+            panel.classList.remove('open');
+        });
+
+        // Insert custom button where native select was
+        nativeSel.parentNode.insertBefore(btn, nativeSel);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('input[type="date"]').forEach(function (el) {
+            var opts = {
+                dateFormat:    'Y-m-d',
+                altInput:      true,
+                altFormat:     'm/d/Y',
+                allowInput:    true,
+                disableMobile: true,
+                onReady: function (sd, ds, fp) {
+                    if (fp.altInput) fp.altInput.placeholder = 'mm/dd/yyyy';
+                    buildMonthDropdown(fp);
+                },
+            };
+            if (el.min) opts.minDate = el.min;
+            if (el.max) opts.maxDate = el.max;
+            if (el.className) opts.altInputClass = el.className;
+            flatpickr(el, opts);
+        });
     });
-});
+})();
 </script>
 
 <script>
