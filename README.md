@@ -237,7 +237,6 @@ May 2025         Appointments queue, portal tracker, email notifications, UX pol
 May 26, 2025     Final submission — all features complete
 ```
 
-<img src=".github/divider.svg" width="100%"/>
 
 <div align="center">
 
