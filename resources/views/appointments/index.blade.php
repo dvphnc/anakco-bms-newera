@@ -1057,14 +1057,12 @@ $(document).ready(function () {
     window.saveConvert = function () {
         var btn = document.getElementById('cvtSaveBtn');
         btn.disabled  = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Issuing…';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing…';
         document.getElementById('cvtError').style.display = 'none';
 
         var payload = {
-            fee_paid:    document.getElementById('cvtFee').value.trim()  || null,
-            or_number:   document.getElementById('cvtOR').value.trim()   || null,
-            notes:       document.getElementById('cvtNote').value.trim() || null,
-            _token:      '{{ csrf_token() }}',
+            notes:  document.getElementById('cvtNote').value.trim() || null,
+            _token: '{{ csrf_token() }}',
         };
         if (_cvtVerifiedResidentId) {
             payload.resident_id = _cvtVerifiedResidentId;
@@ -1074,7 +1072,7 @@ $(document).ready(function () {
         .then(function (res) {
             closeConvertModal();
             docTable.ajax.reload(null, false);
-            bmsToast('📧 ' + (res.data.message || 'Document issued successfully.'), 'success');
+            bmsToast(res.data.message || 'Appointment accepted — now in Document Issuance.', 'success');
             // Update stat cards + tab badge
             if (res.data.counts) {
                 var c = res.data.counts;
@@ -1086,19 +1084,19 @@ $(document).ready(function () {
             if (window.refreshPortalBadges) window.refreshPortalBadges();
         })
         .catch(function (err) {
-            var msg = err.response?.data?.message || 'Failed to issue document.';
+            var msg = err.response?.data?.message || 'Failed to process appointment.';
             document.getElementById('cvtError').textContent    = msg;
             document.getElementById('cvtError').style.display  = '';
-            // If already issued — offer to open the existing record
+            // If already in progress — offer to open the existing record
             if (err.response?.data?.view_url) {
-                bmsToast('Document already issued.', 'info');
+                bmsToast('Already accepted.', 'info');
                 setTimeout(function () { window.open(err.response.data.view_url, '_blank'); }, 1200);
                 closeConvertModal();
             }
         })
         .finally(function () {
             btn.disabled  = false;
-            btn.innerHTML = '<i class="fas fa-file-circle-check"></i> Issue Document';
+            btn.innerHTML = '<i class="fas fa-file-circle-check"></i> Accept &amp; Process';
         });
     };
 
