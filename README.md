@@ -229,18 +229,18 @@ anakco-bms-newera/
 ## Timeline
 
 ```
-January 2025     Project kickoff — requirements gathering, barangay workflow research
-February 2025    Database schema design, design system, wireframes
-March 2025       Core modules — residents, households, documents, blotter
-April 2025       Business permits, officials, committees, reports, resident portal
-May 2025         Appointments queue, portal tracker, email notifications, UX polish
-May 26, 2025     Final submission — all features complete
+January 2026     Project kickoff — requirements gathering, barangay workflow research
+February 2026    Database schema design, design system, wireframes
+March 2026       Core modules — residents, households, documents, blotter
+April 2026       Business permits, officials, committees, reports, resident portal
+May 2026         Appointments queue, portal tracker, email notifications, UX polish
+May 26, 2026     Final submission — all features complete
 ```
 
 <div align="center">
 
 ![wave](.github/readme-wave.svg)
 
-<sub>© 2025 Barangay New Era BMS · IPT Group Project · New Era University <br/>AnakCo. · All Rights Reserved.</sub>
+<sub>© 2026 Barangay New Era BMS · IPT Group Project · New Era University <br/>AnakCo. · All Rights Reserved.</sub>
 
 </div>
