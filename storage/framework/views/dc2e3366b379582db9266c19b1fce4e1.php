@@ -146,6 +146,14 @@
             <a href="<?php echo e(route('portal.track')); ?>?ref=<?php echo e($number); ?>" class="btn btn-outline">
                 <i class="fas fa-magnifying-glass"></i> Track Status
             </a>
+            <?php
+                $submissionContact = $type === 'blotter'
+                    ? ($record->complainant_contact ?? '')
+                    : ($record->owner_contact ?? '');
+            ?>
+            <a href="<?php echo e(route('portal.submissions')); ?>?contact=<?php echo e(urlencode($submissionContact)); ?>#<?php echo e($type); ?>" class="btn btn-outline">
+                <i class="fas fa-folder-open"></i> My Submissions
+            </a>
             <?php if($type === 'blotter'): ?>
                 <a href="<?php echo e(route('portal.blotter')); ?>" class="btn btn-primary">
                     <i class="fas fa-plus"></i> File Another Report
