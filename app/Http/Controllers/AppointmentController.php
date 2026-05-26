@@ -101,7 +101,7 @@ class AppointmentController extends Controller
                     return '<div style="display:flex;justify-content:flex-end;gap:6px">
                                 <button class="btn btn-sm apt-issue-btn"
                                         style="height:30px;padding:0 12px;font-size:12px;font-weight:600;
-                                               background:var(--navy);color:#fff;border:1px solid var(--navy);
+                                               background:#16a34a;color:#fff;border:1px solid #16a34a;
                                                border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;
                                                display:inline-flex;align-items:center;gap:5px"
                                         data-url="'.e($convertUrl).'"
