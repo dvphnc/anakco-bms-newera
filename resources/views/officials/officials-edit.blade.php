@@ -213,31 +213,64 @@ $(function () {
         $('#officialFullName').prop('readonly', false).css('background', '');
     });
 
-    // Remove-photo checkbox: dim the preview and disable the file input
-    var $cb      = $('#remove-photo-cb');
-    var $preview = $('#current-photo-preview');
-    var $upload  = $('#photo-upload');
+});
 
-    function syncRemoveState() {
-        if ($cb.is(':checked')) {
-            $preview.css({ opacity: '0.3', filter: 'grayscale(100%)' });
-            $upload.prop('disabled', true).val('');
-        } else {
-            $preview.css({ opacity: '1', filter: 'none' });
-            $upload.prop('disabled', false);
-        }
-    }
+/* ── Photo drag-and-drop ── */
+(function () {
+    var zone  = document.getElementById('photoDropZone');
+    var input = document.getElementById('photo-upload');
+    if (!zone || !input) return;
 
-    $cb.on('change', syncRemoveState);
-    syncRemoveState(); // run on page load in case old() is checked
+    zone.addEventListener('click', function () { input.click(); });
 
-    // If user picks a new file, auto-uncheck remove
-    $upload.on('change', function () {
-        if (this.files.length) {
-            $cb.prop('checked', false);
-            syncRemoveState();
+    zone.addEventListener('dragover', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = 'var(--navy)';
+        zone.style.backgroundColor = 'rgba(13,33,68,.04)';
+    });
+    zone.addEventListener('dragleave', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = '';
+        zone.style.backgroundColor = '';
+    });
+    zone.addEventListener('drop', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        zone.style.borderColor     = '';
+        zone.style.backgroundColor = '';
+        var files = e.dataTransfer.files;
+        if (files.length) {
+            var dt = new DataTransfer(); dt.items.add(files[0]); input.files = dt.files;
+            showOfficialPhoto(files[0]);
+            var cb = document.getElementById('remove-photo-cb');
+            if (cb && cb.checked) { cb.checked = false; var prev = document.getElementById('current-photo-preview'); if (prev) prev.style.opacity = ''; }
         }
     });
-});
+}());
+
+function showOfficialPhoto(file) {
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+        var preview = document.getElementById('photoDropPreview');
+        preview.src = ev.target.result;
+        preview.style.display = 'block';
+        document.getElementById('photoDropIcon').style.display = 'none';
+        document.getElementById('photoDropName').textContent = '✔ ' + file.name;
+        document.getElementById('photoDropName').style.display = 'block';
+        document.getElementById('photoClearBtn').style.display = 'inline-block';
+    };
+    reader.readAsDataURL(file);
+}
+function clearOfficialPhoto() {
+    var input = document.getElementById('photo-upload');
+    if (input) input.value = '';
+    var preview = document.getElementById('photoDropPreview');
+    if (preview) { preview.style.display = 'none'; preview.src = ''; }
+    var icon = document.getElementById('photoDropIcon');
+    if (icon) icon.style.display = 'block';
+    var name = document.getElementById('photoDropName');
+    if (name) name.style.display = 'none';
+    var btn = document.getElementById('photoClearBtn');
+    if (btn) btn.style.display = 'none';
+}
 </script>
 @endpush
