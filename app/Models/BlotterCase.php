@@ -84,7 +84,7 @@ class BlotterCase extends Model
 
     public function isSettled(): bool
     {
-        return in_array($this->status, ['Settled', 'Closed']);
+        return $this->status === 'Settled';
     }
 
     // Badge color per status for the blade views
@@ -96,7 +96,6 @@ class BlotterCase extends Model
             'Under Investigation'          => 'badge-yellow',
             'Mediated'                     => 'badge-blue',
             'Settled'                      => 'badge-green',
-            'Closed'                       => 'badge-gray',
             'Referred to Higher Authority' => 'badge-orange',
             default                        => 'badge-gray',
         };
