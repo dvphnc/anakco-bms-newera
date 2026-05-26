@@ -382,7 +382,7 @@
     margin-bottom: 2px;
 }
 .rpt-fullwidth .lbl { font-size: 8.5pt; font-weight: bold; color: #555; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; }
-.rpt-fullwidth .val { font-size: 10.5pt; line-height: 1.7; white-space: pre-line; }
+.rpt-fullwidth .val { font-size: 10.5pt; line-height: 1.7; white-space: pre-line; display: block; }
 
 .rpt-sig-section {
     break-inside: avoid;
