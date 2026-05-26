@@ -129,13 +129,13 @@
             </div>
             @endif
             <label class="form-label">Upload New Photo</label>
-            <div id="photoDropZone" style="border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;max-width:280px">
+            <label for="photo-upload" id="photoDropZone" style="display:block;border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;max-width:280px">
                 <i class="fas fa-camera" id="photoDropIcon" style="font-size:24px;color:var(--text-muted);margin-bottom:6px;display:block"></i>
                 <img id="photoDropPreview" src="" alt="" style="display:none;width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto 6px;border:2px solid var(--border)">
                 <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
                 <div style="font-size:12px;color:var(--text-subtle)">JPG, PNG, WEBP — max 2MB</div>
                 <div id="photoDropName" style="display:none;margin-top:6px;font-size:13px;font-weight:600;color:var(--navy)"></div>
-            </div>
+            </label>
             <input type="file" name="photo_path" id="photo-upload" accept="image/*" style="display:none">
             <button type="button" id="photoClearBtn" onclick="clearOfficialPhoto()" style="display:none;margin-top:6px;background:none;border:none;color:var(--danger,#c0392b);font-size:13px;cursor:pointer;padding:0"><i class="fas fa-times"></i> Remove new photo</button>
         </div>
@@ -169,8 +169,9 @@ $(function () {
                 $('#current-photo-preview').css('opacity', '1');
             }
         });
+        /* showOfficialPhoto is called by the native change listener in the IIFE below */
         $photoInput.on('change', function () {
-            if (this.value) { $removeCb.prop('checked', false).trigger('change'); showOfficialPhoto(this.files[0]); }
+            if (this.value) $removeCb.prop('checked', false).trigger('change');
         });
     }
 
@@ -221,7 +222,7 @@ $(function () {
     var input = document.getElementById('photo-upload');
     if (!zone || !input) return;
 
-    zone.addEventListener('click', function () { input.click(); });
+    /* click-to-browse handled natively by <label for="photo-upload"> */
 
     zone.addEventListener('dragover', function (e) {
         e.preventDefault(); e.stopPropagation();
@@ -244,6 +245,13 @@ $(function () {
             var cb = document.getElementById('remove-photo-cb');
             if (cb && cb.checked) { cb.checked = false; var prev = document.getElementById('current-photo-preview'); if (prev) prev.style.opacity = ''; }
         }
+    });
+    /* Unconditional change handler — not guarded by remove-photo-cb existence */
+    input.addEventListener('change', function () {
+        if (!this.files[0]) return;
+        var cb = document.getElementById('remove-photo-cb');
+        if (cb && cb.checked) { cb.checked = false; var prev = document.getElementById('current-photo-preview'); if (prev) prev.style.opacity = ''; }
+        showOfficialPhoto(this.files[0]);
     });
 }());
 
