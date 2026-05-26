@@ -647,11 +647,13 @@
             '</div>';
     }
 
-    function renderTimeline(logs) {
+    function renderTimeline(logs, type) {
         if (!logs || !logs.length) return '';
         var items = logs.map(function (l, i) {
             var isLast = i === logs.length - 1;
             var slug   = statusSlug(l.to);
+            // Business permit Active = green dot
+            if (type === 'business' && l.to === 'Active') slug = 'active-biz';
             var who    = l.by ? '<span class="tl-who">' + esc(l.by) + '</span>' : '';
             var note   = l.note ? '<div class="tl-note">' + esc(l.note) + '</div>' : '';
             return '<div class="tl-item' + (isLast ? ' tl-last' : '') + '">' +
@@ -771,7 +773,7 @@
                 typeChip(d.type) +
             '</div>' +
             '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:.4rem">' +
-                statusBadgeHtml(d.status) +
+                statusBadgeHtml(d.status, d.type) +
                 '<div style="font-size:.72rem;opacity:.6;text-align:right">Submitted ' + esc(d.created_at) + '</div>' +
             '</div>' +
             '</div>';
@@ -797,7 +799,7 @@
         else if (d.type === 'business') grid = infoGridBusiness(d);
         else if (d.type === 'blotter') grid = infoGridBlotter(d);
 
-        var timeline = renderTimeline(d.logs || []);
+        var timeline = renderTimeline(d.logs || [], d.type);
 
         var terminal = TERMINAL.indexOf(d.status) !== -1;
         var liveBar  = terminal
