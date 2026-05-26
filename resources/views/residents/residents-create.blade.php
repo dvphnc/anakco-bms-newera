@@ -224,15 +224,22 @@
     <div class="card-body">
         <div class="form-group" style="max-width:360px">
             <label class="form-label">Upload Photo <span style="color:#9ca3af;font-weight:400">(optional)</span></label>
-            <label for="photoFileInput" id="photoDropZone" style="display:block;border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s,border-style .2s,background .2s">
-                <i class="fas fa-camera" id="photoDropIcon" style="font-size:26px;color:var(--text-muted);margin-bottom:6px;display:block"></i>
-                <img id="photoDropPreview" src="" alt="" style="display:none;width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 8px;border:2px solid var(--border)">
-                <div id="photoDropHint" style="font-size:13px;color:var(--text-muted);margin-bottom:3px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
-                <div id="photoDropSub" style="font-size:12px;color:var(--text-subtle)">JPG, PNG, WEBP — max 2MB</div>
-                <div id="photoDropName" style="display:none;margin-top:4px;font-size:13px;font-weight:600;color:var(--navy)"></div>
+            {{-- Drop zone (idle state) --}}
+            <label for="photoFileInput" id="photoDropZone" style="display:block;border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s">
+                <i class="fas fa-camera" style="font-size:26px;color:var(--text-muted);margin-bottom:6px;display:block"></i>
+                <div style="font-size:13px;color:var(--text-muted);margin-bottom:3px">Drag & drop or <span style="color:var(--navy);font-weight:600">browse</span></div>
+                <div style="font-size:12px;color:var(--text-subtle)">JPG, PNG, WEBP — max 2MB</div>
             </label>
             <input type="file" id="photoFileInput" name="photo_path" accept="image/*" style="display:none">
-            <button type="button" id="photoClearBtn" onclick="clearResidentPhoto()" style="display:none;margin-top:8px;width:100%;background:none;border:1px solid var(--danger,#e53e3e);border-radius:var(--radius-sm,6px);color:var(--danger,#c0392b);font-size:12px;cursor:pointer;padding:5px 10px"><i class="fas fa-times"></i> Remove photo</button>
+            {{-- Selected state card --}}
+            <div id="photoSelectedCard" style="display:none;border:2px solid var(--navy);border-radius:var(--radius);padding:12px 16px;align-items:center;gap:14px">
+                <img id="photoDropPreview" src="" alt="" style="width:56px;height:56px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid var(--border)">
+                <div style="flex:1;min-width:0">
+                    <div id="photoDropName" style="font-size:13px;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+                    <div style="font-size:11px;color:var(--text-subtle);margin-top:2px">Ready to upload</div>
+                </div>
+                <button type="button" onclick="clearResidentPhoto()" style="flex-shrink:0;background:none;border:1px solid var(--danger,#e53e3e);border-radius:var(--radius-sm,6px);color:var(--danger,#c0392b);font-size:12px;cursor:pointer;padding:5px 12px;white-space:nowrap"><i class="fas fa-times"></i> Remove</button>
+            </div>
         </div>
     </div>
 </div>
