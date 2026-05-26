@@ -49,16 +49,17 @@
                 <div class="td-mono" style="color:rgba(255,255,255,0.5);font-size:12px;margin-bottom:4px">{{ $document->doc_number }}</div>
                 <div style="font-size:15px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:10px">{{ $document->document_type }}</div>
                 @php
-                    $cls = match($document->status) {
-                        'Pending'    => 'badge-yellow',
-                        'Processing' => 'badge-blue',
-                        'Ready'      => 'badge-green',
-                        'Released'   => 'badge-gray',
-                        'Cancelled'  => 'badge-red',
-                        default      => 'badge-gray'
+                    // On dark navy card — use light/inverted badge styles
+                    $badgeStyle = match($document->status) {
+                        'Pending'    => 'background:rgba(255,193,7,0.18);color:#FFD54F;border:1px solid rgba(255,211,70,0.35)',
+                        'Processing' => 'background:rgba(96,165,250,0.18);color:#93C5FD;border:1px solid rgba(96,165,250,0.35)',
+                        'Ready'      => 'background:rgba(52,211,153,0.18);color:#6EE7B7;border:1px solid rgba(52,211,153,0.35)',
+                        'Released'   => 'background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.2)',
+                        'Cancelled'  => 'background:rgba(248,113,113,0.18);color:#FCA5A5;border:1px solid rgba(248,113,113,0.35)',
+                        default      => 'background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.2)',
                     };
                 @endphp
-                <span class="badge {{ $cls }}">{{ $document->status }}</span>
+                <span class="badge" style="{{ $badgeStyle }}">{{ $document->status }}</span>
             </div>
             <div style="padding:16px 20px;border-top:1px solid var(--border)">
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:8px">Resident</div>
