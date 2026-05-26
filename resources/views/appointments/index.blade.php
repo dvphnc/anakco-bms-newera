@@ -387,18 +387,18 @@
 </div>
 
 {{-- ══════════════════════════════════════════════════════════════
-     MODAL — Issue Business Permit
+     MODAL — Mark For Review  (portal business → For Review in Business Permits)
 ═══════════════════════════════════════════════════════════════ --}}
 <div id="bizIssueModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
      onclick="if(event.target===this)closeBizIssueModal()">
-    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:480px;
+    <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:460px;
                 box-shadow:0 20px 60px rgba(0,0,0,0.22);overflow:hidden">
         <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
             <div style="display:flex;align-items:center;gap:9px">
-                <i class="fas fa-stamp" style="color:var(--gold);font-size:13px"></i>
-                <span style="font-size:13.5px;font-weight:700;color:#fff">Issue Business Permit</span>
+                <i class="fas fa-magnifying-glass" style="color:var(--gold);font-size:13px"></i>
+                <span style="font-size:13.5px;font-weight:700;color:#fff">Mark For Review</span>
             </div>
             <button onclick="closeBizIssueModal()"
                     style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
@@ -429,25 +429,10 @@
                     </div>
                 </div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">Permit Date <span style="color:var(--crimson)">*</span></label>
-                    <input type="date" id="bizIssuePermitDate" class="form-control">
-                </div>
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">Expiry Date <span style="color:var(--crimson)">*</span></label>
-                    <input type="date" id="bizIssueExpiryDate" class="form-control">
-                </div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">Fee Paid (₱) <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span></label>
-                    <input type="number" id="bizIssueFee" class="form-control" min="0" step="0.01" placeholder="0.00">
-                </div>
-                <div class="form-group" style="margin:0">
-                    <label class="form-label" style="font-size:12.5px">O.R. Number <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional</span></label>
-                    <input type="text" id="bizIssueOR" class="form-control" placeholder="e.g. 2026-00123">
-                </div>
+            <div class="form-group" style="margin-bottom:14px">
+                <label class="form-label" style="font-size:12.5px">Note to Applicant <span style="font-weight:400;color:var(--text-subtle);font-size:11.5px">— optional, sent by email</span></label>
+                <textarea id="bizIssueNote" class="form-control" rows="2"
+                          placeholder="e.g. Please bring your DTI/SEC registration, barangay ID, and latest billing to your appointment."></textarea>
             </div>
             <div id="bizIssueError" style="display:none;font-size:13px;color:var(--crimson);
                  padding:8px 12px;background:var(--crimson-pale);border-radius:var(--radius-sm);
@@ -455,13 +440,13 @@
             <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;
                         color:var(--text-subtle);background:#f8f9fb;border:1px solid var(--border);
                         border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px">
-                <i class="fas fa-circle-info" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
-                <span>Sets the permit to <strong style="color:var(--navy)">Active</strong> and makes it visible as a real permit record in the Business Permits section.</span>
+                <i class="fas fa-circle-right" style="color:var(--navy);opacity:.5;margin-top:1px;flex-shrink:0"></i>
+                <span>Sets the application to <strong style="color:var(--navy)">For Review</strong> and makes it visible in <strong style="color:var(--navy)">Business Permits</strong> for staff to finalize and issue the actual permit.</span>
             </div>
             <div style="display:flex;justify-content:flex-end;gap:10px">
                 <button type="button" onclick="closeBizIssueModal()" class="btn btn-secondary">Cancel</button>
                 <button type="button" id="bizIssueSaveBtn" onclick="saveBizIssue()" class="btn btn-success">
-                    <i class="fas fa-stamp"></i> Issue Permit
+                    <i class="fas fa-magnifying-glass"></i> Mark For Review
                 </button>
             </div>
         </div>
