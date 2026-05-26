@@ -202,11 +202,25 @@ class BlotterController extends Controller
             'respondent_contact'     => 'nullable|string|max:20',
             'respondent_resident_id' => 'nullable|exists:residents,id',
             'responding_officer'     => 'nullable|string|max:255',
-            'status'                 => 'required|in:Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
+            'status'                 => 'required|in:Pending,Active,Under Investigation,Mediated,Settled,Closed,Referred to Higher Authority',
             'resolution_notes'       => 'nullable|string',
+            'settled_at'             => 'nullable|date',
+            'status_message'         => 'nullable|string|max:500',
         ]);
-        if (in_array($validated['status'], ['Settled', 'Closed']) && ! in_array($blotter->status, ['Settled', 'Closed'])) {
-            $validated['settled_at'] = now();
+
+        $statusMessage = $validated['status_message'] ?? null;
+        unset($validated['status_message']);
+
+        // Auto-set settled_at when moving into a closed status
+        if (in_array($validated['status'], ['Settled', 'Closed'])) {
+            if (! empty($validated['settled_at'])) {
+                // keep the staff-supplied date
+            } elseif (! in_array($blotter->status, ['Settled', 'Closed'])) {
+                $validated['settled_at'] = now();
+            }
+        } else {
+            // Clear settled_at when moving away from settled/closed
+            $validated['settled_at'] = null;
         }
 
         // Handle file removal
@@ -228,9 +242,38 @@ class BlotterController extends Controller
             $validated['file_original_name'] = $file->getClientOriginalName();
         }
 
-        $oldData = $blotter->getOriginal();
+        $oldStatus = $blotter->status;
+        $oldData   = $blotter->getOriginal();
         $blotter->update($validated);
         $this->logActivity('updated', $blotter, $oldData, $blotter->fresh()->toArray());
+
+        $newStatus = $blotter->status;
+
+        // ── Status log + portal notification ─────────────────────────
+        if ($oldStatus !== $newStatus) {
+            BlotterStatusLog::create([
+                'blotter_case_id' => $blotter->id,
+                'from_status'     => $oldStatus,
+                'to_status'       => $newStatus,
+                'changed_by'      => auth()->user()->name,
+                'note'            => $statusMessage ?: null,
+                'created_at'      => now(),
+            ]);
+
+            if ($blotter->source === 'portal' && $blotter->email) {
+                try {
+                    Mail::to($blotter->email)->queue(new PortalStatusUpdated(
+                        type:          'blotter',
+                        requestNumber: $blotter->case_number,
+                        residentName:  $blotter->complainant_name,
+                        newStatus:     $newStatus,
+                        notes:         $statusMessage,
+                    ));
+                } catch (\Exception $e) {
+                    logger()->warning('Blotter edit status email failed: ' . $e->getMessage());
+                }
+            }
+        }
 
         return redirect()->route('blotter.show', $blotter)->with('success', 'Blotter case updated successfully.');
     }
