@@ -53,12 +53,6 @@ class BackupController extends Controller
             }
 
             $filename = 'backup_'.now()->format('Y-m-d_H-i-s').'.sql';
-            $fullPath = storage_path('app/'.$this->backupPath.'/'.$filename);
-
-            // Ensure backup directory exists
-            if (! file_exists(storage_path('app/'.$this->backupPath))) {
-                mkdir(storage_path('app/'.$this->backupPath), 0755, true);
-            }
 
             // Write a temporary MySQL options file so credentials are never exposed
             // in the command line (and MYSQL_PWD is not supported on Windows MySQL 8).
