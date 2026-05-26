@@ -1545,6 +1545,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 onReady: function (sd, ds, fp) {
                     if (fp.altInput) fp.altInput.placeholder = 'mm/dd/yyyy';
                     buildMonthDropdown(fp);
+                    buildYearDropdown(fp);
                 },
             };
             if (el.min) opts.minDate = el.min;
