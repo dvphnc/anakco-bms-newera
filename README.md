@@ -241,6 +241,6 @@ May 26, 2026     Final submission — all features complete
 
 ![wave](.github/readme-wave.svg)
 
-<sub>© 2026 Barangay New Era BMS · IPT Group Project · New Era University <br/>AnakCo. All Rights Reserved.</sub>
+<sub>© 2026 Barangay New Era Management System · IPT · New Era University <br/>AnakCo. All Rights Reserved.</sub>
 
 </div>
