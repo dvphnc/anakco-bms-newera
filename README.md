@@ -1,23 +1,14 @@
 <div align="center">
 
-# 🏛️ Barangay New Era BMS
-
-### Barangay Management System — New Era, District VI, Quezon City
+![BMS](.github/readme-banner.svg)
 
 <br/>
 
 [![Laravel](https://img.shields.io/badge/Laravel_12-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com/)
 [![PHP](https://img.shields.io/badge/PHP_8.2-777BB4?style=flat-square&logo=php&logoColor=white)](https://php.net/)
 [![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)](https://mysql.com/)
-[![Blade](https://img.shields.io/badge/Blade_Templates-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com/docs/blade)
-[![Font Awesome](https://img.shields.io/badge/Font_Awesome_6-528DD7?style=flat-square&logo=fontawesome&logoColor=white)](https://fontawesome.com/)
-<<<<<<< HEAD
-[![Made by](https://img.shields.io/badge/Made_by_Joana_Daphne_Sy-0D2144?style=flat-square)](https://github.com/dvphnc)
+[![Made by](https://img.shields.io/badge/Made_by_AnakCo.-0D2144?style=flat-square)](https://github.com/dvphnc)
 [![Status](https://img.shields.io/badge/Status-IPT_Project-C8861A?style=flat-square)]()
-=======
-[![Made by](https://img.shields.io/badge/Made_by_AnakCo-0D2144?style=flat-square)](https://github.com/dvphnc)
-[![Status](https://img.shields.io/badge/Status-Capstone_Ready-C8861A?style=flat-square)]()
->>>>>>> 494d687522f26a7b910dc05499c476b0299e69f5
 
 </div>
 
@@ -29,7 +20,7 @@ BMS is a full-stack Barangay Management System built to digitize and streamline 
 
 > Barangay offices still run on paper folders, physical logbooks, and manual signatures. This system replaces all of that — one place for resident records, case management, document issuance, and real-time status tracking. Built for the actual staff who use it every day.
 
-This is our group collaboration project for **Integrative Programming And Technologies** — built as a team with every feature grounded in real barangay workflows, not textbook exercises.
+This is our group collaboration project for **Integrative Programming and Technologies** — built as a team with every feature grounded in real barangay workflows, not textbook exercises.
 
 <img src=".github/divider.svg" width="100%"/>
 
@@ -52,13 +43,13 @@ Issue barangay certificates (Clearance, Indigency, Residency, Business Clearance
 <details>
 <summary>&nbsp;<b>Blotter Case Management</b></summary>
 <br/>
-File, track, and resolve blotter cases with full status history. Cases move through Active → Under Investigation → Mediated → Settled (or Referred to Higher Authority). Portal submissions land in a review queue before becoming official cases. Staff can attach files, log notes at each status change, and print formatted case reports. Overdue open cases are flagged automatically.
+File, track, and resolve blotter cases with full status history. Cases move through Active → Under Investigation → Mediated → Settled (or Referred to Higher Authority). Staff can attach files, log notes at each status change, and print formatted case reports. Overdue open cases are flagged automatically.
 </details>
 
 <details>
 <summary>&nbsp;<b>Business Permit Tracking</b></summary>
 <br/>
-Issue and manage barangay business clearances with permit dates, expiry tracking, and OR numbers. The system flags overdue and expiring-soon permits on the dashboard. Portal applicants can submit business permit requests online — staff review and issue directly from the admin panel.
+Issue and manage barangay business clearances with permit dates, expiry tracking, and OR numbers. The system flags overdue and expiring-soon permits on the dashboard and sends visual alerts. Staff can filter by expiry status with one click.
 </details>
 
 <details>
@@ -76,7 +67,7 @@ All portal submissions surface in a dedicated Appointments page organized into t
 <details>
 <summary>&nbsp;<b>Officials, Staff & Committees</b></summary>
 <br/>
-Manage barangay officials and staff with role titles, term dates, and photos. Print digital ID cards for each official. Eight committee tabs (Peace & Order, Health, Education, and more) each have their own member list, medicine inventory (Health committee), and committee-specific data.
+Manage barangay officials and staff with role titles, term dates, and photos. Print digital ID cards for each official. Eight committee tabs (Peace & Order, Health, Education, and more) each have their own member list, medicine inventory, and committee-specific data.
 </details>
 
 <details>
@@ -106,7 +97,6 @@ Yajra DataTables  Server-side paginated and searchable tables
 DomPDF            PDF generation for certificates and reports
 PhpSpreadsheet    Excel export across all modules
 Simple QrCode     QR codes on business permits for public verification
-Axios             Async requests — portal tracker, inventory, status updates
 Font Awesome 6    Icon system throughout the UI
 Poppins           Primary typeface (Google Fonts)
 ```
@@ -115,7 +105,7 @@ Poppins           Primary typeface (Google Fonts)
 
 ## My Role
 
-I served as **Scrum Master and Full-Stack Developer** on this group project for Integrative Programming And Technologies — leading sprints, managing the backlog, and owning the end-to-end technical implementation.
+I served as **Scrum Master and Full-Stack Developer** on this group project for Integrative Programming and Technologies — leading sprints, managing the backlog, and owning the end-to-end technical implementation.
 
 **As Scrum Master:**
 - Facilitated sprint planning, daily stand-ups, and retrospectives across the team
@@ -135,7 +125,7 @@ I served as **Scrum Master and Full-Stack Developer** on this group project for 
 - Built a consistent design system: navy `#0D2144`, gold `#C8861A`, Poppins, 10px border radius
 - Designed the resident portal as a distinct public-facing experience separate from the staff admin panel
 - Iterated on every form, table, modal, and print layout to match real barangay workflows
-- Added contextual UX: overdue case badges, expiry warnings, live portal status badges, focus-visible rings, and CSS tooltip labels
+- Added contextual UX: overdue case badges, expiry warnings, live portal status badges, and CSS tooltip labels
 
 <img src=".github/divider.svg" width="100%"/>
 
@@ -144,8 +134,8 @@ I served as **Scrum Master and Full-Stack Developer** on this group project for 
 > Requires [Laragon](https://laragon.org/) (or any local PHP 8.2 + MySQL environment).
 
 ```bash
-git clone https://github.com/dvphnc/anakco-bms.git
-cd anakco-bms
+git clone https://github.com/dvphnc/anakco-bms-newera.git
+cd anakco-bms-newera
 composer install
 npm install
 cp .env.example .env
@@ -189,7 +179,7 @@ Open `http://localhost:8000` — you're in.
 ## How It's Organized
 
 ```
-anakco-bms/
+anakco-bms-newera/
 │
 ├── app/
 │   ├── Http/
@@ -207,8 +197,6 @@ anakco-bms/
 │   ├── Models/                                 Eloquent models (20+ tables)
 │   ├── Mail/
 │   │   └── PortalStatusUpdated.php             portal email notifications
-│   ├── Services/
-│   │   └── DocumentQueueService.php            document pipeline logic
 │   └── Traits/
 │       └── LogsActivity.php                    activity logging trait
 │
@@ -217,12 +205,11 @@ anakco-bms/
 │       ├── layouts/
 │       │   └── app.blade.php                   main layout — CSS, sidebar, topbar
 │       ├── partials/                            sidebar, topbar, alerts
-│       ├── dashboard/                          overview, analytics, appointments tabs
+│       ├── dashboard.blade.php                 overview and alerts
 │       ├── residents/                          registry and profiles
 │       ├── documents/                          issuance and certificates
 │       ├── blotter/                            case management and print report
 │       ├── businesses/                         permit tracking
-│       ├── appointments/                       portal submission queue
 │       ├── portal/                             public request form and tracker
 │       ├── officials/                          staff directory and ID cards
 │       ├── committees/                         8 committee tabs
@@ -242,22 +229,18 @@ anakco-bms/
 ## Timeline
 
 ```
-January 2025     Project kickoff — requirements gathering, barangay workflow research
-February 2025    Database schema design, design system, wireframes
-March 2025       Core modules — residents, households, documents, blotter
-April 2025       Business permits, officials, committees, reports, resident portal
-May 2025         Appointments queue, portal tracker, email notifications, UX polish
-May 26, 2025     Final submission — all features complete
+January 2026     Project kickoff — requirements gathering, barangay workflow research
+February 2026    Database schema design, design system, wireframes
+March 2026       Core modules — residents, households, documents, blotter
+April 2026       Business permits, officials, committees, reports, resident portal
+May 2026         Appointments queue, portal tracker, email notifications, UX polish
+May 26, 2026     Final submission — all features complete
 ```
-
-<img src=".github/divider.svg" width="100%"/>
 
 <div align="center">
 
-<<<<<<< HEAD
-<sub>© 2025 Barangay New Era BMS · IPT Group Project · New Era University<br/>Joana Daphne Sy — Scrum Master & Developer · All Rights Reserved.</sub>
-=======
-<sub>© 2025 Barangay New Era BMS · Built by AnakCo. · New Era University<br/>All Rights Reserved.</sub>
->>>>>>> 494d687522f26a7b910dc05499c476b0299e69f5
+![wave](.github/readme-wave.svg)
+
+<sub>© 2026 Barangay New Era Management System · IPT · New Era University <br/>AnakCo. All Rights Reserved.</sub>
 
 </div>
