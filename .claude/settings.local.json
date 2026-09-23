@@ -108,7 +108,9 @@
       "Bash(curl -fsSL --max-time 30 \"https://api.cdnjs.com/libraries/flatpickr?fields=version\")",
       "Bash(php --version)",
       "Bash(git rm *)",
-      "Bash(git commit -m 'fix: untrack compiled Blade views, restore Laravel .gitignore *)"
+      "Bash(git commit -m 'fix: untrack compiled Blade views, restore Laravel .gitignore *)",
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" log main..origin/main --oneline)",
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" diff --name-only main...origin/main)"
     ]
   }
 }
