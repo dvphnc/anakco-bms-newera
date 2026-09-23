@@ -426,7 +426,7 @@
 }
 .result-header.flashing { animation: statusFlash .6s ease-out; }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="{{ asset('assets/vendor/axios/axios.min.js') }}"></script>
 <script>
 (function () {
     var form         = document.getElementById('trackForm');

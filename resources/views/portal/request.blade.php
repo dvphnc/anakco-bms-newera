@@ -2,7 +2,7 @@
 @section('title', 'Request a Document')
 
 @push('styles')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css">
+<link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
 <style>
     .page-hd { margin-bottom: 1.75rem; }
     .page-hd h2 {
@@ -258,8 +258,8 @@
 
 @push('scripts')
 {{-- jQuery + Select2 (portal layout doesn't include these) --}}
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
 <script>
 (function () {
     // Clear any previously-saved personal info so the form always starts blank
