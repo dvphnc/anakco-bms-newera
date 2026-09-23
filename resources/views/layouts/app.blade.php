@@ -7,12 +7,12 @@
     <title>@yield('title', 'BMS') — Barangay New Era</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css">
-    <link rel="stylesheet" href="https://unpkg.com/shepherd.js@11/dist/css/shepherd.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/poppins/poppins.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/tippy/tippy.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/shepherd/shepherd.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/sweetalert2/sweetalert2.min.css') }}">
 
     <style>
         :root {
@@ -690,13 +690,13 @@
         if (menuToggle) { menuToggle.addEventListener('click', openSidebar); }
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
-    <script src="https://unpkg.com/tippy.js@6/dist/tippy.umd.min.js"></script>
-    <script src="https://unpkg.com/shepherd.js@11/dist/js/shepherd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/axios/axios.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/tippy/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/tippy/tippy.umd.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/shepherd/shepherd.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script>
     $(document).ready(function() {
         $('body').on('init.select2', function() {});
