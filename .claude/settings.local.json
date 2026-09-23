@@ -107,7 +107,8 @@
       "Bash(curl -fsSL --max-time 30 \"https://api.cdnjs.com/libraries/axios?fields=version\")",
       "Bash(curl -fsSL --max-time 30 \"https://api.cdnjs.com/libraries/flatpickr?fields=version\")",
       "Bash(php --version)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "Bash(git commit -m 'fix: untrack compiled Blade views, restore Laravel .gitignore *)"
     ]
   }
 }
