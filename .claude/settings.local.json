@@ -93,7 +93,9 @@
       "Bash(git -C \"D:/laragon/www/anakco_bms\" fetch origin)",
       "Bash(git -C \"D:/laragon/www/anakco_bms\" checkout origin/main -- README.md)",
       "Bash(echo \"exit: $?\")",
-      "Bash(git -C \"D:/laragon/www/anakco_bms\" ls-tree origin/main .github/ --name-only)"
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" ls-tree origin/main .github/ --name-only)",
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" checkout origin/main -- .github/readme-banner.svg .github/readme-wave.svg)",
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" status --short)"
     ]
   }
 }
