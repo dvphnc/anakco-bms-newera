@@ -20,13 +20,6 @@
     </div>
 </div>
 
-<?php if(session('success')): ?>
-<div class="alert alert-success mb-6"><i class="fas fa-check-circle"></i> <?php echo e(session('success')); ?></div>
-<?php endif; ?>
-<?php if(session('error')): ?>
-<div class="alert alert-danger mb-6"><i class="fas fa-exclamation-circle"></i> <?php echo e(session('error')); ?></div>
-<?php endif; ?>
-
 <div class="grid-2 mb-6" style="grid-template-columns:2fr 1fr">
 
     
