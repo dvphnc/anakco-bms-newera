@@ -366,7 +366,7 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="{{ asset('assets/vendor/chartjs/chart.umd.min.js') }}"></script>
 <style>
 @keyframes bms-pdf-spin { to { transform: rotate(360deg); } }
 #reportModule + .select2-container,
