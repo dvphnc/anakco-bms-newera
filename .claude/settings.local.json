@@ -98,7 +98,8 @@
       "Bash(git -C \"D:/laragon/www/anakco_bms\" status --short)",
       "Bash(git -C \"D:/laragon/www/anakco_bms\" diff HEAD --stat -- README.md)",
       "Bash(git -C \"D:/laragon/www/anakco_bms\" diff origin/main --stat -- README.md)",
-      "Bash(git -C \"D:/laragon/www/anakco_bms\" show HEAD:README.md)"
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" show HEAD:README.md)",
+      "Bash(git -C D:/laragon/www/anakco_bms commit -m 'docs: restore README SVG assets \\(banner, wave\\) *)"
     ]
   }
 }
