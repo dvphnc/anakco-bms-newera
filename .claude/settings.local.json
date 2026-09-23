@@ -82,7 +82,9 @@
       "Bash(git merge *)",
       "Bash(git add *)",
       "Bash(php -l app/Http/Controllers/BlotterController.php)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" log origin/main..main --oneline)",
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" show origin/main:README.md)"
     ]
   }
 }
