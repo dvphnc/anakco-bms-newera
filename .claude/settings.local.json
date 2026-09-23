@@ -89,7 +89,10 @@
       "Bash(git -C \"D:/laragon/www/anakco_bms\" diff origin/main 11bb200 --stat)",
       "Bash(git -C \"D:/laragon/www/anakco_bms\" show 11bb200 --stat --format=\"\" --name-only)",
       "Bash(grep -v \"^$\")",
-      "Bash(git -C \"D:/laragon/www/anakco_bms\" diff-tree --no-commit-id --name-only -r 11bb200)"
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" diff-tree --no-commit-id --name-only -r 11bb200)",
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" fetch origin)",
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" checkout origin/main -- README.md)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }
