@@ -105,7 +105,8 @@
       "Bash(curl --version)",
       "Bash(curl -sS -o /dev/null -w \"cdnjs: HTTP %{http_code}\\\\n\" --max-time 20 \"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js\")",
       "Bash(curl -fsSL --max-time 30 \"https://api.cdnjs.com/libraries/axios?fields=version\")",
-      "Bash(curl -fsSL --max-time 30 \"https://api.cdnjs.com/libraries/flatpickr?fields=version\")"
+      "Bash(curl -fsSL --max-time 30 \"https://api.cdnjs.com/libraries/flatpickr?fields=version\")",
+      "Bash(php --version)"
     ]
   }
 }
