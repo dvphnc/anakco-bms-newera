@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Resident Portal') — Barangay New Era</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/poppins/poppins.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/fontawesome/css/all.min.css') }}">
+    <script src="{{ asset('assets/vendor/axios/axios.min.js') }}"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>
     // ── Axios CSRF interceptor (portal) ──────────────────────────────────
@@ -827,7 +827,7 @@
 
     </style>
     {{-- Flatpickr — forces MM/DD/YYYY on all date inputs regardless of OS locale --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/flatpickr/flatpickr.min.css') }}">
     <style>
         /* ── Alt input matches portal .form-control ── */
         .flatpickr-input.form-control[readonly] { background: #fff; cursor: pointer; }
@@ -1456,7 +1456,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 @stack('scripts')
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="{{ asset('assets/vendor/flatpickr/flatpickr.min.js') }}"></script>
 <script>
 // ── Flatpickr — init all date inputs with MM/DD/YYYY display ────────
 (function () {
