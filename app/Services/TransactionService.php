@@ -6,6 +6,8 @@ use App\Enums\ResidencyStatus;
 use App\Exceptions\DuplicateClaimException;
 use App\Models\AssistanceProgram;
 use App\Models\Household;
+use App\Models\ReliefSupply;
+use App\Models\ReliefSupplyMovement;
 use App\Models\Resident;
 use App\Models\ResidentTransaction;
 use App\Models\User;
@@ -76,16 +78,31 @@ class TransactionService
                 throw $this->duplicate($program, $prior->first());
             }
 
+            // Lock the program's relief supplies too, so two PCs can't hand out
+            // the last pack twice
+            $supplies = $this->lockSupplies($program);
+            if ($short = $program->shortSupplies()) {
+                throw ValidationException::withMessages([
+                    'assistance_program_id' => $this->outOfStock($program, $short),
+                ]);
+            }
+
             $attributes['claim_lock'] = $program->max_claims === 1
                 ? $program->id.':'.($scope === 'household' ? 'H' : 'R').$scopeId
                 : null;
 
             try {
-                return $this->create($attributes);
+                $transaction = $this->create($attributes);
             } catch (UniqueConstraintViolationException) {
                 // Another PC recorded the same claim a moment ago
                 throw $this->duplicate($program, $this->claimsInScope($program, $scope, $scopeId)->first());
             }
+
+            foreach ($supplies as $supply) {
+                $supply->adjust(-$supply->pivot->quantity_per_claim, "Given out — {$transaction->reference_no}", $transaction);
+            }
+
+            return $transaction;
         });
     }
 
@@ -99,10 +116,14 @@ class TransactionService
         $prior = $this->claimsInScope($program, $scope, $scopeId);
         $first = $prior->first();
 
+        $program->load('supplies');
+        $short = $program->shortSupplies();
+
         $reason = match (true) {
             $resident->residency_status !== ResidencyStatus::Alive->value => "{$resident->full_name} is marked as {$resident->residency_label}.",
             ! $program->isOpen()                                          => 'This program is not open for claims right now.',
             $prior->count() >= $program->max_claims                        => $this->duplicate($program, $first)->getMessage(),
+            $short !== []                                                  => $this->outOfStock($program, $short),
             default                                                        => null,
         };
 
@@ -112,6 +133,7 @@ class TransactionService
             'scope'       => $scope,
             'claims_used' => $prior->count(),
             'max_claims'  => $program->max_claims,
+            'claims_left' => $program->claimsLeft(),   // null = not linked to relief stock
             'prior'       => $first ? [
                 'reference_no' => $first->reference_no,
                 'resident'     => $first->resident?->full_name,
@@ -124,16 +146,35 @@ class TransactionService
     /** Void a mistaken entry. It stays on record, and its claim is freed. */
     public function void(ResidentTransaction $transaction, User $by, string $reason): void
     {
-        if ($transaction->is_voided) {
-            throw ValidationException::withMessages(['reason' => 'This transaction was already voided.']);
-        }
+        DB::transaction(function () use ($transaction, $by, $reason) {
+            // Locked, so two PCs voiding at once can't return the stock twice
+            $current = ResidentTransaction::whereKey($transaction->id)->lockForUpdate()->first();
 
-        $transaction->forceFill([
-            'voided_at'   => now(),
-            'voided_by'   => $by->id,
-            'void_reason' => $reason,
-            'claim_lock'  => null,
-        ])->save();
+            if ($current->is_voided) {
+                throw ValidationException::withMessages(['reason' => 'This transaction was already voided.']);
+            }
+
+            $transaction->forceFill([
+                'voided_at'   => now(),
+                'voided_by'   => $by->id,
+                'void_reason' => $reason,
+                'claim_lock'  => null,
+            ])->save();
+
+            // Put back exactly what this claim took, even if the program's list changed since
+            $taken = ReliefSupplyMovement::where('resident_transaction_id', $transaction->id)
+                ->where('change', '<', 0)
+                ->get();
+
+            $supplies = ReliefSupply::whereIn('id', $taken->pluck('relief_supply_id'))
+                ->orderBy('id')->lockForUpdate()->get()->keyBy('id');
+
+            foreach ($taken as $movement) {
+                $supplies[$movement->relief_supply_id]?->adjust(
+                    -$movement->change, "Returned — {$transaction->reference_no} voided", $transaction
+                );
+            }
+        });
     }
 
     /**
@@ -164,6 +205,21 @@ class TransactionService
     }
 
     // -------------------------------------------------------------------------
+
+    /** The program's supplies, locked in id order (a fixed order avoids deadlocks). */
+    private function lockSupplies(AssistanceProgram $program)
+    {
+        $supplies = $program->supplies()->reorder('committee_relief_supplies.id')->lockForUpdate()->get();
+        $program->setRelation('supplies', $supplies);
+
+        return $supplies;
+    }
+
+    private function outOfStock(AssistanceProgram $program, array $short): string
+    {
+        return 'Not enough stock for this program: '.implode(', ', $short)
+            .'. Add stock under Committees → BDRRM → Relief Supplies.';
+    }
 
     /** Per-household programs fall back to the resident if they have no household. */
     private function scopeFor(AssistanceProgram $program, Resident $resident): array
