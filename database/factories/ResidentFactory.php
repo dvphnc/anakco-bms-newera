@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Household;
 use App\Models\Purok;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -41,41 +40,48 @@ class ResidentFactory extends Factory
             'Valdez', 'Navarro', 'Morales', 'Aguilar', 'Salazar', 'Hernandez', 'Mercado',
         ];
 
-        $gender = $this->faker->randomElement(['Male', 'Female']);
-        $firstName = $gender === 'Male'
-            ? $this->faker->randomElement($filipinoFirstNamesMale)
-            : $this->faker->randomElement($filipinoFirstNamesFemale);
-
-        $birthdate = $this->faker->dateTimeBetween('-85 years', '-1 year');
-        $age = now()->diffInYears($birthdate);
-
-        $purokId = Purok::inRandomOrder()->first()?->id ?? 1;
-        $householdId = Household::inRandomOrder()->first()?->id;
+        // Attributes that depend on other attributes are closures: Laravel resolves them
+        // after any overrides, so e.g. factory()->create(['gender' => 'Female']) also
+        // gets a female first name, and an overridden birthdate drives the voter /
+        // senior flags. (The old version computed age with now()->diffInYears($past),
+        // which is NEGATIVE in Carbon 3 — so almost nobody was ever a voter or senior.)
+        $ageOf = fn (array $a) => \Carbon\Carbon::parse($a['birthdate'])->age;
 
         return [
-            'first_name' => $firstName,
+            'gender' => $this->faker->randomElement(['Male', 'Female']),
+            'first_name' => fn (array $a) => $this->faker->randomElement(
+                $a['gender'] === 'Male' ? $filipinoFirstNamesMale : $filipinoFirstNamesFemale
+            ),
             'last_name' => $this->faker->randomElement($filipinoLastNames),
             'middle_name' => $this->faker->optional(0.8)->randomElement($filipinoMiddleNames),
-            'suffix' => $this->faker->optional(0.1)->randomElement(['Jr.', 'Sr.', 'II', 'III']),
-            'birthdate' => $birthdate,
-            'gender' => $gender,
-            'civil_status' => $this->faker->randomElement(['Single', 'Married', 'Widowed', 'Separated']),
+            'suffix' => fn (array $a) => $a['gender'] === 'Male'
+                ? $this->faker->optional(0.1)->randomElement(['Jr.', 'Sr.', 'II', 'III'])
+                : null,
+            'birthdate' => $this->faker->dateTimeBetween('-85 years', '-1 year')->format('Y-m-d'),
+            'civil_status' => fn (array $a) => $ageOf($a) < 18
+                ? 'Single'
+                : $this->faker->randomElement(['Single', 'Married', 'Married', 'Widowed', 'Separated']),
             'birthplace' => $this->faker->randomElement(['Quezon City', 'Manila', 'Caloocan', 'Marikina', 'Pasig', 'Makati', 'Taguig']),
             'nationality' => 'Filipino',
             'religion' => $this->faker->randomElement(['Roman Catholic', 'Iglesia ni Cristo', 'Born Again Christian', 'Islam', 'Protestant']),
-            'occupation' => $this->faker->optional(0.7)->randomElement(['Laborer', 'Vendor', 'Driver', 'Teacher', 'Nurse', 'Engineer', 'Student', 'Housewife', 'Retired', 'Self-employed']),
+            'occupation' => fn (array $a) => $ageOf($a) < 18
+                ? ($ageOf($a) >= 5 ? 'Student' : null)
+                : $this->faker->optional(0.7)->randomElement(['Laborer', 'Vendor', 'Driver', 'Teacher', 'Nurse', 'Engineer', 'Housewife', 'Retired', 'Self-employed']),
             'contact_number' => '09'.$this->faker->numerify('#########'),
             'email_address' => $this->faker->optional(0.4)->safeEmail(),
             'address' => $this->faker->buildingNumber().' '.
                                   $this->faker->randomElement(['Sampaguita', 'Rosal', 'Ilang-Ilang', 'Camia', 'Dahlia', 'Gumamela']).
                                   ' St., Barangay New Era, Quezon City',
-            'purok_id' => $purokId,
-            'household_id' => $this->faker->optional(0.7)->passthrough($householdId),
-            'residency_status' => $this->faker->randomElement(['Active', 'Active', 'Active', 'Active', 'Deceased', 'Transferred']),
-            'is_voter' => $age >= 18 ? $this->faker->boolean(70) : false,
+            // Lazy: only queried when the caller doesn't pass a purok_id
+            'purok_id' => fn () => Purok::inRandomOrder()->value('id') ?? 1,
+            // Households are formed by address (HouseholdGroupingService), never picked at random
+            'household_id' => null,
+            'residency_status' => $this->faker->randomElement(array_merge(array_fill(0, 86, 'Active'), array_fill(0, 8, 'Transferred'), array_fill(0, 6, 'Deceased'))),
+            'is_voter' => fn (array $a) => $ageOf($a) >= 18 && $this->faker->boolean(75),
+            'precinct_no' => fn (array $a) => $a['is_voter'] ? $this->faker->numerify('0###').$this->faker->randomElement(['A', 'B', 'C']) : null,
             'is_pwd' => $this->faker->boolean(8),
-            'is_senior' => $age >= 60,
-            'is_solo_parent' => $this->faker->boolean(5),
+            'is_senior' => fn (array $a) => $ageOf($a) >= 60,
+            'is_solo_parent' => fn (array $a) => $ageOf($a) >= 18 && $this->faker->boolean(5),
             'is_4ps' => $this->faker->boolean(12),
             'photo_path' => null,
         ];
