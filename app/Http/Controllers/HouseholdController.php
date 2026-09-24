@@ -10,7 +10,6 @@ use App\Services\HouseholdGroupingService;
 use App\Support\AddressNormalizer;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -194,35 +193,10 @@ class HouseholdController extends Controller
         $validated = $request->validate($this->householdRules(), $this->householdMessages());
         $this->ensureAddressIsFree($validated, $household);
         $oldData = $household->getOriginal();
-
-        $moved = DB::transaction(function () use ($household, $validated, $oldData) {
-            $household->update($validated);
-
-            if (! $household->wasChanged(['address_key', 'purok_id'])) {
-                return 0;
-            }
-
-            // A corrected address applies to everyone grouped by the old one. Without
-            // this, the next regroup (e.g. switching a member back to automatic) would
-            // split them off into a new household at the old address. Members assigned
-            // by hand or who live at a different address keep their own.
-            $members = $household->residents()
-                ->where('household_assignment', 'auto')
-                ->where('address_key', $oldData['address_key'])
-                ->where('purok_id', $oldData['purok_id'])
-                ->get();
-
-            foreach ($members as $member) {
-                $member->update(['address' => $household->address, 'purok_id' => $household->purok_id]);
-            }
-
-            return $members->count();
-        });
-
+        $household->update($validated);
         $this->logActivity('updated', $household, $oldData, $household->fresh()->toArray());
 
-        return redirect()->route('households.index')->with('success', 'Household updated successfully.'
-            .($moved ? " The address of $moved ".str('member')->plural($moved).' was updated to match.' : ''));
+        return redirect()->route('households.index')->with('success', 'Household updated successfully.');
     }
 
     public function show(Household $household)
