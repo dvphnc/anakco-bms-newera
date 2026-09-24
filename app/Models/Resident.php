@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ResidencyStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +42,7 @@ class Resident extends Model
     {
         return [
             'birthdate' => 'date',
+            'status_effective_date' => 'date',
             'is_voter' => 'boolean',
             'is_pwd' => 'boolean',
             'is_senior' => 'boolean',
@@ -81,6 +83,17 @@ class Resident extends Model
         return Carbon::parse($this->birthdate)->age;
     }
 
+    // "Alive" / "Deceased" / "Moved Out" — display label for residency_status
+    public function getResidencyLabelAttribute(): string
+    {
+        return ResidencyStatus::labelFor($this->residency_status);
+    }
+
+    public function getResidencyBadgeAttribute(): string
+    {
+        return ResidencyStatus::badgeFor($this->residency_status);
+    }
+
     // -------------------------------------------------------
     // Relationships
     // -------------------------------------------------------
@@ -108,6 +121,11 @@ class Resident extends Model
     public function businessPermits()
     {
         return $this->hasMany(Business::class, 'owner_resident_id');
+    }
+
+    public function statusLogs()
+    {
+        return $this->hasMany(ResidentStatusLog::class)->latest('id');
     }
 
     // -------------------------------------------------------
