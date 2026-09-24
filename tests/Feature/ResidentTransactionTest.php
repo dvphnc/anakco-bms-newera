@@ -276,7 +276,10 @@ class ResidentTransactionTest extends TestCase
         $this->assertSoftDeleted($program);
         $this->assertSame(1, ResidentTransaction::count());        // history kept
 
-        $this->actingAs($this->secretary)->get(route('programs.index'))->assertOk()->assertDontSee('Rice Subsidy');
+        // Archived programs leave the list (the "archived" flash message still names it, so check the data)
+        $this->actingAs($this->secretary)->get(route('programs.index'))
+            ->assertOk()
+            ->assertViewHas('programs', fn ($programs) => $programs->isEmpty());
     }
 
     public function test_profile_shows_transactions_tab_and_household_claims(): void
