@@ -98,6 +98,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------
     // Households — Admin + Secretary only
     // ---------------------------------------------------
+    // Declared before the resource so "match" isn't read as a household id
+    Route::get('households/match', [HouseholdController::class, 'match'])
+        ->name('households.match')
+        ->middleware('role:Admin,Secretary');
+    Route::patch('households/{household}/head', [HouseholdController::class, 'setHead'])
+        ->name('households.head')
+        ->middleware('role:Admin,Secretary');
     Route::resource('households', HouseholdController::class)
         ->middleware('role:Admin,Secretary');
 
