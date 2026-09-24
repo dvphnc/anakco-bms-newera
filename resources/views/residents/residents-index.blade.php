@@ -76,7 +76,7 @@
             <i class="fas fa-person-cane"></i>
         </div>
         <div class="stat-info">
-            <div class="stat-number">{{ number_format(\App\Models\Resident::where('residency_status','Active')->where('is_senior',true)->count()) }}</div>
+            <div class="stat-number">{{ number_format(\App\Models\Resident::active()->seniors()->count()) }}</div>
             <div class="stat-label">Senior Citizens</div>
         </div>
     </div>

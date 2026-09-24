@@ -214,7 +214,9 @@
                                     : '—'],
                                 ['label' => 'Relationship to Head', 'value' => $resident->relationship_to_head ?? '—'],
                                 ['label' => 'Address',         'value' => $resident->address],
-                                ['label' => 'Yrs of Residency','value' => $resident->years_of_residency ? $resident->years_of_residency . ' years' : '—'],
+                                ['label' => 'Residing Since',  'value' => $resident->residing_since
+                                    ? $resident->residing_since->format('m/d/Y').' ('.$resident->years_of_residency.' '.\Illuminate\Support\Str::plural('year', $resident->years_of_residency).')'
+                                    : '—'],
                                 ['label' => 'Registered',      'value' => $resident->created_at->format('m/d/Y')],
                                 ['label' => 'Last Updated',     'value' => $resident->updated_at->format('m/d/Y')],
                             ];

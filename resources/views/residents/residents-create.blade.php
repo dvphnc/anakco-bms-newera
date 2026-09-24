@@ -151,15 +151,7 @@
                     <span style="font-size:12px;color:var(--text-subtle)">New residents start as Alive</span>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">
-                    Years of Residency
-                    <span class="help-icon" data-tippy-content="How many years this person has been continuously living in Barangay New Era. Used for residency certificates. Enter 0 if newly arrived.">?</span>
-                </label>
-                <input type="number" name="years_of_residency" class="form-control @error('years_of_residency') is-invalid @enderror"
-                       value="{{ old('years_of_residency') }}" min="0" placeholder="0">
-                @error('years_of_residency')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-            </div>
+            @include('residents.partials.residing-since-field', ['resident' => null])
             <div class="form-group">
                 <label class="form-label">Occupation</label>
                 <input type="text" name="occupation" class="form-control @error('occupation') is-invalid @enderror"
@@ -187,10 +179,11 @@
                 <input type="checkbox" name="is_pwd" value="1" {{ old('is_pwd') ? 'checked' : '' }}>
                 <span><strong>Person with Disability (PWD)</strong></span>
             </label>
-            <label class="form-check">
-                <input type="checkbox" name="is_senior" value="1" {{ old('is_senior') ? 'checked' : '' }}>
-                <span><strong>Senior Citizen (60+)</strong></span>
-            </label>
+            {{-- Senior status is worked out from the date of birth (60+) — nothing to tick --}}
+            <div class="form-check" style="cursor:default" title="Set automatically from the date of birth">
+                <i class="fas fa-wand-magic-sparkles" style="color:var(--gold);width:16px;text-align:center"></i>
+                <span><strong>Senior Citizen (60+)</strong><br><span style="font-size:12px;color:var(--text-subtle)">Automatic from date of birth</span></span>
+            </div>
             <label class="form-check">
                 <input type="checkbox" name="is_solo_parent" value="1" {{ old('is_solo_parent') ? 'checked' : '' }}>
                 <span><strong>Solo Parent</strong></span>
