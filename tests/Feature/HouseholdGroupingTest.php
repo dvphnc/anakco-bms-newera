@@ -32,6 +32,9 @@ class HouseholdGroupingTest extends TestCase
     private function resident(array $attrs = []): Resident
     {
         return Resident::factory()->create(array_merge([
+            // Fixed name: the factory's random names include "Maria", which the form
+            // tests below register and then look up — that made those tests flaky.
+            'first_name'       => 'Existing',
             'purok_id'         => $this->purok->id,
             'household_id'     => null,
             'address'          => '12 Rosal St., Barangay New Era, Quezon City',
