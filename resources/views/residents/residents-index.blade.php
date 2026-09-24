@@ -51,7 +51,7 @@
         </div>
         <div class="stat-info">
             <div class="stat-number">{{ number_format(\App\Models\Resident::where('residency_status','Active')->count()) }}</div>
-            <div class="stat-label">Active Residents</div>
+            <div class="stat-label">Alive Residents</div>
         </div>
     </div>
     <div class="stat-card">
@@ -121,14 +121,14 @@
                     </select>
                 </div>
 
-                {{-- Residency Status --}}
+                {{-- Residency Status (kept in sync with the chips above the table) --}}
                 <div class="form-group">
-                    <label class="form-label">Residency Status</label>
+                    <label class="form-label">Status</label>
                     <select id="statusFilter">
-                        <option value=""></option>
-                        <option value="Active">Active</option>
-                        <option value="Deceased">Deceased</option>
-                        <option value="Transferred">Transferred</option>
+                        @foreach(\App\Enums\ResidencyStatus::options() as $value => $label)
+                            <option value="{{ $value }}">{{ $label }}</option>
+                        @endforeach
+                        <option value="all">All statuses</option>
                     </select>
                 </div>
 
