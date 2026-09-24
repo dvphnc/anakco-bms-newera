@@ -21,27 +21,18 @@
     </div>
     <div class="card-body">
 
-        <div class="form-section-title">Basic Details</div>
-        <div class="form-grid-2 mb-6">
-            <div class="form-group">
-                <label class="form-label">Household Head <span style="color:var(--crimson)">*</span></label>
-                <input type="text" name="household_head" id="household_head" class="form-control" value="{{ old('household_head') }}" placeholder="Full name of household head" required>
-                @error('household_head')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-            </div>
-            <div class="form-group">
-                <label class="form-label">
-                    Link to Resident
-                    <span class="help-icon" data-tippy-content="Optional. Search for the household head in the resident registry. Selecting a resident will auto-fill their name and address. Useful for tracking which resident leads each household.">?</span>
-                </label>
-                <select name="head_resident_id" id="head_resident_id" class="select2-resident" style="width:100%" data-placeholder="Search registered resident...">
-                    <option value=""></option>
-                </select>
-            </div>
+        <div style="font-size:13px;color:var(--text-muted);background:var(--surface2);border:1px solid var(--border);
+                    border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:18px">
+            <i class="fas fa-circle-info" style="color:var(--navy)"></i>
+            Households are usually created automatically when you register a resident. Add one here only to set it up
+            before anyone is registered. Residents at this address will join it automatically; the head, family size and
+            voter status are worked out from them.
         </div>
+
         <div class="form-grid-2 mb-6">
             <div class="form-group">
                 <label class="form-label">Purok <span style="color:var(--crimson)">*</span></label>
-                <select name="purok_id" id="s2Purok" class="form-control" required>
+                <select name="purok_id" id="s2Purok" class="form-control @error('purok_id') is-invalid @enderror" required>
                     <option value="">Select Purok</option>
                     @foreach($puroks as $purok)
                         <option value="{{ $purok->id }}" {{ old('purok_id') == $purok->id ? 'selected' : '' }}>{{ $purok->name }}</option>
@@ -50,22 +41,11 @@
                 @error('purok_id')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Family Size <span style="color:var(--crimson)">*</span></label>
-                <input type="number" name="family_size" class="form-control" value="{{ old('family_size', 1) }}" min="1" max="50" required>
+                <label class="form-label">Address <span style="color:var(--crimson)">*</span></label>
+                <input type="text" name="address" id="hh_address" class="form-control @error('address') is-invalid @enderror"
+                       value="{{ old('address') }}" placeholder="House No., Street" required>
+                @error('address')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
-        </div>
-
-        <div class="form-group mb-6">
-            <label class="form-label">Address <span style="color:var(--crimson)">*</span></label>
-            <input type="text" name="address" id="hh_address" class="form-control" value="{{ old('address') }}" placeholder="Full address" required>
-            @error('address')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-        </div>
-
-        <div class="form-group">
-            <label class="form-check">
-                <input type="checkbox" name="is_voter_household" value="1" {{ old('is_voter_household') ? 'checked' : '' }}>
-                <span>This household has registered voters</span>
-            </label>
         </div>
     </div>
 </div>
@@ -84,20 +64,6 @@ $('#s2Purok').select2({
     width: '100%',
     placeholder: 'Select Purok',
     allowClear: true
-});
-
-$('#head_resident_id').on('select2:select', function(e) {
-    const text = e.params.data.text;
-    const parts = text.split(' — ');
-    const namePart = parts[0].trim();
-    const address  = parts[1] ? parts[1].trim() : '';
-    const nameParts = namePart.split(', ');
-    const fullName  = nameParts.length > 1 ? nameParts[1] + ' ' + nameParts[0] : namePart;
-    $('#household_head').val(fullName);
-    if (address) $('#hh_address').val(address);
-});
-$('#head_resident_id').on('select2:clear', function() {
-    $('#household_head').val('');
 });
 </script>
 @endpush
