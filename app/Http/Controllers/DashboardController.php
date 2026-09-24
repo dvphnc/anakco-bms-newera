@@ -24,11 +24,11 @@ class DashboardController extends Controller
         $totalMale = Resident::where('gender', 'Male')->count();
         $totalFemale = Resident::where('gender', 'Female')->count();
         $totalHouseholds = Household::count();
-        $totalVoters = Resident::where('is_voter', true)->count();
-        $totalSeniors = Resident::where('is_senior', true)->count();
-        $totalPwd = Resident::where('is_pwd', true)->count();
-        $totalSoloParent = Resident::where('is_solo_parent', true)->count();
-        $total4ps = Resident::where('is_4ps', true)->count();
+        $totalVoters = Resident::residentVoters()->count();
+        $totalSeniors = Resident::active()->where('is_senior', true)->count();
+        $totalPwd = Resident::active()->where('is_pwd', true)->count();
+        $totalSoloParent = Resident::active()->where('is_solo_parent', true)->count();
+        $total4ps = Resident::active()->where('is_4ps', true)->count();
         $totalBusinesses = Business::count();
         $activeBusinesses = Business::where('status', 'Active')->count();
         $expiredBusinesses = Business::where('status', 'Expired')->count();

@@ -432,11 +432,11 @@ class ExportController extends Controller
         $totalMale = Resident::where('gender', 'Male')->count();
         $totalFemale = Resident::where('gender', 'Female')->count();
         $totalHouseholds = Household::count();
-        $totalVoters = Resident::where('is_voter', true)->count();
-        $totalSeniors = Resident::where('is_senior', true)->count();
-        $totalPwd = Resident::where('is_pwd', true)->count();
-        $totalSoloParent = Resident::where('is_solo_parent', true)->count();
-        $total4ps = Resident::where('is_4ps', true)->count();
+        $totalVoters = Resident::residentVoters()->count();
+        $totalSeniors = Resident::active()->where('is_senior', true)->count();
+        $totalPwd = Resident::active()->where('is_pwd', true)->count();
+        $totalSoloParent = Resident::active()->where('is_solo_parent', true)->count();
+        $total4ps = Resident::active()->where('is_4ps', true)->count();
 
         $ageGroups = [
             'Children (0-12)' => Resident::whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [0, 12])->count(),

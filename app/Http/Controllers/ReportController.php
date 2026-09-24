@@ -48,11 +48,11 @@ class ReportController extends Controller
         $totalHouseholds = Household::count();
         $totalMale       = Resident::where('gender', 'Male')->count();
         $totalFemale     = Resident::where('gender', 'Female')->count();
-        $totalVoters     = Resident::where('is_voter', true)->count();
-        $totalSeniors    = Resident::where('is_senior', true)->count();
-        $totalPwd        = Resident::where('is_pwd', true)->count();
-        $totalSoloParent = Resident::where('is_solo_parent', true)->count();
-        $total4ps        = Resident::where('is_4ps', true)->count();
+        $totalVoters     = Resident::residentVoters()->count();
+        $totalSeniors    = Resident::active()->where('is_senior', true)->count();
+        $totalPwd        = Resident::active()->where('is_pwd', true)->count();
+        $totalSoloParent = Resident::active()->where('is_solo_parent', true)->count();
+        $total4ps        = Resident::active()->where('is_4ps', true)->count();
 
         // Derived gender percentages
         $genderTotal = ($totalMale + $totalFemale) ?: 1;
@@ -100,11 +100,11 @@ class ReportController extends Controller
         $totalHouseholds = \App\Models\Household::count();
         $totalDocuments = \App\Models\Document::count();
         $totalBlotter = \App\Models\BlotterCase::count();
-        $totalVoters = Resident::where('is_voter', true)->count();
-        $totalSeniors = Resident::where('is_senior', true)->count();
-        $totalPwd = Resident::where('is_pwd', true)->count();
-        $totalSoloParent = Resident::where('is_solo_parent', true)->count();
-        $total4ps = Resident::where('is_4ps', true)->count();
+        $totalVoters = Resident::residentVoters()->count();
+        $totalSeniors = Resident::active()->where('is_senior', true)->count();
+        $totalPwd = Resident::active()->where('is_pwd', true)->count();
+        $totalSoloParent = Resident::active()->where('is_solo_parent', true)->count();
+        $total4ps = Resident::active()->where('is_4ps', true)->count();
         $totalBusinesses = \App\Models\Business::count();
         $activeBusinesses = \App\Models\Business::where('status', 'Active')->count();
         $expiredBusinesses = \App\Models\Business::where('status', 'Expired')->count();
@@ -259,9 +259,9 @@ class ReportController extends Controller
                     'blotter_settled' => BlotterCase::whereBetween('settled_at', [$start, $end])->count(),
                     'businesses_active' => Business::where('status', 'Active')->count(),
                     'businesses_new' => Business::whereBetween('created_at', [$start, $end])->count(),
-                    'voters' => Resident::where('is_voter', true)->count(),
-                    'seniors' => Resident::where('is_senior', true)->count(),
-                    'pwd' => Resident::where('is_pwd', true)->count(),
+                    'voters' => Resident::residentVoters()->count(),
+                    'seniors' => Resident::active()->where('is_senior', true)->count(),
+                    'pwd' => Resident::active()->where('is_pwd', true)->count(),
                     'total_male' => Resident::where('gender', 'Male')->count(),
                     'total_female' => Resident::where('gender', 'Female')->count(),
                     'docs_by_type' => Document::whereBetween('created_at', [$start, $end])
