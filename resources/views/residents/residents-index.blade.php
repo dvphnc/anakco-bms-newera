@@ -180,10 +180,22 @@
 
 {{-- Table --}}
 <div class="card">
-    <div class="card-header">
+    <div class="card-header" style="flex-wrap:wrap;gap:10px">
         <span class="card-title">
             <i class="fas fa-users"></i> Resident List
         </span>
+        {{-- Status chips — the list defaults to Alive; chips make that visible --}}
+        <div class="status-chips" role="group" aria-label="Show residents by status">
+            @foreach(\App\Enums\ResidencyStatus::cases() as $case)
+                <button type="button" class="status-chip" data-status="{{ $case->value }}" aria-pressed="false">
+                    {{ $case->label() }}
+                    <span class="status-chip-count">{{ number_format($statusCounts[$case->value] ?? 0) }}</span>
+                </button>
+            @endforeach
+            <button type="button" class="status-chip" data-status="all" aria-pressed="false">
+                All <span class="status-chip-count">{{ number_format($statusCounts->sum()) }}</span>
+            </button>
+        </div>
     </div>
     <div class="table-responsive">
         <table id="residentsTable" class="w-full" style="width:100%">
@@ -248,6 +260,18 @@
     width: 26px !important; height: 26px !important; font-size: 10px !important;
 }
 #residentsTable td .res-phone { display: none; }
+
+/* Status chips (Alive / Moved Out / Deceased / All) */
+.status-chips { display:flex; gap:6px; flex-wrap:wrap; }
+.status-chip {
+    display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:99px;
+    border:1px solid var(--border); background:var(--surface); font:inherit; font-size:12.5px;
+    font-weight:600; color:var(--text-muted); cursor:pointer; transition:border-color .15s, background .15s, color .15s;
+}
+.status-chip:hover { border-color:var(--navy); color:var(--navy); }
+.status-chip.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+.status-chip-count { font-size:11px; font-weight:700; padding:1px 7px; border-radius:99px; background:var(--navy-pale); }
+.status-chip.active .status-chip-count { background:rgba(255,255,255,.18); }
 </style>
 
 <script>
@@ -275,11 +299,20 @@ $(document).ready(function () {
 
     $('#purokFilter').select2($.extend({}, s2Base, { placeholder: 'All Puroks' }));
     $('#genderFilter').select2($.extend({}, s2Base, { placeholder: 'All Genders' }));
-    $('#statusFilter').select2($.extend({}, s2Base, { placeholder: 'All Statuses' }));
+    // Status always has a value (defaults to Alive); "All statuses" is an explicit option
+    $('#statusFilter').select2($.extend({}, s2Base, { allowClear: false, minimumResultsForSearch: Infinity }));
     $('#civilStatusFilter').select2($.extend({}, s2Base, { placeholder: 'Any Civil Status' }));
     $('#tagsFilter').select2($.extend({}, s2Base, { placeholder: 'Filter by classification…' }));
 
     $fp.css({ display: 'none', visibility: '', position: '', 'z-index': '', width: '' });
+
+    // The residents list shows Alive residents unless another status is chosen
+    const DEFAULT_STATUS = 'Active';
+
+    // Restore filters from the URL BEFORE the table's first request, so links like
+    // ?status=Deceased filter the very first load (previously they only applied after
+    // the user changed another filter).
+    const hasUrlFilters = loadFromUrl();
 
     /* ── DataTable ────────────────────────────────────────────────────── */
     var table = $('#residentsTable').DataTable({
@@ -328,7 +361,7 @@ $(document).ready(function () {
         if (s)                              url.searchParams.set('s', s);
         if ($('#purokFilter').val())        url.searchParams.set('purok_id', $('#purokFilter').val());
         if ($('#genderFilter').val())       url.searchParams.set('gender', $('#genderFilter').val());
-        if ($('#statusFilter').val())       url.searchParams.set('status', $('#statusFilter').val());
+        if ($('#statusFilter').val() !== DEFAULT_STATUS) url.searchParams.set('status', $('#statusFilter').val());
         if ($('#civilStatusFilter').val())  url.searchParams.set('civil_status', $('#civilStatusFilter').val());
         if ($('#ageMin').val())             url.searchParams.set('age_min', $('#ageMin').val());
         if ($('#ageMax').val())             url.searchParams.set('age_max', $('#ageMax').val());
@@ -344,7 +377,9 @@ $(document).ready(function () {
         if (p.get('s'))            { $('#searchInput').val(p.get('s')); any = true; }
         if (p.get('purok_id'))     { $('#purokFilter').val(p.get('purok_id')).trigger('change.select2'); any = true; }
         if (p.get('gender'))       { $('#genderFilter').val(p.get('gender')).trigger('change.select2'); any = true; }
-        if (p.get('status'))       { $('#statusFilter').val(p.get('status')).trigger('change.select2'); any = true; }
+        const st = p.get('status') || DEFAULT_STATUS;
+        $('#statusFilter').val(st).trigger('change.select2');
+        if (st !== DEFAULT_STATUS) any = true;
         if (p.get('civil_status')) { $('#civilStatusFilter').val(p.get('civil_status')).trigger('change.select2'); any = true; }
         if (p.get('age_min'))      { $('#ageMin').val(p.get('age_min')); any = true; }
         if (p.get('age_max'))      { $('#ageMax').val(p.get('age_max')); any = true; }
