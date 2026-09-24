@@ -186,8 +186,7 @@ tbody td {
                 @endif
             </td>
             <td>
-                @php $sc = match($r->residency_status) { 'Active'=>'badge-green','Deceased'=>'badge-gray','Transferred'=>'badge-yellow',default=>'badge-gray' }; @endphp
-                <span class="badge {{ $sc }}">{{ $r->residency_status }}</span>
+                <span class="badge {{ $r->residency_badge }}">{{ $r->residency_label }}</span>
             </td>
         </tr>
         @endforeach

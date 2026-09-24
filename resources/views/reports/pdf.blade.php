@@ -185,7 +185,7 @@ tbody td { padding:4px 7px; border-bottom:1px solid #e5e7eb; }
             <td>{{ $r->age ?? '—' }}</td>
             <td>{{ $r->purok->name ?? '—' }}</td>
             <td>{{ $r->address }}</td>
-            <td><span class="badge {{ $r->residency_status === 'Active' ? 'badge-green' : 'badge-gray' }}">{{ $r->residency_status }}</span></td>
+            <td><span class="badge {{ $r->residency_badge }}">{{ $r->residency_label }}</span></td>
             <td>{{ $r->created_at->format('M d') }}</td>
         </tr>
         @endforeach
