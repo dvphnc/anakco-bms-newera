@@ -128,27 +128,14 @@
                 </select>
                 @error('purok_id')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
-            <div class="form-group">
-                <label class="form-label">
-                    Household
-                    <span class="help-icon" data-tippy-content="Optional. Link this resident to a registered household to track family size and relationships. Leave blank if the household is not yet registered.">?</span>
-                </label>
-                <select name="household_id" id="s2Household" class="form-control @error('household_id') is-invalid @enderror">
-                    <option value="">No Household</option>
-                    @foreach($households as $hh)
-                        <option value="{{ $hh->id }}" {{ old('household_id', $resident->household_id) == $hh->id ? 'selected' : '' }}>
-                            {{ $hh->household_number }} — {{ $hh->household_head }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('household_id')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-            </div>
+            @include('residents.partials.relationship-field', ['resident' => $resident])
             <div class="form-group" style="grid-column:span 2">
                 <label class="form-label">Full Address <span style="color:var(--crimson)">*</span></label>
                 <input type="text" name="address" class="form-control @error('address') is-invalid @enderror"
                        value="{{ old('address', $resident->address) }}" required>
                 @error('address')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
+            @include('residents.partials.household-assignment', ['resident' => $resident])
         </div>
 
         <div class="form-section-title">Residency</div>
@@ -314,10 +301,6 @@ $(function () {
     /* Long lists — searchable */
     $('#s2Purok').select2($.extend({}, s2, {
         placeholder: 'Select Purok',
-        allowClear: true
-    }));
-    $('#s2Household').select2($.extend({}, s2, {
-        placeholder: 'No Household',
         allowClear: true
     }));
 });

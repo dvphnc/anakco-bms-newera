@@ -134,6 +134,7 @@
                        placeholder="House No., Street, Barangay New Era, QC" required>
                 @error('address')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
+            @include('residents.partials.household-assignment', ['resident' => null])
         </div>
 
         <div class="form-section-title">Residency</div>
@@ -254,10 +255,6 @@ $(function () {
     /* Long lists — searchable */
     $('#s2Purok').select2($.extend({}, s2, {
         placeholder: 'Select Purok',
-        allowClear: true
-    }));
-    $('#s2Household').select2($.extend({}, s2, {
-        placeholder: 'Select Household (optional)',
         allowClear: true
     }));
 });
