@@ -14,6 +14,7 @@ use App\Http\Controllers\OfficialController;
 use App\Http\Controllers\PurokController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResidentController;
+use App\Http\Controllers\ResidentStatusController;
 use App\Http\Controllers\ResidentPortalController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Select2Controller;
@@ -89,8 +90,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('residents/{resident}/quick-view', [ResidentController::class, 'quickView'])
         ->name('residents.quick-view')
         ->middleware('role:Admin,Secretary');
-    Route::patch('residents/{resident}/toggle-status', [ResidentController::class, 'toggleStatus'])
-        ->name('residents.toggle-status')
+    // Life status (Alive / Deceased / Moved Out) — dated, logged; replaces the old one-click toggle
+    Route::patch('residents/{resident}/status', [ResidentStatusController::class, 'update'])
+        ->name('residents.status.update')
         ->middleware('role:Admin,Secretary');
 
     // ---------------------------------------------------
