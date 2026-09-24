@@ -35,7 +35,8 @@ class ResidentController extends Controller
                         foreach ($tags as $tag) {
                             match ($tag) {
                                 'voter'       => $sub->orWhere('is_voter', true),
-                                'senior'      => $sub->orWhere('is_senior', true),
+                                // Seniors are worked out from birthdate (60+), not a stored flag
+                                'senior'      => $sub->orWhereDate('birthdate', '<=', now()->subYears(Resident::SENIOR_AGE)->toDateString()),
                                 'pwd'         => $sub->orWhere('is_pwd', true),
                                 'solo_parent' => $sub->orWhere('is_solo_parent', true),
                                 '4ps'         => $sub->orWhere('is_4ps', true),
@@ -221,9 +222,10 @@ class ResidentController extends Controller
                 }
             }],
             'precinct_no'      => 'nullable|string|max:20',
+            // Living in Barangay New Era since — years of residency are calculated from it
+            'residing_since'   => 'nullable|date|before_or_equal:today|after_or_equal:birthdate',
             'voters_id_no'     => 'nullable|string|max:30',
             'is_pwd'           => 'boolean',
-            'is_senior'        => 'boolean',
             'is_solo_parent'   => 'boolean',
             'is_4ps'           => 'boolean',
             // residency_status is intentionally absent: new residents start as Alive,
@@ -251,6 +253,8 @@ class ResidentController extends Controller
             'email_address.email'       => 'Please enter a valid email address (e.g. juan@gmail.com).',
             'contact_number.max'        => 'Contact number must not exceed 20 characters.',
             'precinct_no.max'           => 'Precinct number must not exceed 20 characters.',
+            'residing_since.before_or_equal' => 'The "residing since" date cannot be in the future.',
+            'residing_since.after_or_equal'  => 'The "residing since" date cannot be before the date of birth.',
             'voters_id_no.max'          => 'Voter\'s ID number must not exceed 30 characters.',
             'photo_path.image'          => 'The photo must be an image file (JPG, PNG, GIF, etc.).',
             'photo_path.max'            => 'Photo is too large. Maximum allowed size is 2MB.',
@@ -339,7 +343,6 @@ class ResidentController extends Controller
 
         $validated['is_voter'] = $request->boolean('is_voter');
         $validated['is_pwd'] = $request->boolean('is_pwd');
-        $validated['is_senior'] = $request->boolean('is_senior');
         $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
         $validated['is_4ps'] = $request->boolean('is_4ps');
         $validated = $this->clearVoterDetailsIfNotVoter($validated);
@@ -413,7 +416,6 @@ class ResidentController extends Controller
 
         $validated['is_voter'] = $request->boolean('is_voter');
         $validated['is_pwd'] = $request->boolean('is_pwd');
-        $validated['is_senior'] = $request->boolean('is_senior');
         $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
         $validated['is_4ps'] = $request->boolean('is_4ps');
         $validated = $this->clearVoterDetailsIfNotVoter($validated);
