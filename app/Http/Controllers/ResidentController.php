@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ResidencyStatus;
 use App\Models\Household;
 use App\Models\Purok;
 use App\Models\Resident;
