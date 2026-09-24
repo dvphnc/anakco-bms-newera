@@ -704,3 +704,5 @@
     })();
 </script>
 @endpush
+
+@include('residents.partials.transactions-script')
