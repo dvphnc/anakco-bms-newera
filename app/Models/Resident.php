@@ -139,9 +139,26 @@ class Resident extends Model
         return $query->where('residency_status', 'Active');
     }
 
+    // Every resident flagged as a registered voter, whatever their status.
+    // For counts and reports, use residentVoters() instead.
     public function scopeVoters($query)
     {
         return $query->where('is_voter', true);
+    }
+
+    // Registered voters who currently live in the barangay (Alive — excludes
+    // residents who have moved out or died).
+    public function scopeResidentVoters($query)
+    {
+        return $query->where('is_voter', true)->where('residency_status', ResidencyStatus::Alive->value);
+    }
+
+    // Still flagged as registered here but have moved out — candidates for the
+    // voter-list cleanup report (they usually stay on the COMELEC list until they
+    // transfer their registration).
+    public function scopeNonResidentVoters($query)
+    {
+        return $query->where('is_voter', true)->where('residency_status', ResidencyStatus::MovedOut->value);
     }
 
     public function scopeSeniors($query)

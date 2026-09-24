@@ -202,7 +202,22 @@ class ResidentController extends Controller
             'address'          => 'required|string|max:255',
             'purok_id'         => 'required|exists:puroks,id',
             'household_id'     => 'nullable|exists:households,id',
-            'is_voter'         => 'boolean',
+            'is_voter'         => ['boolean', function ($attribute, $value, $fail) {
+                // Only residents aged 18+ can be registered voters
+                if (! filter_var($value, FILTER_VALIDATE_BOOLEAN)) {
+                    return;
+                }
+                try {
+                    $age = \Carbon\Carbon::parse(request('birthdate'))->age;
+                } catch (\Throwable) {
+                    return;   // the birthdate rule reports the bad date
+                }
+                if ($age < 18) {
+                    $fail('Only residents aged 18 or older can be marked as registered voters.');
+                }
+            }],
+            'precinct_no'      => 'nullable|string|max:20',
+            'voters_id_no'     => 'nullable|string|max:30',
             'is_pwd'           => 'boolean',
             'is_senior'        => 'boolean',
             'is_solo_parent'   => 'boolean',
@@ -230,9 +245,22 @@ class ResidentController extends Controller
             'purok_id.exists'           => 'The selected Purok is not valid. Please choose from the list.',
             'email_address.email'       => 'Please enter a valid email address (e.g. juan@gmail.com).',
             'contact_number.max'        => 'Contact number must not exceed 20 characters.',
+            'precinct_no.max'           => 'Precinct number must not exceed 20 characters.',
+            'voters_id_no.max'          => 'Voter\'s ID number must not exceed 30 characters.',
             'photo_path.image'          => 'The photo must be an image file (JPG, PNG, GIF, etc.).',
             'photo_path.max'            => 'Photo is too large. Maximum allowed size is 2MB.',
         ];
+    }
+
+    // Precinct / voter's ID only mean something for registered voters
+    private function clearVoterDetailsIfNotVoter(array $validated): array
+    {
+        if (! $validated['is_voter']) {
+            $validated['precinct_no']  = null;
+            $validated['voters_id_no'] = null;
+        }
+
+        return $validated;
     }
 
     private function avatarHtml($r): string
@@ -272,6 +300,7 @@ class ResidentController extends Controller
         $validated['is_senior'] = $request->boolean('is_senior');
         $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
         $validated['is_4ps'] = $request->boolean('is_4ps');
+        $validated = $this->clearVoterDetailsIfNotVoter($validated);
         $validated['residency_status'] = ResidencyStatus::Alive->value;
 
         $record = Resident::create($validated);
@@ -324,6 +353,7 @@ class ResidentController extends Controller
         $validated['is_senior'] = $request->boolean('is_senior');
         $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
         $validated['is_4ps'] = $request->boolean('is_4ps');
+        $validated = $this->clearVoterDetailsIfNotVoter($validated);
 
         $oldData = $resident->getOriginal();
         $resident->update($validated);
