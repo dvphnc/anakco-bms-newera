@@ -429,20 +429,20 @@ class ExportController extends Controller
         $totalActive = Resident::where('residency_status', 'Active')->count();
         $totalDeceased = Resident::where('residency_status', 'Deceased')->count();
         $totalTransferred = Resident::where('residency_status', 'Transferred')->count();
-        $totalMale = Resident::where('gender', 'Male')->count();
-        $totalFemale = Resident::where('gender', 'Female')->count();
+        $totalMale = Resident::active()->where('gender', 'Male')->count();
+        $totalFemale = Resident::active()->where('gender', 'Female')->count();
         $totalHouseholds = Household::count();
         $totalVoters = Resident::residentVoters()->count();
-        $totalSeniors = Resident::active()->where('is_senior', true)->count();
+        $totalSeniors = Resident::active()->seniors()->count();
         $totalPwd = Resident::active()->where('is_pwd', true)->count();
         $totalSoloParent = Resident::active()->where('is_solo_parent', true)->count();
         $total4ps = Resident::active()->where('is_4ps', true)->count();
 
         $ageGroups = [
-            'Children (0-12)' => Resident::whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [0, 12])->count(),
-            'Teens (13-17)' => Resident::whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [13, 17])->count(),
-            'Adults (18-59)' => Resident::whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [18, 59])->count(),
-            'Seniors (60+)' => Resident::where(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), '>=', 60)->count(),
+            'Children (0-12)' => Resident::active()->whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [0, 12])->count(),
+            'Teens (13-17)' => Resident::active()->whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [13, 17])->count(),
+            'Adults (18-59)' => Resident::active()->whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [18, 59])->count(),
+            'Seniors (60+)' => Resident::active()->seniors()->count(),
         ];
 
         $residentsByPurok = Purok::withCount(['residents' => fn ($q) => $q->where('residency_status', 'Active')])
