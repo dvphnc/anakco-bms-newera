@@ -79,7 +79,7 @@ class DuplicateResidentFinder
             return true;
         }
         // "Jun" vs "Junior", "Liza" vs "Lizabeth" — a short name that starts the longer one
-        if (strlen(min($a, $b)) >= 2 && (str_starts_with($a, $b) || str_starts_with($b, $a))) {
+        if (min(strlen($a), strlen($b)) >= 3 && (str_starts_with($a, $b) || str_starts_with($b, $a))) {
             return true;
         }
 
