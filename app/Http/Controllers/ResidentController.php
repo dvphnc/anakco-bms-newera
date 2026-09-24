@@ -201,7 +201,10 @@ class ResidentController extends Controller
             'email_address'    => 'nullable|email|max:255',
             'address'          => 'required|string|max:255',
             'purok_id'         => 'required|exists:puroks,id',
-            'household_id'     => 'nullable|exists:households,id',
+            // Task 1.2: 'auto' groups by address; 'manual' uses the chosen household
+            'household_mode'   => 'nullable|in:auto,manual',
+            'household_id'     => 'nullable|required_if:household_mode,manual|exists:households,id',
+            'relationship_to_head' => ['nullable', \Illuminate\Validation\Rule::in(Resident::RELATIONSHIPS)],
             'is_voter'         => ['boolean', function ($attribute, $value, $fail) {
                 // Only residents aged 18+ can be registered voters
                 if (! filter_var($value, FILTER_VALIDATE_BOOLEAN)) {
@@ -243,6 +246,7 @@ class ResidentController extends Controller
             'address.max'               => 'Address must not exceed 255 characters.',
             'purok_id.required'         => 'Please select a Purok.',
             'purok_id.exists'           => 'The selected Purok is not valid. Please choose from the list.',
+            'household_id.required_if'  => 'Please choose a household, or switch back to Automatic.',
             'email_address.email'       => 'Please enter a valid email address (e.g. juan@gmail.com).',
             'contact_number.max'        => 'Contact number must not exceed 20 characters.',
             'precinct_no.max'           => 'Precinct number must not exceed 20 characters.',
@@ -250,6 +254,21 @@ class ResidentController extends Controller
             'photo_path.image'          => 'The photo must be an image file (JPG, PNG, GIF, etc.).',
             'photo_path.max'            => 'Photo is too large. Maximum allowed size is 2MB.',
         ];
+    }
+
+    // Automatic: the grouping service picks the household from the address.
+    // Manual: keep the household staff chose — it is never overwritten.
+    private function applyHouseholdMode(array $validated, Request $request): array
+    {
+        $mode = $request->input('household_mode') === 'manual' ? 'manual' : 'auto';
+        $validated['household_assignment'] = $mode;
+        unset($validated['household_mode']);
+
+        if ($mode === 'auto') {
+            unset($validated['household_id']);
+        }
+
+        return $validated;
     }
 
     // Precinct / voter's ID only mean something for registered voters
@@ -301,6 +320,7 @@ class ResidentController extends Controller
         $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
         $validated['is_4ps'] = $request->boolean('is_4ps');
         $validated = $this->clearVoterDetailsIfNotVoter($validated);
+        $validated = $this->applyHouseholdMode($validated, $request);
         $validated['residency_status'] = ResidencyStatus::Alive->value;
 
         $record = Resident::create($validated);
@@ -314,7 +334,11 @@ class ResidentController extends Controller
     // -------------------------------------------------------
     public function show(Resident $resident)
     {
-        $resident->load(['purok', 'household', 'documents', 'blotterCases', 'statusLogs.changedBy']);
+        $resident->load([
+            'purok', 'documents', 'blotterCases', 'statusLogs.changedBy',
+            // Household tab: every member, living first, eldest first
+            'household.residents' => fn ($q) => $q->orderByRaw("residency_status = 'Active' DESC")->orderBy('birthdate'),
+        ]);
 
         return view('residents.residents-show', compact('resident'));
     }
@@ -354,6 +378,7 @@ class ResidentController extends Controller
         $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
         $validated['is_4ps'] = $request->boolean('is_4ps');
         $validated = $this->clearVoterDetailsIfNotVoter($validated);
+        $validated = $this->applyHouseholdMode($validated, $request);
 
         $oldData = $resident->getOriginal();
         $resident->update($validated);
