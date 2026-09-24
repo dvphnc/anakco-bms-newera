@@ -433,6 +433,8 @@
 
 </div>
 
+@push('modals')   {{-- rendered at <body> level so dialogs sit above the fixed sidebar --}}
+
 {{-- ── Update Status dialog (Task 1.4) ─────────────────────────────────── --}}
 @if($canChangeStatus)
 @php $statusErrors = $errors->hasAny(['to_status', 'effective_date', 'moved_to', 'remarks']); @endphp
@@ -601,6 +603,8 @@
         </div>
     </form>
 </div>
+
+@endpush
 
 @endsection
 

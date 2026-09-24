@@ -855,6 +855,11 @@
 
     @stack('scripts')
 
+    {{-- Page dialogs go here, at <body> level. Inside .main-content (which is
+         position:relative; z-index:1) they would sit UNDER the fixed sidebar,
+         no matter how high their own z-index is. --}}
+    @stack('modals')
+
     {{-- ── Global Confirmation Modal ──────────────────────────────────── --}}
     <div id="bmsConfirmModal"
          style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9990;
