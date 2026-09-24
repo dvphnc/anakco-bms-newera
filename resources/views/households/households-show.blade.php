@@ -144,8 +144,8 @@
                                 </span>
                             </td>
                             <td>
-                                <span class="badge {{ $resident->residency_status === 'Active' ? 'badge-green' : 'badge-gray' }}">
-                                    {{ $resident->residency_status }}
+                                <span class="badge {{ $resident->residency_badge }}">
+                                    {{ $resident->residency_label }}
                                 </span>
                             </td>
                             <td>

@@ -594,7 +594,7 @@
             <div class="demog-grid">
                 <div class="demog-item">
                     <div class="demog-num">{{ number_format($totalActive) }}</div>
-                    <div class="demog-lbl">Active</div>
+                    <div class="demog-lbl">Alive</div>
                 </div>
                 <div class="demog-item">
                     <div class="demog-num" style="color:var(--gold)">{{ number_format($totalSeniors) }}</div>
