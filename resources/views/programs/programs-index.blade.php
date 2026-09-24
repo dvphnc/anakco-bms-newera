@@ -25,6 +25,7 @@
                     <th>Claiming rule</th>
                     <th>Period</th>
                     <th>Status</th>
+                    <th>Stock</th>
                     <th style="text-align:right">Claims</th>
                     <th></th>
                 </tr>
@@ -48,6 +49,17 @@
                         {{ $program->starts_on?->format('m/d/Y') ?? 'Any time' }} – {{ $program->ends_on?->format('m/d/Y') ?? 'no end date' }}
                     </td>
                     <td><span class="badge {{ $statusBadge }}">{{ $statusLabel }}</span></td>
+                    <td>
+                        @php $left = $program->claimsLeft(); @endphp
+                        @if($left === null)
+                            <span class="td-muted" title="Not linked to the relief supplies inventory">—</span>
+                        @else
+                            <span class="badge {{ $left === 0 ? 'badge-red' : ($left <= 10 ? 'badge-yellow' : 'badge-green') }}"
+                                  title="Each claim uses: {{ $program->supplies->map(fn ($s) => $s->pivot->quantity_per_claim.' '.($s->unit ?? '').' '.$s->item_name)->map(fn ($t) => preg_replace('/\s+/', ' ', $t))->join(', ') }}">
+                                {{ $left === 0 ? 'Out of stock' : 'Enough for '.number_format($left) }}
+                            </span>
+                        @endif
+                    </td>
                     <td style="text-align:right;font-weight:600">{{ number_format($program->claims_count) }}</td>
                     <td>
                         <div style="display:flex;gap:6px;justify-content:flex-end">
@@ -64,7 +76,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6">
+                    <td colspan="7">
                         <div class="empty-state" style="padding:32px">
                             <i class="fas fa-hand-holding-heart"></i>
                             <p>No programs yet. Create one — for example “Relief Pack — Typhoon Kristine”, once per household.</p>
