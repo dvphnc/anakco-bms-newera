@@ -853,12 +853,13 @@
     .tippy-box[data-theme~='bms'] .tippy-content { padding: 8px 12px; }
     </style>
 
-    @stack('scripts')
-
     {{-- Page dialogs go here, at <body> level. Inside .main-content (which is
          position:relative; z-index:1) they would sit UNDER the fixed sidebar,
-         no matter how high their own z-index is. --}}
+         no matter how high their own z-index is. Must come BEFORE the scripts
+         stack, so page scripts can find the dialog elements when they run. --}}
     @stack('modals')
+
+    @stack('scripts')
 
     {{-- ── Global Confirmation Modal ──────────────────────────────────── --}}
     <div id="bmsConfirmModal"
