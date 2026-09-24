@@ -1113,20 +1113,27 @@
         const form = e.target;
         _bmsCallback = function () {
             form.dataset.confirmed = '1';
+            bmsLockSubmit(form);   // form.submit() fires no submit event, so lock here
             form.submit();
         };
     });
 
     // ── Double-submit prevention ────────────────────────────────────────
-    document.addEventListener('submit', function(e) {
-        const form = e.target;
-        // Skip: already confirmed (confirm modal re-submits), or opted out
-        if (form.dataset.confirmed === '1' || form.dataset.noDisable) return;
+    function bmsLockSubmit(form) {
         const btn = form.querySelector('button[type="submit"]');
-        if (!btn) return;
+        if (!btn || btn.disabled) return;
         btn.disabled = true;
         btn.dataset.originalHtml = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+    }
+
+    document.addEventListener('submit', function(e) {
+        const form = e.target;
+        if (form.dataset.noDisable) return;
+        // Forms with a confirm dialog lock only once OK is pressed — otherwise
+        // Cancel would leave the button stuck on "Saving…"
+        if (form.dataset.confirm && form.dataset.confirmed !== '1') return;
+        bmsLockSubmit(form);
     }, true);
     // Re-enable on back-button restore (bfcache)
     // Also force a full reload so Select2, DataTables, and all JS re-initialise
