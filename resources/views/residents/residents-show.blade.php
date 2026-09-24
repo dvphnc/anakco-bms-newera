@@ -516,7 +516,7 @@
 @if($resident->residency_status === 'Active')
 <div id="txModal" class="bms-dialog" role="dialog" aria-modal="true" aria-labelledby="txModalTitle"
      onclick="if (event.target === this) closeTxModal()">
-    <form id="txForm" class="bms-dialog-box" novalidate>
+    <form id="txForm" class="bms-dialog-box" novalidate data-no-disable="1">   {{-- sent by axios; opts out of the global submit-spinner --}}
         <div id="txModalTitle" style="font-size:16px;font-weight:700;color:var(--text)">Record Transaction</div>
         <div style="font-size:13px;color:var(--text-muted);margin:4px 0 18px">For {{ $resident->full_name }}</div>
 
@@ -586,7 +586,7 @@
 {{-- ── Void Transaction dialog ─────────────────────────────────────────── --}}
 <div id="voidModal" class="bms-dialog" role="dialog" aria-modal="true" aria-labelledby="voidModalTitle"
      onclick="if (event.target === this) closeVoidModal()">
-    <form id="voidForm" class="bms-dialog-box" novalidate>
+    <form id="voidForm" class="bms-dialog-box" novalidate data-no-disable="1">
         <div id="voidModalTitle" style="font-size:16px;font-weight:700;color:var(--text)">Void <span id="voidRef"></span></div>
         <div style="font-size:13px;color:var(--text-muted);margin:6px 0 16px;line-height:1.5">
             The entry stays on record, marked as voided with your reason. If it was a program claim,
@@ -697,12 +697,7 @@
         radios.forEach(r => r.addEventListener('change', sync));
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStatusModal(); });
 
-        // Prevent a double submit while the request is in flight
-        document.getElementById('statusForm').addEventListener('submit', function () {
-            submit.disabled = true;
-            submit.querySelector('i').className = 'fas fa-spinner fa-spin';
-            submit.querySelector('span').textContent = 'Saving…';
-        });
+        // (Double-submit spinner comes from the layout's global submit handler.)
 
         sync();   // restores state when the dialog re-opens after a validation error
     })();

@@ -232,6 +232,8 @@
         .btn-gold:hover { background:var(--gold-light); box-shadow:var(--shadow-gold); }
         .btn-secondary { background:var(--surface); color:var(--text); border-color:var(--border); }
         .btn-secondary:hover { border-color:var(--navy); color:var(--navy); background:var(--navy-pale); }
+        /* Disabled buttons must look disabled (previously identical to enabled ones) */
+        .btn:disabled, .btn[disabled] { opacity:.55; cursor:not-allowed; pointer-events:none; }
         .btn-danger    { background:var(--crimson-pale); color:var(--crimson); border-color:var(--crimson-border); }
         .btn-danger:hover { background:rgba(155,28,28,0.12); }
         .btn-sm   { padding:6px 13px; font-size:12px; min-height:34px; }
