@@ -111,7 +111,9 @@
       "Bash(git commit -m 'fix: untrack compiled Blade views, restore Laravel .gitignore *)",
       "Bash(git -C \"D:/laragon/www/anakco_bms\" log main..origin/main --oneline)",
       "Bash(git -C \"D:/laragon/www/anakco_bms\" diff --name-only main...origin/main)",
-      "Bash(git -C \"D:/laragon/www/anakco_bms\" merge origin/main --no-edit)"
+      "Bash(git -C \"D:/laragon/www/anakco_bms\" merge origin/main --no-edit)",
+      "Bash(echo \"=== migrations touching residents/households/medicine/relief ===\")",
+      "Bash(ls D:/laragon/www/anakco_bms/database/migrations/)"
     ]
   }
 }
