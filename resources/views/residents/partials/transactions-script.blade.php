@@ -111,7 +111,8 @@
                 if (data.eligible) {
                     elig.className = 'tx-elig ok';
                     elig.innerHTML = '<i class="fas fa-circle-check"></i><span>Eligible — ' + data.claims_used + ' of '
-                        + data.max_claims + ' claim(s) used ' + (data.scope === 'household' ? 'by this household' : 'by this resident') + '.</span>';
+                        + data.max_claims + ' claim(s) used ' + (data.scope === 'household' ? 'by this household' : 'by this resident') + '.'
+                        + (data.claims_left !== null ? ' Stock left for ' + data.claims_left + ' more claim(s).' : '') + '</span>';
                     submit.disabled = false;
                 } else {
                     // Submit stays disabled; the server re-checks on save anyway
