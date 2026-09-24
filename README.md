@@ -131,13 +131,12 @@ I served as **Scrum Master and Full-Stack Developer** on this group project for 
 
 ## Run It Locally
 
-> Requires [Laragon](https://laragon.org/) (or any local PHP 8.2 + MySQL environment).
+> Requires [Laragon](https://laragon.org/) (or any local PHP 8.2 + MySQL environment). No Node.js or npm needed — all assets are served locally from `public/assets`, so the system runs fully offline.
 
 ```bash
 git clone https://github.com/dvphnc/anakco-bms-newera.git
 cd anakco-bms-newera
 composer install
-npm install
 cp .env.example .env
 php artisan key:generate
 ```
@@ -157,7 +156,6 @@ Then run migrations and seeders:
 
 ```bash
 php artisan migrate --seed
-npm run dev
 ```
 
 Open a second terminal and start the server:
@@ -173,6 +171,24 @@ Open `http://localhost:8000` — you're in.
 | Role | Email | Password |
 |------|-------|----------|
 | Admin | admin@bms.gov.ph | Admin@12345 |
+
+> Change this password before real resident data is entered.
+
+### Running the tests
+
+Tests use their **own** MySQL database, `anakco_bms_testing`, and wipe it on every run. They never touch `anakco_bms`: a safety check refuses to run against any database whose name doesn't contain "testing".
+
+Create the test database once (Laragon → **Database**, or in a terminal):
+
+```bash
+mysql -u root -e "CREATE DATABASE anakco_bms_testing"
+```
+
+Then run the suite:
+
+```bash
+php artisan test
+```
 
 <img src=".github/divider.svg" width="100%"/>
 
