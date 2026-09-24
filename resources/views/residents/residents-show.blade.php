@@ -45,7 +45,7 @@
                 <div style="font-size:14px;color:rgba(255,255,255,0.7);margin-top:5px">
                     {{ $resident->purok->name ?? '—' }}
                 </div>
-                <div style="margin-top:12px">
+                <div class="profile-status" style="margin-top:12px">
                     <span class="badge {{ $resident->residency_badge }}">{{ $resident->residency_label }}</span>
                     @if($resident->residency_status !== 'Active' && $resident->status_effective_date)
                         <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:6px">
