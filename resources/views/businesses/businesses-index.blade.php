@@ -230,6 +230,7 @@
 </div>
 
 {{-- Issue Business Permit Modal (portal submissions) --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="bizIssueModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9700;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -302,8 +303,10 @@
         </div>
     </div>
 </div>
+@endpush
 
 {{-- Business Status Update Modal --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="bizStatusModal"
      style="display:none;position:fixed;inset:0;z-index:9600;align-items:center;justify-content:center;
             background:rgba(9,20,40,0.5);backdrop-filter:blur(3px)"
@@ -367,8 +370,10 @@
         </div>
     </div>
 </div>
+@endpush
 
 {{-- Business Quick View Panel --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="bizQvPanel"
      style="display:none;opacity:0;position:fixed;inset:0;z-index:9500;
             align-items:flex-start;justify-content:flex-end;
@@ -396,6 +401,7 @@
         <div id="bizQvBody" style="flex:1"></div>
     </div>
 </div>
+@endpush
 <style>
 @keyframes qvSlideIn { from { transform:translateX(32px);opacity:0; } to { transform:translateX(0);opacity:1; } }
 </style>

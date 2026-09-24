@@ -205,6 +205,7 @@
 </div>
 
 {{-- Activate Case Modal (portal submissions) --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="blotterActivateModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9700;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -262,8 +263,10 @@
         </div>
     </div>
 </div>
+@endpush
 
 {{-- Quick Status Modal --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="blotterStatusModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -311,6 +314,7 @@
         </div>
     </div>
 </div>
+@endpush
 
 @endsection
 
