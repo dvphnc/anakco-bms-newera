@@ -98,7 +98,8 @@ $(function () {
     function applyMode() {
         const manual = mode() === 'manual';
         $('#hhManualPick').toggle(manual);
-        $hint.toggle(!manual);
+        // Not jQuery .toggle(): it would force display:block over the hint's flex / :empty rules
+        $hint[0].style.display = manual ? 'none' : '';
         if (!manual) lookup();
     }
 
