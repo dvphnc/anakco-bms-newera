@@ -218,6 +218,9 @@
                 <span><strong>4Ps Beneficiary</strong></span>
             </label>
         </div>
+        @error('is_voter')<span class="invalid-feedback" style="margin-top:10px"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+
+        @include('residents.partials.voter-details', ['resident' => $resident])
     </div>
 </div>
 
