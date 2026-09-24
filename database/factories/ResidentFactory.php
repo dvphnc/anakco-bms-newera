@@ -80,7 +80,17 @@ class ResidentFactory extends Factory
             'is_voter' => fn (array $a) => $ageOf($a) >= 18 && $this->faker->boolean(75),
             'precinct_no' => fn (array $a) => $a['is_voter'] ? $this->faker->numerify('0###').$this->faker->randomElement(['A', 'B', 'C']) : null,
             'is_pwd' => $this->faker->boolean(8),
-            'is_senior' => fn (array $a) => $ageOf($a) >= 60,
+            // (senior status is calculated from birthdate — no stored flag)
+            // About half were born here; the rest moved in within the last 40 years
+            'residing_since' => function (array $a) {
+                $birth = \Carbon\Carbon::parse($a['birthdate']);
+                $from  = $birth->max(now()->subYears(40));
+                if ($this->faker->boolean(50) || $from->gte(now()->subMonth())) {
+                    return $birth->toDateString();
+                }
+
+                return $this->faker->dateTimeBetween($from, '-1 month')->format('Y-m-d');
+            },
             'is_solo_parent' => fn (array $a) => $ageOf($a) >= 18 && $this->faker->boolean(5),
             'is_4ps' => $this->faker->boolean(12),
             'photo_path' => null,

@@ -402,6 +402,12 @@
     $birthdate    = $resident?->birthdate ? $resident->birthdate->format('m/d/Y') : null;
     $issuedDate   = $document->released_at ?? $document->created_at;
     $purpose      = $document->purpose ?? 'whatever legal purpose it may serve';
+    // "since 2008 (18 years)" when the residing-since date is on record; the old wording otherwise
+    $residingYears  = $resident?->years_of_residency;
+    $residingPhrase = $resident?->residing_since
+        ? "since <span class='highlight'>".$resident->residing_since->format('Y').'</span>'
+            .($residingYears >= 1 ? " (<span class='highlight'>$residingYears ".\Illuminate\Support\Str::plural('year', $residingYears).'</span>)' : '')
+        : 'for a considerable period of time';
     $officialName  = \App\Models\Official::where('position','Punong Barangay')->where('is_active',true)->first()?->full_name ?? 'ROBERT S. ROMANO';
     $secretaryName = \App\Models\Official::where('position','Barangay Secretary')->where('is_active',true)->first()?->full_name ?? 'JOSEPHINE A. FLORES';
 
@@ -423,7 +429,7 @@
         'Certificate of Residency' =>
             "This is to certify that <span class='resident-name'>$fullName</span>, $age, $civilStatus".
             "is a <span class='highlight'>bonafide resident</span> of <span class='highlight'>$addrStreet, Barangay New Era, Quezon City</span>. ".
-            "$heShe has been residing in this barangay for a considerable period of time ".
+            "$heShe has been residing in this barangay $residingPhrase ".
             "and is personally known to the undersigned.",
 
         'Good Moral Character' =>
