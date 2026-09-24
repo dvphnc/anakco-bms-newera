@@ -152,7 +152,7 @@ class CommitteeController extends Controller
             'bdrrm' => [
                 'emergency_logs'     => EmergencyLog::latest('incident_date')->get(),
                 'evacuation_centers' => EvacuationCenter::orderBy('center_name')->get(),
-                'relief_supplies'    => ReliefSupply::orderBy('item_name')->get(),
+                'relief_supplies'    => ReliefSupply::with('programs')->orderBy('item_name')->get(),
             ],
             default => [],
         };
@@ -353,6 +353,21 @@ class CommitteeController extends Controller
     {
         $record = ReliefSupply::findOrFail($id);
         $name   = $record->item_name;
+
+        // Programs draw from this item, or claims were given out of it: deleting it
+        // would break the program / erase the stock history
+        $program = $record->programs()->withTrashed()->value('name');
+        $given   = $record->movements()->whereNotNull('resident_transaction_id')->exists();
+        if ($program || $given) {
+            $message = $program
+                ? "{$name} is used by the program “{$program}”. Remove it from that program first, or set its quantity to 0 instead."
+                : "{$name} has claims recorded against it. Set its quantity to 0 instead, so the history is kept.";
+
+            return request()->expectsJson()
+                ? response()->json(['success' => false, 'message' => $message], 422)
+                : back()->with('error', $message)->withFragment('relief-supplies');
+        }
+
         $record->delete();
 
         if (request()->expectsJson()) {
