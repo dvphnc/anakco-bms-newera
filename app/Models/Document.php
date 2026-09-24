@@ -9,6 +9,36 @@ class Document extends Model
 {
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        // Task 1.1 — a document released to a registered resident goes into their
+        // transaction history (once per document). Separate created/updated hooks
+        // because wasRecentlyCreated never resets on the model object.
+        $record = function (Document $doc) {
+            if ($doc->status !== 'Released' || ! $doc->resident_id || ! ($resident = $doc->resident)) {
+                return;
+            }
+            app(\App\Services\TransactionService::class)->logFromSource(
+                $doc,
+                $resident,
+                'document',
+                trim($doc->document_type.' '.($doc->doc_number ? "({$doc->doc_number})" : '')),
+                [
+                    'amount'        => $doc->fee_paid > 0 ? $doc->fee_paid : null,
+                    'transacted_at' => $doc->released_at ?? now(),
+                    'processed_by'  => $doc->released_by_user_id ?? $doc->issued_by ?? auth()->id(),
+                ],
+            );
+        };
+
+        static::created($record);
+        static::updated(function (Document $doc) use ($record) {
+            if ($doc->wasChanged(['status', 'resident_id'])) {
+                $record($doc);
+            }
+        });
+    }
+
     /**
      * Full status set — mirrors DocumentAppointment::$statuses for 1-to-1 sync.
      * Walk-in documents typically use Pending → Processing → Released / Cancelled.
