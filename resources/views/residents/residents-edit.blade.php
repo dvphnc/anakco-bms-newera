@@ -155,15 +155,15 @@
         <div class="form-grid-3 mb-6">
             <div class="form-group">
                 <label class="form-label">
-                    Residency Status
-                    <span class="help-icon" data-tippy-content="'Active' = currently residing in the barangay. 'Transferred' = moved to another area. 'Deceased' = has passed away. Changing this affects who appears in active resident counts.">?</span>
+                    Status
+                    <span class="help-icon" data-tippy-content="Status is changed from the resident's profile (Update Status), which records the date and keeps a history.">?</span>
                 </label>
-                <select name="residency_status" id="s2ResidencyStatus" class="form-control @error('residency_status') is-invalid @enderror">
-                    @foreach(['Active','Deceased','Transferred'] as $s)
-                        <option value="{{ $s }}" {{ old('residency_status', $resident->residency_status) === $s ? 'selected' : '' }}>{{ $s }}</option>
-                    @endforeach
-                </select>
-                @error('residency_status')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                <div class="form-control" style="display:flex;align-items:center;gap:8px;background:var(--surface2)">
+                    <span class="badge {{ $resident->residency_badge }}">{{ $resident->residency_label }}</span>
+                    <a href="{{ route('residents.show', $resident) }}" style="font-size:12px;margin-left:auto;color:var(--navy);font-weight:600">
+                        Change on profile <i class="fas fa-arrow-right" style="font-size:10px"></i>
+                    </a>
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label">
@@ -307,7 +307,6 @@ $(function () {
 
     $('#s2Gender').select2($.extend({}, s2, { placeholder: 'Select Gender', allowClear: false }));
     $('#s2CivilStatus').select2($.extend({}, s2, { placeholder: 'Select Status', allowClear: false }));
-    $('#s2ResidencyStatus').select2($.extend({}, s2, { placeholder: 'Select Status', allowClear: false }));
 
     /* Long lists — searchable */
     $('#s2Purok').select2($.extend({}, s2, {
