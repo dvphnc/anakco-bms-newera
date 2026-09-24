@@ -34,7 +34,6 @@ class ResidentVoterTest extends TestCase
             'birthdate'        => '1980-01-15',
             'residency_status' => 'Active',
             'is_voter'         => false,
-            'is_senior'        => false,
         ], $attrs));
     }
 
@@ -65,8 +64,8 @@ class ResidentVoterTest extends TestCase
     {
         $this->resident(['is_voter' => true]);
         $this->resident(['is_voter' => true, 'residency_status' => 'Transferred']);
-        $this->resident(['is_voter' => true, 'residency_status' => 'Deceased', 'is_senior' => true, 'birthdate' => '1940-01-01']);
-        $this->resident(['is_senior' => true, 'birthdate' => '1950-01-01']);
+        $this->resident(['is_voter' => true, 'residency_status' => 'Deceased', 'birthdate' => '1940-01-01']);
+        $this->resident(['birthdate' => '1950-01-01']);   // senior by age
 
         $this->actingAs($this->secretary)
             ->get(route('dashboard'))
