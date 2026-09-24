@@ -23,8 +23,14 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
+        <!-- Tests run on their own MySQL database and WIPE it on every run.
+             Never point this at anakco_bms. (Create it once: CREATE DATABASE anakco_bms_testing)
+             SQLite can't be used: some migrations use MySQL-only ALTER statements. -->
+        <env name="DB_CONNECTION" value="mysql" force="true"/>
+        <env name="DB_DATABASE" value="anakco_bms_testing" force="true"/>
+        <!-- Ignore the app's cached config (bootstrap/cache/config.php): a cached config
+             ignores the settings above and would send tests to the real database. -->
+        <env name="APP_CONFIG_CACHE" value="bootstrap/cache/config.phpunit-never-cached.php" force="true"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
