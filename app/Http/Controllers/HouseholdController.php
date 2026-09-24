@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ResidencyStatus;
 use App\Models\Household;
 use App\Models\Purok;
+use App\Models\Resident;
+use App\Services\HouseholdGroupingService;
+use App\Support\AddressNormalizer;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Yajra\DataTables\Facades\DataTables;
 
 class HouseholdController extends Controller
@@ -71,21 +76,109 @@ class HouseholdController extends Controller
         return view('households.households-create', compact('puroks'));
     }
 
+    // Head, family size and voter-household are derived from the members
+    // (HouseholdGroupingService), so the form only takes purok + address.
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'purok_id' => 'required|exists:puroks,id',
-            'address' => 'required|string|max:255',
-            'household_head' => 'nullable|string|max:255',
-            'family_size' => 'required|integer|min:1',
-            'is_voter_household' => 'boolean',
-        ]);
-        $validated['household_number'] = $this->generateHouseholdNumber();
-        $validated['is_voter_household'] = $request->boolean('is_voter_household');
+        $validated = $request->validate($this->householdRules(), $this->householdMessages());
+        $this->ensureAddressIsFree($validated);
+
+        $validated['household_number'] = Household::nextNumber();
+        $validated['family_size'] = 0;
         $record = Household::create($validated);
         $this->logActivity('created', $record);
 
-        return redirect()->route('households.index')->with('success', 'Household added successfully.');
+        return redirect()->route('households.show', $record)
+            ->with('success', "Household {$record->household_number} added. Residents registered at this address will join it automatically.");
+    }
+
+    private function householdRules(): array
+    {
+        return [
+            'purok_id' => 'required|exists:puroks,id',
+            'address'  => 'required|string|max:255',
+        ];
+    }
+
+    private function householdMessages(): array
+    {
+        return [
+            'purok_id.required' => 'Please select a Purok.',
+            'address.required'  => 'Please enter the household\'s address.',
+        ];
+    }
+
+    // One household per address per purok (also enforced by a unique index)
+    private function ensureAddressIsFree(array $validated, ?Household $except = null): void
+    {
+        $existing = Household::where('purok_id', $validated['purok_id'])
+            ->where('address_key', AddressNormalizer::key($validated['address']))
+            ->when($except, fn ($q) => $q->whereKeyNot($except->id))
+            ->first();
+
+        if ($existing) {
+            throw ValidationException::withMessages([
+                'address' => "Household {$existing->household_number} is already registered at this address.",
+            ]);
+        }
+    }
+
+    // -------------------------------------------------------
+    // MATCH — which household would a resident at this address join?
+    // Used by the live hint on the resident form (Task 1.2).
+    // -------------------------------------------------------
+    public function match(Request $request)
+    {
+        $data = $request->validate([
+            'address'     => 'required|string|max:255',
+            'purok_id'    => 'required|integer',
+            'resident_id' => 'nullable|integer',
+        ]);
+
+        $key = AddressNormalizer::key($data['address']);
+        $household = $key === '' ? null : Household::where('purok_id', $data['purok_id'])
+            ->where('address_key', $key)
+            ->first();
+
+        $currentHouseholdId = ! empty($data['resident_id'])
+            ? Resident::whereKey($data['resident_id'])->value('household_id')
+            : null;
+
+        return response()->json([
+            'key'       => $key,
+            'household' => $household ? [
+                'number'     => $household->household_number,
+                'url'        => route('households.show', $household),
+                'members'    => (int) $household->family_size,
+                'head'       => $household->household_head,
+                'is_current' => $currentHouseholdId === $household->id,
+            ] : null,
+        ]);
+    }
+
+    // -------------------------------------------------------
+    // SET HEAD — make a living member the household head
+    // -------------------------------------------------------
+    public function setHead(Request $request, Household $household, HouseholdGroupingService $grouping)
+    {
+        $data = $request->validate(['resident_id' => 'required|integer']);
+
+        $resident = $household->residents()
+            ->whereKey($data['resident_id'])
+            ->where('residency_status', ResidencyStatus::Alive->value)
+            ->first();
+
+        if (! $resident) {
+            throw ValidationException::withMessages([
+                'resident_id' => 'Only a living member of this household can be its head.',
+            ]);
+        }
+
+        $oldData = $household->getOriginal();
+        $grouping->makeHead($household, $resident);
+        $this->logActivity('updated', $household, $oldData, $household->fresh()->toArray());
+
+        return back()->with('success', "{$resident->full_name} is now the head of household {$household->household_number}.");
     }
 
     public function edit(Household $household)
