@@ -324,6 +324,53 @@
                     @endif
                 </div>
 
+                {{-- Transactions Tab (Task 1.1) --}}
+                <div class="tab-pane" id="tab-transactions">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+                        <div class="tx-chips" role="group" aria-label="Filter by type">
+                            <button type="button" class="tx-chip active" data-type="" aria-pressed="true">All</button>
+                            @foreach(\App\Models\ResidentTransaction::TYPES as $value => $label)
+                                <button type="button" class="tx-chip" data-type="{{ $value }}" aria-pressed="false">{{ $label }}</button>
+                            @endforeach
+                        </div>
+                        @if($resident->residency_status === 'Active')
+                            <button type="button" class="btn btn-primary btn-sm" onclick="openTxModal()">
+                                <i class="fas fa-plus"></i> Record Transaction
+                            </button>
+                        @else
+                            <span title="Transactions can only be recorded for living residents.">
+                                <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                    <i class="fas fa-lock"></i> Record Transaction
+                                </button>
+                            </span>
+                        @endif
+                    </div>
+
+                    @if($householdClaims->isNotEmpty())
+                        <div style="border:1px solid var(--gold-border);background:var(--gold-pale);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px">
+                            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#92600A;margin-bottom:6px">
+                                <i class="fas fa-house-user"></i> Claimed by others in this household (per-household programs)
+                            </div>
+                            @foreach($householdClaims as $claim)
+                                <div style="font-size:13px;color:var(--text);padding:3px 0">
+                                    <strong>{{ $claim->program->name }}</strong> —
+                                    {{ $claim->resident->full_name }}, {{ $claim->transacted_at->format('m/d/Y') }}
+                                    <span class="td-mono" style="margin-left:4px">{{ $claim->reference_no }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <div class="table-responsive">
+                        <table id="txTable" class="w-full" style="width:100%">
+                            <thead>
+                                <tr><th>Date</th><th>Item</th><th>Qty / Amount</th><th>Reference</th><th></th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
                 {{-- Documents Tab --}}
                 <div class="tab-pane" id="tab-documents">
                     @forelse($resident->documents as $doc)
@@ -463,9 +510,123 @@
 </div>
 @endif
 
+{{-- ── Record Transaction dialog (Task 1.1) ─────────────────────────────── --}}
+@if($resident->residency_status === 'Active')
+<div id="txModal" class="bms-dialog" role="dialog" aria-modal="true" aria-labelledby="txModalTitle"
+     onclick="if (event.target === this) closeTxModal()">
+    <form id="txForm" class="bms-dialog-box" novalidate>
+        <div id="txModalTitle" style="font-size:16px;font-weight:700;color:var(--text)">Record Transaction</div>
+        <div style="font-size:13px;color:var(--text-muted);margin:4px 0 18px">For {{ $resident->full_name }}</div>
+
+        <div class="form-group mb-4">
+            <label class="form-label" for="txProgram">Program</label>
+            <select id="txProgram" name="assistance_program_id" class="form-control">
+                <option value="">— None: record a one-off item —</option>
+                @foreach($openPrograms as $p)
+                    <option value="{{ $p->id }}">{{ $p->name }} · {{ $p->scope_label }}</option>
+                @endforeach
+            </select>
+            @if($openPrograms->isEmpty())
+                <span style="font-size:12px;color:var(--text-subtle);margin-top:4px">
+                    No programs are open right now. <a href="{{ route('programs.create') }}" style="color:var(--navy);font-weight:600">Create one</a>
+                </span>
+            @endif
+        </div>
+
+        <div id="txEligibility" class="tx-elig" aria-live="polite"></div>
+
+        <div id="txOneOff" class="form-grid-2 mb-4">
+            <div class="form-group">
+                <label class="form-label" for="txType">Type</label>
+                <select id="txType" name="type" class="form-control">
+                    @foreach(\App\Models\ResidentTransaction::TYPES as $value => $label)
+                        @continue($value === 'document')   {{-- documents are recorded automatically when released --}}
+                        <option value="{{ $value }}">{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="txDesc">What was given</label>
+                <input type="text" id="txDesc" name="description" class="form-control" maxlength="255" placeholder="e.g. 5 kg rice, 3 canned goods">
+            </div>
+        </div>
+
+        <div class="form-grid-3 mb-4">
+            <div class="form-group">
+                <label class="form-label" for="txQty">Quantity</label>
+                <input type="number" id="txQty" name="quantity" class="form-control" min="0.01" step="0.01">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="txUnit">Unit</label>
+                <input type="text" id="txUnit" name="unit" class="form-control" maxlength="30" placeholder="pack, kg, tablet">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="txAmount">Amount (₱)</label>
+                <input type="number" id="txAmount" name="amount" class="form-control" min="0" step="0.01">
+            </div>
+        </div>
+
+        <div class="form-group mb-4">
+            <label class="form-label" for="txWhen">Date &amp; time</label>
+            <input type="datetime-local" id="txWhen" name="transacted_at" class="form-control">
+        </div>
+
+        <div id="txError" class="invalid-feedback" style="display:none;margin-bottom:12px"></div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px">
+            <button type="button" class="btn btn-secondary" onclick="closeTxModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="txSubmit"><i class="fas fa-check"></i> <span>Save</span></button>
+        </div>
+    </form>
+</div>
+@endif
+
+{{-- ── Void Transaction dialog ─────────────────────────────────────────── --}}
+<div id="voidModal" class="bms-dialog" role="dialog" aria-modal="true" aria-labelledby="voidModalTitle"
+     onclick="if (event.target === this) closeVoidModal()">
+    <form id="voidForm" class="bms-dialog-box" novalidate>
+        <div id="voidModalTitle" style="font-size:16px;font-weight:700;color:var(--text)">Void <span id="voidRef"></span></div>
+        <div style="font-size:13px;color:var(--text-muted);margin:6px 0 16px;line-height:1.5">
+            The entry stays on record, marked as voided with your reason. If it was a program claim,
+            the household or resident will be able to claim again.
+        </div>
+        <div class="form-group mb-4">
+            <label class="form-label" for="voidReason">Reason <span style="color:var(--crimson)">*</span></label>
+            <textarea id="voidReason" name="reason" rows="2" maxlength="255" class="form-control" placeholder="e.g. Recorded for the wrong resident"></textarea>
+        </div>
+        <div id="voidError" class="invalid-feedback" style="display:none;margin-bottom:12px"></div>
+        <div style="display:flex;justify-content:flex-end;gap:10px">
+            <button type="button" class="btn btn-secondary" onclick="closeVoidModal()">Cancel</button>
+            <button type="submit" class="btn btn-danger" id="voidSubmit"><i class="fas fa-ban"></i> <span>Void Entry</span></button>
+        </div>
+    </form>
+</div>
+
 @endsection
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('assets/vendor/datatables/css/jquery.dataTables.min.css') }}">
+<style>
+    .bms-dialog     { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9980;
+                      align-items:center; justify-content:center; backdrop-filter:blur(2px); }
+    .bms-dialog-box { background:var(--surface); border-radius:var(--radius-lg); padding:26px 26px 22px;
+                      max-width:520px; width:92%; max-height:92vh; overflow-y:auto;
+                      box-shadow:0 20px 60px rgba(0,0,0,0.22); border:1px solid var(--border); }
+    .tx-chips { display:flex; gap:6px; flex-wrap:wrap; }
+    .tx-chip  { padding:4px 11px; border-radius:99px; border:1px solid var(--border); background:var(--surface);
+                font:inherit; font-size:12px; font-weight:600; color:var(--text-muted); cursor:pointer; }
+    .tx-chip:hover  { border-color:var(--navy); color:var(--navy); }
+    .tx-chip.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+    .tx-elig { font-size:13px; padding:9px 12px; border-radius:var(--radius-sm); margin-bottom:14px; display:flex; gap:8px; align-items:flex-start; }
+    .tx-elig:empty { display:none; }
+    .tx-elig.ok  { background:rgba(22,163,74,.07); border:1px solid rgba(22,163,74,.3); color:#166534; }
+    .tx-elig.no  { background:var(--crimson-pale); border:1px solid rgba(155,28,28,.25); color:var(--crimson); }
+    .tx-elig.wait{ background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); }
+    #txTable_wrapper .dataTables_length, #txTable_wrapper .dataTables_filter { display:none; }
+    #txTable_wrapper .dataTables_info { font-size:13px; color:var(--text-muted); padding-top:12px; }
+    #txTable_wrapper .dataTables_paginate { padding-top:12px; }
+    #txTable td, #txTable th { font-size:13px; vertical-align:top; }
+</style>
 <style>
     .status-options { display:flex; flex-direction:column; gap:6px; }
     .status-option  { display:flex; align-items:center; gap:10px; padding:9px 12px; cursor:pointer;
