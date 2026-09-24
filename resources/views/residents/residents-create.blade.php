@@ -21,6 +21,8 @@
 <form method="POST" action="{{ route('residents.store') }}" enctype="multipart/form-data">
 @csrf
 
+@include('residents.partials.duplicate-warning')
+
 {{-- Personal Information --}}
 <div class="card mb-6">
     <div class="card-header">

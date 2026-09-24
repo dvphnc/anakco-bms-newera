@@ -6,6 +6,7 @@ use App\Enums\ResidencyStatus;
 use App\Models\Household;
 use App\Models\Purok;
 use App\Models\Resident;
+use App\Services\DuplicateResidentFinder;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -306,9 +307,31 @@ class ResidentController extends Controller
     // -------------------------------------------------------
     // STORE — Save new resident
     // -------------------------------------------------------
-    public function store(Request $request)
+    public function store(Request $request, DuplicateResidentFinder $duplicates)
     {
         $validated = $request->validate($this->residentRules(), $this->residentMessages());
+
+        // Possible duplicate? Pause and let staff open the existing record instead —
+        // unless they've confirmed this is a different person. Checked before the
+        // photo is stored so a paused save leaves no orphaned file.
+        if (! $request->boolean('confirm_not_duplicate')) {
+            $matches = $duplicates->find($validated);
+            if ($matches->isNotEmpty()) {
+                return back()->withInput($request->except('photo_path'))->with([
+                    'possibleDuplicates' => $matches->map(fn (Resident $r) => [
+                        'name'      => $r->full_name,
+                        'birthdate' => $r->birthdate->format('m/d/Y'),
+                        'purok'     => $r->purok->name ?? '—',
+                        'address'   => $r->address,
+                        'status'    => $r->residency_status,
+                        'label'     => $r->residency_label,
+                        'badge'     => $r->residency_badge,
+                        'url'       => route('residents.show', $r),
+                    ])->all(),
+                    'duplicatePhotoDropped' => $request->hasFile('photo_path'),
+                ]);
+            }
+        }
 
         if ($request->hasFile('photo_path')) {
             $validated['photo_path'] = $request->file('photo_path')->store('residents', 'public');
