@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\ResidencyStatus;
+use App\Services\HouseholdGroupingService;
+use App\Support\AddressNormalizer;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +31,8 @@ class Resident extends Model
         'address',
         'purok_id',
         'household_id',
+        'household_assignment',
+        'relationship_to_head',
         'is_voter',
         'precinct_no',
         'voters_id_no',
@@ -51,6 +55,41 @@ class Resident extends Model
             'is_solo_parent' => 'boolean',
             'is_4ps' => 'boolean',
         ];
+    }
+
+    public const RELATIONSHIPS = [
+        'Head', 'Spouse', 'Child', 'Parent', 'Sibling', 'Grandchild', 'Other Relative', 'Non-relative',
+    ];
+
+    protected static function booted(): void
+    {
+        // Task 1.2 — keep the grouping key in step with the typed address
+        static::saving(function (Resident $resident) {
+            if ($resident->isDirty('address') || $resident->address_key === null) {
+                $resident->address_key = AddressNormalizer::key($resident->address);
+            }
+        });
+
+        // Group into a household by address, and keep household head / size current
+        static::saved(function (Resident $resident) {
+            $relevant = $resident->wasRecentlyCreated
+                || $resident->wasChanged(['address_key', 'purok_id', 'residency_status', 'household_id',
+                                          'household_assignment', 'relationship_to_head', 'is_voter', 'birthdate'])
+                || ($resident->household_id === null && app(HouseholdGroupingService::class)->shouldAutoGroup($resident));
+
+            if ($relevant) {
+                // getOriginal() still holds the pre-save values inside the saved event
+                app(HouseholdGroupingService::class)
+                    ->residentSaved($resident, $resident->getOriginal('household_id'));
+            }
+        });
+
+        // A removed resident no longer counts toward their household
+        static::deleted(function (Resident $resident) {
+            if ($resident->household_id && ($household = Household::find($resident->household_id))) {
+                app(HouseholdGroupingService::class)->refresh($household);
+            }
+        });
     }
 
     // -------------------------------------------------------
