@@ -46,10 +46,10 @@ class ReportController extends Controller
         $totalBlotter    = BlotterCase::whereYear('created_at', $currentYear)->count();
         $totalBusinesses = Business::where('status', 'Active')->count();
         $totalHouseholds = Household::count();
-        $totalMale       = Resident::where('gender', 'Male')->count();
-        $totalFemale     = Resident::where('gender', 'Female')->count();
+        $totalMale       = Resident::active()->where('gender', 'Male')->count();
+        $totalFemale     = Resident::active()->where('gender', 'Female')->count();
         $totalVoters     = Resident::residentVoters()->count();
-        $totalSeniors    = Resident::active()->where('is_senior', true)->count();
+        $totalSeniors    = Resident::active()->seniors()->count();
         $totalPwd        = Resident::active()->where('is_pwd', true)->count();
         $totalSoloParent = Resident::active()->where('is_solo_parent', true)->count();
         $total4ps        = Resident::active()->where('is_4ps', true)->count();
@@ -95,13 +95,13 @@ class ReportController extends Controller
         $totalActive = Resident::where('residency_status', 'Active')->count();
         $totalDeceased = Resident::where('residency_status', 'Deceased')->count();
         $totalTransferred = Resident::where('residency_status', 'Transferred')->count();
-        $totalMale = Resident::where('gender', 'Male')->count();
-        $totalFemale = Resident::where('gender', 'Female')->count();
+        $totalMale = Resident::active()->where('gender', 'Male')->count();
+        $totalFemale = Resident::active()->where('gender', 'Female')->count();
         $totalHouseholds = \App\Models\Household::count();
         $totalDocuments = \App\Models\Document::count();
         $totalBlotter = \App\Models\BlotterCase::count();
         $totalVoters = Resident::residentVoters()->count();
-        $totalSeniors = Resident::active()->where('is_senior', true)->count();
+        $totalSeniors = Resident::active()->seniors()->count();
         $totalPwd = Resident::active()->where('is_pwd', true)->count();
         $totalSoloParent = Resident::active()->where('is_solo_parent', true)->count();
         $total4ps = Resident::active()->where('is_4ps', true)->count();
@@ -130,10 +130,10 @@ class ReportController extends Controller
         }
 
         $ageGroups = [
-            'Children (0-12)' => Resident::whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [0, 12])->count(),
-            'Teens (13-17)' => Resident::whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [13, 17])->count(),
-            'Adults (18-59)' => Resident::whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [18, 59])->count(),
-            'Seniors (60+)' => Resident::where(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), '>=', 60)->count(),
+            'Children (0-12)' => Resident::active()->whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [0, 12])->count(),
+            'Teens (13-17)' => Resident::active()->whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [13, 17])->count(),
+            'Adults (18-59)' => Resident::active()->whereBetween(\DB::raw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE())'), [18, 59])->count(),
+            'Seniors (60+)' => Resident::active()->seniors()->count(),
         ];
 
         return view('reports.reports-index', compact(
@@ -260,10 +260,10 @@ class ReportController extends Controller
                     'businesses_active' => Business::where('status', 'Active')->count(),
                     'businesses_new' => Business::whereBetween('created_at', [$start, $end])->count(),
                     'voters' => Resident::residentVoters()->count(),
-                    'seniors' => Resident::active()->where('is_senior', true)->count(),
+                    'seniors' => Resident::active()->seniors()->count(),
                     'pwd' => Resident::active()->where('is_pwd', true)->count(),
-                    'total_male' => Resident::where('gender', 'Male')->count(),
-                    'total_female' => Resident::where('gender', 'Female')->count(),
+                    'total_male' => Resident::active()->where('gender', 'Male')->count(),
+                    'total_female' => Resident::active()->where('gender', 'Female')->count(),
                     'docs_by_type' => Document::whereBetween('created_at', [$start, $end])
                         ->selectRaw('document_type, count(*) as total')
                         ->groupBy('document_type')->pluck('total', 'document_type'),
