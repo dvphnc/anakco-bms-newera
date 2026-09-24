@@ -33,11 +33,11 @@ class Resident extends Model
         'household_id',
         'household_assignment',
         'relationship_to_head',
+        'residing_since',
         'is_voter',
         'precinct_no',
         'voters_id_no',
         'is_pwd',
-        'is_senior',
         'is_solo_parent',
         'is_4ps',
         'residency_status',
@@ -49,13 +49,16 @@ class Resident extends Model
         return [
             'birthdate' => 'date',
             'status_effective_date' => 'date',
+            'residing_since' => 'date',
             'is_voter' => 'boolean',
             'is_pwd' => 'boolean',
-            'is_senior' => 'boolean',
             'is_solo_parent' => 'boolean',
             'is_4ps' => 'boolean',
         ];
     }
+
+    /** Senior citizen age (RA 9994 — Expanded Senior Citizens Act) */
+    public const SENIOR_AGE = 60;
 
     public const RELATIONSHIPS = [
         'Head', 'Spouse', 'Child', 'Parent', 'Sibling', 'Grandchild', 'Other Relative', 'Non-relative',
@@ -131,6 +134,18 @@ class Resident extends Model
     public function getAgeAttribute(): int
     {
         return Carbon::parse($this->birthdate)->age;
+    }
+
+    // Senior citizen = 60 or older, worked out from the birthdate so it is never out of date
+    public function getIsSeniorAttribute(): bool
+    {
+        return $this->birthdate !== null && $this->age >= self::SENIOR_AGE;
+    }
+
+    // Whole years living in the barangay, from residing_since (null when unknown)
+    public function getYearsOfResidencyAttribute(): ?int
+    {
+        return $this->residing_since?->age;
     }
 
     // "Alive" / "Deceased" / "Moved Out" — display label for residency_status
@@ -209,9 +224,10 @@ class Resident extends Model
         return $query->where('is_voter', true)->where('residency_status', ResidencyStatus::MovedOut->value);
     }
 
+    // Senior citizens: 60 or older today (calculated from birthdate — there is no stored flag)
     public function scopeSeniors($query)
     {
-        return $query->where('is_senior', true);
+        return $query->whereDate('birthdate', '<=', now()->subYears(self::SENIOR_AGE)->toDateString());
     }
 
     public function scopePwd($query)
