@@ -298,8 +298,99 @@
 
 </div>
 
+{{-- ── Update Status dialog (Task 1.4) ─────────────────────────────────── --}}
+@if($canChangeStatus)
+@php $statusErrors = $errors->hasAny(['to_status', 'effective_date', 'moved_to', 'remarks']); @endphp
+<div id="statusModal" role="dialog" aria-modal="true" aria-labelledby="statusModalTitle"
+     style="display:{{ $statusErrors ? 'flex' : 'none' }};position:fixed;inset:0;background:rgba(0,0,0,0.45);
+            z-index:9980;align-items:center;justify-content:center;backdrop-filter:blur(2px)"
+     onclick="if (event.target === this) closeStatusModal()">
+    <form method="POST" action="{{ route('residents.status.update', $resident) }}" id="statusForm"
+          style="background:var(--surface);border-radius:var(--radius-lg);padding:26px 26px 22px;
+                 max-width:460px;width:92%;max-height:92vh;overflow-y:auto;
+                 box-shadow:0 20px 60px rgba(0,0,0,0.22);border:1px solid var(--border)">
+        @csrf
+        @method('PATCH')
+
+        <div id="statusModalTitle" style="font-size:16px;font-weight:700;color:var(--text)">Update Status</div>
+        <div style="font-size:13px;color:var(--text-muted);margin:4px 0 18px">
+            {{ $resident->full_name }} is currently <strong>{{ $resident->residency_label }}</strong>.
+        </div>
+
+        <div class="form-group mb-4">
+            <label class="form-label">New status</label>
+            <div class="status-options">
+                @foreach(\App\Enums\ResidencyStatus::cases() as $case)
+                    @php $isCurrent = $case->value === $resident->residency_status; @endphp
+                    <label class="status-option {{ $isCurrent ? 'is-current' : '' }}">
+                        <input type="radio" name="to_status" value="{{ $case->value }}"
+                               @checked(old('to_status') === $case->value) @disabled($isCurrent)>
+                        <span class="badge {{ $case->badgeClass() }}">{{ $case->label() }}</span>
+                        <span class="status-option-fil">{{ $case->filipino() }}</span>
+                        @if($isCurrent)<span class="status-option-current">current</span>@endif
+                    </label>
+                @endforeach
+            </div>
+            @error('to_status')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+        </div>
+
+        <div class="form-group mb-4">
+            <label class="form-label" for="statusEffectiveDate" id="statusDateLabel">Date</label>
+            <input type="date" name="effective_date" id="statusEffectiveDate"
+                   class="form-control @error('effective_date') is-invalid @enderror"
+                   value="{{ old('effective_date', now()->toDateString()) }}"
+                   min="{{ $resident->birthdate->toDateString() }}" max="{{ now()->toDateString() }}" required>
+            @error('effective_date')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+        </div>
+
+        <div class="form-group mb-4" id="statusMovedToGroup" style="display:none">
+            <label class="form-label" for="statusMovedTo">Moved to <span style="color:var(--crimson)">*</span></label>
+            <input type="text" name="moved_to" id="statusMovedTo" maxlength="255"
+                   class="form-control @error('moved_to') is-invalid @enderror"
+                   value="{{ old('moved_to') }}" placeholder="e.g. Brgy. Bagong Silangan, Quezon City">
+            @error('moved_to')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+        </div>
+
+        <div class="form-group mb-4">
+            <label class="form-label" for="statusRemarks">Remarks <span style="font-weight:400;color:var(--text-subtle)">(optional)</span></label>
+            <textarea name="remarks" id="statusRemarks" rows="2" maxlength="1000"
+                      class="form-control @error('remarks') is-invalid @enderror">{{ old('remarks') }}</textarea>
+            @error('remarks')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+        </div>
+
+        <div id="statusDeceasedNote"
+             style="display:none;font-size:13px;color:#854d0e;background:#fef9c3;border:1px solid #fde047;
+                    border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:14px">
+            <i class="fas fa-triangle-exclamation"></i>
+            Once recorded, only an Administrator can undo a death record.
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px">
+            <button type="button" class="btn btn-secondary" onclick="closeStatusModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="statusSubmitBtn" disabled>
+                <i class="fas fa-check"></i> <span>Save Status</span>
+            </button>
+        </div>
+    </form>
+</div>
+@endif
 
 @endsection
+
+@push('styles')
+<style>
+    .status-options { display:flex; flex-direction:column; gap:6px; }
+    .status-option  { display:flex; align-items:center; gap:10px; padding:9px 12px; cursor:pointer;
+                      border:1px solid var(--border); border-radius:var(--radius-sm); transition:border-color .15s, background .15s; }
+    .status-option:hover        { border-color:var(--navy); }
+    .status-option.is-selected  { border-color:var(--navy); background:var(--navy-pale); }
+    .status-option.is-current   { opacity:.55; cursor:not-allowed; }
+    .status-option.is-current:hover { border-color:var(--border); }
+    .status-option-fil     { font-size:13px; color:var(--text-muted); }
+    .status-option-current { margin-left:auto; font-size:11px; font-weight:600; text-transform:uppercase;
+                             letter-spacing:.06em; color:var(--text-subtle); }
+</style>
+@endpush
 
 @push('scripts')
 <script>
@@ -311,5 +402,47 @@
         e.currentTarget.classList.add('active');
         document.getElementById(tabId).classList.add('active');
     }
+
+    /* ── Update Status dialog ─────────────────────────────────────────── */
+    (function () {
+        const modal = document.getElementById('statusModal');
+        if (!modal) return;   // not rendered: resident is Deceased and user is not an Admin
+
+        const DATE_LABELS = {
+            Active:      'Date returned or corrected',
+            Deceased:    'Date of death',
+            Transferred: 'Date moved out',
+        };
+        const radios  = modal.querySelectorAll('input[name="to_status"]');
+        const movedTo = document.getElementById('statusMovedTo');
+        const submit  = document.getElementById('statusSubmitBtn');
+
+        function sync() {
+            const checked = modal.querySelector('input[name="to_status"]:checked');
+            const value   = checked ? checked.value : null;
+
+            radios.forEach(r => r.closest('.status-option').classList.toggle('is-selected', r.checked));
+            document.getElementById('statusMovedToGroup').style.display = value === 'Transferred' ? '' : 'none';
+            movedTo.required = value === 'Transferred';
+            document.getElementById('statusDeceasedNote').style.display = value === 'Deceased' ? '' : 'none';
+            document.getElementById('statusDateLabel').textContent = value ? DATE_LABELS[value] : 'Date';
+            submit.disabled = !value;
+        }
+
+        window.openStatusModal  = function () { modal.style.display = 'flex'; sync(); };
+        window.closeStatusModal = function () { modal.style.display = 'none'; };
+
+        radios.forEach(r => r.addEventListener('change', sync));
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStatusModal(); });
+
+        // Prevent a double submit while the request is in flight
+        document.getElementById('statusForm').addEventListener('submit', function () {
+            submit.disabled = true;
+            submit.querySelector('i').className = 'fas fa-spinner fa-spin';
+            submit.querySelector('span').textContent = 'Saving…';
+        });
+
+        sync();   // restores state when the dialog re-opens after a validation error
+    })();
 </script>
 @endpush
