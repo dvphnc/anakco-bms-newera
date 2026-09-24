@@ -164,6 +164,12 @@
                             </span>
                         @endif
                     </button>
+                    <button class="tab-btn" id="tabBtnTransactions" onclick="switchTab(event,'tab-transactions')">
+                        Transactions
+                        <span id="txCountBadge" style="background:var(--gold);color:#fff;border-radius:99px;padding:2px 8px;font-size:13px;margin-left:5px;{{ $transactionCount ? '' : 'display:none' }}">
+                            {{ $transactionCount }}
+                        </span>
+                    </button>
                     <button class="tab-btn" onclick="switchTab(event,'tab-documents')">
                         Documents
                         @if($resident->documents->count())

@@ -363,7 +363,23 @@ class ResidentController extends Controller
             'household.residents' => fn ($q) => $q->orderByRaw("residency_status = 'Active' DESC")->orderBy('birthdate'),
         ]);
 
-        return view('residents.residents-show', compact('resident'));
+        // Transactions tab (Task 1.1)
+        $transactionCount = \App\Models\ResidentTransaction::where('resident_id', $resident->id)->valid()->count();
+        $openPrograms = \App\Models\AssistanceProgram::open()->orderBy('name')->get();
+        // Claims by OTHER household members for per-household programs — where
+        // double-claiming actually happens
+        $householdClaims = $resident->household_id
+            ? \App\Models\ResidentTransaction::with(['resident', 'program'])
+                ->valid()
+                ->where('household_id', $resident->household_id)
+                ->where('resident_id', '!=', $resident->id)
+                ->whereHas('program', fn ($q) => $q->where('claim_scope', 'household'))
+                ->latest('transacted_at')
+                ->limit(10)
+                ->get()
+            : collect();
+
+        return view('residents.residents-show', compact('resident', 'transactionCount', 'openPrograms', 'householdClaims'));
     }
 
     // -------------------------------------------------------
