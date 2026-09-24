@@ -51,6 +51,12 @@
             <span>Puroks</span>
         </a>
 
+        <a href="{{ route('programs.index') }}"
+           class="nav-item {{ request()->routeIs('programs.*') ? 'active' : '' }}">
+            <i class="fas fa-hand-holding-heart"></i>
+            <span>Assistance Programs</span>
+        </a>
+
         <a href="{{ route('officials.index') }}"
            class="nav-item {{ request()->routeIs('officials.*') ? 'active' : '' }}">
             <i class="fas fa-user-tie"></i>
