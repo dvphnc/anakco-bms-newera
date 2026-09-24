@@ -72,15 +72,19 @@ class Resident extends Model
 
         // Group into a household by address, and keep household head / size current
         static::saved(function (Resident $resident) {
-            $relevant = $resident->wasRecentlyCreated
-                || $resident->wasChanged(['address_key', 'purok_id', 'residency_status', 'household_id',
-                                          'household_assignment', 'relationship_to_head', 'is_voter', 'birthdate'])
-                || ($resident->household_id === null && app(HouseholdGroupingService::class)->shouldAutoGroup($resident));
+            $grouping = app(HouseholdGroupingService::class);
 
-            if ($relevant) {
+            // Where the resident lives changed → (re)group by address
+            $regroup = $resident->wasRecentlyCreated
+                || $resident->wasChanged(['address_key', 'purok_id', 'residency_status', 'household_assignment'])
+                || ($resident->household_id === null && $grouping->shouldAutoGroup($resident));
+
+            // Something that affects the household's head / size / voter flag changed
+            $refresh = $resident->wasChanged(['household_id', 'relationship_to_head', 'is_voter', 'birthdate', 'first_name', 'last_name']);
+
+            if ($regroup || $refresh) {
                 // getOriginal() still holds the pre-save values inside the saved event
-                app(HouseholdGroupingService::class)
-                    ->residentSaved($resident, $resident->getOriginal('household_id'));
+                $grouping->residentSaved($resident, $resident->getOriginal('household_id'), $regroup);
             }
         });
 
