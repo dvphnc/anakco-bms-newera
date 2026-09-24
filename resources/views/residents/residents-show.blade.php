@@ -611,6 +611,13 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/vendor/datatables/css/jquery.dataTables.min.css') }}">
 <style>
+    /* Status badge on the dark profile header. Badges are made for white backgrounds
+       (translucent fill + dark text), which vanishes on navy — use solid light fills here. */
+    .profile-status .badge        { box-shadow:0 1px 3px rgba(0,0,0,.25); }
+    .profile-status .badge-green  { background:#DCFCE7; color:#14532D; }
+    .profile-status .badge-yellow { background:#FEF3C7; color:#7A4F0A; }
+    .profile-status .badge-gray   { background:#E5E7EB; color:#374151; }
+
     .bms-dialog     { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9980;
                       align-items:center; justify-content:center; backdrop-filter:blur(2px); }
     .bms-dialog-box { background:var(--surface); border-radius:var(--radius-lg); padding:26px 26px 22px;
