@@ -6,7 +6,11 @@ use App\Models\BlotterCase;
 use App\Models\Business;
 use App\Models\Document;
 use App\Models\Household;
+use App\Models\Purok;
 use App\Models\Resident;
+use App\Models\ResidentStatusLog;
+use App\Models\User;
+use Faker\Factory as FakerFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
