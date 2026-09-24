@@ -101,6 +101,23 @@
                     <i class="fas fa-gavel" style="color:var(--crimson-mid)"></i>
                     File Blotter Case
                 </a>
+                @php
+                    // Reversing a death record is a correction — Admins only (enforced server-side too)
+                    $canChangeStatus = $resident->residency_status !== 'Deceased' || auth()->user()->isAdmin();
+                @endphp
+                @if($canChangeStatus)
+                    <button type="button" class="btn btn-secondary" style="justify-content:flex-start" onclick="openStatusModal()">
+                        <i class="fas fa-heart-pulse" style="color:#16a34a"></i>
+                        Update Status
+                    </button>
+                @else
+                    <span title="Only an Administrator can change the status of a resident recorded as deceased.">
+                        <button type="button" class="btn btn-secondary" style="justify-content:flex-start;width:100%" disabled>
+                            <i class="fas fa-lock" style="color:var(--text-subtle)"></i>
+                            Update Status
+                        </button>
+                    </span>
+                @endif
                 <a href="{{ route('residents.edit', $resident) }}"
                    class="btn btn-secondary" style="justify-content:flex-start">
                     <i class="fas fa-pen" style="color:var(--navy)"></i>
@@ -185,6 +202,38 @@
                         </div>
                         @endforeach
                     </div>
+
+                    {{-- Status history (Task 1.4) --}}
+                    @if($resident->statusLogs->isNotEmpty())
+                    <div style="margin-top:24px">
+                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:6px">
+                            <i class="fas fa-clock-rotate-left"></i> Status History
+                        </div>
+                        @foreach($resident->statusLogs as $log)
+                        <div style="display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--border)">
+                            <div style="flex-shrink:0;width:88px;font-size:13px;font-weight:600;color:var(--navy);padding-top:2px">
+                                {{ $log->effective_date->format('m/d/Y') }}
+                            </div>
+                            <div style="flex:1;min-width:0">
+                                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                                    <span class="badge {{ \App\Enums\ResidencyStatus::badgeFor($log->from_status) }}">{{ $log->from_label }}</span>
+                                    <i class="fas fa-arrow-right" style="font-size:11px;color:var(--text-subtle)"></i>
+                                    <span class="badge {{ \App\Enums\ResidencyStatus::badgeFor($log->to_status) }}">{{ $log->to_label }}</span>
+                                </div>
+                                @if($log->moved_to)
+                                    <div style="font-size:13px;color:var(--text);margin-top:5px">Moved to: {{ $log->moved_to }}</div>
+                                @endif
+                                @if($log->remarks)
+                                    <div style="font-size:13px;color:var(--text-muted);margin-top:3px">{{ $log->remarks }}</div>
+                                @endif
+                                <div style="font-size:12px;color:var(--text-subtle);margin-top:5px">
+                                    Recorded by {{ $log->changedBy->name ?? 'a removed user' }} · {{ $log->created_at->format('m/d/Y g:i A') }}
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    @endif
                 </div>
 
                 {{-- Documents Tab --}}
