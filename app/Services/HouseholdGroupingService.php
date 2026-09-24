@@ -20,12 +20,17 @@ use Illuminate\Database\UniqueConstraintViolationException;
 class HouseholdGroupingService
 {
     /**
-     * Run after a resident is saved. Groups the resident by address when that
-     * applies, then refreshes every household whose membership may have changed.
+     * Run after a resident is saved. Groups the resident by address when their
+     * address / purok / status / assignment mode changed ($regroup), then refreshes
+     * every household whose membership may have changed.
+     *
+     * Other edits (voter flag, relationship, …) only refresh the household. That
+     * way editing a *household's* address never splits its members off into a new
+     * household the next time one of them is saved for an unrelated reason.
      */
-    public function residentSaved(Resident $resident, ?int $previousHouseholdId): void
+    public function residentSaved(Resident $resident, ?int $previousHouseholdId, bool $regroup = true): void
     {
-        if ($this->shouldAutoGroup($resident)) {
+        if ($regroup && $this->shouldAutoGroup($resident)) {
             $household = $this->householdFor($resident);
 
             if ($resident->household_id !== $household->id) {
