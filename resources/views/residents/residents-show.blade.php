@@ -46,15 +46,12 @@
                     {{ $resident->purok->name ?? '—' }}
                 </div>
                 <div style="margin-top:12px">
-                    @php
-                        $cls = match($resident->residency_status) {
-                            'Active'      => 'badge-green',
-                            'Deceased'    => 'badge-gray',
-                            'Transferred' => 'badge-yellow',
-                            default       => 'badge-gray'
-                        };
-                    @endphp
-                    <span class="badge {{ $cls }}">{{ $resident->residency_status }}</span>
+                    <span class="badge {{ $resident->residency_badge }}">{{ $resident->residency_label }}</span>
+                    @if($resident->residency_status !== 'Active' && $resident->status_effective_date)
+                        <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:6px">
+                            since {{ $resident->status_effective_date->format('m/d/Y') }}
+                        </div>
+                    @endif
                 </div>
             </div>
 
