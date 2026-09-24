@@ -156,6 +156,14 @@
                 {{-- Tabs --}}
                 <div class="tab-nav" id="profileTabs">
                     <button class="tab-btn active" onclick="switchTab(event,'tab-personal')">Personal</button>
+                    <button class="tab-btn" onclick="switchTab(event,'tab-household')">
+                        Household
+                        @if($resident->household)
+                            <span style="background:var(--navy);color:#fff;border-radius:99px;padding:2px 8px;font-size:13px;margin-left:5px">
+                                {{ $resident->household->family_size }}
+                            </span>
+                        @endif
+                    </button>
                     <button class="tab-btn" onclick="switchTab(event,'tab-documents')">
                         Documents
                         @if($resident->documents->count())
@@ -195,7 +203,10 @@
                                 ] : []),
                                 ['label' => 'Contact Number',  'value' => $resident->contact_number ?: '—'],
                                 ['label' => 'Purok',           'value' => $resident->purok->name ?? '—'],
-                                ['label' => 'Household',       'value' => $resident->household?->household_number . ' — ' . ($resident->household?->household_head) ?: '—'],
+                                ['label' => 'Household',       'value' => $resident->household
+                                    ? $resident->household->household_number.' — Head: '.($resident->household->household_head ?? '—')
+                                    : '—'],
+                                ['label' => 'Relationship to Head', 'value' => $resident->relationship_to_head ?? '—'],
                                 ['label' => 'Address',         'value' => $resident->address],
                                 ['label' => 'Yrs of Residency','value' => $resident->years_of_residency ? $resident->years_of_residency . ' years' : '—'],
                                 ['label' => 'Registered',      'value' => $resident->created_at->format('m/d/Y')],
@@ -244,6 +255,66 @@
                         </div>
                         @endforeach
                     </div>
+                    @endif
+                </div>
+
+                {{-- Household Tab (Task 1.2) --}}
+                <div class="tab-pane" id="tab-household">
+                    @if($hh = $resident->household)
+                        @php $formerCount = $hh->residents->where('residency_status', '!=', 'Active')->count(); @endphp
+                        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+                            <div>
+                                <a href="{{ route('households.show', $hh) }}" class="td-mono" style="font-weight:700;color:var(--navy)">{{ $hh->household_number }}</a>
+                                <div style="font-size:14px;color:var(--text);margin-top:3px">{{ $hh->address }}</div>
+                                <div class="td-muted" style="margin-top:3px">
+                                    {{ $hh->family_size }} living member{{ $hh->family_size === 1 ? '' : 's' }} · Head: {{ $hh->household_head ?? '—' }}
+                                </div>
+                            </div>
+                            @if($resident->household_assignment === 'manual')
+                                <span class="badge badge-gold" title="Staff chose this household; it won't change automatically.">Assigned manually</span>
+                            @else
+                                <span class="badge badge-blue" title="Grouped with everyone at the same address and purok.">Grouped by address</span>
+                            @endif
+                        </div>
+
+                        <div class="table-responsive">
+                        <table class="w-full">
+                            <thead>
+                                <tr><th>Member</th><th>Age</th><th>Relationship</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                            @foreach($hh->residents as $member)
+                                @php $isFormer = $member->residency_status !== 'Active'; @endphp
+                                <tr @if($isFormer) class="hh-former" style="display:none" @endif>
+                                    <td>
+                                        <a href="{{ route('residents.show', $member) }}" style="font-weight:600;color:var(--navy)">{{ $member->full_name }}</a>
+                                        @if($member->id === $hh->head_resident_id)
+                                            <span class="badge badge-navy" style="margin-left:4px">Head</span>
+                                        @endif
+                                        @if($member->id === $resident->id)
+                                            <span class="td-muted" style="margin-left:4px">(this resident)</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $member->age }}</td>
+                                    <td class="td-muted">{{ $member->relationship_to_head ?? '—' }}</td>
+                                    <td><span class="badge {{ $member->residency_badge }}">{{ $member->residency_label }}</span></td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                        </div>
+
+                        @if($formerCount)
+                            <button type="button" class="btn btn-secondary btn-sm" style="margin-top:12px" onclick="toggleFormerMembers(this)"
+                                    data-show="Show former members ({{ $formerCount }})" data-hide="Hide former members">
+                                Show former members ({{ $formerCount }})
+                            </button>
+                        @endif
+                    @else
+                        <div class="empty-state">
+                            <i class="fas fa-house"></i>
+                            <p>Not in a household yet. Residents are grouped automatically by address, or you can choose a household on the Edit form.</p>
+                        </div>
                     @endif
                 </div>
 
@@ -412,6 +483,15 @@
         // Activate clicked
         e.currentTarget.classList.add('active');
         document.getElementById(tabId).classList.add('active');
+    }
+
+    /* ── Household tab: former members (moved out / deceased) ────────── */
+    function toggleFormerMembers(btn) {
+        const rows = document.querySelectorAll('#tab-household .hh-former');
+        const showing = btn.dataset.state === 'shown';
+        rows.forEach(r => { r.style.display = showing ? 'none' : ''; });
+        btn.dataset.state = showing ? '' : 'shown';
+        btn.textContent = showing ? btn.dataset.show : btn.dataset.hide;
     }
 
     /* ── Update Status dialog ─────────────────────────────────────────── */
