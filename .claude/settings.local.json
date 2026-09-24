@@ -113,7 +113,10 @@
       "Bash(git -C \"D:/laragon/www/anakco_bms\" diff --name-only main...origin/main)",
       "Bash(git -C \"D:/laragon/www/anakco_bms\" merge origin/main --no-edit)",
       "Bash(echo \"=== migrations touching residents/households/medicine/relief ===\")",
-      "Bash(ls D:/laragon/www/anakco_bms/database/migrations/)"
+      "Bash(ls D:/laragon/www/anakco_bms/database/migrations/)",
+      "Bash(sed -n '/committee_relief_supplies/,/}\\);/p' D:/laragon/www/anakco_bms/database/migrations/2026_05_07_000002_add_committee_medium_tables.php)",
+      "Bash(sed -n '/committee_livelihood_beneficiaries/,/}\\);/p' D:/laragon/www/anakco_bms/database/migrations/2026_03_22_152750_create_committee_specific_tables.php)",
+      "Bash(grep -rnoE ''\\\\''\\(Transferred|Deceased\\)'\\\\''|residency_status[^;]{0,60}' D:/laragon/www/anakco_bms/app D:/laragon/www/anakco_bms/resources/views)"
     ]
   }
 }
