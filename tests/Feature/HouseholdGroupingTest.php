@@ -220,6 +220,7 @@ class HouseholdGroupingTest extends TestCase
 
         // Switching a member to automatic later keeps them in the same household
         // (before the fix they were split off into a new one at the old address)
+        $b = $b->fresh();
         $b->update(['household_assignment' => 'manual']);
         $b->update(['household_assignment' => 'auto']);
         $this->assertSame($household->id, $b->fresh()->household_id);
