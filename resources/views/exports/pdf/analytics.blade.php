@@ -82,7 +82,7 @@ tbody td { padding:5px 8px; border-bottom:1px solid #e5e7eb; }
         </div>
         <div class="stat-box">
             <div class="stat-num" style="color:#16a34a">{{ number_format($totalActive) }}</div>
-            <div class="stat-label">Active</div>
+            <div class="stat-label">Alive</div>
         </div>
         <div class="stat-box">
             <div class="stat-num" style="color:#6b7280">{{ number_format($totalDeceased) }}</div>
@@ -90,7 +90,7 @@ tbody td { padding:5px 8px; border-bottom:1px solid #e5e7eb; }
         </div>
         <div class="stat-box">
             <div class="stat-num" style="color:#C8861A">{{ number_format($totalTransferred) }}</div>
-            <div class="stat-label">Transferred</div>
+            <div class="stat-label">Moved Out</div>
         </div>
         <div class="stat-box">
             <div class="stat-num">{{ number_format($totalHouseholds) }}</div>

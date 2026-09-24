@@ -191,7 +191,7 @@ class ExportController extends Controller
 
                 foreach ($data as $i => $r) {
                     $row = $i + 2;
-                    $sheet->fromArray([$i + 1, $r->last_name, $r->first_name, $r->middle_name ?? '—', $r->suffix ?? '—', $r->gender, $r->birthdate?->format('m/d/Y') ?? '—', $r->age ?? '—', $r->civil_status ?? '—', $r->purok->name ?? '—', $r->address, $r->contact_number ?? '—', $r->email_address ?? '—', $r->is_voter ? 'Yes' : 'No', $r->is_senior ? 'Yes' : 'No', $r->is_pwd ? 'Yes' : 'No', $r->is_solo_parent ? 'Yes' : 'No', $r->is_4ps ? 'Yes' : 'No', $r->residency_status, $r->created_at->format('m/d/Y')], null, "A{$row}");
+                    $sheet->fromArray([$i + 1, $r->last_name, $r->first_name, $r->middle_name ?? '—', $r->suffix ?? '—', $r->gender, $r->birthdate?->format('m/d/Y') ?? '—', $r->age ?? '—', $r->civil_status ?? '—', $r->purok->name ?? '—', $r->address, $r->contact_number ?? '—', $r->email_address ?? '—', $r->is_voter ? 'Yes' : 'No', $r->is_senior ? 'Yes' : 'No', $r->is_pwd ? 'Yes' : 'No', $r->is_solo_parent ? 'Yes' : 'No', $r->is_4ps ? 'Yes' : 'No', $r->residency_label, $r->created_at->format('m/d/Y')], null, "A{$row}");
                 }
                 $this->styleDataRows($sheet, $data->count(), count($headers));
                 $this->addMetaSheet($ss, 'Residents', $data->count(), $by, $this->filterLabel($filters));
