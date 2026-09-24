@@ -43,15 +43,15 @@
             <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)">
                 <div style="padding:14px 16px;text-align:center;border-right:1px solid var(--border)">
                     <div style="font-size:22px;font-weight:700;color:var(--navy)">
-                        {{ $household->residents->count() }}
+                        {{ $household->family_size ?? 0 }}
                     </div>
-                    <div style="font-size:13px;color:var(--text-muted)">Members</div>
+                    <div style="font-size:13px;color:var(--text-muted)">Living Members</div>
                 </div>
                 <div style="padding:14px 16px;text-align:center">
                     <div style="font-size:22px;font-weight:700;color:var(--navy)">
-                        {{ $household->family_size ?? 0 }}
+                        {{ $household->residents->count() }}
                     </div>
-                    <div style="font-size:13px;color:var(--text-muted)">Family Size</div>
+                    <div style="font-size:13px;color:var(--text-muted)">All-time Members</div>
                 </div>
             </div>
         </div>
@@ -92,7 +92,7 @@
                             ['label'=>'Household No.',  'value'=>$household->household_number],
                             ['label'=>'Household Head', 'value'=>$household->household_head ?? '—'],
                             ['label'=>'Purok',          'value'=>$household->purok->name ?? '—'],
-                            ['label'=>'Family Size',    'value'=>$household->family_size ?? '—'],
+                            ['label'=>'Living Members', 'value'=>$household->family_size ?? '—'],
                             ['label'=>'Voter Household','value'=>$household->is_voter_household ? 'Yes' : 'No'],
                             ['label'=>'Registered',     'value'=>$household->created_at->format('m/d/Y')],
                         ];
@@ -134,8 +134,18 @@
                         @forelse($household->residents as $resident)
                         <tr>
                             <td>
-                                <div style="font-weight:600;font-size:14px">{{ $resident->full_name }}</div>
-                                <div class="td-muted">{{ $resident->civil_status }}</div>
+                                <div style="font-weight:600;font-size:14px">
+                                    {{ $resident->full_name }}
+                                    @if($resident->id === $household->head_resident_id)
+                                        <span class="badge badge-navy" style="margin-left:4px">Head</span>
+                                    @endif
+                                </div>
+                                <div class="td-muted">
+                                    {{ $resident->relationship_to_head ?? $resident->civil_status }}
+                                    @if($resident->household_assignment === 'manual')
+                                        · <span title="Staff chose this household; it won't change automatically">assigned manually</span>
+                                    @endif
+                                </div>
                             </td>
                             <td>{{ $resident->age ?? '—' }}</td>
                             <td>
@@ -149,9 +159,24 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('residents.show', $resident) }}" class="btn btn-secondary btn-sm btn-icon">
-                                    <i class="fas fa-eye"></i>
-                                </a>
+                                <div style="display:flex;gap:6px;justify-content:flex-end">
+                                    @if($resident->residency_status === 'Active' && $resident->id !== $household->head_resident_id)
+                                        <form method="POST" action="{{ route('households.head', $household) }}"
+                                              data-confirm="Make {{ $resident->full_name }} the head of this household?"
+                                              data-confirm-title="Change Household Head"
+                                              data-confirm-ok="Make Head"
+                                              data-confirm-type="safe">
+                                            @csrf @method('PATCH')
+                                            <input type="hidden" name="resident_id" value="{{ $resident->id }}">
+                                            <button type="submit" class="btn btn-secondary btn-sm" title="Make household head">
+                                                <i class="fas fa-crown" style="color:var(--gold)"></i> Make head
+                                            </button>
+                                        </form>
+                                    @endif
+                                    <a href="{{ route('residents.show', $resident) }}" class="btn btn-secondary btn-sm btn-icon" title="View profile">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         @empty
