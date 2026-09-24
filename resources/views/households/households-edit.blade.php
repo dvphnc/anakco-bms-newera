@@ -5,7 +5,7 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Edit Household</h1>
-        <p class="page-subtitle">{{ $household->household_number }} — {{ $household->household_head }}</p>
+        <p class="page-subtitle">{{ $household->household_number }} — {{ $household->household_head ?? 'no members yet' }}</p>
     </div>
     <div class="page-actions">
         <a href="{{ route('households.show', $household) }}" class="btn btn-secondary"><i class="fas fa-eye"></i> View</a>
@@ -23,46 +23,44 @@
     </div>
     <div class="card-body">
 
-        <div class="form-section-title">Basic Details</div>
-        <div class="form-grid-2 mb-6">
-            <div class="form-group">
-                <label class="form-label">Household Head</label>
-                <input type="text" name="household_head" id="household_head" class="form-control" value="{{ old('household_head', $household->household_head) }}">
-            </div>
+        {{-- Worked out from the members (Task 1.2) — shown for reference, not editable --}}
+        <div class="form-section-title">From the members</div>
+        <div class="form-grid-3 mb-6">
             <div class="form-group">
                 <label class="form-label">
-                    Link to Resident
-                    <span class="help-icon" data-tippy-content="Optional. Search for the household head in the resident registry. Selecting a resident will auto-fill their name. Useful for tracking which resident leads each household.">?</span>
+                    Household Head
+                    <span class="help-icon" data-tippy-content="Change the head from the household's page (Make head), or by setting a member's relationship to 'Head'.">?</span>
                 </label>
-                <select name="head_resident_id" id="head_resident_id" class="select2-resident" style="width:100%" data-placeholder="Search registered resident...">
-                    <option value=""></option>
-                </select>
+                <div class="form-control" style="background:var(--surface2)">{{ $household->household_head ?? '—' }}</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Living Members</label>
+                <div class="form-control" style="background:var(--surface2)">{{ $household->family_size }}</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Voter Household</label>
+                <div class="form-control" style="background:var(--surface2)">{{ $household->is_voter_household ? 'Yes' : 'No' }}</div>
             </div>
         </div>
-        <div class="form-grid-2 mb-6">
+
+        <div class="form-section-title">Location</div>
+        <div class="form-grid-2">
             <div class="form-group">
                 <label class="form-label">Purok <span style="color:var(--crimson)">*</span></label>
-                <select name="purok_id" id="s2Purok" class="form-control" required>
+                <select name="purok_id" id="s2Purok" class="form-control @error('purok_id') is-invalid @enderror" required>
                     <option value="">Select Purok</option>
                     @foreach($puroks as $purok)
                         <option value="{{ $purok->id }}" {{ old('purok_id', $household->purok_id) == $purok->id ? 'selected' : '' }}>{{ $purok->name }}</option>
                     @endforeach
                 </select>
+                @error('purok_id')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
             <div class="form-group">
-                <label class="form-label">Family Size <span style="color:var(--crimson)">*</span></label>
-                <input type="number" name="family_size" class="form-control" value="{{ old('family_size', $household->family_size) }}" min="1" max="50" required>
+                <label class="form-label">Address <span style="color:var(--crimson)">*</span></label>
+                <input type="text" name="address" id="hh_address" class="form-control @error('address') is-invalid @enderror"
+                       value="{{ old('address', $household->address) }}" required>
+                @error('address')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
-        </div>
-        <div class="form-group mb-6">
-            <label class="form-label">Address <span style="color:var(--crimson)">*</span></label>
-            <input type="text" name="address" id="hh_address" class="form-control" value="{{ old('address', $household->address) }}" required>
-        </div>
-        <div class="form-group">
-            <label class="form-check">
-                <input type="checkbox" name="is_voter_household" value="1" {{ old('is_voter_household', $household->is_voter_household) ? 'checked' : '' }}>
-                <span>This household has registered voters</span>
-            </label>
         </div>
     </div>
 </div>
@@ -81,15 +79,6 @@ $('#s2Purok').select2({
     width: '100%',
     placeholder: 'Select Purok',
     allowClear: false
-});
-
-$('#head_resident_id').on('select2:select', function(e) {
-    const text = e.params.data.text;
-    const parts = text.split(' — ');
-    const namePart = parts[0].trim();
-    const nameParts = namePart.split(', ');
-    const fullName  = nameParts.length > 1 ? nameParts[1] + ' ' + nameParts[0] : namePart;
-    $('#household_head').val(fullName);
 });
 </script>
 @endpush
