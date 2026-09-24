@@ -91,8 +91,8 @@ class AssistanceProgramController extends Controller
     private function validatedSupplies(Request $request): array
     {
         $rows = collect($request->input('supplies', []))
-            ->filter(fn ($row) => filled($row['relief_supply_id'] ?? null) || filled($row['quantity_per_claim'] ?? null))
-            ->values()
+            // A row left completely blank is ignored. Keys are kept so errors line up with the form's rows.
+            ->filter(fn ($row) => is_array($row) && filled($row['relief_supply_id'] ?? null))
             ->all();
 
         validator(['supplies' => $rows], [
