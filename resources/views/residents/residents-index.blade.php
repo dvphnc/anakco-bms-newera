@@ -59,8 +59,16 @@
             <i class="fas fa-check-to-slot"></i>
         </div>
         <div class="stat-info">
-            <div class="stat-number">{{ number_format(\App\Models\Resident::where('residency_status','Active')->where('is_voter',true)->count()) }}</div>
-            <div class="stat-label">Registered Voters</div>
+            <div class="stat-number">{{ number_format(\App\Models\Resident::residentVoters()->count()) }}</div>
+            <div class="stat-label" title="Registered voters currently living in Barangay New Era">Registered Voters</div>
+            @php $movedOutVoters = \App\Models\Resident::nonResidentVoters()->count(); @endphp
+            @if($movedOutVoters)
+                {{-- Voter-list cleanup: still flagged as registered here but moved out --}}
+                <a href="{{ route('residents.index', ['tags' => 'voter', 'status' => 'Transferred']) }}"
+                   style="display:inline-block;margin-top:3px;font-size:11.5px;font-weight:600;color:var(--gold)">
+                    + {{ number_format($movedOutVoters) }} moved out, still registered
+                </a>
+            @endif
         </div>
     </div>
     <div class="stat-card">
