@@ -22,7 +22,8 @@ class ResidentController extends Controller
         if ($request->ajax()) {
             $query = Resident::with(['purok'])
                 ->when($request->gender, fn ($q) => $q->where('gender', $request->gender))
-                ->when($request->status, fn ($q) => $q->where('residency_status', $request->status))
+                // 'all' = every status; the list itself defaults to Alive client-side
+                ->when($request->status && $request->status !== 'all', fn ($q) => $q->where('residency_status', $request->status))
                 ->when($request->purok_id, fn ($q) => $q->where('purok_id', $request->purok_id))
                 ->when($request->civil_status, fn ($q) => $q->where('civil_status', $request->civil_status))
                 ->when($request->age_min, fn ($q) => $q->whereRaw('TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) >= ?', [(int) $request->age_min]))
@@ -91,23 +92,8 @@ class ResidentController extends Controller
 
                     return '<div style="display:flex;flex-wrap:wrap;gap:4px">'.$tags.'</div>';
                 })
-                ->addColumn('status_col', function ($r) {
-                    $cls = match ($r->residency_status) {
-                        'Active'      => 'badge-green',
-                        'Transferred' => 'badge-yellow',
-                        default       => 'badge-gray',
-                    };
-                    // Deceased is terminal — no toggle
-                    if ($r->residency_status === 'Deceased') {
-                        return '<span class="badge badge-gray">Deceased</span>';
-                    }
-
-                    return '<button class="badge '.$cls.' res-status-toggle"
-                                    data-id="'.$r->id.'"
-                                    data-status="'.e($r->residency_status).'"
-                                    style="border:none;cursor:pointer;font-family:inherit"
-                                    title="Click to toggle: Active ↔ Transferred">'.e($r->residency_status).'</button>';
-                })
+                // Read-only: status changes go through the dated, logged dialog on the profile page
+                ->addColumn('status_col', fn ($r) => '<span class="badge '.$r->residency_badge.'">'.e($r->residency_label).'</span>')
                 ->addColumn('actions', function ($r) {
                     $show      = route('residents.show', $r);
                     $edit      = route('residents.edit', $r);
@@ -153,7 +139,12 @@ class ResidentController extends Controller
 
         $puroks = Purok::orderBy('name')->get();
 
-        return view('residents.residents-index', compact('puroks'));
+        // Counts for the Alive / Moved Out / Deceased / All chips above the table
+        $statusCounts = Resident::selectRaw('residency_status, COUNT(*) AS total')
+            ->groupBy('residency_status')
+            ->pluck('total', 'residency_status');
+
+        return view('residents.residents-index', compact('puroks', 'statusCounts'));
     }
 
     // -------------------------------------------------------
@@ -177,6 +168,8 @@ class ResidentController extends Controller
             'email_address'    => $resident->email_address ?? '—',
             'occupation'       => $resident->occupation ?? '—',
             'residency_status' => $resident->residency_status,
+            'residency_label'  => $resident->residency_label,
+            'residency_badge'  => $resident->residency_badge,
             'purok'            => $resident->purok?->name ?? '—',
             'household'        => $resident->household?->household_number ?? '—',
             'is_voter'         => (bool) $resident->is_voter,
@@ -214,7 +207,8 @@ class ResidentController extends Controller
             'is_senior'        => 'boolean',
             'is_solo_parent'   => 'boolean',
             'is_4ps'           => 'boolean',
-            'residency_status' => 'required|in:Active,Deceased,Transferred',
+            // residency_status is intentionally absent: new residents start as Alive,
+            // and later changes go through ResidentStatusController (dated + logged).
             'photo_path'       => 'nullable|image|max:2048',
         ];
     }
@@ -236,7 +230,6 @@ class ResidentController extends Controller
             'purok_id.exists'           => 'The selected Purok is not valid. Please choose from the list.',
             'email_address.email'       => 'Please enter a valid email address (e.g. juan@gmail.com).',
             'contact_number.max'        => 'Contact number must not exceed 20 characters.',
-            'residency_status.required' => 'Please select a residency status.',
             'photo_path.image'          => 'The photo must be an image file (JPG, PNG, GIF, etc.).',
             'photo_path.max'            => 'Photo is too large. Maximum allowed size is 2MB.',
         ];
@@ -279,6 +272,7 @@ class ResidentController extends Controller
         $validated['is_senior'] = $request->boolean('is_senior');
         $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
         $validated['is_4ps'] = $request->boolean('is_4ps');
+        $validated['residency_status'] = ResidencyStatus::Alive->value;
 
         $record = Resident::create($validated);
         $this->logActivity('created', $record);
@@ -291,7 +285,7 @@ class ResidentController extends Controller
     // -------------------------------------------------------
     public function show(Resident $resident)
     {
-        $resident->load(['purok', 'household', 'documents', 'blotterCases']);
+        $resident->load(['purok', 'household', 'documents', 'blotterCases', 'statusLogs.changedBy']);
 
         return view('residents.residents-show', compact('resident'));
     }
@@ -352,22 +346,5 @@ class ResidentController extends Controller
         }
 
         return redirect()->route('residents.index')->with('success', 'Resident removed successfully.');
-    }
-
-    // -------------------------------------------------------
-    // TOGGLE STATUS — Axios PATCH for inline status change
-    // -------------------------------------------------------
-    public function toggleStatus(Resident $resident)
-    {
-        // Cycle: Active ↔ Transferred  (Deceased is terminal — cannot toggle)
-        if ($resident->residency_status === 'Active') {
-            $resident->residency_status = 'Transferred';
-        } elseif ($resident->residency_status === 'Transferred') {
-            $resident->residency_status = 'Active';
-        }
-        $resident->save();
-        $this->logActivity('updated', $resident);
-
-        return response()->json(['residency_status' => $resident->residency_status]);
     }
 }
