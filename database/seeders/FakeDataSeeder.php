@@ -111,7 +111,7 @@ class FakeDataSeeder extends Seeder
         $this->command->table(
             ['Model', 'Seeded', 'Basis'],
             [
-                ['Households',    number_format(Household::count()),  'Pop ÷ 4.4 avg household size'],
+                ['Households',    number_format(Household::count()),  'Formed automatically by address'],
                 ['Residents',     number_format(Resident::count()),   '2024 census — 14,987 total'],
                 ['Documents',     number_format(Document::count()),   '~20% annual issuance rate'],
                 ['Blotter Cases', number_format(BlotterCase::count()),'Urban barangay estimate'],
@@ -200,11 +200,9 @@ class FakeDataSeeder extends Seeder
         if ($f->boolean(75)) {
             $m[] = ['rel' => 'Spouse', 'age' => max(20, min(90, $headAge + $f->numberBetween(-6, 4))), 'gender' => $other($headGender), 'family' => true];
         }
+        // (a counted loop on purpose: PHP's range(1, 0) counts DOWN and yields two items)
         $maxKids = max(0, min(5, intdiv($headAge - 18, 4)));
-        foreach (range(1, $f->numberBetween(0, $maxKids)) ?: [] as $i) {
-            if ($maxKids === 0) {
-                break;
-            }
+        for ($i = 0, $kids = $f->numberBetween(0, $maxKids); $i < $kids; $i++) {
             $m[] = ['rel' => 'Child', 'age' => $f->numberBetween(0, max(0, min(40, $headAge - 20))), 'gender' => $any(), 'family' => true];
         }
         if ($headAge <= 55 && $f->boolean(15)) {
@@ -251,7 +249,10 @@ class FakeDataSeeder extends Seeder
             'moved_to'       => $movedTo,
             'changed_by'     => $adminId,
         ]);
-        $resident->update(['residency_status' => $to, 'status_effective_date' => $date]);
+        // Assigned directly: status_effective_date is deliberately not mass-assignable
+        $resident->residency_status      = $to;
+        $resident->status_effective_date = $date;
+        $resident->save();
     }
 
     /**
