@@ -37,7 +37,7 @@ class ResidentTransactionController extends Controller
             ->addColumn('item_col', function ($t) {
                 $html = '<span class="badge '.$t->type_badge.'" style="margin-right:6px">'.e($t->type_label).'</span>'
                     .'<span style="font-weight:600'.($t->is_voided ? ';text-decoration:line-through;color:var(--text-subtle)' : '').'">'.e($t->description).'</span>';
-                if ($t->program) {
+                if ($t->program && $t->program->name !== $t->description) {   // program claims default to the program's name
                     $html .= '<div class="td-muted" style="margin-top:3px">'.e($t->program->name).'</div>';
                 }
                 if ($t->is_voided) {
