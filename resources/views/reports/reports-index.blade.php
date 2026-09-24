@@ -203,9 +203,9 @@
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
                     @php
                         $statuses = [
-                            ['label' => 'Active',      'value' => $totalActive,      'color' => '#2e6b47'],
-                            ['label' => 'Deceased',    'value' => $totalDeceased,    'color' => 'var(--text-muted)'],
-                            ['label' => 'Transferred', 'value' => $totalTransferred, 'color' => 'var(--gold)'],
+                            ['label' => 'Alive',     'value' => $totalActive,      'color' => '#2e6b47'],
+                            ['label' => 'Deceased',  'value' => $totalDeceased,    'color' => 'var(--text-muted)'],
+                            ['label' => 'Moved Out', 'value' => $totalTransferred, 'color' => 'var(--gold)'],
                         ];
                     @endphp
                     @foreach($statuses as $s)
