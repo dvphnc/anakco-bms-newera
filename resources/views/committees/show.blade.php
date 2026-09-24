@@ -1873,7 +1873,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     data-status="{{ $rs->status }}"
                     data-remarks="{{ addslashes($rs->remarks ?? '') }}"
                 >
-                    <td style="font-weight:600;color:var(--navy)">{{ $rs->item_name }}</td>
+                    <td>
+                        <div style="font-weight:600;color:var(--navy)">{{ $rs->item_name }}</div>
+                        @if($rs->programs->isNotEmpty())
+                            <div class="td-muted" style="font-size:12px;margin-top:2px" title="Claims for these programs take this item out of stock">
+                                <i class="fas fa-link"></i> {{ $rs->programs->map(fn ($p) => $p->name.' ('.$p->pivot->quantity_per_claim.'/claim)')->join(', ') }}
+                            </div>
+                        @endif
+                    </td>
                     <td><span class="badge badge-navy">{{ $rs->category }}</span></td>
                     <td style="text-align:right;font-weight:700;color:var(--navy)">{{ number_format($rs->quantity) }}</td>
                     <td class="td-muted">{{ $rs->unit ?? '—' }}</td>
