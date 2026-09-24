@@ -54,7 +54,7 @@ class ReliefStockTest extends TestCase
     }
 
     /** Each claim: 3 kg rice + 5 cans of sardines. */
-    private function program(array $uses = null): AssistanceProgram
+    private function program(?array $uses = null): AssistanceProgram
     {
         $program = AssistanceProgram::create([
             'name' => 'Relief Pack — Typhoon Kristine', 'type' => 'relief', 'claim_scope' => 'household',
