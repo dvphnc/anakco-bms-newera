@@ -15,6 +15,8 @@ use App\Http\Controllers\PurokController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResidentController;
 use App\Http\Controllers\ResidentStatusController;
+use App\Http\Controllers\ResidentTransactionController;
+use App\Http\Controllers\AssistanceProgramController;
 use App\Http\Controllers\ResidentPortalController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Select2Controller;
@@ -90,6 +92,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('residents/{resident}/quick-view', [ResidentController::class, 'quickView'])
         ->name('residents.quick-view')
         ->middleware('role:Admin,Secretary');
+    // Transaction history & double-claim prevention (Task 1.1)
+    Route::get('residents/{resident}/transactions', [ResidentTransactionController::class, 'index'])
+        ->name('residents.transactions.index')
+        ->middleware('role:Admin,Secretary');
+    Route::post('residents/{resident}/transactions', [ResidentTransactionController::class, 'store'])
+        ->name('residents.transactions.store')
+        ->middleware('role:Admin,Secretary');
+    Route::get('residents/{resident}/eligibility/{program}', [ResidentTransactionController::class, 'eligibility'])
+        ->name('residents.eligibility')
+        ->middleware('role:Admin,Secretary');
+    Route::patch('transactions/{transaction}/void', [ResidentTransactionController::class, 'void'])
+        ->name('transactions.void')
+        ->middleware('role:Admin,Secretary');
+    Route::resource('programs', AssistanceProgramController::class)
+        ->except('show')
+        ->middleware('role:Admin,Secretary');
+
     // Life status (Alive / Deceased / Moved Out) — dated, logged; replaces the old one-click toggle
     Route::patch('residents/{resident}/status', [ResidentStatusController::class, 'update'])
         ->name('residents.status.update')
