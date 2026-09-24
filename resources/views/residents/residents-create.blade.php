@@ -154,15 +154,13 @@
         <div class="form-grid-3 mb-6">
             <div class="form-group">
                 <label class="form-label">
-                    Residency Status
-                    <span class="help-icon" data-tippy-content="'Active' = currently living here. 'Transferred' = moved to another address. 'Deceased' = passed away. Only Active residents appear in document requests.">?</span>
+                    Status
+                    <span class="help-icon" data-tippy-content="New residents are recorded as Alive. To record a death or a move, open the resident's profile and use Update Status — it asks for the date so the history stays accurate.">?</span>
                 </label>
-                <select name="residency_status" id="s2ResidencyStatus" class="form-control @error('residency_status') is-invalid @enderror">
-                    @foreach(['Active','Deceased','Transferred'] as $s)
-                        <option value="{{ $s }}" {{ old('residency_status', 'Active') === $s ? 'selected' : '' }}>{{ $s }}</option>
-                    @endforeach
-                </select>
-                @error('residency_status')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                <div class="form-control" style="display:flex;align-items:center;gap:8px;background:var(--surface2)">
+                    <span class="badge badge-green">Alive</span>
+                    <span style="font-size:12px;color:var(--text-subtle)">New residents start as Alive</span>
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label">
