@@ -203,6 +203,29 @@ class HouseholdGroupingTest extends TestCase
         $this->assertSame(1, Household::count());
     }
 
+    public function test_correcting_a_household_address_carries_its_members_along(): void
+    {
+        $a = $this->resident(['birthdate' => '1950-01-01']);
+        $b = $this->resident(['birthdate' => '1985-01-01']);
+        $household = Household::sole();
+        $boarder = $this->resident(['address' => '5 Luna St.', 'household_assignment' => 'manual', 'household_id' => $household->id]);
+
+        $this->actingAs($this->secretary)
+            ->put(route('households.update', $household), ['purok_id' => $this->purok->id, 'address' => '12-A Rosal St.'])
+            ->assertSessionHas('success', fn ($m) => str_contains($m, '2 members'));
+
+        $this->assertSame('12-A Rosal St.', $a->fresh()->address);
+        $this->assertSame('12-A Rosal St.', $b->fresh()->address);
+        $this->assertSame('5 Luna St.', $boarder->fresh()->address);   // manual: keeps their own
+
+        // Switching a member to automatic later keeps them in the same household
+        // (before the fix they were split off into a new one at the old address)
+        $b->update(['household_assignment' => 'manual']);
+        $b->update(['household_assignment' => 'auto']);
+        $this->assertSame($household->id, $b->fresh()->household_id);
+        $this->assertSame(1, Household::count());
+    }
+
     public function test_live_match_endpoint(): void
     {
         $member = $this->resident();
