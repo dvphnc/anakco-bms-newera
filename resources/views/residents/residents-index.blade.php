@@ -394,7 +394,8 @@ $(document).ready(function () {
     function _syncExportUrls() {
         var p = {};
         var s = $('#searchInput').val();           if (s) p.s = s;
-        var st = $('#statusFilter').val();         if (st) p.status = st;
+        // Exports match what's on screen: Alive by default, nothing sent for "All"
+        var st = $('#statusFilter').val();         if (st && st !== 'all') p.status = st;
         var g  = $('#genderFilter').val();         if (g)  p.gender = g;
         var pk = $('#purokFilter').val();          if (pk) p.purok_id = pk;
         var qs = Object.keys(p).length ? '?' + $.param(p) : '';
@@ -402,7 +403,8 @@ $(document).ready(function () {
             .attr('title', qs ? 'Export filtered results — ' + Object.entries(p).map(([k,v])=>k+':'+v).join(', ') : 'Export PDF');
         $('#btnExportExcel').attr('href', _xlsxBase + qs)
             .attr('title', qs ? 'Export filtered results — ' + Object.entries(p).map(([k,v])=>k+':'+v).join(', ') : 'Export Excel');
-        var active = Object.keys(p).length > 0;
+        // The default Alive status alone doesn't count as "filtered"
+        var active = Object.keys(p).some(k => !(k === 'status' && p[k] === DEFAULT_STATUS));
         $('#btnExportPdf, #btnExportExcel').toggleClass('btn-export-filtered', active);
     }
 
@@ -411,7 +413,7 @@ $(document).ready(function () {
         if ($('#searchInput').val())                    n++;
         if ($('#purokFilter').val())                    n++;
         if ($('#genderFilter').val())                   n++;
-        if ($('#statusFilter').val())                   n++;
+        if ($('#statusFilter').val() !== DEFAULT_STATUS) n++;
         if ($('#civilStatusFilter').val())              n++;
         if ($('#ageMin').val() || $('#ageMax').val())   n++;
         if ($('#tagsFilter').val())                      n++;
@@ -440,7 +442,7 @@ $(document).ready(function () {
     };
 
     // Restore panel state: open if URL filters present, localStorage says open, or any filter active
-    const hasUrlFilters = loadFromUrl();
+    // (filters themselves were already restored from the URL before the table loaded)
     const lsOpen = localStorage.getItem('fp_residents') === '1';
     if (hasUrlFilters || lsOpen) {
         document.getElementById('filterPanel').style.display = 'block';
@@ -473,9 +475,25 @@ $(document).ready(function () {
         debounce = setTimeout(() => { saveToUrl(); table.ajax.reload(); }, 600);
     });
 
+    /* ── Status chips ↔ status dropdown ──────────────────────────────── */
+    function syncStatusChips() {
+        const v = $('#statusFilter').val();
+        document.querySelectorAll('.status-chip').forEach(c => {
+            const on = c.dataset.status === v;
+            c.classList.toggle('active', on);
+            c.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+    }
+    $(document).on('click', '.status-chip', function () {
+        $('#statusFilter').val(this.dataset.status).trigger('change');
+    });
+    $('#statusFilter').on('change', syncStatusChips);
+    syncStatusChips();
+
     $('#resetBtn').on('click', function () {
         $('#searchInput').val('');
-        $('#genderFilter, #statusFilter, #purokFilter, #civilStatusFilter').val(null).trigger('change');
+        $('#statusFilter').val(DEFAULT_STATUS).trigger('change');
+        $('#genderFilter, #purokFilter, #civilStatusFilter').val(null).trigger('change');
         $('#tagsFilter').val(null).trigger('change');
         $('#ageMin, #ageMax').val('');
         saveToUrl(); table.ajax.reload();
@@ -499,7 +517,6 @@ window.residentQuickView = function (id, url) {
 
     axios.get(url)
         .then(({ data: r }) => {
-            const badgeMap = { Active:'badge-green', Deceased:'badge-gray', Transferred:'badge-blue' };
             const tags = [
                 r.is_voter       ? '<span class="badge badge-navy">Voter</span>'       : '',
                 r.is_senior      ? '<span class="badge badge-gold">Senior</span>'      : '',
@@ -527,7 +544,7 @@ window.residentQuickView = function (id, url) {
                             ${r.age} yrs · ${r.gender} · ${r.civil_status}
                         </div>
                         <div style="margin-top:7px;display:flex;flex-wrap:wrap;gap:4px">
-                            <span class="badge ${badgeMap[r.residency_status] || 'badge-gray'}">${r.residency_status}</span>
+                            <span class="badge ${r.residency_badge}">${r.residency_label}</span>
                             ${tags}
                         </div>
                     </div>
@@ -620,29 +637,6 @@ $(document).on('click', '#residentsTable form[data-confirm] button[type="submit"
     });
 });
 
-/* ── Axios PATCH — Residency status inline toggle ──────────────────────── */
-$(document).on('click', '#residentsTable .res-status-toggle', function () {
-    const btn    = $(this);
-    const id     = btn.data('id');
-    const cur    = btn.data('status');
-
-    btn.html('<i class="fas fa-spinner fa-spin" style="color:var(--gold)"></i>').prop('disabled', true);
-
-    axios.patch(`/residents/${id}/toggle-status`)
-        .then(({ data }) => {
-            const s = data.residency_status;
-            const clsMap = { Active: 'badge-green', Transferred: 'badge-yellow', Deceased: 'badge-gray' };
-            btn.removeClass('badge-green badge-yellow badge-gray')
-               .addClass(clsMap[s] || 'badge-gray')
-               .text(s)
-               .data('status', s)
-               .prop('disabled', false);
-        })
-        .catch(() => {
-            btn.text(cur).prop('disabled', false);
-            alert('Could not update status. Please try again.');
-        });
-});
 </script>
 
 {{-- Quick View Slide Panel --}}
