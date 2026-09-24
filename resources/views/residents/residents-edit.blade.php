@@ -152,15 +152,7 @@
                     </a>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">
-                    Years of Residency
-                    <span class="help-icon" data-tippy-content="Total number of continuous years the resident has lived in Barangay New Era. Required for Barangay Clearance and other certificates.">?</span>
-                </label>
-                <input type="number" name="years_of_residency" class="form-control @error('years_of_residency') is-invalid @enderror"
-                       value="{{ old('years_of_residency', $resident->years_of_residency) }}" min="0">
-                @error('years_of_residency')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-            </div>
+            @include('residents.partials.residing-since-field', ['resident' => $resident])
             <div class="form-group">
                 <label class="form-label">Occupation</label>
                 <input type="text" name="occupation" class="form-control @error('occupation') is-invalid @enderror"
@@ -189,11 +181,11 @@
                     {{ old('is_pwd', $resident->is_pwd) ? 'checked' : '' }}>
                 <span><strong>Person with Disability (PWD)</strong></span>
             </label>
-            <label class="form-check">
-                <input type="checkbox" name="is_senior" value="1"
-                    {{ old('is_senior', $resident->is_senior) ? 'checked' : '' }}>
-                <span><strong>Senior Citizen (60+)</strong></span>
-            </label>
+            {{-- Senior status is worked out from the date of birth (60+) — nothing to tick --}}
+            <div class="form-check" style="cursor:default" title="Set automatically from the date of birth">
+                <i class="fas fa-wand-magic-sparkles" style="color:var(--gold);width:16px;text-align:center"></i>
+                <span><strong>Senior Citizen (60+)</strong><br><span style="font-size:12px;color:var(--text-subtle)">Automatic from date of birth</span></span>
+            </div>
             <label class="form-check">
                 <input type="checkbox" name="is_solo_parent" value="1"
                     {{ old('is_solo_parent', $resident->is_solo_parent) ? 'checked' : '' }}>
