@@ -101,7 +101,7 @@
         </p>
 
         @if($supplies->isEmpty())
-            <div class="tx-elig wait" style="display:flex;gap:8px;align-items:center">
+            <div style="display:flex;gap:8px;align-items:center;font-size:13px;padding:9px 12px;border-radius:var(--radius-sm);background:var(--surface2);color:var(--text-muted)">
                 <i class="fas fa-circle-info"></i>
                 <span>No relief supplies recorded yet. Add them under <a href="{{ $bdrrmUrl }}">Committees → BDRRM → Relief Supplies</a> first.</span>
             </div>
@@ -150,6 +150,21 @@
             : 'Each resident can claim on their own.';
     }
     explain();
+
+    // "Each claim uses" rows
+    const rows = document.getElementById('supplyRows');
+    const tpl  = document.getElementById('supplyRowTemplate');
+    if (rows && tpl) {
+        let next = Date.now();   // unique row keys; the server keeps them so errors match rows
+        document.getElementById('addSupplyRow').addEventListener('click', () => {
+            rows.insertAdjacentHTML('beforeend', tpl.innerHTML.replaceAll('__I__', next++));
+            rows.lastElementChild.querySelector('select').focus();
+        });
+        rows.addEventListener('click', e => {
+            const btn = e.target.closest('.remove-supply-row');
+            if (btn) btn.closest('.supply-row').remove();
+        });
+    }
 })();
 </script>
 @endpush
