@@ -82,6 +82,46 @@
     </div>
 </div>
 
+@php
+    // Rows to show: what was just submitted (after a validation error), else what's saved
+    $supplyRows = old('supplies', $program->relationLoaded('supplies')
+        ? $program->supplies->map(fn ($s) => ['relief_supply_id' => $s->id, 'quantity_per_claim' => $s->pivot->quantity_per_claim])->all()
+        : []);
+    $bdrrmUrl = route('committees.show', 'bdrrm').'#relief-supplies';
+@endphp
+<div class="card mb-6">
+    <div class="card-header">
+        <span class="card-title"><i class="fas fa-boxes-stacked"></i> Each claim uses <span style="font-weight:400;color:var(--text-subtle)">(optional)</span></span>
+    </div>
+    <div class="card-body">
+        <p class="td-muted" style="margin:0 0 14px">
+            Link this program to the <a href="{{ $bdrrmUrl }}">BDRRM relief supplies</a> and each claim takes its items out of stock.
+            A claim is refused once stock runs out, and voiding a claim puts its items back.
+            Leave empty for programs that don't hand out stocked items (e.g. cash aid).
+        </p>
+
+        @if($supplies->isEmpty())
+            <div class="tx-elig wait" style="display:flex;gap:8px;align-items:center">
+                <i class="fas fa-circle-info"></i>
+                <span>No relief supplies recorded yet. Add them under <a href="{{ $bdrrmUrl }}">Committees → BDRRM → Relief Supplies</a> first.</span>
+            </div>
+        @else
+            <div id="supplyRows">
+                @foreach($supplyRows as $i => $row)
+                    @include('programs.partials.supply-row', ['i' => $i, 'row' => $row])
+                @endforeach
+            </div>
+            @error('supplies')<span class="invalid-feedback" style="display:block"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+            <button type="button" id="addSupplyRow" class="btn btn-secondary btn-sm" style="margin-top:4px">
+                <i class="fas fa-plus"></i> Add supply item
+            </button>
+            <template id="supplyRowTemplate">
+                @include('programs.partials.supply-row', ['i' => '__I__', 'row' => []])
+            </template>
+        @endif
+    </div>
+</div>
+
 <div class="form-actions">
     <button type="submit" class="btn btn-primary"><i class="fas fa-floppy-disk"></i> {{ $program->exists ? 'Save Changes' : 'Create Program' }}</button>
     <a href="{{ route('programs.index') }}" class="btn btn-secondary">Cancel</a>

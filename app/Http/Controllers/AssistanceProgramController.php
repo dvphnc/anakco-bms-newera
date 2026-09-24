@@ -38,9 +38,10 @@ class AssistanceProgramController extends Controller
     {
         $data = $this->validated($request);
         $data['created_by'] = $request->user()->id;
-        $program = DB::transaction(function () use ($data, $request) {
+        $supplies = $this->validatedSupplies($request);
+        $program = DB::transaction(function () use ($data, $supplies) {
             $program = AssistanceProgram::create($data);
-            $program->supplies()->sync($this->validatedSupplies($request));
+            $program->supplies()->sync($supplies);
 
             return $program;
         });
