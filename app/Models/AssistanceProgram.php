@@ -36,6 +36,43 @@ class AssistanceProgram extends Model
         return $this->hasMany(ResidentTransaction::class);
     }
 
+    /** Relief supplies each claim uses, with how many per claim. */
+    public function supplies()
+    {
+        return $this->belongsToMany(ReliefSupply::class, 'assistance_program_supplies')
+            ->withPivot('quantity_per_claim')
+            ->withTimestamps()
+            ->orderBy('item_name');
+    }
+
+    /**
+     * How many more claims the linked stock covers — null when the program
+     * doesn't draw from the relief inventory.
+     */
+    public function claimsLeft(): ?int
+    {
+        $supplies = $this->relationLoaded('supplies') ? $this->supplies : $this->supplies()->get();
+
+        if ($supplies->isEmpty()) {
+            return null;
+        }
+
+        return (int) $supplies->min(fn ($s) => intdiv(max(0, $s->quantity), max(1, $s->pivot->quantity_per_claim)));
+    }
+
+    /** Supplies that can't cover one more claim, e.g. ["Rice (2 sacks left, 3 per claim)"]. */
+    public function shortSupplies(): array
+    {
+        $supplies = $this->relationLoaded('supplies') ? $this->supplies : $this->supplies()->get();
+
+        return $supplies
+            ->filter(fn ($s) => $s->quantity < $s->pivot->quantity_per_claim)
+            ->map(fn ($s) => "{$s->item_name} (".number_format(max(0, $s->quantity)).' '.($s->unit ? "{$s->unit} " : '')
+                ."left, {$s->pivot->quantity_per_claim} per claim)")
+            ->values()
+            ->all();
+    }
+
     public function getTypeLabelAttribute(): string
     {
         return self::TYPES[$this->type] ?? ucfirst($this->type);
