@@ -126,21 +126,7 @@
                 </select>
                 @error('purok_id')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
-            <div class="form-group">
-                <label class="form-label">
-                    Household
-                    <span class="help-icon" data-tippy-content="Optional. Link this resident to a registered household. This automatically updates the household's family size count. You can skip this and add it later.">?</span>
-                </label>
-                <select name="household_id" id="s2Household" class="form-control @error('household_id') is-invalid @enderror">
-                    <option value="">Select Household (optional)</option>
-                    @foreach($households as $hh)
-                        <option value="{{ $hh->id }}" {{ old('household_id') == $hh->id ? 'selected' : '' }}>
-                            {{ $hh->household_number }} — {{ $hh->household_head }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('household_id')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-            </div>
+            @include('residents.partials.relationship-field', ['resident' => null])
             <div class="form-group" style="grid-column:span 2">
                 <label class="form-label">Full Address <span style="color:var(--crimson)">*</span></label>
                 <input type="text" name="address" class="form-control @error('address') is-invalid @enderror"

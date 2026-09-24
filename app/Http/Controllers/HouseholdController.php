@@ -190,14 +190,8 @@ class HouseholdController extends Controller
 
     public function update(Request $request, Household $household)
     {
-        $validated = $request->validate([
-            'purok_id' => 'required|exists:puroks,id',
-            'address' => 'required|string|max:255',
-            'household_head' => 'nullable|string|max:255',
-            'family_size' => 'required|integer|min:1',
-            'is_voter_household' => 'boolean',
-        ]);
-        $validated['is_voter_household'] = $request->boolean('is_voter_household');
+        $validated = $request->validate($this->householdRules(), $this->householdMessages());
+        $this->ensureAddressIsFree($validated, $household);
         $oldData = $household->getOriginal();
         $household->update($validated);
         $this->logActivity('updated', $household, $oldData, $household->fresh()->toArray());
@@ -207,16 +201,18 @@ class HouseholdController extends Controller
 
     public function show(Household $household)
     {
-        $household->load(['purok', 'residents']);
+        // Living members first, eldest first
+        $household->load(['purok', 'residents' => fn ($q) => $q->orderByRaw("residency_status = 'Active' DESC")->orderBy('birthdate')]);
 
         // Quick-view JSON response for the slide panel
         if (request()->wantsJson()) {
-            $members = $household->residents->map(function ($r) {
+            $members = $household->residents->map(function ($r) use ($household) {
                 return [
                     'full_name'         => $r->full_name,
                     'age'               => $r->age ?? '—',
                     'gender'            => $r->gender ?? '—',
-                    'is_household_head' => (bool) $r->is_household_head,
+                    'is_household_head' => $r->id === $household->head_resident_id,
+                    'residency_label'   => $r->residency_label,
                     'is_voter'          => (bool) $r->is_voter,
                     'photo_url'         => $r->photo_path ? asset('storage/' . $r->photo_path) : null,
                     'initials'          => strtoupper(substr($r->first_name, 0, 1) . substr($r->last_name, 0, 1)),
@@ -249,13 +245,5 @@ class HouseholdController extends Controller
         }
 
         return redirect()->route('households.index')->with('success', 'Household deleted successfully.');
-    }
-
-    private function generateHouseholdNumber(): string
-    {
-        $year = date('Y');
-        $count = Household::whereYear('created_at', $year)->count() + 1;
-
-        return 'HH-'.$year.'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 }
