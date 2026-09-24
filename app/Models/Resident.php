@@ -30,6 +30,8 @@ class Resident extends Model
         'purok_id',
         'household_id',
         'is_voter',
+        'precinct_no',
+        'voters_id_no',
         'is_pwd',
         'is_senior',
         'is_solo_parent',
