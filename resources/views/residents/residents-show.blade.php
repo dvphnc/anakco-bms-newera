@@ -61,7 +61,14 @@
                     Classifications
                 </div>
                 <div style="display:flex;flex-wrap:wrap;gap:6px">
-                    @if($resident->is_voter)       <span class="badge badge-green">Voter</span>        @endif
+                    @if($resident->is_voter)
+                        @if($resident->residency_status === 'Active')
+                            <span class="badge badge-green">Voter</span>
+                        @else
+                            {{-- Still flagged as registered here, but no longer living in the barangay --}}
+                            <span class="badge badge-yellow" title="Still flagged as a registered voter here, but no longer living in the barangay. Not counted in voter totals.">Voter · not residing</span>
+                        @endif
+                    @endif
                     @if($resident->is_senior)      <span class="badge badge-yellow">Senior Citizen</span> @endif
                     @if($resident->is_pwd)         <span class="badge badge-blue">PWD</span>           @endif
                     @if($resident->is_solo_parent) <span class="badge badge-orange">Solo Parent</span> @endif
@@ -182,6 +189,10 @@
                                 ['label' => 'Nationality',     'value' => $resident->nationality ?: '—'],
                                 ['label' => 'Religion',        'value' => $resident->religion ?: '—'],
                                 ['label' => 'Occupation',      'value' => $resident->occupation ?: '—'],
+                                ...($resident->is_voter ? [
+                                    ['label' => 'Precinct No.',    'value' => $resident->precinct_no ?: '—'],
+                                    ['label' => "Voter's ID No.",  'value' => $resident->voters_id_no ?: '—'],
+                                ] : []),
                                 ['label' => 'Contact Number',  'value' => $resident->contact_number ?: '—'],
                                 ['label' => 'Purok',           'value' => $resident->purok->name ?? '—'],
                                 ['label' => 'Household',       'value' => $resident->household?->household_number . ' — ' . ($resident->household?->household_head) ?: '—'],
