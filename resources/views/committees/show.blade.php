@@ -2703,6 +2703,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
 </div>{{-- end .card --}}
 
 {{-- ── EDIT MODAL: Activities / Accomplishments ── --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="editActivityModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editActivityModal')">
 <div class="crud-modal">
     <div class="crud-modal-header">
@@ -2729,8 +2730,10 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </form>
 </div>
 </div>
+@endpush
 
 {{-- ── EDIT MODAL: Attendance ── --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="editAttendanceModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editAttendanceModal')">
 <div class="crud-modal">
     <div class="crud-modal-header">
@@ -2756,8 +2759,10 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </form>
 </div>
 </div>
+@endpush
 
 {{-- ── EDIT MODAL: Inventory ── --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="editInventoryModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editInventoryModal')">
 <div class="crud-modal">
     <div class="crud-modal-header">
@@ -2784,8 +2789,10 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </form>
 </div>
 </div>
+@endpush
 
 {{-- ── EDIT MODAL: Partnership ── --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="editPartnershipModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editPartnershipModal')">
 <div class="crud-modal">
     <div class="crud-modal-header">
@@ -2813,8 +2820,10 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </form>
 </div>
 </div>
+@endpush
 
 {{-- ── EDIT MODAL: Specific (universal) ── --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="editSpecificModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editSpecificModal')">
 <div class="crud-modal">
     <div class="crud-modal-header">
@@ -2826,8 +2835,10 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
     </div>
 </div>
 </div>
+@endpush
 
 {{-- ── EDIT MODAL: Record (title / type / description) ── --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="editRecordModal" class="crud-modal-backdrop" onclick="if(event.target===this)closeCrudModal('editRecordModal')">
 <div class="crud-modal">
     <div class="crud-modal-header">
@@ -2857,6 +2868,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
         </form>
 </div>
 </div>
+@endpush
 
 @endsection
 

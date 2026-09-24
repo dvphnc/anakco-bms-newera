@@ -114,6 +114,7 @@
 </div>
 
 {{-- Household Quick View Panel --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="hhQvPanel"
      style="display:none;opacity:0;position:fixed;inset:0;z-index:9500;
             align-items:flex-start;justify-content:flex-end;
@@ -141,6 +142,7 @@
         <div id="hhQvBody" style="flex:1"></div>
     </div>
 </div>
+@endpush
 <style>
 @keyframes qvSlideIn { from { transform:translateX(32px);opacity:0; } to { transform:translateX(0);opacity:1; } }
 </style>

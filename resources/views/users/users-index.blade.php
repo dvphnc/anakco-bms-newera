@@ -150,6 +150,7 @@
 </div>
 
 {{-- ── Add User Modal ─────────────────────────────────────────────────────── --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="addUserModal" style="display:none;position:fixed;inset:0;background:rgba(13,33,68,0.5);z-index:1000;align-items:center;justify-content:center"
      onclick="if(event.target===this)closeModal('addUserModal')">
     <div style="background:#fff;border-radius:var(--radius-lg);width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,0.18);margin:16px">
@@ -202,8 +203,10 @@
         </div>
     </div>
 </div>
+@endpush
 
 {{-- ── Edit User Modal ────────────────────────────────────────────────────── --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="editUserModal" style="display:none;position:fixed;inset:0;background:rgba(13,33,68,0.5);z-index:1000;align-items:center;justify-content:center"
      onclick="if(event.target===this)closeModal('editUserModal')">
     <div style="background:#fff;border-radius:var(--radius-lg);width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,0.18);margin:16px">
@@ -258,6 +261,7 @@
         </div>
     </div>
 </div>
+@endpush
 
 @endsection
 

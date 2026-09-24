@@ -299,6 +299,7 @@
 {{-- ══════════════════════════════════════════════════════════════
      MODAL — Accept & Process  (portal request → Processing in Document Issuance)
 ═══════════════════════════════════════════════════════════════ --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="aptConvertModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -387,10 +388,12 @@
         </div>
     </div>
 </div>
+@endpush
 
 {{-- ══════════════════════════════════════════════════════════════
      MODAL — Mark For Review  (portal business → For Review in Business Permits)
 ═══════════════════════════════════════════════════════════════ --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="bizIssueModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -454,10 +457,12 @@
         </div>
     </div>
 </div>
+@endpush
 
 {{-- ══════════════════════════════════════════════════════════════
      MODAL — Activate Blotter Case
 ═══════════════════════════════════════════════════════════════ --}}
+@push('modals')   {{-- body level: inside .main-content it would sit under the sidebar --}}
 <div id="blotterActivateModal"
      style="display:none;position:fixed;inset:0;background:rgba(9,20,40,0.45);z-index:9500;
             align-items:center;justify-content:center;backdrop-filter:blur(3px)"
@@ -521,6 +526,7 @@
         </div>
     </div>
 </div>
+@endpush
 
 @endsection
 
