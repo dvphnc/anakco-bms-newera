@@ -104,6 +104,10 @@ class FakeDataSeeder extends Seeder
         $this->command->info('Seeding portal appointment records…');
         $this->call(AppointmentSeeder::class);
 
+        // ── Step 8: Ministers' families in Pabahay units (Part 2) ────────
+        $this->command->info('Seeding Pabahay blocks and ministers\' families…');
+        $this->call(ReligionPabahayDemoSeeder::class);
+
         // ── Summary ──────────────────────────────────────────────────────
         $this->command->newLine();
         $this->command->info('✅  Done! Demo data seeded based on real Barangay New Era statistics.');
@@ -132,6 +136,7 @@ class FakeDataSeeder extends Seeder
         $purokIds = Purok::pluck('id', 'name')
             ->mapWithKeys(fn ($id, $name) => [trim(explode('-', $name, 2)[1] ?? $name) => $id]);
         $adminId  = User::where('role', 'Admin')->value('id');
+        $religionIds = \App\Models\Religion::pluck('id', 'name');   // name => id, one pick per family
         $used     = [];   // "street|number" already taken
         $made     = 0;
 
@@ -148,7 +153,7 @@ class FakeDataSeeder extends Seeder
             $purokId  = $purokIds[self::STREETS[$street]] ?? $purokIds->first();
             $address  = "$number $street St., Barangay New Era, Quezon City";
             $surname  = null;
-            $religion = $this->faker->randomElement(['Roman Catholic', 'Roman Catholic', 'Iglesia ni Cristo', 'Born Again Christian', 'Islam', 'Protestant']);
+            $religion = $religionIds[$this->faker->randomElement(['Roman Catholic', 'Roman Catholic', 'Iglesia ni Cristo', 'Born Again Christian', 'Islam', 'Protestant'])] ?? null;
             $members  = array_slice($this->composeHousehold(), 0, self::RESIDENTS - $made);
 
             DB::transaction(function () use ($members, $purokId, $address, &$surname, $religion, $adminId) {
@@ -160,7 +165,7 @@ class FakeDataSeeder extends Seeder
                         'address'              => $address,
                         'birthdate'            => now()->subYears($m['age'])->subDays($this->faker->numberBetween(0, 364))->toDateString(),
                         'gender'               => $m['gender'],
-                        'religion'             => $religion,
+                        'religion_id'          => $religion,
                         'relationship_to_head' => $m['rel'],
                         'residency_status'     => 'Active',   // life events are applied below, like in real use
                     ];

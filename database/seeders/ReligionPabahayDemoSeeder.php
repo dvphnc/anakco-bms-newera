@@ -89,6 +89,7 @@ class ReligionPabahayDemoSeeder extends Seeder
                 ->update(['is_minister_family' => true, 'pabahay_unit_id' => $free[$k]->id]);
         }
 
-        $this->command?->info("Pabahay practice data: {$households->count()} ministers' families placed in ".self::BLOCKS ? count(self::BLOCKS) : 0 .' Pabahay blocks.');
+        $blocks = count(self::BLOCKS);
+        $this->command?->info("Pabahay practice data: {$households->count()} ministers' families placed in {$blocks} Pabahay blocks.");
     }
 }

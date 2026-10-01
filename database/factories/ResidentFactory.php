@@ -3,10 +3,22 @@
 namespace Database\Factories;
 
 use App\Models\Purok;
+use App\Models\Religion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ResidentFactory extends Factory
 {
+    /** Religion ids by name, read once per run */
+    private static ?array $religionIds = null;
+
+    private function randomReligionId(): ?int
+    {
+        self::$religionIds ??= Religion::pluck('id', 'name')->all();
+        $name = $this->faker->randomElement(['Roman Catholic', 'Iglesia ni Cristo', 'Born Again Christian', 'Islam', 'Protestant']);
+
+        return self::$religionIds[$name] ?? null;
+    }
+
     public function definition(): array
     {
         $filipinoFirstNamesMale = [
@@ -63,7 +75,7 @@ class ResidentFactory extends Factory
                 : $this->faker->randomElement(['Single', 'Married', 'Married', 'Widowed', 'Separated']),
             'birthplace' => $this->faker->randomElement(['Quezon City', 'Manila', 'Caloocan', 'Marikina', 'Pasig', 'Makati', 'Taguig']),
             'nationality' => 'Filipino',
-            'religion' => $this->faker->randomElement(['Roman Catholic', 'Iglesia ni Cristo', 'Born Again Christian', 'Islam', 'Protestant']),
+            'religion_id' => $this->randomReligionId(),
             'occupation' => fn (array $a) => $ageOf($a) < 18
                 ? ($ageOf($a) >= 5 ? 'Student' : null)
                 : $this->faker->optional(0.7)->randomElement(['Laborer', 'Vendor', 'Driver', 'Teacher', 'Nurse', 'Engineer', 'Housewife', 'Retired', 'Self-employed']),
