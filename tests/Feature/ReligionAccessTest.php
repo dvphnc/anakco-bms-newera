@@ -167,7 +167,7 @@ class ReligionAccessTest extends TestCase
         $this->actingAs($this->admin)->put(route('residents.update', $this->minister), $this->form([
             'last_name' => 'Renamed', 'religion_id' => $this->inc->id,
         ]))->assertSessionHasNoErrors();
-        $this->assertSame(0, ActivityLog::count());
+        $this->assertSame([], ActivityLog::all()->map->changes->all());
     }
 
     private function form(array $overrides = []): array
