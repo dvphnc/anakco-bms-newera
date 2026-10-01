@@ -10,6 +10,7 @@ use App\Models\Purok;
 use App\Models\Resident;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -161,6 +162,21 @@ class ExportController extends Controller
         return $parts ? implode(' · ', $parts) : 'None (all records)';
     }
 
+    /**
+     * Part 2: the nested religion filter (INC / Non-INC, Family of Ministers, Pabahay unit).
+     * Admin only: anyone else sending these parameters gets a 403, same as the table.
+     */
+    private function applyReligionFilter($query, Request $request)
+    {
+        $asked = $request->filled('religion_group') || $request->boolean('fom') || $request->filled('pabahay_unit');
+        if (! $asked) {
+            return $query;
+        }
+        Gate::authorize('view-religion-data');
+
+        return $query->religionFilter($request->input('religion_group'), $request->boolean('fom'), $request->input('pabahay_unit'));
+    }
+
     public function excel(Request $request, string $module)
     {
         ini_set('memory_limit', '1024M');
@@ -177,10 +193,10 @@ class ExportController extends Controller
         switch ($module) {
 
             case 'residents':
-                $data = Resident::with(['purok'])
+                $data = $this->applyReligionFilter(Resident::with(['purok'])
                     ->when($filters['gender'] ?? null, fn ($q, $v) => $q->where('gender', $v))
                     ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('residency_status', $v))
-                    ->when($filters['purok_id'] ?? null, fn ($q, $v) => $q->where('purok_id', $v))
+                    ->when($filters['purok_id'] ?? null, fn ($q, $v) => $q->where('purok_id', $v)), $request)
                     ->orderBy('last_name')->orderBy('first_name')->get();
 
                 $ss = new Spreadsheet;
@@ -322,10 +338,10 @@ class ExportController extends Controller
 
         switch ($module) {
             case 'residents':
-                $data = Resident::with(['purok'])
+                $data = $this->applyReligionFilter(Resident::with(['purok'])
                     ->when($filters['gender'] ?? null, fn ($q, $v) => $q->where('gender', $v))
                     ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('residency_status', $v))
-                    ->when($filters['purok_id'] ?? null, fn ($q, $v) => $q->where('purok_id', $v))
+                    ->when($filters['purok_id'] ?? null, fn ($q, $v) => $q->where('purok_id', $v)), $request)
                     ->orderBy('last_name')->get();
 
                 return Pdf::loadView('exports.pdf.residents', compact('data', 'generatedAt', 'generatedBy', 'officialName', 'secretaryName', 'filters', 'activeFilters'))
