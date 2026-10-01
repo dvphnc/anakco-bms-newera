@@ -48,7 +48,7 @@ class ReligionAccessTest extends TestCase
         ]);
     }
 
-    private function json(User $user, array $params = [])
+    private function listJson(User $user, array $params = [])
     {
         return $this->actingAs($user)->getJson(
             route('residents.index', array_merge(['draw' => 1, 'start' => 0, 'length' => 25, 'status' => 'Active'], $params)),
@@ -80,12 +80,12 @@ class ReligionAccessTest extends TestCase
     public function test_the_table_json_does_not_leak_religion_to_a_secretary(): void
     {
         // The page hides the columns, but the AJAX response used to carry every field
-        $this->json($this->secretary)->assertOk()
+        $this->listJson($this->secretary)->assertOk()
             ->assertJsonMissingPath('data.0.religion_id')
             ->assertJsonMissingPath('data.0.is_minister_family')
             ->assertJsonMissingPath('data.0.pabahay_unit_id');
 
-        $this->json($this->admin)->assertOk()
+        $this->listJson($this->admin)->assertOk()
             ->assertJsonPath('data.0.religion_id', $this->inc->id)
             ->assertJsonPath('data.0.is_minister_family', true);
     }
@@ -103,11 +103,11 @@ class ReligionAccessTest extends TestCase
 
     public function test_a_secretary_cannot_use_the_religion_filter_even_by_typing_the_url(): void
     {
-        $this->json($this->secretary, ['religion_group' => 'inc'])->assertForbidden();
-        $this->json($this->secretary, ['fom' => 1])->assertForbidden();
-        $this->json($this->secretary, ['pabahay_unit' => $this->unit->id])->assertForbidden();
+        $this->listJson($this->secretary, ['religion_group' => 'inc'])->assertForbidden();
+        $this->listJson($this->secretary, ['fom' => 1])->assertForbidden();
+        $this->listJson($this->secretary, ['pabahay_unit' => $this->unit->id])->assertForbidden();
 
-        $this->json($this->admin, ['religion_group' => 'inc'])->assertOk();
+        $this->listJson($this->admin, ['religion_group' => 'inc'])->assertOk();
     }
 
     public function test_exports_follow_the_filter_for_admin_and_refuse_a_secretary(): void
