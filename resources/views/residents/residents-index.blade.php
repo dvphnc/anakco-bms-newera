@@ -327,8 +327,7 @@ $(document).ready(function () {
     // The residents list shows Alive residents unless another status is chosen
     const DEFAULT_STATUS = 'Active';
 
-    // Part 2 (Admin only): INC / Non-INC → Family of Ministers → Pabahay unit, driven by the sidebar.
-    // For anyone else the server refuses these parameters, so they are never read or sent.
+    {{-- Part 2 (Admin only): the sidebar's nested religion filter. Anyone else is refused by the server, so these are never read or sent. --}}
     const canReligion = @json(auth()->user()?->can('view-religion-data') ?? false);
     const religionFilter = { group: '', fom: false, unit: '' };
     function cleanReligionFilter() {
