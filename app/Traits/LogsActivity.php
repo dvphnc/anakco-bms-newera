@@ -110,6 +110,12 @@ trait LogsActivity
 
         $str = (string) $val;
 
+        // toArray() writes dates as UTC ("1969-12-31T16:00:00.000000Z" is 1 Jan 1970 in Manila).
+        // Read them in the app's timezone first, or every date looks like it moved back a day.
+        if (preg_match('/^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/', $str)) {
+            $str = \Illuminate\Support\Carbon::parse($str)->setTimezone(config('app.timezone'))->format('Y-m-d H:i:s');
+        }
+
         // Strip time from datetime strings: 2022-09-20 00:00:00 or 2022-09-20T00:00:00...
         if (preg_match('/^(\d{4}-\d{2}-\d{2})/', $str, $m)) {
             return $m[1];
