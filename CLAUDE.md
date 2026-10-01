@@ -107,6 +107,8 @@ routes/
 - ✅ Real-time medicine inventory (Health committee) — Axios stock adjust & delete, live badge updates
 - ✅ Appointments admin page — Axios PATCH status update modal, delete with confirm dialog
 - ✅ Global UX polish — font smoothing, focus-visible rings, CSS tooltip labels, custom validation messages, overdue blotter badges
+- ✅ Sprint 2 Part 1 — resident life statuses (Alive/Deceased/Moved Out + history), voters residing, automatic household grouping by address, transaction history with double-claim prevention, relief programs linked to BDRRM stock, duplicate resident warning
+- ✅ Sprint 2 Part 2 — religion list (INC flagged), Family of Ministers, Pabahay blocks/units, nested sidebar filter (INC / Non-INC → Family of Ministers → Pabahay unit). **Admin only.**
 
 ## Key Conventions
 - All controllers use `LogsActivity` trait
@@ -116,6 +118,8 @@ routes/
 - Select2 resident search uses `/select2/residents` AJAX endpoint
 - PDF certificates use `->stream()` to open in browser tab
 - All dates formatted with Carbon
+- **Religion and minister data is Admin-only.** Always check the Gates `view-religion-data` / `manage-religion-data` (defined in `AppServiceProvider`, never test the role directly). `Resident::getHidden()` removes `religion_id`, `is_minister_family`, `pabahay_unit_id` from JSON/arrays for non-Admins, and `LogsActivity` never logs them (the activity log is readable by Secretaries). `tests/Feature/ReligionAccessTest.php` covers every leak path; keep it passing.
+- Tests run on MySQL `anakco_bms_testing` and refuse any other database (see `tests/TestCase.php`). Run `php artisan test`.
 
 ## Current Task
 All features complete. Project is in final polish / capstone-ready state.
