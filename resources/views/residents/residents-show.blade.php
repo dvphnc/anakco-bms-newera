@@ -73,7 +73,12 @@
                     @if($resident->is_pwd)         <span class="badge badge-blue">PWD</span>           @endif
                     @if($resident->is_solo_parent) <span class="badge badge-orange">Solo Parent</span> @endif
                     @if($resident->is_4ps)         <span class="badge badge-gold">4Ps</span>           @endif
-                    @if(!$resident->is_voter && !$resident->is_senior && !$resident->is_pwd && !$resident->is_solo_parent && !$resident->is_4ps)
+                    @can('view-religion-data')
+                        @if($resident->religion?->is_inc)  <span class="badge badge-navy">INC</span> @endif
+                        @if($resident->is_minister_family) <span class="badge badge-purple" style="background:#EDE9FE;color:#4C1D95">Family of Ministers</span> @endif
+                    @endcan
+                    @if(!$resident->is_voter && !$resident->is_senior && !$resident->is_pwd && !$resident->is_solo_parent && !$resident->is_4ps
+                        && !(auth()->user()?->can('view-religion-data') && ($resident->religion?->is_inc || $resident->is_minister_family)))
                         <span style="font-size:13px;color:var(--text-subtle)">None</span>
                     @endif
                 </div>
@@ -201,7 +206,16 @@
                                 ['label' => 'Gender',          'value' => $resident->gender],
                                 ['label' => 'Civil Status',    'value' => $resident->civil_status],
                                 ['label' => 'Nationality',     'value' => $resident->nationality ?: '—'],
-                                ['label' => 'Religion',        'value' => $resident->religion ?: '—'],
+                                // Religion and Pabahay are Admin-only (the relations are only loaded for Admin)
+                                ...(auth()->user()?->can('view-religion-data') ? [
+                                    ['label' => 'Religion',        'value' => $resident->religion?->name ?? '—'],
+                                    ...($resident->religion?->is_inc ? [
+                                        ['label' => 'Family of Ministers', 'value' => $resident->is_minister_family ? 'Yes' : 'No'],
+                                    ] : []),
+                                    ...($resident->is_minister_family ? [
+                                        ['label' => 'Pabahay Unit', 'value' => $resident->pabahayUnit?->label ?? 'Not assigned yet'],
+                                    ] : []),
+                                ] : []),
                                 ['label' => 'Occupation',      'value' => $resident->occupation ?: '—'],
                                 ...($resident->is_voter ? [
                                     ['label' => 'Precinct No.',    'value' => $resident->precinct_no ?: '—'],
