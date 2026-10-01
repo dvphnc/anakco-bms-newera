@@ -49,7 +49,7 @@ class ReligionPabahayDemoSeeder extends Seeder
         foreach (self::BLOCKS as $name => $unitCount) {
             $purok = $puroks->isNotEmpty() ? $puroks[$i % $puroks->count()] : null;
             $pabahay = Pabahay::firstOrCreate(['name' => $name], [
-                'location' => "Ministers' housing, ".($purok?->name ?? 'Barangay New Era'),
+                'location' => "Ministers' housing compound",   // the Purok is shown next to it
                 'purok_id' => $purok?->id,
             ]);
             $letter = substr($name, -1);
