@@ -21,7 +21,9 @@ class PabahayUnitController extends Controller
         ]);
 
         $numbers = collect(preg_split('/[,\n\r]+/', $request->input('unit_numbers')))
-            ->map(fn ($n) => trim($n))->filter()->unique()->values();
+            ->map(fn ($n) => trim($n))->filter()
+            ->unique(fn ($n) => mb_strtolower($n))   // "A-1" and "a-1" are the same unit
+            ->values();
 
         $tooLong = $numbers->first(fn ($n) => mb_strlen($n) > 30);
         if ($tooLong) {
