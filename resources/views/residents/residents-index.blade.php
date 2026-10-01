@@ -553,7 +553,9 @@ $(document).ready(function () {
     });
 
     /* ── Religion filter (Admin only), driven by the sidebar tree ─────── */
-    function renderReligionBar() {
+    let renderReligionBar = function () {};   // nothing to show unless the Admin-only block below is present
+    @can('view-religion-data')
+    renderReligionBar = function () {
         const bar = document.getElementById('religionActive');
         if (!bar) return;
         const names = { inc: 'INC', non_inc: 'Non-INC', unrecorded: 'Religion not recorded' };
@@ -567,7 +569,8 @@ $(document).ready(function () {
         }
         document.getElementById('religionPath').textContent = parts.join('  ›  ');
         bar.style.display = parts.length ? 'flex' : 'none';
-    }
+    };
+    @endcan
 
     // One entry point for the sidebar, the Clear button and the reset button
     function applyReligion(state) {
