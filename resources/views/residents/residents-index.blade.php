@@ -186,6 +186,16 @@
     </div>
 </div>
 
+{{-- Part 2: shows the sidebar's religion filter that is applied (Admin only) --}}
+@can('view-religion-data')
+<div id="religionActive" style="display:none;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:10px 14px;background:var(--gold-pale);border:1px solid var(--gold-border);border-radius:var(--radius-sm);font-size:13px">
+    <i class="fas fa-church" style="color:var(--gold)"></i>
+    <span style="font-weight:600;color:var(--navy)">Religion filter:</span>
+    <span id="religionPath" style="font-weight:600"></span>
+    <button type="button" id="religionClear" class="btn btn-secondary btn-sm" style="margin-left:auto"><i class="fas fa-xmark"></i> Clear</button>
+</div>
+@endcan
+
 {{-- Table --}}
 <div class="card">
     <div class="card-header" style="flex-wrap:wrap;gap:10px">
@@ -317,6 +327,17 @@ $(document).ready(function () {
     // The residents list shows Alive residents unless another status is chosen
     const DEFAULT_STATUS = 'Active';
 
+    // Part 2 (Admin only): INC / Non-INC → Family of Ministers → Pabahay unit, driven by the sidebar.
+    // For anyone else the server refuses these parameters, so they are never read or sent.
+    const canReligion = @json(auth()->user()?->can('view-religion-data') ?? false);
+    const religionFilter = { group: '', fom: false, unit: '' };
+    function cleanReligionFilter() {
+        // Each level only exists under the one above it
+        if (religionFilter.unit) religionFilter.fom = true;
+        if (religionFilter.fom)  religionFilter.group = 'inc';
+        if (!['inc', 'non_inc', 'unrecorded'].includes(religionFilter.group)) { religionFilter.group = ''; religionFilter.fom = false; religionFilter.unit = ''; }
+    }
+
     // Restore filters from the URL BEFORE the table's first request, so links like
     // ?status=Deceased filter the very first load (previously they only applied after
     // the user changed another filter).
@@ -337,6 +358,11 @@ $(document).ready(function () {
                 d.tags         = $('#tagsFilter').val();
                 d.age_min      = $('#ageMin').val();
                 d.age_max      = $('#ageMax').val();
+                if (canReligion) {
+                    d.religion_group = religionFilter.group;
+                    d.fom            = religionFilter.fom ? 1 : 0;
+                    d.pabahay_unit   = religionFilter.unit;
+                }
                 d.search       = { value: $('#searchInput').val() };
             }
         },
@@ -364,6 +390,7 @@ $(document).ready(function () {
         const url = new URL(window.location);
         ['s','purok_id','gender','status','civil_status','age_min','age_max'].forEach(k => url.searchParams.delete(k));
         url.searchParams.delete('tags');
+        ['religion_group','fom','pabahay_unit'].forEach(k => url.searchParams.delete(k));
 
         const s = $('#searchInput').val();
         if (s)                              url.searchParams.set('s', s);
@@ -374,6 +401,11 @@ $(document).ready(function () {
         if ($('#ageMin').val())             url.searchParams.set('age_min', $('#ageMin').val());
         if ($('#ageMax').val())             url.searchParams.set('age_max', $('#ageMax').val());
         if ($('#tagsFilter').val()) url.searchParams.set('tags', $('#tagsFilter').val());
+        if (canReligion && religionFilter.group) {
+            url.searchParams.set('religion_group', religionFilter.group);
+            if (religionFilter.fom)  url.searchParams.set('fom', '1');
+            if (religionFilter.unit) url.searchParams.set('pabahay_unit', religionFilter.unit);
+        }
 
         history.replaceState({}, '', url);
         updateBadge();
@@ -393,6 +425,13 @@ $(document).ready(function () {
         if (p.get('age_max'))      { $('#ageMax').val(p.get('age_max')); any = true; }
         const tag = p.get('tags');
         if (tag) { $('#tagsFilter').val(tag).trigger('change.select2'); any = true; }
+        if (canReligion) {
+            religionFilter.group = p.get('religion_group') || '';
+            religionFilter.fom   = p.get('fom') === '1';
+            religionFilter.unit  = p.get('pabahay_unit') || '';
+            cleanReligionFilter();
+            if (religionFilter.group) any = true;
+        }
         return any;
     }
 
@@ -406,6 +445,11 @@ $(document).ready(function () {
         var st = $('#statusFilter').val();         if (st && st !== 'all') p.status = st;
         var g  = $('#genderFilter').val();         if (g)  p.gender = g;
         var pk = $('#purokFilter').val();          if (pk) p.purok_id = pk;
+        if (canReligion && religionFilter.group) {
+            p.religion_group = religionFilter.group;
+            if (religionFilter.fom)  p.fom = 1;
+            if (religionFilter.unit) p.pabahay_unit = religionFilter.unit;
+        }
         var qs = Object.keys(p).length ? '?' + $.param(p) : '';
         $('#btnExportPdf').attr('href', _pdfBase + qs)
             .attr('title', qs ? 'Export filtered results — ' + Object.entries(p).map(([k,v])=>k+':'+v).join(', ') : 'Export PDF');
@@ -425,6 +469,7 @@ $(document).ready(function () {
         if ($('#civilStatusFilter').val())              n++;
         if ($('#ageMin').val() || $('#ageMax').val())   n++;
         if ($('#tagsFilter').val())                      n++;
+        if (canReligion && religionFilter.group)        n++;
         const badge = document.getElementById('filterBadge');
         const chip  = document.getElementById('headerFilterChip');
         const chipN = document.getElementById('headerFilterCount');
@@ -504,8 +549,39 @@ $(document).ready(function () {
         $('#genderFilter, #purokFilter, #civilStatusFilter').val(null).trigger('change');
         $('#tagsFilter').val(null).trigger('change');
         $('#ageMin, #ageMax').val('');
-        saveToUrl(); table.ajax.reload();
+        applyReligion({ group: '', fom: false, unit: '' });
     });
+
+    /* ── Religion filter (Admin only), driven by the sidebar tree ─────── */
+    function renderReligionBar() {
+        const bar = document.getElementById('religionActive');
+        if (!bar) return;
+        const names = { inc: 'INC', non_inc: 'Non-INC', unrecorded: 'Religion not recorded' };
+        const parts = [];
+        if (religionFilter.group) parts.push(names[religionFilter.group]);
+        if (religionFilter.fom)   parts.push('Family of Ministers');
+        if (religionFilter.unit) {
+            const opt = document.querySelector('#navPabahayUnit option[value="' + religionFilter.unit + '"]');
+            const label = opt ? opt.closest('optgroup').label + ' · ' + opt.textContent.replace(/\s*\(\d+\)\s*$/, '').trim() : 'Pabahay unit';
+            parts.push(label);
+        }
+        document.getElementById('religionPath').textContent = parts.join('  ›  ');
+        bar.style.display = parts.length ? 'flex' : 'none';
+    }
+
+    // One entry point for the sidebar, the Clear button and the reset button
+    function applyReligion(state) {
+        if (!canReligion) return;
+        Object.assign(religionFilter, { group: '', fom: false, unit: '' }, state);
+        cleanReligionFilter();
+        saveToUrl();
+        table.ajax.reload();
+        renderReligionBar();
+        if (window.syncReligionTree) window.syncReligionTree(religionFilter);
+    }
+    window.applyReligionFilter = applyReligion;
+    $('#religionClear').on('click', () => applyReligion({}));
+    renderReligionBar();
 });
 
 /* ── Resident Quick View Panel ──────────────────────────────────────── */
