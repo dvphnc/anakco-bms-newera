@@ -39,6 +39,56 @@
             <span>Residents</span>
         </a>
 
+        {{-- Part 2: nested religion filter, Admin only.
+             INC / Non-INC → Family of Ministers → Pabahay unit. On the Residents page a click
+             filters the table in place; anywhere else it opens the Residents page with the filter. --}}
+        @can('view-religion-data')
+        @php
+            $onList   = request()->routeIs('residents.index');
+            $rGroup   = $onList && in_array(request('religion_group'), ['inc', 'non_inc', 'unrecorded'], true) ? request('religion_group') : '';
+            $rFom     = $rGroup === 'inc' && (request()->boolean('fom') || request()->filled('pabahay_unit'));
+            $rUnit    = $rFom ? (int) request('pabahay_unit') : 0;
+        @endphp
+        <div class="nav-tree" id="religionTree" data-url="{{ route('residents.index') }}"
+             data-group="{{ $rGroup }}" data-fom="{{ $rFom ? 1 : 0 }}" data-unit="{{ $rUnit ?: '' }}" data-open="{{ $rGroup ? 1 : 0 }}">
+            <button type="button" class="nav-tree-toggle" id="religionTreeToggle" aria-expanded="{{ $rGroup ? 'true' : 'false' }}" aria-controls="religionTreeBody">
+                <i class="fas fa-sitemap"></i><span>Filter by religion</span><i class="fas fa-chevron-down caret"></i>
+            </button>
+            <div class="nav-tree-body" id="religionTreeBody" @if(! $rGroup) hidden @endif>
+                <a href="{{ route('residents.index', ['religion_group' => 'inc']) }}"
+                   class="nav-sub {{ $rGroup === 'inc' ? ($rFom ? 'on-path' : 'active') : '' }}" data-level="1" data-group="inc">
+                    <i class="fas fa-church"></i><span>INC</span>
+                </a>
+                <div class="nav-children {{ $rGroup === 'inc' ? 'open' : '' }}" data-children="inc">
+                    <a href="{{ route('residents.index', ['religion_group' => 'inc', 'fom' => 1]) }}"
+                       class="nav-sub lvl2 {{ $rFom ? ($rUnit ? 'on-path' : 'active') : '' }}" data-level="2" data-group="inc" data-fom="1">
+                        <i class="fas fa-people-roof"></i><span>Family of Ministers</span>
+                    </a>
+                    <div class="nav-unit-wrap" style="{{ $rFom ? '' : 'display:none' }}">
+                        <select id="navPabahayUnit" class="nav-select" aria-label="Pabahay unit">
+                            <option value="">All Pabahay units</option>
+                            @foreach($sidebarPabahayUnits ?? [] as $pabahayName => $units)
+                                <optgroup label="{{ $pabahayName }}">
+                                    @foreach($units as $u)
+                                        <option value="{{ $u->id }}" @selected($rUnit === $u->id)>{{ $u->unit_no }} ({{ $u->living_count }})</option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <a href="{{ route('residents.index', ['religion_group' => 'non_inc']) }}"
+                   class="nav-sub {{ $rGroup === 'non_inc' ? 'active' : '' }}" data-level="1" data-group="non_inc">
+                    <i class="fas fa-users"></i><span>Non-INC</span>
+                </a>
+                <a href="{{ route('residents.index', ['religion_group' => 'unrecorded']) }}"
+                   class="nav-sub {{ $rGroup === 'unrecorded' ? 'active' : '' }}" data-level="1" data-group="unrecorded">
+                    <i class="fas fa-circle-question"></i><span>Not recorded</span>
+                </a>
+            </div>
+        </div>
+        @endcan
+
         <a href="{{ route('households.index') }}"
            class="nav-item {{ request()->routeIs('households.*') ? 'active' : '' }}">
             <i class="fas fa-house"></i>
@@ -56,6 +106,20 @@
             <i class="fas fa-hand-holding-heart"></i>
             <span>Assistance Programs</span>
         </a>
+
+        @can('manage-religion-data')
+        <a href="{{ route('religions.index') }}"
+           class="nav-item {{ request()->routeIs('religions.*') ? 'active' : '' }}">
+            <i class="fas fa-church"></i>
+            <span>Religions</span>
+        </a>
+
+        <a href="{{ route('pabahays.index') }}"
+           class="nav-item {{ request()->routeIs('pabahays.*') ? 'active' : '' }}">
+            <i class="fas fa-house-chimney"></i>
+            <span>Pabahay</span>
+        </a>
+        @endcan
 
         <a href="{{ route('officials.index') }}"
            class="nav-item {{ request()->routeIs('officials.*') ? 'active' : '' }}">
