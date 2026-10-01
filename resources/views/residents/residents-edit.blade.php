@@ -91,12 +91,7 @@
                        value="{{ old('nationality', $resident->nationality) }}">
                 @error('nationality')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
             </div>
-            <div class="form-group">
-                <label class="form-label">Religion</label>
-                <input type="text" name="religion" class="form-control @error('religion') is-invalid @enderror"
-                       value="{{ old('religion', $resident->religion) }}">
-                @error('religion')<span class="invalid-feedback"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-            </div>
+            @include('residents.partials.religion-fields', ['resident' => $resident])
             <div class="form-group">
                 <label class="form-label">Contact Number</label>
                 <input type="text" name="contact_number" class="form-control @error('contact_number') is-invalid @enderror"
