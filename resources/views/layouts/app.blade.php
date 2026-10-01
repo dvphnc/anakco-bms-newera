@@ -111,7 +111,7 @@
         .nav-item i { width:16px; text-align:center; font-size:12px; flex-shrink:0; opacity:0.75; }
         .nav-item.active i { opacity:1; }
 
-        /* Part 2: nested religion filter under Residents (Admin only) */
+        {{-- Part 2: nested religion filter under Residents (Admin only). A Blade comment, so it is never sent to the browser. --}}
         .nav-tree-toggle { width:100%; display:flex; align-items:center; gap:10px; padding:6px 18px 6px 31px; background:none; border:0; border-left:3px solid transparent; cursor:pointer; font:inherit; font-size:12px; text-align:left; color:rgba(255,255,255,0.45); transition:all 0.15s ease; }
         .nav-tree-toggle:hover { color:rgba(255,255,255,0.88); background:rgba(255,255,255,0.04); }
         .nav-tree-toggle > i:first-child { width:16px; text-align:center; font-size:11px; opacity:0.7; }
