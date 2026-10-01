@@ -571,13 +571,16 @@ $(document).ready(function () {
 
     // One entry point for the sidebar, the Clear button and the reset button
     function applyReligion(state) {
-        if (!canReligion) return;
-        Object.assign(religionFilter, { group: '', fom: false, unit: '' }, state);
-        cleanReligionFilter();
+        if (canReligion) {
+            Object.assign(religionFilter, { group: '', fom: false, unit: '' }, state);
+            cleanReligionFilter();
+        }
         saveToUrl();
         table.ajax.reload();
-        renderReligionBar();
-        if (window.syncReligionTree) window.syncReligionTree(religionFilter);
+        if (canReligion) {
+            renderReligionBar();
+            if (window.syncReligionTree) window.syncReligionTree(religionFilter);
+        }
     }
     window.applyReligionFilter = applyReligion;
     $('#religionClear').on('click', () => applyReligion({}));
