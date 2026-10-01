@@ -12,6 +12,9 @@ trait LogsActivity
         $skipFields = [
             'password', 'remember_token', 'updated_at', 'created_at',
             'deleted_at', 'photo_path', 'file_path', 'file_type', 'file_original_name',
+            // Religion data is Admin-only, and the activity log is visible to Secretaries,
+            // so changes to it must not be written here
+            'religion_id', 'is_minister_family', 'pabahay_unit_id',
         ];
 
         $booleanFields = [

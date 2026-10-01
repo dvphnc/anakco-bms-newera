@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Enums\ResidencyStatus;
 use App\Models\Household;
+use App\Models\PabahayUnit;
 use App\Models\Purok;
+use App\Models\Religion;
 use App\Models\Resident;
 use App\Services\DuplicateResidentFinder;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
 class ResidentController extends Controller
@@ -21,6 +25,12 @@ class ResidentController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
+            // The nested religion filter reveals religion data, so it is Admin-only even
+            // when the request is typed by hand (403 for anyone else).
+            if ($this->religionFilterRequested($request)) {
+                Gate::authorize('view-religion-data');
+            }
+
             $query = Resident::with(['purok'])
                 ->when($request->gender, fn ($q) => $q->where('gender', $request->gender))
                 // 'all' = every status; the list itself defaults to Alive client-side
@@ -45,6 +55,10 @@ class ResidentController extends Controller
                         }
                     });
                 })
+                // Part 2: INC / Non-INC → Family of Ministers → one Pabahay unit
+                ->when($this->religionFilterRequested($request), fn ($q) => $q->religionFilter(
+                    $request->input('religion_group'), $request->boolean('fom'), $request->input('pabahay_unit')
+                ))
                 ->select('residents.*');
 
             return DataTables::of($query)
@@ -185,7 +199,65 @@ class ResidentController extends Controller
         ]);
     }
 
-    private function residentRules(): array
+    private function religionFilterRequested(Request $request): bool
+    {
+        return $request->filled('religion_group') || $request->boolean('fom') || $request->filled('pabahay_unit');
+    }
+
+    /**
+     * Religion, Family of Ministers and Pabahay unit. Only validated (and so only saved)
+     * for Admin; for everyone else these fields are simply not part of the form.
+     * A deactivated entry the resident already has can be kept.
+     */
+    private function religionRules(?Resident $resident): array
+    {
+        $keep = fn (?int $current) => fn ($q) => $q->where('is_active', true)->when($current, fn ($q2, $id) => $q2->orWhere('id', $id));
+
+        return [
+            'religion_id' => ['nullable', Rule::exists('religions', 'id')->where($keep($resident?->religion_id))],
+            'is_minister_family' => ['boolean', function ($attribute, $value, $fail) {
+                if (! filter_var($value, FILTER_VALIDATE_BOOLEAN)) {
+                    return;
+                }
+                $isInc = request('religion_id') && Religion::whereKey(request('religion_id'))->value('is_inc');
+                if (! $isInc) {
+                    $fail('Only members of the Iglesia ni Cristo can be marked as Family of Ministers.');
+                }
+            }],
+            'pabahay_unit_id' => ['nullable', Rule::exists('pabahay_units', 'id')->where($keep($resident?->pabahay_unit_id)), function ($attribute, $value, $fail) {
+                if (filled($value) && ! request()->boolean('is_minister_family')) {
+                    $fail('A Pabahay unit can only be given to a Family of Ministers.');
+                }
+            }],
+        ];
+    }
+
+    /** Dropdown choices for the religion section of the form (Admin only, otherwise empty). */
+    private function religionFormData(?Resident $resident = null): array
+    {
+        if (! Gate::allows('manage-religion-data')) {
+            return ['religions' => collect(), 'pabahayUnits' => collect()];
+        }
+
+        return [
+            'religions' => Religion::where(fn ($q) => $q->where('is_active', true)->when($resident?->religion_id, fn ($q2, $id) => $q2->orWhere('id', $id)))
+                ->orderBy('name')->get(),
+            'pabahayUnits' => PabahayUnit::with('pabahay')
+                ->withCount(['residents as living_count' => fn ($q) => $q->where('residency_status', ResidencyStatus::Alive->value)])
+                ->where(fn ($q) => $q->where(fn ($a) => $a->where('is_active', true)->whereHas('pabahay', fn ($p) => $p->where('is_active', true)))
+                    ->when($resident?->pabahay_unit_id, fn ($q2, $id) => $q2->orWhere('id', $id)))
+                ->ordered()->get()->sortBy(fn ($u) => $u->pabahay->name)->values(),
+        ];
+    }
+
+    private function residentRules(?Resident $resident = null): array
+    {
+        $rules = $this->baseResidentRules();
+
+        return Gate::allows('manage-religion-data') ? array_merge($rules, $this->religionRules($resident)) : $rules;
+    }
+
+    private function baseResidentRules(): array
     {
         return [
             'last_name'        => 'required|string|max:100',
@@ -197,7 +269,6 @@ class ResidentController extends Controller
             'civil_status'     => 'nullable|in:Single,Married,Widowed,Separated,Annulled',
             'birthplace'       => 'nullable|string|max:255',
             'nationality'      => 'nullable|string|max:100',
-            'religion'         => 'nullable|string|max:100',
             'occupation'       => 'nullable|string|max:100',
             'contact_number'   => 'nullable|string|max:20',
             'email_address'    => 'nullable|email|max:255',
@@ -256,6 +327,8 @@ class ResidentController extends Controller
             'residing_since.before_or_equal' => 'The "residing since" date cannot be in the future.',
             'residing_since.after_or_equal'  => 'The "residing since" date cannot be before the date of birth.',
             'voters_id_no.max'          => 'Voter\'s ID number must not exceed 30 characters.',
+            'religion_id.exists'        => 'Please choose a religion from the list.',
+            'pabahay_unit_id.exists'    => 'Please choose a Pabahay unit from the list.',
             'photo_path.image'          => 'The photo must be an image file (JPG, PNG, GIF, etc.).',
             'photo_path.max'            => 'Photo is too large. Maximum allowed size is 2MB.',
         ];
@@ -305,7 +378,7 @@ class ResidentController extends Controller
         $puroks = Purok::orderBy('name')->get();
         $households = Household::orderBy('household_number')->get();
 
-        return view('residents.residents-create', compact('puroks', 'households'));
+        return view('residents.residents-create', ['puroks' => $puroks, 'households' => $households] + $this->religionFormData());
     }
 
     // -------------------------------------------------------
@@ -345,6 +418,9 @@ class ResidentController extends Controller
         $validated['is_pwd'] = $request->boolean('is_pwd');
         $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
         $validated['is_4ps'] = $request->boolean('is_4ps');
+        if (Gate::allows('manage-religion-data')) {
+            $validated['is_minister_family'] = $request->boolean('is_minister_family');
+        }
         $validated = $this->clearVoterDetailsIfNotVoter($validated);
         $validated = $this->applyHouseholdMode($validated, $request);
         $validated['residency_status'] = ResidencyStatus::Alive->value;
@@ -365,6 +441,9 @@ class ResidentController extends Controller
             // Household tab: every member, living first, eldest first
             'household.residents' => fn ($q) => $q->orderByRaw("residency_status = 'Active' DESC")->orderBy('birthdate'),
         ]);
+        if (Gate::allows('view-religion-data')) {
+            $resident->load('religion', 'pabahayUnit.pabahay');
+        }
 
         // Transactions tab (Task 1.1)
         $transactionCount = \App\Models\ResidentTransaction::where('resident_id', $resident->id)->valid()->count();
@@ -393,7 +472,7 @@ class ResidentController extends Controller
         $puroks = Purok::orderBy('name')->get();
         $households = Household::orderBy('household_number')->get();
 
-        return view('residents.residents-edit', compact('resident', 'puroks', 'households'));
+        return view('residents.residents-edit', ['resident' => $resident, 'puroks' => $puroks, 'households' => $households] + $this->religionFormData($resident));
     }
 
     // -------------------------------------------------------
@@ -401,7 +480,7 @@ class ResidentController extends Controller
     // -------------------------------------------------------
     public function update(Request $request, Resident $resident)
     {
-        $validated = $request->validate($this->residentRules(), $this->residentMessages());
+        $validated = $request->validate($this->residentRules($resident), $this->residentMessages());
 
         if ($request->hasFile('photo_path')) {
             // Delete old photo before storing the new one
@@ -418,6 +497,9 @@ class ResidentController extends Controller
         $validated['is_pwd'] = $request->boolean('is_pwd');
         $validated['is_solo_parent'] = $request->boolean('is_solo_parent');
         $validated['is_4ps'] = $request->boolean('is_4ps');
+        if (Gate::allows('manage-religion-data')) {
+            $validated['is_minister_family'] = $request->boolean('is_minister_family');
+        }
         $validated = $this->clearVoterDetailsIfNotVoter($validated);
         $validated = $this->applyHouseholdMode($validated, $request);
 

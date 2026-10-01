@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Gate;
 
 class Resident extends Model
 {
@@ -24,7 +25,9 @@ class Resident extends Model
         'civil_status',
         'birthplace',
         'nationality',
-        'religion',
+        'religion_id',
+        'is_minister_family',
+        'pabahay_unit_id',
         'occupation',
         'contact_number',
         'email_address',
@@ -51,6 +54,7 @@ class Resident extends Model
             'status_effective_date' => 'date',
             'residing_since' => 'date',
             'is_voter' => 'boolean',
+            'is_minister_family' => 'boolean',
             'is_pwd' => 'boolean',
             'is_solo_parent' => 'boolean',
             'is_4ps' => 'boolean',
@@ -60,12 +64,33 @@ class Resident extends Model
     /** Senior citizen age (RA 9994 — Expanded Senior Citizens Act) */
     public const SENIOR_AGE = 60;
 
+    /**
+     * Religion data is Admin-only. These never appear in JSON / arrays for anyone else
+     * (see getHidden), so a table's AJAX response can't leak them even if a page hides them.
+     */
+    public const RELIGION_FIELDS = ['religion_id', 'is_minister_family', 'pabahay_unit_id'];
+
     public const RELATIONSHIPS = [
         'Head', 'Spouse', 'Child', 'Parent', 'Sibling', 'Grandchild', 'Other Relative', 'Non-relative',
     ];
 
     protected static function booted(): void
     {
+        // Part 2 — "Family of Ministers" only applies to INC members, and a Pabahay unit
+        // only to a minister's family. Keep the three fields consistent in one place.
+        static::saving(function (Resident $resident) {
+            if (! $resident->isDirty(self::RELIGION_FIELDS)) {
+                return;
+            }
+            $isInc = $resident->religion_id && Religion::whereKey($resident->religion_id)->value('is_inc');
+            if (! $isInc) {
+                $resident->is_minister_family = false;
+            }
+            if (! $resident->is_minister_family) {
+                $resident->pabahay_unit_id = null;
+            }
+        });
+
         // Task 1.2 — keep the grouping key in step with the typed address
         static::saving(function (Resident $resident) {
             if ($resident->isDirty('address') || $resident->address_key === null) {
@@ -102,6 +127,15 @@ class Resident extends Model
                 app(HouseholdGroupingService::class)->refresh($household);
             }
         });
+    }
+
+    public function getHidden(): array
+    {
+        $hidden = parent::getHidden();
+
+        return Gate::allows('view-religion-data')
+            ? $hidden
+            : array_merge($hidden, self::RELIGION_FIELDS, ['religion', 'pabahay_unit']);
     }
 
     // -------------------------------------------------------
@@ -193,6 +227,16 @@ class Resident extends Model
         return $this->hasMany(ResidentStatusLog::class)->latest('id');
     }
 
+    public function religion()
+    {
+        return $this->belongsTo(Religion::class);
+    }
+
+    public function pabahayUnit()
+    {
+        return $this->belongsTo(PabahayUnit::class);
+    }
+
     // -------------------------------------------------------
     // Scopes
     // -------------------------------------------------------
@@ -233,5 +277,39 @@ class Resident extends Model
     public function scopePwd($query)
     {
         return $query->where('is_pwd', true);
+    }
+
+    // Part 2 — the nested religion filter (INC / Non-INC → Family of Ministers → Pabahay unit)
+
+    /** 'inc', 'non_inc' (a religion is recorded and it is not INC), or 'unrecorded'. */
+    public function scopeReligionGroup($query, ?string $group)
+    {
+        $inc = Religion::query()->where('is_inc', true)->select('id');
+
+        return match ($group) {
+            'inc'        => $query->whereIn('residents.religion_id', $inc),
+            'non_inc'    => $query->whereNotNull('residents.religion_id')->whereNotIn('residents.religion_id', $inc),
+            'unrecorded' => $query->whereNull('residents.religion_id'),
+            default      => $query,
+        };
+    }
+
+    public function scopeMinisterFamily($query)
+    {
+        return $query->where('residents.is_minister_family', true);
+    }
+
+    public function scopeInPabahayUnit($query, $unitId)
+    {
+        return $query->where('residents.pabahay_unit_id', $unitId);
+    }
+
+    /** All three levels of the nested filter in one call (used by the table and the exports). */
+    public function scopeReligionFilter($query, ?string $group, bool $ministerFamily = false, $unitId = null)
+    {
+        return $query
+            ->religionGroup($group)
+            ->when($ministerFamily, fn ($q) => $q->ministerFamily())
+            ->when($unitId, fn ($q) => $q->inPabahayUnit($unitId));
     }
 }
