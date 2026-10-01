@@ -58,7 +58,7 @@ class ReligionPabahayTest extends TestCase
         ], $overrides);
     }
 
-    private function count(array $params = []): int
+    private function filteredCount(array $params = []): int
     {
         return $this->actingAs($this->admin)->getJson(
             route('residents.index', array_merge(['draw' => 1, 'start' => 0, 'length' => 50, 'status' => 'Active'], $params)),
@@ -141,14 +141,14 @@ class ReligionPabahayTest extends TestCase
         $this->resident();                                                                          // no religion recorded
         $this->resident(['religion_id' => $this->inc->id, 'is_minister_family' => true, 'pabahay_unit_id' => $this->unit1->id, 'residency_status' => 'Deceased']);
 
-        $this->assertSame(3, $this->count(['religion_group' => 'inc']));
-        $this->assertSame(2, $this->count(['religion_group' => 'inc', 'fom' => 1]));
-        $this->assertSame(1, $this->count(['religion_group' => 'inc', 'fom' => 1, 'pabahay_unit' => $this->unit1->id]));
-        $this->assertSame(1, $this->count(['religion_group' => 'non_inc']));
-        $this->assertSame(1, $this->count(['religion_group' => 'unrecorded']));
+        $this->assertSame(3, $this->filteredCount(['religion_group' => 'inc']));
+        $this->assertSame(2, $this->filteredCount(['religion_group' => 'inc', 'fom' => 1]));
+        $this->assertSame(1, $this->filteredCount(['religion_group' => 'inc', 'fom' => 1, 'pabahay_unit' => $this->unit1->id]));
+        $this->assertSame(1, $this->filteredCount(['religion_group' => 'non_inc']));
+        $this->assertSame(1, $this->filteredCount(['religion_group' => 'unrecorded']));
 
         // Living residents only unless "All" is chosen, so a deceased member does not count as an inhabitant
-        $this->assertSame(2, $this->count(['religion_group' => 'inc', 'fom' => 1, 'pabahay_unit' => $this->unit1->id, 'status' => 'all']));
+        $this->assertSame(2, $this->filteredCount(['religion_group' => 'inc', 'fom' => 1, 'pabahay_unit' => $this->unit1->id, 'status' => 'all']));
     }
 
     public function test_a_filtered_export_only_contains_the_matching_people(): void
@@ -237,8 +237,9 @@ class ReligionPabahayTest extends TestCase
         $r = $this->resident(['religion_id' => $this->catholic->id]);
         $this->actingAs($this->admin)->patch(route('religions.update', $this->catholic), ['is_active' => 0])->assertSessionHas('success');
 
+        // (checking the list itself: the "now hidden" confirmation message also contains the name)
         $this->actingAs($this->admin)->get(route('residents.create'))
-            ->assertOk()->assertDontSee('Roman Catholic');
+            ->assertOk()->assertViewHas('religions', fn ($list) => $list->doesntContain('id', $this->catholic->id));
 
         $this->actingAs($this->admin)->get(route('residents.edit', $r))
             ->assertOk()->assertSee('Roman Catholic (hidden)');
