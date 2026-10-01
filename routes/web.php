@@ -17,6 +17,9 @@ use App\Http\Controllers\ResidentController;
 use App\Http\Controllers\ResidentStatusController;
 use App\Http\Controllers\ResidentTransactionController;
 use App\Http\Controllers\AssistanceProgramController;
+use App\Http\Controllers\PabahayController;
+use App\Http\Controllers\PabahayUnitController;
+use App\Http\Controllers\ReligionController;
 use App\Http\Controllers\ResidentPortalController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Select2Controller;
@@ -108,6 +111,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('programs', AssistanceProgramController::class)
         ->except('show')
         ->middleware('role:Admin,Secretary');
+
+    // Religion list and Pabahay (ministers' housing) — Admin only (Part 2).
+    // The gate is defined in AppServiceProvider; Part 3 will make it editable.
+    Route::middleware('can:manage-religion-data')->group(function () {
+        Route::resource('religions', ReligionController::class)->only(['index', 'store', 'update']);
+        Route::resource('pabahays', PabahayController::class)->except('destroy');
+        Route::post('pabahays/{pabahay}/units', [PabahayUnitController::class, 'store'])->name('pabahays.units.store');
+        Route::patch('pabahay-units/{unit}', [PabahayUnitController::class, 'update'])->name('pabahay-units.update');
+    });
 
     // Life status (Alive / Deceased / Moved Out) — dated, logged; replaces the old one-click toggle
     Route::patch('residents/{resident}/status', [ResidentStatusController::class, 'update'])
