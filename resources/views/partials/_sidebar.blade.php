@@ -406,3 +406,71 @@
 }());
 </script>
 @endif
+{{-- Part 2: behaviour of the nested religion filter (Admin only) --}}
+@can('view-religion-data')
+<script>
+(function () {
+    const tree = document.getElementById('religionTree');
+    if (!tree) return;
+    const body   = document.getElementById('religionTreeBody');
+    const toggle = document.getElementById('religionTreeToggle');
+    const select = document.getElementById('navPabahayUnit');
+
+    // What is selected right now (kept in step with the Residents page)
+    let current = { group: tree.dataset.group || '', fom: tree.dataset.fom === '1', unit: tree.dataset.unit || '' };
+
+    function setOpen(open) {
+        body.hidden = !open;
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        try { localStorage.setItem('bms_religion_tree', open ? '1' : '0'); } catch (e) {}
+    }
+    toggle.addEventListener('click', () => setOpen(body.hidden));
+    try { if (tree.dataset.open !== '1' && localStorage.getItem('bms_religion_tree') === '1') setOpen(true); } catch (e) {}
+
+    // Reflect a selection in the tree: deepest choice = active, the levels above it = on-path
+    window.syncReligionTree = function (s) {
+        current = { group: s.group || '', fom: !!s.fom, unit: s.unit || '' };
+        tree.querySelectorAll('[data-level="1"]').forEach(a => {
+            const here = a.dataset.group === current.group;
+            a.classList.toggle('active', here && !(a.dataset.group === 'inc' && current.fom));
+            a.classList.toggle('on-path', here && a.dataset.group === 'inc' && current.fom);
+        });
+        tree.querySelector('[data-children="inc"]').classList.toggle('open', current.group === 'inc');
+        const fom = tree.querySelector('[data-level="2"]');
+        fom.classList.toggle('active', current.fom && !current.unit);
+        fom.classList.toggle('on-path', !!current.unit);
+        tree.querySelector('.nav-unit-wrap').style.display = current.fom ? '' : 'none';
+        select.value = current.unit;
+        if (current.group) setOpen(true);
+    };
+
+    // On the Residents page the table filters in place; anywhere else the link just opens it
+    function go(state, fallbackUrl) {
+        if (window.applyReligionFilter) { window.applyReligionFilter(state); return true; }
+        if (fallbackUrl) window.location.href = fallbackUrl;
+        return false;
+    }
+
+    tree.addEventListener('click', function (e) {
+        const a = e.target.closest('a.nav-sub');
+        if (!a || !window.applyReligionFilter) return;   // not on the Residents page: follow the link
+        e.preventDefault();
+
+        if (a.dataset.level === '2') {
+            // Family of Ministers: click again to go back up to INC
+            go(current.fom && !current.unit ? { group: 'inc' } : { group: 'inc', fom: true });
+        } else {
+            // A group: click again to clear the filter
+            const same = current.group === a.dataset.group && !current.fom && !current.unit;
+            go(same ? {} : { group: a.dataset.group });
+        }
+    });
+
+    select.addEventListener('change', function () {
+        const query = new URLSearchParams({ religion_group: 'inc', fom: '1' });
+        if (select.value) query.set('pabahay_unit', select.value);
+        go({ group: 'inc', fom: true, unit: select.value }, tree.dataset.url + '?' + query);
+    });
+})();
+</script>
+@endcan

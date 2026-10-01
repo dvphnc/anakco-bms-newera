@@ -110,6 +110,27 @@
         .nav-item.active { color:var(--gold-light); background:rgba(200,134,26,0.1); border-left-color:var(--gold-light); font-weight:600; }
         .nav-item i { width:16px; text-align:center; font-size:12px; flex-shrink:0; opacity:0.75; }
         .nav-item.active i { opacity:1; }
+
+        /* Part 2: nested religion filter under Residents (Admin only) */
+        .nav-tree-toggle { width:100%; display:flex; align-items:center; gap:10px; padding:6px 18px 6px 31px; background:none; border:0; border-left:3px solid transparent; cursor:pointer; font:inherit; font-size:12px; text-align:left; color:rgba(255,255,255,0.45); transition:all 0.15s ease; }
+        .nav-tree-toggle:hover { color:rgba(255,255,255,0.88); background:rgba(255,255,255,0.04); }
+        .nav-tree-toggle > i:first-child { width:16px; text-align:center; font-size:11px; opacity:0.7; }
+        .nav-tree-toggle .caret { margin-left:auto; font-size:9px; transition:transform 0.2s ease; }
+        .nav-tree-toggle[aria-expanded="true"] .caret { transform:rotate(180deg); }
+        .nav-tree-body { padding:2px 0 8px; }
+        .nav-tree-body[hidden] { display:none; }
+        .nav-sub { display:flex; align-items:center; gap:8px; padding:6px 18px 6px 44px; color:rgba(255,255,255,0.5); font-size:12px; border-left:3px solid transparent; transition:all 0.15s ease; }
+        .nav-sub:hover { color:rgba(255,255,255,0.9); background:rgba(255,255,255,0.04); }
+        .nav-sub i { width:14px; text-align:center; font-size:11px; opacity:0.7; }
+        .nav-sub.on-path { color:rgba(255,255,255,0.85); }
+        .nav-sub.active { color:var(--gold-light); font-weight:600; background:rgba(200,134,26,0.1); border-left-color:var(--gold-light); }
+        .nav-sub.active i { opacity:1; }
+        .nav-sub.lvl2 { padding-left:62px; }
+        .nav-children { display:none; }
+        .nav-children.open { display:block; }
+        .nav-unit-wrap { padding:3px 18px 6px 80px; }
+        .nav-select { width:100%; background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:5px 6px; font:inherit; font-size:12px; }
+        .nav-select option, .nav-select optgroup { color:#1F2937; background:#fff; }
         .sidebar-footer {
             padding:0; border-top:1px solid rgba(255,255,255,0.07);
             flex-shrink:0; background:rgba(0,0,0,0.18); position:relative; z-index:1;
