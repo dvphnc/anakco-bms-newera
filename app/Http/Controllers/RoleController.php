@@ -81,15 +81,20 @@ class RoleController extends Controller
     /** Saves the whole matrix: perms[role id][] = permission key */
     public function permissions(Request $request)
     {
-        $request->validate(['perms' => ['nullable', 'array'], 'perms.*' => ['array'], 'perms.*.*' => ['string']]);
+        $request->validate([
+            'roles' => ['required', 'array'], 'roles.*' => ['integer'],
+            'perms' => ['nullable', 'array'], 'perms.*' => ['array'], 'perms.*.*' => ['string'],
+        ]);
 
         $posted = $request->input('perms', []);
+        $onPage = $request->input('roles');
         $ids    = Permission::pluck('id', 'key');
         $saved  = [];
 
-        DB::transaction(function () use ($posted, $ids, &$saved) {
-            // Every editable role is on the page, so a role with nothing ticked means "no permissions"
-            foreach (Role::where('is_system', false)->with('permissions')->get() as $role) {
+        DB::transaction(function () use ($posted, $onPage, $ids, &$saved) {
+            // Only roles that were on the page (a role added meanwhile is left alone).
+            // A listed role with nothing ticked means "no permissions".
+            foreach (Role::where('is_system', false)->whereIn('id', $onPage)->with('permissions')->get() as $role) {
                 if ($role->id === auth()->user()->role_id && ! auth()->user()->isAdmin()) {
                     continue;   // nobody changes their own access
                 }
