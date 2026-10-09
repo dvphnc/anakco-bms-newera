@@ -115,7 +115,7 @@
                 </a>
                 @php
                     // Reversing a death record is a correction — Admins only (enforced server-side too)
-                    $canChangeStatus = $resident->residency_status !== 'Deceased' || auth()->user()->isAdmin();
+                    $canChangeStatus = $resident->residency_status !== 'Deceased' || auth()->user()->hasPermission('residents.revive');
                 @endphp
                 @if($canChangeStatus)
                     <button type="button" class="btn btn-secondary" style="justify-content:flex-start" onclick="openStatusModal()">
@@ -123,7 +123,7 @@
                         Update Status
                     </button>
                 @else
-                    <span title="Only an Administrator can change the status of a resident recorded as deceased.">
+                    <span title="You do not have permission to change the status of a resident recorded as deceased.">
                         <button type="button" class="btn btn-secondary" style="justify-content:flex-start;width:100%" disabled>
                             <i class="fas fa-lock" style="color:var(--text-subtle)"></i>
                             Update Status

@@ -22,9 +22,9 @@ class ResidentStatusController extends Controller
 
     public function update(Request $request, Resident $resident)
     {
-        // Reversing a death record is a correction — Admins only.
-        if ($resident->residency_status === ResidencyStatus::Deceased->value && ! $request->user()->isAdmin()) {
-            abort(403, 'Only an Administrator can change the status of a resident recorded as deceased.');
+        // Reversing a death record is a correction, so it has its own permission (Admin by default)
+        if ($resident->residency_status === ResidencyStatus::Deceased->value && ! $request->user()->hasPermission('residents.revive')) {
+            abort(403, 'You do not have permission to change the status of a resident recorded as deceased.');
         }
 
         $data = $request->validate([
