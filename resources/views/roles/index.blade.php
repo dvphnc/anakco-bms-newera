@@ -54,7 +54,7 @@
             </form>
         </div>
         @else
-        <div class="rp-role-locked">Always has every permission. It cannot be changed, so the system can never be locked out.</div>
+        <div class="rp-role-locked"><i class="fas fa-shield-halved"></i> Locked, so the system can never be locked out.</div>
         @endunless
     </div>
     @endforeach
