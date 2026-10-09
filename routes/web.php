@@ -121,7 +121,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Religion list and Pabahay (ministers' housing) — Admin only (Part 2).
     // The gate is defined in AppServiceProvider; Part 3 will make it editable.
-    Route::middleware('permission:religion.manage')->group(function () {
+    Route::middleware('can:manage-religion-data')->group(function () {
         Route::resource('religions', ReligionController::class)->only(['index', 'store', 'update']);
         Route::resource('pabahays', PabahayController::class)->except('destroy');
         Route::post('pabahays/{pabahay}/units', [PabahayUnitController::class, 'store'])->name('pabahays.units.store');
