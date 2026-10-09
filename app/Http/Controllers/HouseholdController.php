@@ -44,12 +44,14 @@ class HouseholdController extends Controller
                     return '
                         <div style="display:flex;justify-content:flex-end;gap:6px">
                             <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View"><i class="fas fa-eye"></i></a>
-                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
-                            <form method="POST" action="'.$delete.'">
+                            '.(auth()->user()->can('households.edit') ? '<a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>' : '').'
+                            '.(auth()->user()->can('households.archive') ? '<form method="POST" action="'.$delete.'"
+                                  data-confirm="Archive household '.e($h->household_number).'? You can restore it from the Recycle Bin."
+                                  data-confirm-title="Archive Household" data-confirm-ok="Archive">
                                 <input type="hidden" name="_token" value="'.csrf_token().'">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
-                            </form>
+                            </form>' : '').'
                         </div>';
                 })
                 ->filter(function ($query) use ($request) {

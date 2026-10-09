@@ -119,8 +119,9 @@
                     File Blotter Case
                 </a>
                 @endcan
+                @can('residents.status')
                 @php
-                    // Reversing a death record is a correction — Admins only (enforced server-side too)
+                    // Reversing a death record is a correction with its own permission (enforced server-side too)
                     $canChangeStatus = $resident->residency_status !== 'Deceased' || auth()->user()->hasPermission('residents.revive');
                 @endphp
                 @if($canChangeStatus)
@@ -136,6 +137,7 @@
                         </button>
                     </span>
                 @endif
+                @endcan
                 @can('residents.edit')
                 <a href="{{ route('residents.edit', $resident) }}"
                    class="btn btn-secondary" style="justify-content:flex-start">
