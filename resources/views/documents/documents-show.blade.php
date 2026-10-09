@@ -13,9 +13,11 @@
         <button onclick="window.print()" class="btn btn-primary">
             <i class="fas fa-print"></i> Print Certificate
         </button>
+        @can('documents.edit')
         <a href="{{ route('documents.edit', $document) }}" class="btn btn-secondary">
             <i class="fas fa-pen"></i> Edit
         </a>
+        @endcan
         <a href="{{ route('documents.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
@@ -108,6 +110,7 @@
                     </button>
                 </form>
                 @endif
+                @can('documents.archive')
                 <form method="POST" action="{{ route('documents.destroy', $document) }}"
                       data-confirm="Archive document {{ $document->doc_number }}? You can restore it from the Recycle Bin."
                       data-confirm-title="Archive Document"
@@ -117,6 +120,7 @@
                         <i class="fas fa-box-archive"></i> Archive
                     </button>
                 </form>
+                @endcan
             </div>
         </div>
     </div>

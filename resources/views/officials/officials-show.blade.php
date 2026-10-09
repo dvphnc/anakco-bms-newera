@@ -13,9 +13,11 @@
         <button onclick="window.print()" class="btn btn-primary">
             <i class="fas fa-id-card"></i> Print ID Card
         </button>
+        @can('officials.edit')
         <a href="{{ route('officials.edit', $official) }}" class="btn btn-secondary">
             <i class="fas fa-pen"></i> Edit
         </a>
+        @endcan
         <a href="{{ route('officials.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
@@ -61,9 +63,12 @@
                 <button onclick="window.print()" class="btn btn-gold" style="justify-content:flex-start">
                     <i class="fas fa-id-card"></i> Print ID Card
                 </button>
+                @can('officials.edit')
                 <a href="{{ route('officials.edit', $official) }}" class="btn btn-secondary" style="justify-content:flex-start">
                     <i class="fas fa-pen" style="color:var(--navy)"></i> Edit Profile
                 </a>
+                @endcan
+                @can('officials.archive')
                 <form method="POST" action="{{ route('officials.destroy', $official) }}"
                       data-confirm="Archive {{ $official->full_name }}? You can restore it from the Recycle Bin."
                       data-confirm-title="Archive Official"
@@ -71,6 +76,7 @@
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start"><i class="fas fa-box-archive"></i> Archive</button>
                 </form>
+                @endcan
             </div>
         </div>
     </div>

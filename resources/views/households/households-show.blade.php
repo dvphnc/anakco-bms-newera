@@ -10,9 +10,11 @@
         <p class="page-subtitle">{{ $household->household_number }} — {{ $household->household_head ?? "—" }}</p>
     </div>
     <div class="page-actions">
+        @can('households.edit')
         <a href="{{ route('households.edit', $household) }}" class="btn btn-primary">
             <i class="fas fa-pen"></i> Edit
         </a>
+        @endcan
         <a href="{{ route('households.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
@@ -62,9 +64,12 @@
                 <span class="card-title"><i class="fas fa-bolt"></i> Actions</span>
             </div>
             <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+                @can('households.edit')
                 <a href="{{ route('households.edit', $household) }}" class="btn btn-secondary" style="justify-content:flex-start">
                     <i class="fas fa-pen" style="color:var(--navy)"></i> Edit Household
                 </a>
+                @endcan
+                @can('households.archive')
                 <form method="POST" action="{{ route('households.destroy', $household) }}"
                       data-confirm="Archive household {{ $household->household_number }}? You can restore it from the Recycle Bin."
                       data-confirm-title="Archive Household"
@@ -74,6 +79,7 @@
                         <i class="fas fa-box-archive"></i> Archive
                     </button>
                 </form>
+                @endcan
             </div>
         </div>
     </div>

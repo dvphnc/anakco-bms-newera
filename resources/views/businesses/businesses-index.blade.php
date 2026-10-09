@@ -26,9 +26,11 @@
         <a id="btnExportExcel" href="{{ route('export.excel', 'businesses') }}" class="btn btn-secondary" title="Export Excel">
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
+        @can('businesses.create')
         <a href="{{ route('businesses.create') }}" class="btn btn-primary">
             <i class="fas fa-stamp"></i> Issue Permit
         </a>
+        @endcan
     </div>
 </div>
 
