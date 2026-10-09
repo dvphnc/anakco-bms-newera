@@ -64,11 +64,12 @@
     width:3px; border-radius:4px 0 0 4px;
     background:var(--gold); opacity:.55;
 }
-.dash-stat-card:hover {
+.dash-stat-card:not([href]), .feed-row:not([href]) { cursor:default; }
+.dash-stat-card[href]:hover {
     box-shadow:0 8px 28px rgba(13,33,68,0.13), 0 2px 8px rgba(0,0,0,0.06);
     transform:translateY(-3px);
 }
-.dash-stat-card:hover .dash-stat-icon {
+.dash-stat-card[href]:hover .dash-stat-icon {
     background:var(--navy) !important; color:#fff !important;
 }
 .dash-stat-icon {
@@ -145,7 +146,7 @@
     text-decoration:none; transition:background .1s;
 }
 .feed-row:last-child { border-bottom:none; }
-.feed-row:hover { background:var(--navy-pale); }
+.feed-row[href]:hover { background:var(--navy-pale); }
 .feed-icon { width:30px; height:30px; border-radius:50%; background:#F1F5F9; color:var(--navy); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; }
 .feed-body { flex:1; min-width:0; }
 .feed-title { font-size:13px; font-weight:600; color:var(--text); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
