@@ -24,6 +24,7 @@ class RecycleBin
         'official'     => ['Official', Models\Official::class, 'fa-user-tie'],
         'program'      => ['Assistance program', Models\AssistanceProgram::class, 'fa-hand-holding-heart'],
         'user'         => ['User account', Models\User::class, 'fa-user-shield'],
+        'role'         => ['Role', Models\Role::class, 'fa-key'],
         // Committees
         'committee-record'     => ['Committee record', Models\CommitteeRecord::class, 'fa-folder'],
         'committee-activity'   => ['Committee activity', Models\CommitteeActivity::class, 'fa-calendar-day'],

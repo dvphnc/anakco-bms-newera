@@ -29,6 +29,7 @@ class ActivityLogController extends Controller
                     'officials' => 'App\Models\Official',
                     'users' => 'App\Models\User',
                     'puroks' => 'App\Models\Purok',
+                    'roles' => 'App\Models\Role',
                 ];
                 if (isset($modelMap[$request->module])) {
                     $q->where('loggable_type', $modelMap[$request->module]);
