@@ -13,9 +13,11 @@
         <button onclick="window.print()" class="btn btn-primary">
             <i class="fas fa-print"></i> Print Report
         </button>
+        @can('blotter.edit')
         <a href="{{ route('blotter.edit', $blotter) }}" class="btn btn-secondary">
             <i class="fas fa-pen"></i> Edit
         </a>
+        @endcan
         <a href="{{ route('blotter.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
@@ -123,9 +125,11 @@
                 <span class="card-title"><i class="fas fa-bolt"></i> Actions</span>
             </div>
             <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+                @can('blotter.edit')
                 <a href="{{ route('blotter.edit', $blotter) }}" class="btn btn-secondary" style="justify-content:flex-start">
                     <i class="fas fa-pen" style="color:var(--navy)"></i> Edit Case
                 </a>
+                @endcan
                 @if(in_array($blotter->status, ['Active','Under Investigation']))
                 <form method="POST" action="{{ route('blotter.update', $blotter) }}">
                     @csrf @method('PUT')
@@ -141,6 +145,7 @@
                     </button>
                 </form>
                 @endif
+                @can('blotter.archive')
                 <form method="POST" action="{{ route('blotter.destroy', $blotter) }}"
                       data-confirm="Archive case {{ $blotter->case_number }}? You can restore it from the Recycle Bin."
                       data-confirm-title="Archive Blotter Case"
@@ -150,6 +155,7 @@
                         <i class="fas fa-box-archive"></i> Archive Case
                     </button>
                 </form>
+                @endcan
             </div>
         </div>
     </div>

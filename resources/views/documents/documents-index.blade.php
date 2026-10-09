@@ -26,9 +26,11 @@
         <a id="btnExportExcel" href="{{ route('export.excel', 'documents') }}" class="btn btn-secondary" title="Export Excel">
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
+        @can('documents.create')
         <a href="{{ route('documents.create') }}" class="btn btn-primary">
             <i class="fas fa-file-circle-plus"></i> Issue Document
         </a>
+        @endcan
     </div>
 </div>
 

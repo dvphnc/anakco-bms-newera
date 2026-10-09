@@ -12,9 +12,11 @@
         <p class="page-subtitle">Viewing record of {{ $resident->full_name }}</p>
     </div>
     <div class="page-actions">
+        @can('residents.edit')
         <a href="{{ route('residents.edit', $resident) }}" class="btn btn-primary">
             <i class="fas fa-pen"></i> Edit
         </a>
+        @endcan
         <a href="{{ route('residents.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
@@ -103,16 +105,20 @@
                 <span class="card-title"><i class="fas fa-bolt"></i> Quick Actions</span>
             </div>
             <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+                @can('documents.create')
                 <a href="{{ route('documents.create', ['resident_id' => $resident->id]) }}"
                    class="btn btn-secondary" style="justify-content:flex-start">
                     <i class="fas fa-file-circle-plus" style="color:var(--gold)"></i>
                     Issue Document
                 </a>
+                @endcan
+                @can('blotter.create')
                 <a href="{{ route('blotter.create', ['complainant_resident_id' => $resident->id]) }}"
                    class="btn btn-secondary" style="justify-content:flex-start">
                     <i class="fas fa-gavel" style="color:var(--crimson-mid)"></i>
                     File Blotter Case
                 </a>
+                @endcan
                 @php
                     // Reversing a death record is a correction — Admins only (enforced server-side too)
                     $canChangeStatus = $resident->residency_status !== 'Deceased' || auth()->user()->hasPermission('residents.revive');
@@ -130,11 +136,14 @@
                         </button>
                     </span>
                 @endif
+                @can('residents.edit')
                 <a href="{{ route('residents.edit', $resident) }}"
                    class="btn btn-secondary" style="justify-content:flex-start">
                     <i class="fas fa-pen" style="color:var(--navy)"></i>
                     Edit Profile
                 </a>
+                @endcan
+                @can('residents.archive')
                 <form method="POST" action="{{ route('residents.destroy', $resident) }}"
                       data-confirm="Archive {{ $resident->full_name }}? You can restore it from the Recycle Bin."
                       data-confirm-title="Archive Resident"
@@ -144,6 +153,7 @@
                         <i class="fas fa-box-archive"></i> Archive Record
                     </button>
                 </form>
+                @endcan
             </div>
         </div>
 
@@ -546,7 +556,7 @@
             </select>
             @if($openPrograms->isEmpty())
                 <span style="font-size:12px;color:var(--text-subtle);margin-top:4px">
-                    No programs are open right now. <a href="{{ route('programs.create') }}" style="color:var(--navy);font-weight:600">Create one</a>
+                    No programs are open right now. @can('programs.manage')<a href="{{ route('programs.create') }}" style="color:var(--navy);font-weight:600">Create one</a>@endcan
                 </span>
             @endif
         </div>

@@ -8,7 +8,9 @@
         <p class="page-subtitle">Relief, medicine and aid distributions — and how often each household or resident may claim</p>
     </div>
     <div class="page-actions">
+        @can('programs.manage')
         <a href="{{ route('programs.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> New Program</a>
+        @endcan
     </div>
 </div>
 
@@ -63,7 +65,10 @@
                     <td style="text-align:right;font-weight:600">{{ number_format($program->claims_count) }}</td>
                     <td>
                         <div style="display:flex;gap:6px;justify-content:flex-end">
+                            @can('programs.manage')
                             <a href="{{ route('programs.edit', $program) }}" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
+                            @endcan
+                            @can('programs.archive')
                             <form method="POST" action="{{ route('programs.destroy', $program) }}"
                                   data-confirm="Archive “{{ $program->name }}”? It will no longer accept claims. Claims already made stay in residents' histories."
                                   data-confirm-title="Archive Program"
@@ -71,6 +76,7 @@
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-secondary btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                             </form>
+                            @endcan
                         </div>
                     </td>
                 </tr>

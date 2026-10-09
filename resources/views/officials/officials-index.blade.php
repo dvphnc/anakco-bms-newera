@@ -10,9 +10,11 @@
         <p class="page-subtitle">Barangay New Era elected officials and personnel</p>
     </div>
     <div class="page-actions">
+        @can('officials.create')
         <a href="{{ route('officials.create') }}" class="btn btn-primary">
             <i class="fas fa-user-plus"></i> Add Official
         </a>
+        @endcan
     </div>
 </div>
 
@@ -223,9 +225,12 @@
                             <a href="{{ route('officials.show', $official) }}" class="btn btn-secondary btn-sm btn-icon" title="View">
                                 <i class="fas fa-eye"></i>
                             </a>
+                            @can('officials.edit')
                             <a href="{{ route('officials.edit', $official) }}" class="btn btn-secondary btn-sm btn-icon" title="Edit">
                                 <i class="fas fa-pen"></i>
                             </a>
+                            @endcan
+                            @can('officials.archive')
                             <form method="POST" action="{{ route('officials.destroy', $official) }}"
                                   data-confirm="Archive {{ $official->full_name }}? You can restore it from the Recycle Bin."
                                   data-confirm-title="Archive Official"
@@ -235,6 +240,7 @@
                                     <i class="fas fa-box-archive"></i>
                                 </button>
                             </form>
+                            @endcan
                         </div>
                     </td>
                 </tr>

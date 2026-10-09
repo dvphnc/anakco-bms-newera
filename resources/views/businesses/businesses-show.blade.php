@@ -13,9 +13,11 @@
         <button onclick="window.print()" class="btn btn-primary">
             <i class="fas fa-print"></i> Print Permit
         </button>
+        @can('businesses.edit')
         <a href="{{ route('businesses.edit', $business) }}" class="btn btn-secondary">
             <i class="fas fa-pen"></i> Edit
         </a>
+        @endcan
         <a href="{{ route('businesses.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
@@ -113,9 +115,11 @@
                 <span class="card-title"><i class="fas fa-bolt"></i> Actions</span>
             </div>
             <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+                @can('businesses.edit')
                 <a href="{{ route('businesses.edit', $business) }}" class="btn btn-secondary" style="justify-content:flex-start">
                     <i class="fas fa-pen" style="color:var(--navy)"></i> Edit Permit
                 </a>
+                @endcan
                 @if($business->status !== 'Active')
                 <form method="POST" action="{{ route('businesses.update', $business) }}">
                     @csrf @method('PUT')
@@ -131,6 +135,7 @@
                     </button>
                 </form>
                 @endif
+                @can('businesses.archive')
                 <form method="POST" action="{{ route('businesses.destroy', $business) }}"
                       data-confirm="Archive permit for {{ $business->business_name }}? You can restore it from the Recycle Bin."
                       data-confirm-title="Archive Business Permit"
@@ -140,6 +145,7 @@
                         <i class="fas fa-box-archive"></i> Archive
                     </button>
                 </form>
+                @endcan
             </div>
         </div>
     </div>
