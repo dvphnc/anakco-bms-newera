@@ -256,18 +256,22 @@
                                min-height:34px;font-size:12px;padding:6px 14px">
                     <i class="fas fa-map" style="color:var(--gold-light)"></i> Take Tour
                 </button>
+                @can('residents.create')
                 <a href="{{ route('residents.create') }}"
                    style="background:rgba(255,255,255,0.10);color:#fff;border:1px solid rgba(255,255,255,0.20);
                           min-height:34px;font-size:12px;padding:6px 14px"
                    class="btn btn-sm">
                     <i class="fas fa-user-plus"></i> New Resident
                 </a>
+                @endcan
+                @can('documents.create')
                 <a href="{{ route('documents.create') }}"
                    style="background:var(--gold);color:#fff;border:none;
                           min-height:34px;font-size:12px;padding:6px 14px"
                    class="btn btn-sm">
                     <i class="fas fa-file-circle-plus"></i> New Document
                 </a>
+                @endcan
             </div>
         </div>
     </div>
@@ -298,7 +302,7 @@
                 <strong>Senior Citizen {{ $seniorBdays->count() === 1 ? 'Birthday' : 'Birthdays' }} Today ({{ $seniorBdays->count() }}) —</strong>
                 {{ $seniorBdays->map(fn($r) => $r->first_name . ' ' . $r->last_name . ', ' . $r->age . ' yrs')->take(4)->implode(' · ') }}{{ $seniorBdays->count() > 4 ? ' +' . ($seniorBdays->count() - 4) . ' more' : '' }}
             </span>
-            <a href="{{ route('residents.index') }}" class="alert-link">View All</a>
+            @can('residents.view')<a href="{{ route('residents.index') }}" class="alert-link">View All</a>@endcan
         </div>
         @endif
 
@@ -319,7 +323,7 @@
                 <strong>{{ $expiringPermits->count() }} Business Permit{{ $expiringPermits->count() > 1 ? 's' : '' }} Expiring Within 30 Days —</strong>
                 {{ $expiringPermits->map(fn($b) => $b->business_name . ' (exp. ' . \Carbon\Carbon::parse($b->expiry_date)->format('M d') . ')')->take(3)->implode(' · ') }}{{ $expiringPermits->count() > 3 ? ' +' . ($expiringPermits->count() - 3) . ' more' : '' }}
             </span>
-            <a href="{{ route('businesses.index') }}" class="alert-link">View All</a>
+            @can('businesses.view')<a href="{{ route('businesses.index') }}" class="alert-link">View All</a>@endcan
         </div>
         @endif
 
@@ -408,21 +412,21 @@
 
     {{-- STAT CARDS --}}
     <div class="dash-stats" id="tour-statcards">
-        <a href="{{ route('residents.index') }}" class="dash-stat-card">
+        <a @can('residents.view') href="{{ route('residents.index') }}" @endcan class="dash-stat-card">
             <div class="dash-stat-icon"><i class="fas fa-users"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($totalResidents) }}</div>
                 <div class="dash-stat-label">Total Residents</div>
             </div>
         </a>
-        <a href="{{ route('documents.index') }}" class="dash-stat-card">
+        <a @can('documents.view') href="{{ route('documents.index') }}" @endcan class="dash-stat-card">
             <div class="dash-stat-icon"><i class="fas fa-file-alt"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($pendingDocuments) }}</div>
                 <div class="dash-stat-label">Pending Documents</div>
             </div>
         </a>
-        <a href="{{ route('blotter.index') }}" class="dash-stat-card" style="position:relative">
+        <a @can('blotter.view') href="{{ route('blotter.index') }}" @endcan class="dash-stat-card" style="position:relative">
             @if($overdueBlotter > 0)
             <span style="position:absolute;top:10px;right:12px;
                          background:var(--crimson);color:#fff;
@@ -439,7 +443,7 @@
                 <div class="dash-stat-label">Active Blotter Cases</div>
             </div>
         </a>
-        <a href="{{ route('businesses.index') }}" class="dash-stat-card">
+        <a @can('businesses.view') href="{{ route('businesses.index') }}" @endcan class="dash-stat-card">
             <div class="dash-stat-icon"><i class="fas fa-store"></i></div>
             <div>
                 <div class="dash-stat-number">{{ number_format($activeBusinesses) }}</div>
@@ -500,17 +504,17 @@
             <div class="card-body">
                 <div class="quick-grid">
                     @php $links = [
-                        ['href' => route('residents.index'),    'icon' => 'fa-users',          'label' => 'Residents'   ],
-                        ['href' => route('households.index'),   'icon' => 'fa-house',          'label' => 'Households'  ],
-                        ['href' => route('documents.index'),    'icon' => 'fa-file-alt',       'label' => 'Documents'   ],
-                        ['href' => route('blotter.index'),      'icon' => 'fa-gavel',          'label' => 'Blotter'     ],
-                        ['href' => route('businesses.index'),   'icon' => 'fa-store',          'label' => 'Businesses'  ],
-                        ['href' => route('appointments.index'), 'icon' => 'fa-calendar-check', 'label' => 'Appointments'],
-                        ['href' => route('officials.index'),    'icon' => 'fa-user-tie',       'label' => 'Officials'   ],
-                        ['href' => route('reports.index'),      'icon' => 'fa-chart-bar',      'label' => 'Analytics'   ],
-                        ['href' => route('backup.index'),       'icon' => 'fa-database',       'label' => 'Backup'      ],
+                        ['can' => 'residents.view', 'href' => route('residents.index'),    'icon' => 'fa-users',          'label' => 'Residents'   ],
+                        ['can' => 'households.view', 'href' => route('households.index'),   'icon' => 'fa-house',          'label' => 'Households'  ],
+                        ['can' => 'documents.view', 'href' => route('documents.index'),    'icon' => 'fa-file-alt',       'label' => 'Documents'   ],
+                        ['can' => 'blotter.view', 'href' => route('blotter.index'),      'icon' => 'fa-gavel',          'label' => 'Blotter'     ],
+                        ['can' => 'businesses.view', 'href' => route('businesses.index'),   'icon' => 'fa-store',          'label' => 'Businesses'  ],
+                        ['can' => 'appointments.view', 'href' => route('appointments.index'), 'icon' => 'fa-calendar-check', 'label' => 'Appointments'],
+                        ['can' => 'officials.view', 'href' => route('officials.index'),    'icon' => 'fa-user-tie',       'label' => 'Officials'   ],
+                        ['can' => 'reports.view', 'href' => route('reports.index'),      'icon' => 'fa-chart-bar',      'label' => 'Analytics'   ],
+                        ['can' => 'backup.manage', 'href' => route('backup.index'),       'icon' => 'fa-database',       'label' => 'Backup'      ],
                     ]; @endphp
-                    @foreach($links as $l)
+                    @foreach(array_filter($links, fn ($l) => auth()->user()->can($l['can'])) as $l)
                     <a href="{{ $l['href'] }}" class="quick-item">
                         <div class="quick-icon">
                             <i class="fas {{ $l['icon'] }}"></i>
@@ -528,11 +532,11 @@
         <div class="card">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-file-alt"></i> Recent Documents</span>
-                <a href="{{ route('documents.index') }}" class="btn btn-secondary btn-sm">View All</a>
+                @can('documents.view')<a href="{{ route('documents.index') }}" class="btn btn-secondary btn-sm">View All</a>@endcan
             </div>
             <div class="card-body" style="padding:0">
                 @forelse($recentDocuments as $d)
-                <a href="{{ route('documents.show', $d->id) }}" class="feed-row">
+                <a @can('documents.view') href="{{ route('documents.show', $d->id) }}" @endcan class="feed-row">
                     <div class="feed-icon"><i class="fas fa-file-alt"></i></div>
                     <div class="feed-body">
                         <div class="feed-title">{{ $d->doc_number }}</div>
@@ -543,7 +547,7 @@
                 @empty
                 <div class="empty-state" style="padding:32px">
                     <i class="fas fa-file-alt"></i>
-                    <p>No documents yet. <a href="{{ route('documents.create') }}" style="color:var(--navy);font-weight:600">Issue one now</a></p>
+                    <p>No documents yet. @can('documents.create')<a href="{{ route('documents.create') }}" style="color:var(--navy);font-weight:600">Issue one now</a>@endcan</p>
                 </div>
                 @endforelse
             </div>
@@ -552,7 +556,7 @@
         <div class="card">
             <div class="card-header">
                 <span class="card-title"><i class="fas fa-gavel"></i> Recent Blotter</span>
-                <a href="{{ route('blotter.index') }}" class="btn btn-secondary btn-sm">View All</a>
+                @can('blotter.view')<a href="{{ route('blotter.index') }}" class="btn btn-secondary btn-sm">View All</a>@endcan
             </div>
             <div class="card-body" style="padding:0">
                 @forelse($recentBlotter as $b)
@@ -561,7 +565,7 @@
                     $bDaysOpen = $bIsOpen && $b->incident_date
                         ? (int)\Carbon\Carbon::parse($b->incident_date)->diffInDays(now()) : 0;
                 @endphp
-                <a href="{{ route('blotter.show', $b->id) }}" class="feed-row">
+                <a @can('blotter.view') href="{{ route('blotter.show', $b->id) }}" @endcan class="feed-row">
                     <div class="feed-icon"
                          style="{{ $bIsOpen && $bDaysOpen >= 30 ? 'outline:2px solid var(--crimson);outline-offset:-2px;' : '' }}">
                         <i class="fas fa-gavel"></i>
@@ -582,7 +586,7 @@
                 @empty
                 <div class="empty-state" style="padding:32px">
                     <i class="fas fa-gavel"></i>
-                    <p>No blotter cases yet. <a href="{{ route('blotter.create') }}" style="color:var(--navy);font-weight:600">File a case</a></p>
+                    <p>No blotter cases yet. @can('blotter.create')<a href="{{ route('blotter.create') }}" style="color:var(--navy);font-weight:600">File a case</a>@endcan</p>
                 </div>
                 @endforelse
             </div>
@@ -598,7 +602,7 @@
     <div class="card" style="margin-bottom:16px">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-users"></i> Resident Demographics</span>
-            <a href="{{ route('residents.index') }}" class="btn btn-secondary btn-sm">View Residents</a>
+            @can('residents.view')<a href="{{ route('residents.index') }}" class="btn btn-secondary btn-sm">View Residents</a>@endcan
         </div>
         <div class="card-body">
             <div class="demog-grid">
@@ -722,7 +726,7 @@
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-gavel"></i> Blotter by Incident Type</span>
-            <a href="{{ route('blotter.index') }}" class="btn btn-secondary btn-sm">View All</a>
+            @can('blotter.view')<a href="{{ route('blotter.index') }}" class="btn btn-secondary btn-sm">View All</a>@endcan
         </div>
         <div class="card-body">
             @php $maxBlotter = $blotterByType->max() ?: 1; @endphp
