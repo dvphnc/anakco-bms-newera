@@ -142,12 +142,12 @@
                 </form>
                 @endif
                 <form method="POST" action="{{ route('blotter.destroy', $blotter) }}"
-                      data-confirm="Delete case {{ $blotter->case_number }}? This cannot be recovered."
-                      data-confirm-title="Delete Blotter Case"
-                      data-confirm-ok="Delete Case">
+                      data-confirm="Archive case {{ $blotter->case_number }}? You can restore it from the Recycle Bin."
+                      data-confirm-title="Archive Blotter Case"
+                      data-confirm-ok="Archive Case">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start">
-                        <i class="fas fa-trash"></i> Delete Case
+                        <i class="fas fa-box-archive"></i> Archive Case
                     </button>
                 </form>
             </div>

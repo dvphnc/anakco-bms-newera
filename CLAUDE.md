@@ -109,6 +109,7 @@ routes/
 - ✅ Global UX polish — font smoothing, focus-visible rings, CSS tooltip labels, custom validation messages, overdue blotter badges
 - ✅ Sprint 2 Part 1 — resident life statuses (Alive/Deceased/Moved Out + history), voters residing, automatic household grouping by address, transaction history with double-claim prevention, relief programs linked to BDRRM stock, duplicate resident warning
 - ✅ Sprint 2 Part 2 — religion list (INC flagged), Family of Ministers, Pabahay blocks/units, nested sidebar filter (INC / Non-INC → Family of Ministers → Pabahay unit). **Admin only.**
+- ✅ Sprint 2 Part 3.1 — archive instead of delete on every table (soft deletes + `deleted_by`), Admin-only Recycle Bin with Restore, "Archive" wording everywhere
 
 ## Key Conventions
 - All controllers use `LogsActivity` trait
@@ -119,6 +120,7 @@ routes/
 - PDF certificates use `->stream()` to open in browser tab
 - All dates formatted with Carbon
 - **Religion and minister data is Admin-only.** Always check the Gates `view-religion-data` / `manage-religion-data` (defined in `AppServiceProvider`, never test the role directly). `Resident::getHidden()` removes `religion_id`, `is_minister_family`, `pabahay_unit_id` from JSON/arrays for non-Admins, and `LogsActivity` never logs them (the activity log is readable by Secretaries). `tests/Feature/ReligionAccessTest.php` covers every leak path; keep it passing.
+- **Nothing is hard deleted.** Every model uses `App\Models\Concerns\Archivable` (SoftDeletes + who archived it). `forceDelete()` throws unless wrapped in `PermanentDelete::allow(fn () => ...)` (maintenance scripts only). New models must use `Archivable`, new tables need `softDeletes()` + `deleted_by`, `belongsTo` relations end with `->withTrashed()`, and number generators must count `withTrashed()` rows. New archivable types go in `App\Support\RecycleBin::TYPES`. `tests/Feature/ArchiveTest.php` checks every model.
 - Tests run on MySQL `anakco_bms_testing` and refuse any other database (see `tests/TestCase.php`). Run `php artisan test`.
 
 ## Current Task

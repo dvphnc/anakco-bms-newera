@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Model;
 
 class MedicineStockLog extends Model
 {
+    use Archivable;
+
     protected static function booted(): void
     {
         // Task 1.1 — medicine handed out to a registered resident goes into their
@@ -52,11 +55,11 @@ class MedicineStockLog extends Model
 
     public function medicine()
     {
-        return $this->belongsTo(MedicineInventory::class, 'medicine_id');
+        return $this->belongsTo(MedicineInventory::class, 'medicine_id')->withTrashed();
     }
 
     public function beneficiaryResident()
     {
-        return $this->belongsTo(\App\Models\Resident::class, 'beneficiary_resident_id');
+        return $this->belongsTo(\App\Models\Resident::class, 'beneficiary_resident_id')->withTrashed();
     }
 }

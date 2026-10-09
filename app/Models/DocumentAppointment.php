@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class DocumentAppointment extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected $table = 'document_appointments';
@@ -68,7 +71,7 @@ class DocumentAppointment extends Model
     {
         do {
             $number = 'APT-' . now()->format('Ymd') . '-' . strtoupper(Str::random(4));
-        } while (self::where('appointment_number', $number)->exists());
+        } while (self::withTrashed()->where('appointment_number', $number)->exists());
 
         return $number;
     }

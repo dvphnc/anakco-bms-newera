@@ -23,8 +23,10 @@ $routeMap = [
 @forelse($query as $log)
 @php
     $module = $moduleMap[$log->loggable_type] ?? ['label' => 'Record', 'icon' => 'fa-circle', 'color' => '#9ca3af', 'slug' => ''];
-    $actionColor = match($log->action) { 'created' => '#2e6b47', 'deleted' => '#8b2e2e', default => '#7a5200' };
-    $actionBg    = match($log->action) { 'created' => '#e6f2ec', 'deleted' => '#f5e8e8', default => '#fdf0d5' };
+    // Records are archived, never erased (Part 3.1): the stored action "deleted" is shown as ARCHIVED
+    $actionColor = match($log->action) { 'created' => '#2e6b47', 'deleted' => '#8b2e2e', 'restored' => '#1e4f8a', default => '#7a5200' };
+    $actionBg    = match($log->action) { 'created' => '#e6f2ec', 'deleted' => '#f5e8e8', 'restored' => '#e3edf8', default => '#fdf0d5' };
+    $actionLabel = $log->action === 'deleted' ? 'archived' : $log->action;
     $dateStr = $log->created_at->isToday() ? 'Today' : ($log->created_at->isYesterday() ? 'Yesterday' : $log->created_at->format('m/d/Y'));
     $changes = collect($log->changes ?? [])->filter(fn($v, $k) => !in_array($k, $skipFields))->take(4);
     $routeName = $routeMap[$log->loggable_type] ?? null;
@@ -38,7 +40,7 @@ $routeMap = [
             <span style="font-size:14px;font-weight:600;color:var(--text)">{{ $log->user->name ?? 'Unknown' }}</span>
             <span class="badge badge-navy">{{ $log->user->role ?? 'Staff' }}</span>
             <span style="display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:13px;font-weight:700;background:{{ $actionBg }};color:{{ $actionColor }}">
-                {{ strtoupper($log->action) }}
+                {{ strtoupper($actionLabel) }}
             </span>
             <span style="font-size:13px;font-weight:600;color:{{ $module['color'] }}">
                 <i class="fas {{ $module['icon'] }}" style="font-size:11px"></i> {{ $module['label'] }}

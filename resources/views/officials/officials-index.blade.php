@@ -227,12 +227,12 @@
                                 <i class="fas fa-pen"></i>
                             </a>
                             <form method="POST" action="{{ route('officials.destroy', $official) }}"
-                                  data-confirm="Delete {{ $official->full_name }}? This cannot be undone."
-                                  data-confirm-title="Delete Official"
-                                  data-confirm-ok="Delete">
+                                  data-confirm="Archive {{ $official->full_name }}? You can restore it from the Recycle Bin."
+                                  data-confirm-title="Archive Official"
+                                  data-confirm-ok="Archive">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete">
-                                    <i class="fas fa-trash"></i>
+                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Archive">
+                                    <i class="fas fa-box-archive"></i>
                                 </button>
                             </form>
                         </div>
@@ -330,9 +330,9 @@ $(document).ready(function () {
         const url  = form.attr('action');
 
         bmsConfirm({
-            title:   form.data('confirm-title') || 'Delete Official',
+            title:   form.data('confirm-title') || 'Archive Official',
             message: form.data('confirm'),
-            ok:      form.data('confirm-ok')    || 'Delete',
+            ok:      form.data('confirm-ok')    || 'Archive',
         }, function () {
             const icon = btn.find('i');
             const orig = icon.attr('class');

@@ -61,9 +61,19 @@ class HouseholdGroupingService
     /** The household at this resident's address — created if there isn't one yet. */
     public function householdFor(Resident $resident): Household
     {
-        $find = fn () => Household::where('purok_id', $resident->purok_id)
-            ->where('address_key', $resident->address_key)
-            ->first();
+        // Archived households still own their address, so look at those too and bring
+        // one back if someone is registered there again (Part 3.1).
+        $find = function () use ($resident) {
+            $household = Household::withTrashed()
+                ->where('purok_id', $resident->purok_id)
+                ->where('address_key', $resident->address_key)
+                ->first();
+            if ($household?->trashed()) {
+                $household->restore();
+            }
+
+            return $household;
+        };
 
         if ($household = $find()) {
             return $household;

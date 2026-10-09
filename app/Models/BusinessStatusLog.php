@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Model;
 
 class BusinessStatusLog extends Model
 {
+    use Archivable;
+
     public $timestamps = false;
 
     protected $table    = 'business_status_logs';

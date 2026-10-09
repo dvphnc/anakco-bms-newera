@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use App\Enums\ResidencyStatus;
 use App\Support\AddressNormalizer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Household extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected $fillable = [
@@ -45,7 +48,7 @@ class Household extends Model
 
     public function purok()
     {
-        return $this->belongsTo(Purok::class);
+        return $this->belongsTo(Purok::class)->withTrashed();
     }
 
     public function residents()
@@ -61,7 +64,7 @@ class Household extends Model
 
     public function head()
     {
-        return $this->belongsTo(Resident::class, 'head_resident_id');
+        return $this->belongsTo(Resident::class, 'head_resident_id')->withTrashed();
     }
 
     // -------------------------------------------------------
@@ -82,7 +85,7 @@ class Household extends Model
     public static function nextNumber(): string
     {
         $prefix = 'HH-'.now()->format('Y').'-';
-        $last   = static::where('household_number', 'like', $prefix.'%')
+        $last   = static::withTrashed()->where('household_number', 'like', $prefix.'%')
             ->orderByRaw('CAST(SUBSTRING(household_number, ?) AS UNSIGNED) DESC', [strlen($prefix) + 1])
             ->value('household_number');
         $next   = $last ? ((int) substr($last, strlen($prefix))) + 1 : 1;

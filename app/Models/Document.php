@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Document extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected static function booted(): void
@@ -82,17 +85,17 @@ class Document extends Model
 
     public function resident()
     {
-        return $this->belongsTo(Resident::class);
+        return $this->belongsTo(Resident::class)->withTrashed();
     }
 
     public function issuedBy()
     {
-        return $this->belongsTo(User::class, 'issued_by');
+        return $this->belongsTo(User::class, 'issued_by')->withTrashed();
     }
 
     public function releasedBy()
     {
-        return $this->belongsTo(User::class, 'released_by_user_id');
+        return $this->belongsTo(User::class, 'released_by_user_id')->withTrashed();
     }
 
     /**
@@ -100,7 +103,7 @@ class Document extends Model
      */
     public function appointment()
     {
-        return $this->belongsTo(DocumentAppointment::class, 'appointment_id');
+        return $this->belongsTo(DocumentAppointment::class, 'appointment_id')->withTrashed();
     }
 
     // -------------------------------------------------------
@@ -116,7 +119,7 @@ class Document extends Model
         $year   = date('Y');
         $prefix = 'OR-'.$year.'-';
 
-        $max = self::where('or_number', 'like', $prefix.'%')
+        $max = self::withTrashed()->where('or_number', 'like', $prefix.'%')
             ->selectRaw('MAX(CAST(SUBSTRING(or_number, ?) AS UNSIGNED)) as max_seq', [strlen($prefix) + 1])
             ->value('max_seq');
 
@@ -131,7 +134,7 @@ class Document extends Model
         $prefix = 'DOC-'.$year.'-';
 
         // Use MAX on the numeric suffix so gaps from deletions never cause collisions
-        $max = self::where('doc_number', 'like', $prefix.'%')
+        $max = self::withTrashed()->where('doc_number', 'like', $prefix.'%')
             ->selectRaw('MAX(CAST(SUBSTRING(doc_number, ?) AS UNSIGNED)) as max_seq', [strlen($prefix) + 1])
             ->value('max_seq');
 

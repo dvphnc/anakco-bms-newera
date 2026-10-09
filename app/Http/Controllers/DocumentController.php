@@ -79,11 +79,11 @@ class DocumentController extends Controller
                                    data-tippy-content="View Document"><i class="fas fa-eye"></i></a>';
 
                     $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon doc-delete-btn"
-                                          data-tippy-content="Delete Document"
+                                          data-tippy-content="Archive Document"
                                           data-url="'.e($delete).'"
                                           data-num="'.e($d->doc_number).'"
                                           data-name="'.e($d->resident ? $d->resident->full_name : ($d->resident_name_portal ?? 'this document')).'">
-                                     <i class="fas fa-trash"></i>
+                                     <i class="fas fa-box-archive"></i>
                                  </button>';
 
                     return '<div style="display:flex;justify-content:flex-end;align-items:center;gap:6px">'.
@@ -249,7 +249,7 @@ class DocumentController extends Controller
         // Guard: Released documents are immutable
         if ($document->status === 'Released' && $validated['status'] !== 'Released') {
             return back()->withErrors([
-                'status' => 'This document has already been released and cannot be changed. Delete and re-issue if a correction is needed.',
+                'status' => 'This document has already been released and cannot be changed. Archive it and issue a new one if a correction is needed.',
             ])->withInput();
         }
 
@@ -385,9 +385,9 @@ class DocumentController extends Controller
         $document->delete();
 
         if ($request->wantsJson()) {
-            return response()->json(['success' => true, 'message' => "Document {$num} deleted."]);
+            return response()->json(['success' => true, 'message' => "Document {$num} archived. You can restore it from the Recycle Bin."]);
         }
 
-        return redirect()->route('documents.index')->with('success', 'Document deleted successfully.');
+        return redirect()->route('documents.index')->with('success', "Document {$num} archived. You can restore it from the Recycle Bin.");
     }
 }

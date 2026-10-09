@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Model;
 
 class ActivityLog extends Model
 {
+    use Archivable;
+
     protected $fillable = [
         'loggable_type',
         'loggable_id',
@@ -20,12 +23,12 @@ class ActivityLog extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     public function loggable()
     {
-        return $this->morphTo();
+        return $this->morphTo()->withTrashed();
     }
 
     // -------------------------------------------------------

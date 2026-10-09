@@ -31,8 +31,8 @@ $roleCls = match($user->role) {
                 <i class="fas fa-user-check"></i>
             </button>
             <button onclick="deleteUser({{ $user->id }}, '{{ addslashes($user->name) }}')"
-                    class="btn btn-danger btn-sm btn-icon" title="Delete">
-                <i class="fas fa-trash"></i>
+                    class="btn btn-danger btn-sm btn-icon" title="Archive">
+                <i class="fas fa-box-archive"></i>
             </button>
         </div>
     </td>

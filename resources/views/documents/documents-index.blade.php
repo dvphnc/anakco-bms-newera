@@ -319,9 +319,9 @@ $(document).ready(function () {
         const name = $btn.data('name');
 
         bmsConfirm({
-            title:   'Delete Document',
-            message: 'Delete document ' + num + ' for ' + name + '? This cannot be undone.',
-            ok:      'Delete',
+            title:   'Archive Document',
+            message: 'Archive document ' + num + ' for ' + name + '? You can restore it from the Recycle Bin.',
+            ok:      'Archive',
         }, function () {
             const icon = $btn.find('i');
             const orig = icon.attr('class');

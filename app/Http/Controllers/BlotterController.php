@@ -70,11 +70,11 @@ class BlotterController extends Controller
                                    data-tippy-content="View Case"><i class="fas fa-eye"></i></a>';
 
                     $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon blotter-delete-btn"
-                                          data-tippy-content="Delete Case"
+                                          data-tippy-content="Archive Case"
                                           data-url="'.e($delete).'"
                                           data-num="'.e($c->case_number).'"
                                           data-name="'.e($c->complainant_name ?? '').'">
-                                     <i class="fas fa-trash"></i>
+                                     <i class="fas fa-box-archive"></i>
                                  </button>';
 
                     // Portal + Pending: show Activate button (3rd action)
@@ -313,17 +313,15 @@ class BlotterController extends Controller
 
     public function destroy(Request $request, BlotterCase $blotter)
     {
-        if ($blotter->file_path) {
-            \Storage::disk('public')->delete($blotter->file_path);
-        }
+        // The attachment file is kept, so a restored case still has it (Part 3.1)
         $num = $blotter->case_number;
         $this->logActivity('deleted', $blotter);
         $blotter->delete();
 
         if ($request->wantsJson()) {
-            return response()->json(['success' => true, 'message' => "Case {$num} deleted."]);
+            return response()->json(['success' => true, 'message' => "Case {$num} archived. You can restore it from the Recycle Bin."]);
         }
 
-        return redirect()->route('blotter.index')->with('success', 'Blotter case deleted successfully.');
+        return redirect()->route('blotter.index')->with('success', "Case {$num} archived. You can restore it from the Recycle Bin.");
     }
 }

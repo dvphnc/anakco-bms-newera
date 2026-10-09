@@ -424,9 +424,9 @@ $(document).ready(function () {
         const name = $btn.data('name');
 
         bmsConfirm({
-            title:   'Delete Blotter Case',
-            message: 'Delete case ' + num + ' — ' + name + '? This will permanently remove the record and any attachments.',
-            ok:      'Delete',
+            title:   'Archive Blotter Case',
+            message: 'Archive case ' + num + ' — ' + name + '? It moves to the Recycle Bin with its attachment, and can be restored.',
+            ok:      'Archive',
         }, function () {
             const icon = $btn.find('i');
             const orig = icon.attr('class');

@@ -65,11 +65,11 @@
                     <i class="fas fa-pen" style="color:var(--navy)"></i> Edit Profile
                 </a>
                 <form method="POST" action="{{ route('officials.destroy', $official) }}"
-                      data-confirm="Delete {{ $official->full_name }}? This will remove their profile and ID card."
-                      data-confirm-title="Delete Official"
-                      data-confirm-ok="Delete">
+                      data-confirm="Archive {{ $official->full_name }}? You can restore it from the Recycle Bin."
+                      data-confirm-title="Archive Official"
+                      data-confirm-ok="Archive">
                     @csrf @method('DELETE')
-                    <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start"><i class="fas fa-trash"></i> Delete</button>
+                    <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start"><i class="fas fa-box-archive"></i> Archive</button>
                 </form>
             </div>
         </div>

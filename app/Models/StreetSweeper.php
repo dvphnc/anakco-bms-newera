@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class StreetSweeper extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected $table = 'committee_street_sweepers';

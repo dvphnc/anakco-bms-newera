@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class BlotterCase extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected $fillable = [
@@ -46,17 +49,17 @@ class BlotterCase extends Model
 
     public function complainantResident()
     {
-        return $this->belongsTo(Resident::class, 'complainant_resident_id');
+        return $this->belongsTo(Resident::class, 'complainant_resident_id')->withTrashed();
     }
 
     public function respondentResident()
     {
-        return $this->belongsTo(Resident::class, 'respondent_resident_id');
+        return $this->belongsTo(Resident::class, 'respondent_resident_id')->withTrashed();
     }
 
     public function filedBy()
     {
-        return $this->belongsTo(User::class, 'filed_by');
+        return $this->belongsTo(User::class, 'filed_by')->withTrashed();
     }
 
     public function statusLogs()
@@ -72,9 +75,13 @@ class BlotterCase extends Model
     public static function generateCaseNumber(): string
     {
         $year = date('Y');
-        $count = self::whereYear('created_at', $year)->count() + 1;
+        $prefix = 'CASE-'.$year.'-';
+        // Highest number so far (archived records included), so a number is never reused
+        $max = self::withTrashed()->where('case_number', 'like', $prefix.'%')
+            ->selectRaw('MAX(CAST(SUBSTRING(case_number, ?) AS UNSIGNED)) as max_seq', [strlen($prefix) + 1])
+            ->value('max_seq');
 
-        return 'CASE-'.$year.'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
+        return $prefix.str_pad(($max ?? 0) + 1, 4, '0', STR_PAD_LEFT);
     }
 
     public function isActive(): bool

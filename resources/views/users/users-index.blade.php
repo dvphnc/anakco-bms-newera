@@ -119,8 +119,8 @@
                             </button>
                             @endif
                             <button onclick="deleteUser({{ $user->id }}, '{{ addslashes($user->name) }}')"
-                                    class="btn btn-danger btn-sm btn-icon" title="Delete">
-                                <i class="fas fa-trash"></i>
+                                    class="btn btn-danger btn-sm btn-icon" title="Archive">
+                                <i class="fas fa-box-archive"></i>
                             </button>
                             @endif
                         </div>
@@ -381,9 +381,9 @@ function submitEditUser() {
 function deleteUser(id, name) {
     var rowEl = document.querySelector('tr[data-id="' + id + '"]');
     bmsConfirm({
-        title:   'Delete User',
-        message: 'Delete ' + name + '? This will permanently remove their account.',
-        okText:  'Delete Permanently',
+        title:   'Archive User',
+        message: 'Archive ' + name + '? They will no longer be able to sign in. You can restore the account from the Recycle Bin.',
+        ok:      'Archive',
         okClass: 'btn-danger'
     }, function() {
         axios.delete('/users/' + id)

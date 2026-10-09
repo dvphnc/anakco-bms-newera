@@ -1231,9 +1231,9 @@ $(document).ready(function () {
         var name = $btn.data('name');
         var url  = $btn.data('url');
         bmsConfirm({
-            title:   'Delete Appointment',
-            message: 'Delete appointment ' + num + ' for ' + name + '? This cannot be undone.',
-            ok:      'Delete',
+            title:   'Archive Appointment',
+            message: 'Archive appointment ' + num + ' for ' + name + '? You can restore it from the Recycle Bin.',
+            ok:      'Archive',
         }, function () {
             axios.delete(url, { data: { _token: '{{ csrf_token() }}' } })
             .then(function (res) {
@@ -1266,9 +1266,9 @@ $(document).ready(function () {
         var name = $btn.data('name');
         var url  = $btn.data('url');
         bmsConfirm({
-            title:   'Delete Business Application',
-            message: 'Delete business permit application ' + num + ' from ' + name + '? This cannot be undone.',
-            ok:      'Delete',
+            title:   'Archive Business Application',
+            message: 'Archive business permit application ' + num + ' from ' + name + '? You can restore it from the Recycle Bin.',
+            ok:      'Archive',
         }, function () {
             axios.delete(url, { data: { _token: '{{ csrf_token() }}' } })
             .then(function (res) {
@@ -1294,9 +1294,9 @@ $(document).ready(function () {
         var name = $btn.data('name');
         var url  = $btn.data('url');
         bmsConfirm({
-            title:   'Delete Blotter Report',
-            message: 'Delete blotter report ' + num + ' from ' + name + '? This cannot be undone.',
-            ok:      'Delete',
+            title:   'Archive Blotter Report',
+            message: 'Archive blotter report ' + num + ' from ' + name + '? You can restore it from the Recycle Bin.',
+            ok:      'Archive',
         }, function () {
             axios.delete(url, { data: { _token: '{{ csrf_token() }}' } })
             .then(function (res) {

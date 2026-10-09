@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CommitteeRecord extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected $fillable = [
@@ -25,7 +28,7 @@ class CommitteeRecord extends Model
 
     public function uploadedBy()
     {
-        return $this->belongsTo(User::class, 'uploaded_by');
+        return $this->belongsTo(User::class, 'uploaded_by')->withTrashed();
     }
 
     // -------------------------------------------------------

@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Model;
 
 class AppointmentStatusLog extends Model
 {
+    use Archivable;
+
     public $timestamps = false;
 
     protected $table    = 'appointment_status_logs';
@@ -14,7 +17,7 @@ class AppointmentStatusLog extends Model
 
     public function appointment()
     {
-        return $this->belongsTo(DocumentAppointment::class);
+        return $this->belongsTo(DocumentAppointment::class)->withTrashed();
     }
 
     public function iconClass(): string

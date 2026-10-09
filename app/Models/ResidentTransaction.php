@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ResidentTransaction extends Model
 {
+    use Archivable;
+
     public const TYPES = [
         'document'   => 'Document',
         'medicine'   => 'Medicine',
@@ -46,12 +49,12 @@ class ResidentTransaction extends Model
 
     public function resident()
     {
-        return $this->belongsTo(Resident::class);
+        return $this->belongsTo(Resident::class)->withTrashed();
     }
 
     public function household()
     {
-        return $this->belongsTo(Household::class);
+        return $this->belongsTo(Household::class)->withTrashed();
     }
 
     public function program()
@@ -66,12 +69,12 @@ class ResidentTransaction extends Model
 
     public function processedBy()
     {
-        return $this->belongsTo(User::class, 'processed_by');
+        return $this->belongsTo(User::class, 'processed_by')->withTrashed();
     }
 
     public function voidedBy()
     {
-        return $this->belongsTo(User::class, 'voided_by');
+        return $this->belongsTo(User::class, 'voided_by')->withTrashed();
     }
 
     public function scopeValid($query)

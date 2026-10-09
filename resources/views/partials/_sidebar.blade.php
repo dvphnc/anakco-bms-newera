@@ -252,6 +252,11 @@
             <i class="fas fa-user-shield"></i>
             <span>User Management</span>
         </a>
+        <a href="{{ route('recycle-bin.index') }}"
+           class="nav-item {{ request()->routeIs('recycle-bin.*') ? 'active' : '' }}">
+            <i class="fas fa-box-archive"></i>
+            <span>Recycle Bin</span>
+        </a>
         @endif
         @endif
 
