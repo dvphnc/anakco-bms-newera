@@ -78,7 +78,7 @@ class DocumentController extends Controller
                     $viewBtn = '<a href="'.e($show).'" class="btn btn-secondary btn-sm btn-icon"
                                    data-tippy-content="View Document"><i class="fas fa-eye"></i></a>';
 
-                    $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon doc-delete-btn"
+                    $deleteBtn = ! auth()->user()->can('documents.archive') ? '' : '<button class="btn btn-danger btn-sm btn-icon doc-delete-btn"
                                           data-tippy-content="Archive Document"
                                           data-url="'.e($delete).'"
                                           data-num="'.e($d->doc_number).'"

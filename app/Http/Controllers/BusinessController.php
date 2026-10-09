@@ -129,7 +129,7 @@ class BusinessController extends Controller
                     $viewBtn = '<a href="'.e($show).'" class="btn btn-secondary btn-sm btn-icon"
                                    data-tippy-content="View Permit"><i class="fas fa-eye"></i></a>';
 
-                    $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon biz-delete-btn"
+                    $deleteBtn = ! auth()->user()->can('businesses.archive') ? '' : '<button class="btn btn-danger btn-sm btn-icon biz-delete-btn"
                                           data-tippy-content="Archive Permit"
                                           data-url="'.e($delete).'"
                                           data-num="'.e($b->permit_number).'"

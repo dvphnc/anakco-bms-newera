@@ -69,7 +69,7 @@ class BlotterController extends Controller
                     $viewBtn = '<a href="'.e($show).'" class="btn btn-secondary btn-sm btn-icon"
                                    data-tippy-content="View Case"><i class="fas fa-eye"></i></a>';
 
-                    $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon blotter-delete-btn"
+                    $deleteBtn = ! auth()->user()->can('blotter.archive') ? '' : '<button class="btn btn-danger btn-sm btn-icon blotter-delete-btn"
                                           data-tippy-content="Archive Case"
                                           data-url="'.e($delete).'"
                                           data-num="'.e($c->case_number).'"

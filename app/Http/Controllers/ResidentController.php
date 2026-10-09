@@ -123,19 +123,19 @@ class ResidentController extends Controller
                                     class="btn btn-secondary btn-sm btn-icon" title="Quick View">
                                 <i class="fas fa-id-card"></i>
                             </button>
-                            <a href="'.$clearance.'" class="btn btn-gold btn-sm" title="Issue Barangay Clearance" style="white-space:nowrap">
+                            '.(auth()->user()->can('documents.create') ? '<a href="'.$clearance.'" class="btn btn-gold btn-sm" title="Issue Barangay Clearance" style="white-space:nowrap">
                                 <i class="fas fa-file-circle-check"></i> Clearance
-                            </a>
+                            </a>' : '').'
                             <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View Profile"><i class="fas fa-eye"></i></a>
-                            <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
-                            <form method="POST" action="'.$delete.'"
+                            '.(auth()->user()->can('residents.edit') ? '<a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>' : '').'
+                            '.(auth()->user()->can('residents.archive') ? '<form method="POST" action="'.$delete.'"
                                   data-confirm="Archive '.e($r->full_name).'? Linked records stay. You can restore it from the Recycle Bin."
                                   data-confirm-title="Archive Resident"
                                   data-confirm-ok="Archive">
                                 <input type="hidden" name="_token" value="'.csrf_token().'">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
-                            </form>
+                            </form>' : '').'
                         </div>';
                 })
                 ->filter(function ($query) use ($request) {
