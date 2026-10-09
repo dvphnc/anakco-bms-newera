@@ -1103,7 +1103,7 @@
         document.getElementById('bmsConfirmOkText').textContent    = options.ok      || 'Confirm';
         var isDanger = options.type !== 'safe';
         // Archive buttons get the archive box; a real delete (e.g. a backup file) keeps the trash can
-        var dangerIcon = /archive/i.test(options.ok || '') ? 'fa-box-archive' : 'fa-trash';
+        var dangerIcon = options.icon || (/archive/i.test(options.ok || '') ? 'fa-box-archive' : 'fa-trash');
         document.getElementById('bmsConfirmOkIcon').className      = 'fas ' + (isDanger ? dangerIcon : 'fa-check');
         document.getElementById('bmsConfirmOk').className          = isDanger ? 'btn btn-danger' : 'btn btn-primary';
         document.getElementById('bmsConfirmIcon').style.background = isDanger ? 'var(--crimson-pale)' : 'var(--navy-pale)';
