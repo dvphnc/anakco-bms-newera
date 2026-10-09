@@ -1304,13 +1304,28 @@
         // ── Quick actions shown when palette opens with empty input ──────
         const quickActions = [
             @auth
+            @can('residents.create')
             { title:'Add New Resident',  sub:'Create a resident record',    url:'{{ route("residents.create") }}',   icon:'fa-user-plus',   color:'var(--navy)' },
+            @endcan
+            @can('documents.create')
             { title:'Issue Document',    sub:'Barangay clearance, indigency…',url:'{{ route("documents.create") }}',  icon:'fa-file-circle-plus',color:'var(--gold)' },
+            @endcan
+            @can('blotter.create')
             { title:'File Blotter Case', sub:'Record an incident or complaint',url:'{{ route("blotter.create") }}',   icon:'fa-gavel',       color:'#9B1C1C' },
+            @endcan
+            @can('businesses.create')
             { title:'Register Business', sub:'Add a business permit record',  url:'{{ route("businesses.create") }}', icon:'fa-store',       color:'#166534' },
+            @endcan
             { title:'View Dashboard',    sub:'Overview, analytics, appointments',url:'{{ route("dashboard") }}',      icon:'fa-gauge-high',  color:'var(--navy)' },
+            @can('reports.view')
             { title:'Reports & Analytics',sub:'Population, demographics, services',url:'{{ route("reports.index") }}',icon:'fa-chart-bar',   color:'var(--gold)' },
+            @endcan
+            @can('users.manage')
             { title:'Manage Users',      sub:'Accounts, roles, access control',url:'{{ route("users.index") }}',      icon:'fa-users-gear',  color:'var(--navy)' },
+            @endcan
+            @can('roles.manage')
+            { title:'Roles & Permissions', sub:'Choose what each role can do', url:'{{ route("roles.index") }}', icon:'fa-key', color:'var(--gold)' },
+            @endcan
             @endauth
         ];
 
