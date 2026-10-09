@@ -96,7 +96,7 @@
                     @if($user->email_verified_at)
                         <span class="badge badge-green"><i class="fas fa-check" style="margin-right:4px"></i>Verified</span>
                         <span style="font-size:13px;color:var(--text-subtle)">{{ $user->email_verified_at->format('m/d/Y') }}</span>
-                        @if(auth()->user()->role === 'Admin')
+                        @if(auth()->user()->can('users.manage'))
                         <button type="button" class="btn btn-secondary btn-sm"
                                 onclick="document.getElementById('unverify-form').submit()"
                                 style="font-size:13px;padding:5px 12px">
@@ -105,7 +105,7 @@
                         @endif
                     @else
                         <span class="badge badge-gray"><i class="fas fa-clock" style="margin-right:4px"></i>Unverified</span>
-                        @if(auth()->user()->role === 'Admin')
+                        @if(auth()->user()->can('users.manage'))
                         <button type="button" class="btn btn-primary btn-sm"
                                 onclick="document.getElementById('verify-form').submit()"
                                 style="font-size:13px;padding:5px 12px">

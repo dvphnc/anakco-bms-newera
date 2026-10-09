@@ -102,6 +102,12 @@ class User extends Authenticatable
         return $query->whereHas('assignedRole', fn ($q) => $q->where('name', $name));
     }
 
+    /** Users holding the locked Admin role */
+    public function scopeAdmins(Builder $query): Builder
+    {
+        return $query->whereHas('assignedRole', fn ($q) => $q->where('is_system', true));
+    }
+
     public function hasPermission(string $key): bool
     {
         return in_array($key, $this->permissionKeys(), true);
