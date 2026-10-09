@@ -119,8 +119,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middlewareFor(['edit', 'update'], 'permission:programs.manage')
         ->middlewareFor('destroy', 'permission:programs.archive');
 
-    // Religion list and Pabahay (ministers' housing) — Admin only (Part 2).
-    // The gate is defined in AppServiceProvider; Part 3 will make it editable.
+    // Religion list and Pabahay (ministers' housing): needs "Manage the religion list and Pabahay units".
+    // Kept on the gate so a role without it gets a plain 403 (the gate reads the permission, Part 3.2).
     Route::middleware('can:manage-religion-data')->group(function () {
         Route::resource('religions', ReligionController::class)->only(['index', 'store', 'update']);
         Route::resource('pabahays', PabahayController::class)->except('destroy');
