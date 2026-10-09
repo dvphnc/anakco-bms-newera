@@ -56,15 +56,15 @@
         {{-- Role guide --}}
         <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px">
             <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--navy);margin-bottom:12px">
-                <i class="fas fa-info-circle" style="color:var(--gold);margin-right:6px"></i> Role Permissions
+                <i class="fas fa-info-circle" style="color:var(--gold);margin-right:6px"></i> Roles
             </div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
                 @php
-                    $roleGuide = [
-                        ['role'=>'Admin',     'desc'=>'Full system access. Can manage all records, users, and settings.', 'color'=>'var(--crimson)'],
-                        ['role'=>'Secretary', 'desc'=>'Can manage residents, documents, blotter, and businesses. Cannot manage users.', 'color'=>'var(--gold)'],
-                        ['role'=>'Committee', 'desc'=>'Access limited to committee pages and related records only.', 'color'=>'var(--navy)'],
-                    ];
+                    // Part 3.2: roles and what they do are set on the Roles & Permissions page
+                    $roleGuide = \App\Models\Role::orderByDesc('is_system')->orderBy('name')
+                        ->whereIn('name', $roles)->get()
+                        ->map(fn ($r) => ['role' => $r->name, 'desc' => $r->description ?: 'No description.',
+                                          'color' => $r->is_system ? 'var(--crimson)' : 'var(--navy)']);
                 @endphp
                 @foreach($roleGuide as $rg)
                 <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px">
@@ -72,7 +72,12 @@
                     <div style="font-size:13px;color:var(--text-muted);line-height:1.5">{{ $rg['desc'] }}</div>
                 </div>
                 @endforeach
-            </div>
+                @can('roles.manage')
+            <a href="{{ route('roles.index') }}" style="display:inline-block;margin-top:12px;font-size:13px;font-weight:600;color:var(--navy)">
+                <i class="fas fa-key" style="margin-right:4px"></i> See or change what each role can do
+            </a>
+            @endcan
+        </div>
         </div>
 
         <div class="form-section-title">Password</div>
