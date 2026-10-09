@@ -179,6 +179,7 @@ class ExportController extends Controller
 
     public function excel(Request $request, string $module)
     {
+        $this->authorizeModule($module);
         ini_set('memory_limit', '1024M');
         set_time_limit(120);
 
@@ -318,6 +319,7 @@ class ExportController extends Controller
     // -------------------------------------------------------
     public function pdf(Request $request, string $module)
     {
+        $this->authorizeModule($module);
         // DomPDF is memory-intensive on large tables — raise limits before rendering
         ini_set('memory_limit', '2048M');
         set_time_limit(120);
@@ -432,6 +434,7 @@ class ExportController extends Controller
     // -------------------------------------------------------
     public function analytics(Request $request, string $format)
     {
+        abort_unless($request->user()->can('reports.view'), 403);
         $date = now()->format('Y-m-d');
         $generatedAt = now()->format('m/d/Y g:i A');
         $generatedBy = auth()->user()->name;
@@ -569,5 +572,16 @@ class ExportController extends Controller
         $this->addMetaSheet($ss, 'Analytics', $totalResidents, $generatedBy);
 
         return $this->streamXlsx($ss, "population-summary-{$date}.xlsx");
+    }
+
+    /** Exporting needs "Export to Excel and PDF" (route) plus permission to view what is exported */
+    private function authorizeModule(string $module): void
+    {
+        $view = [
+            'residents' => 'residents.view', 'households' => 'households.view', 'documents' => 'documents.view',
+            'blotter' => 'blotter.view', 'businesses' => 'businesses.view', 'committees' => 'committees.view',
+        ][$module] ?? null;
+
+        abort_unless($view && auth()->user()->can($view), $view ? 403 : 404);
     }
 }

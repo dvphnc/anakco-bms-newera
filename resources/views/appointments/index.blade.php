@@ -531,6 +531,13 @@
 @endsection
 
 @push('styles')
+{{-- Part 3.2: processing and archive buttons follow the role's permissions (the server checks them too) --}}
+@cannot('appointments.process')
+<style>.apt-issue-btn, .biz-issue-btn, .blotter-activate-btn { display:none !important; }</style>
+@endcannot
+@cannot('appointments.archive')
+<style>.apt-delete-btn, .biz-delete-btn, .blotter-delete-btn { display:none !important; }</style>
+@endcannot
 <link rel="stylesheet" href="{{ asset('assets/vendor/datatables/css/jquery.dataTables.min.css') }}">
 @endpush
 
