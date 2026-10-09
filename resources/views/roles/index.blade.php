@@ -290,11 +290,12 @@
         const risky = boxes.filter(b => b.checked && !start.get(b) && b.dataset.sensitive === '1');
         if (!risky.length) { dirty = false; return; }
         e.preventDefault();
-        const names = [...new Set(risky.map(b => b.getAttribute('aria-label')))].join('\n• ');
+        const names = [...new Set(risky.map(b => b.getAttribute('aria-label')))].join('; ');
         bmsConfirm({
             title: 'Give sensitive permissions?',
-            message: 'These give access to private data or to access control itself:\n• ' + names,
+            message: 'These give access to private data or to access control itself: ' + names + '.',
             ok: 'Yes, save',
+            icon: 'fa-floppy-disk',
             type: 'danger',
         }, function () { form.dataset.confirmed = '1'; dirty = false; form.requestSubmit(); });
     });
