@@ -261,6 +261,37 @@ class RolePermissionTest extends TestCase
         $this->assertSame('Secretary', User::factory()->create()->role);
     }
 
+    public function test_add_edit_and_archive_buttons_follow_the_permissions(): void
+    {
+        $resident = \App\Models\Resident::factory()->create(['purok_id' => \App\Models\Purok::create(['name' => 'Purok 1'])->id]);
+        $archive  = 'action="'.route('residents.destroy', $resident).'"';
+        $edit     = 'href="'.route('residents.edit', $resident).'"';
+
+        $this->actingAs($this->secretary)->get(route('residents.show', $resident))
+            ->assertSee($archive, false)->assertSee($edit, false);
+
+        $keys = array_diff($this->keysOf('Secretary'), ['residents.archive', 'residents.edit', 'residents.create']);
+        $this->saveMatrix($this->admin, ['Secretary' => $keys]);
+        $secretary = $this->secretary->fresh();
+
+        $this->actingAs($secretary)->get(route('residents.show', $resident))
+            ->assertOk()->assertDontSee($archive, false)->assertDontSee($edit, false);
+        $this->actingAs($secretary)->get(route('residents.index'))
+            ->assertOk()->assertDontSee('href="'.route('residents.create').'"', false);
+        $this->actingAs($secretary)->delete(route('residents.destroy', $resident))->assertRedirect(route('dashboard'));
+        $this->assertNotSoftDeleted($resident);
+    }
+
+    public function test_exporting_needs_permission_to_view_what_is_exported(): void
+    {
+        $this->actingAs($this->committee)->get(route('export.excel', 'residents'))->assertRedirect(route('dashboard'));
+
+        // Export allowed, but residents still not viewable
+        $this->saveMatrix($this->admin, ['Committee' => array_merge($this->keysOf('Committee'), ['reports.export'])]);
+        $this->actingAs($this->committee->fresh())->get(route('export.excel', 'residents'))->assertForbidden();
+        $this->actingAs($this->committee->fresh())->get(route('export.excel', 'nonsense'))->assertNotFound();
+    }
+
     public function test_religion_data_follows_its_permission(): void
     {
         $this->actingAs($this->secretary)->get(route('religions.index'))->assertForbidden();

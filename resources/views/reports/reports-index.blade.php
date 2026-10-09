@@ -17,12 +17,14 @@
         <a href="{{ route('reports.generate') }}" class="btn btn-secondary">
             <i class="fas fa-file-pdf"></i> Generate Reports
         </a>
+        @can('reports.export')
         <a href="{{ route('export.analytics', 'pdf') }}" class="btn btn-secondary" title="Export Population Summary PDF">
             <i class="fas fa-file-pdf" style="color:#9b3535"></i> Population PDF
         </a>
         <a href="{{ route('export.analytics', 'excel') }}" class="btn btn-secondary" title="Export Population Summary Excel">
             <i class="fas fa-file-excel" style="color:#3d7a55"></i> Population Excel
         </a>
+        @endcan
     </div>
 </div>
 
@@ -67,6 +69,7 @@
 </div>
 
 {{-- EXPORT DATA --}}
+@can('reports.export')
 <div class="card mb-6">
     <div class="card-header">
         <span class="card-title"><i class="fas fa-download"></i> Export Data</span>
@@ -83,7 +86,7 @@
                     ['key' => 'businesses', 'label' => 'Businesses', 'icon' => 'fa-store',    'color' => '#a05828'],
                 ];
             @endphp
-            @foreach($modules as $m)
+            @foreach(array_filter($modules, fn ($m) => auth()->user()->can($m['key'].'.view')) as $m)
             <div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
                 <div style="background:var(--surface2);padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
                     <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:rgba(13,33,68,0.06);color:{{ $m['color'] }};display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">
@@ -113,6 +116,7 @@
         </div>
     </div>
 </div>
+@endcan
 
 {{-- CHARTS ROW --}}
 <div class="grid-2 mb-6" style="grid-template-columns:2fr 1fr">

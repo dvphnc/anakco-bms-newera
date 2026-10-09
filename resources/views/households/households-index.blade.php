@@ -8,12 +8,14 @@
         <p class="page-subtitle">All registered households in Barangay New Era</p>
     </div>
     <div class="page-actions">
+        @can('reports.export')
         <a id="btnExportPdf" href="{{ route('export.pdf', 'households') }}" class="btn btn-secondary" title="Export PDF">
             <i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF
         </a>
         <a id="btnExportExcel" href="{{ route('export.excel', 'households') }}" class="btn btn-secondary" title="Export Excel">
             <i class="fas fa-file-excel" style="color:#16a34a"></i> Excel
         </a>
+        @endcan
         @can('households.create')
         <a href="{{ route('households.create') }}" class="btn btn-primary">
             <i class="fas fa-house-circle-plus"></i> Add Household

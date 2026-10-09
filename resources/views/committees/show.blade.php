@@ -2,6 +2,17 @@
 @section('title', $committee['name'])
 
 @push('styles')
+{{-- Part 3.2: the add / edit / archive controls follow the role's permissions (the server checks them too) --}}
+@cannot('committees.manage')
+<style>
+[onclick^="toggleForm("], [onclick^="openEdit"], [onclick^="openStockModal("], .form-panel { display:none !important; }
+</style>
+@endcannot
+@cannot('committees.archive')
+<style>
+[onclick^="delete"] { display:none !important; }
+</style>
+@endcannot
 <style>
 /* ── Tab Strip ───────────────────────────────────────────── */
 .tab-strip-wrap {
@@ -438,12 +449,14 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 <i class="fas fa-gavel" style="color:var(--gold-light)"></i> View Blotter Cases
             </a>
             @endif
+            @can('reports.export')
             <a href="{{ route('export.pdf', 'committees') }}?slug={{ $committee['slug'] }}"
                style="background:rgba(255,255,255,0.10);color:#fff;border:1px solid rgba(255,255,255,0.20);
                       font-size:12px;padding:6px 14px;min-height:32px"
                class="btn btn-sm" target="_blank">
                 <i class="fas fa-file-pdf" style="color:#f87171"></i> Export PDF
             </a>
+            @endcan
         </div>
 
     </div>
