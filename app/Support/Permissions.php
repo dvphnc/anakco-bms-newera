@@ -157,6 +157,11 @@ class Permissions
 
     public static function inSync(): bool
     {
-        return Permission::count() === count(self::keys());
+        $inCode = array_merge(...array_values(self::GROUPS));
+        $inDb   = Permission::pluck('label', 'key')->all();
+        ksort($inCode);
+        ksort($inDb);
+
+        return $inCode === $inDb;
     }
 }
