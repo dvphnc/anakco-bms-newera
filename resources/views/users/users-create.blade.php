@@ -72,12 +72,12 @@
                     <div style="font-size:13px;color:var(--text-muted);line-height:1.5">{{ $rg['desc'] }}</div>
                 </div>
                 @endforeach
-                @can('roles.manage')
+            </div>
+            @can('roles.manage')
             <a href="{{ route('roles.index') }}" style="display:inline-block;margin-top:12px;font-size:13px;font-weight:600;color:var(--navy)">
                 <i class="fas fa-key" style="margin-right:4px"></i> See or change what each role can do
             </a>
             @endcan
-        </div>
         </div>
 
         <div class="form-section-title">Password</div>

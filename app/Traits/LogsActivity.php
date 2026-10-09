@@ -31,6 +31,7 @@ trait LogsActivity
             'filed_by' => 'Filed By',
             'user_id' => 'User',
             'leader_id' => 'Leader',
+            'role_id' => 'Role',
         ];
 
         // FK fields that should resolve to names
@@ -40,6 +41,7 @@ trait LogsActivity
             'household_id' => fn ($id) => \App\Models\Household::find($id)?->household_number ?? "ID: $id",
             'issued_by' => fn ($id) => \App\Models\User::find($id)?->name ?? "ID: $id",
             'filed_by' => fn ($id) => \App\Models\User::find($id)?->name ?? "ID: $id",
+            'role_id' => fn ($id) => \App\Models\Role::withTrashed()->find($id)?->name ?? "ID: $id",
         ];
 
         $changes = [];

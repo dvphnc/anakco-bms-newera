@@ -135,7 +135,7 @@ class FakeDataSeeder extends Seeder
     {
         $purokIds = Purok::pluck('id', 'name')
             ->mapWithKeys(fn ($id, $name) => [trim(explode('-', $name, 2)[1] ?? $name) => $id]);
-        $adminId  = User::where('role', 'Admin')->value('id');
+        $adminId  = User::admins()->value('id');
         $religionIds = \App\Models\Religion::pluck('id', 'name');   // name => id, one pick per family
         $used     = [];   // "street|number" already taken
         $made     = 0;

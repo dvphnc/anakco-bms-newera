@@ -8,6 +8,7 @@ $moduleMap = [
     'App\Models\Official'    => ['label' => 'Officials',  'icon' => 'fa-user-tie',     'color' => '#7c3aed', 'slug' => 'officials'],
     'App\Models\User'        => ['label' => 'Users',      'icon' => 'fa-user-shield',  'color' => '#9333ea', 'slug' => 'users'],
     'App\Models\Purok'       => ['label' => 'Puroks',     'icon' => 'fa-location-dot', 'color' => '#0891b2', 'slug' => 'puroks'],
+    'App\Models\Role'        => ['label' => 'Roles',      'icon' => 'fa-key',          'color' => '#b45309', 'slug' => 'roles'],
 ];
 $skipFields = ['created_at', 'updated_at', 'remember_token', 'password', 'deleted_at'];
 $routeMap = [
