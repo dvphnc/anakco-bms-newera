@@ -32,7 +32,7 @@
             <i class="fas fa-user-shield"></i>
         </div>
         <div class="stat-info">
-            <div class="stat-number" id="stat-admins">{{ number_format(\App\Models\User::where('role','Admin')->count()) }}</div>
+            <div class="stat-number" id="stat-admins">{{ number_format(\App\Models\User::admins()->count()) }}</div>
             <div class="stat-label">Admins</div>
         </div>
     </div>
@@ -110,7 +110,7 @@
                             </button>
                             @if($user->id !== auth()->id())
                             {{-- Verify/Unverify: only shown for non-Admin users --}}
-                            @if($user->role !== 'Admin')
+                            @if(! $user->isAdmin())
                             <button data-verify-btn
                                     onclick="toggleVerify({{ $user->id }}, {{ $user->email_verified_at ? 'true' : 'false' }})"
                                     class="btn btn-secondary btn-sm btn-icon"
@@ -178,9 +178,9 @@
                     <label class="form-label">Role <span style="color:var(--crimson)">*</span></label>
                     <select name="role" id="addRole" class="form-control" required>
                         <option value="">Select role…</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Secretary">Secretary</option>
-                        <option value="Committee">Committee</option>
+                        @foreach($roles as $r)
+                        <option value="{{ $r }}">{{ $r }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
@@ -234,9 +234,9 @@
                 <div class="form-group" style="margin-bottom:16px">
                     <label class="form-label">Role <span style="color:var(--crimson)">*</span></label>
                     <select name="role" id="editRole" class="form-control" required>
-                        <option value="Admin">Admin</option>
-                        <option value="Secretary">Secretary</option>
-                        <option value="Committee">Committee</option>
+                        @foreach($roles as $r)
+                        <option value="{{ $r }}">{{ $r }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">

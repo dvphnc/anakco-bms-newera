@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
@@ -14,14 +16,15 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::orderBy('name')->paginate(15);
+        $users = User::with('assignedRole')->orderBy('name')->paginate(15);
+        $roles = $this->assignableRoles();
 
-        return view('users.users-index', compact('users'));
+        return view('users.users-index', compact('users', 'roles'));
     }
 
     public function create()
     {
-        $roles = ['Admin', 'Secretary', 'Committee'];
+        $roles = $this->assignableRoles();
 
         return view('users.users-create', compact('roles'));
     }
@@ -33,14 +36,14 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required|in:Admin,Secretary,Committee',
+            'role' => $this->roleRule(),
             'password' => ['required', 'confirmed', Password::min(8)],
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
 
         // Admin accounts are always auto-verified
-        if ($validated['role'] === 'Admin') {
+        if ($this->isAdminRole($validated['role'])) {
             $validated['email_verified_at'] = now();
         }
 
@@ -53,7 +56,7 @@ class UserController extends Controller
                 'message'  => 'User account created successfully.',
                 'row_html' => view('users._row', ['user' => $record])->render(),
                 'total'    => User::count(),
-                'admins'   => User::where('role', 'Admin')->count(),
+                'admins'   => User::admins()->count(),
                 'verified' => User::whereNotNull('email_verified_at')->count(),
             ]);
         }
@@ -68,21 +71,28 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $roles = ['Admin', 'Secretary', 'Committee'];
+        $this->guardAdminAccount($user);
+        $roles = $this->assignableRoles();
 
         return view('users.users-edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)
     {
+        $this->guardAdminAccount($user);
         $this->rejectArchivedEmail($request);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$user->id,
-            'role' => 'required|in:Admin,Secretary,Committee',
+            'role' => $this->roleRule(),
             'password' => ['nullable', 'confirmed', Password::min(8)],
         ]);
+
+        // Nobody changes their own role (it could lock them out, or raise their own access)
+        if ($user->id === auth()->id()) {
+            $validated['role'] = $user->role;
+        }
 
         if ($request->filled('password')) {
             $validated['password'] = Hash::make($validated['password']);
@@ -91,7 +101,7 @@ class UserController extends Controller
         }
 
         // If role is set/changed to Admin, auto-verify
-        if ($validated['role'] === 'Admin' && is_null($user->email_verified_at)) {
+        if ($this->isAdminRole($validated['role']) && is_null($user->email_verified_at)) {
             $validated['email_verified_at'] = now();
         }
 
@@ -109,7 +119,7 @@ class UserController extends Controller
                     'email' => $user->email,
                     'role'  => $user->role,
                 ],
-                'admins'   => User::where('role', 'Admin')->count(),
+                'admins'   => User::admins()->count(),
                 'verified' => User::whereNotNull('email_verified_at')->count(),
             ]);
         }
@@ -119,6 +129,8 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        $this->guardAdminAccount($user);
+
         if ($user->id === auth()->id()) {
             return redirect()->route('users.index')->with('error', 'You cannot archive your own account.');
         }
@@ -131,7 +143,7 @@ class UserController extends Controller
                 'success'  => true,
                 'message'  => 'User account archived. The person can no longer sign in. You can restore it from the Recycle Bin.',
                 'total'    => User::count(),
-                'admins'   => User::where('role', 'Admin')->count(),
+                'admins'   => User::admins()->count(),
                 'verified' => User::whereNotNull('email_verified_at')->count(),
             ]);
         }
@@ -141,6 +153,7 @@ class UserController extends Controller
 
     public function verify(User $user)
     {
+        $this->guardAdminAccount($user);
         \DB::table('users')->where('id', $user->id)->update([
             'email_verified_at' => now(),
         ]);
@@ -150,6 +163,7 @@ class UserController extends Controller
 
     public function unverify(User $user)
     {
+        $this->guardAdminAccount($user);
         if ($user->id === auth()->id()) {
             return back()->with('error', 'You cannot unverify your own account.');
         }
@@ -163,7 +177,7 @@ class UserController extends Controller
     public function verifyToggle(User $user)
     {
         // Admin accounts are always verified — cannot be toggled
-        if ($user->role === 'Admin') {
+        if ($user->isAdmin()) {
             if (request()->expectsJson()) {
                 return response()->json(['success' => false, 'message' => 'Admin accounts are always verified and cannot be changed.'], 422);
             }
@@ -195,6 +209,32 @@ class UserController extends Controller
         }
 
         return back()->with('success', $message);
+    }
+
+    /** Roles that can be picked in the user forms. Only an Admin can hand out the Admin role. */
+    private function assignableRoles()
+    {
+        return Role::orderByDesc('is_system')->orderBy('name')
+            ->when(! auth()->user()->isAdmin(), fn ($q) => $q->where('is_system', false))
+            ->pluck('name');
+    }
+
+    private function roleRule(): array
+    {
+        return ['required', Rule::in($this->assignableRoles()->all())];
+    }
+
+    private function isAdminRole(string $name): bool
+    {
+        return (bool) Role::where('name', $name)->value('is_system');
+    }
+
+    /** Someone given "Manage user accounts" who is not an Admin cannot touch Admin accounts (Part 3.2) */
+    private function guardAdminAccount(User $user): void
+    {
+        if ($user->isAdmin() && ! auth()->user()->isAdmin()) {
+            abort(403, 'Only an Admin can change an Admin account.');
+        }
     }
 
     /** An archived account keeps its email, so say where it is instead of "already taken" (Part 3.1) */
