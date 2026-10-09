@@ -15,19 +15,18 @@ class SearchController extends Controller
     public function search(Request $request)
     {
         $q = trim($request->get('q', ''));
-        $role = auth()->user()->role;
+        $user = auth()->user();
 
         if (strlen($q) < 2) {
             return response()->json(['results' => [], 'query' => $q]);
         }
 
-        // Committee role can only search officials and committees
-        $canSearchRecords = in_array($role, ['Admin', 'Secretary']);
+        // Each kind of result needs its view permission (Roles & Permissions, Part 3.2)
 
         $results = [];
 
-        // Residents — Admin + Secretary only
-        if ($canSearchRecords) {
+        // Residents
+        if ($user->hasPermission('residents.view')) {
             Resident::where(function ($query) use ($q) {
                 $query->where('first_name', 'like', "%{$q}%")
                     ->orWhere('last_name', 'like', "%{$q}%")
@@ -49,8 +48,8 @@ class SearchController extends Controller
             });
         }
 
-        // Households — Admin + Secretary only
-        if ($canSearchRecords) {
+        // Households
+        if ($user->hasPermission('households.view')) {
             Household::where('household_number', 'like', "%{$q}%")
                 ->orWhere('household_head', 'like', "%{$q}%")
                 ->orWhere('address', 'like', "%{$q}%")
@@ -68,8 +67,8 @@ class SearchController extends Controller
                 });
         }
 
-        // Documents — Admin + Secretary only
-        if ($canSearchRecords) {
+        // Documents
+        if ($user->hasPermission('documents.view')) {
             Document::where('doc_number', 'like', "%{$q}%")
                 ->orWhere('document_type', 'like', "%{$q}%")
                 ->orWhere('or_number', 'like', "%{$q}%")
@@ -88,8 +87,8 @@ class SearchController extends Controller
                 });
         }
 
-        // Blotter — Admin + Secretary only
-        if ($canSearchRecords) {
+        // Blotter
+        if ($user->hasPermission('blotter.view')) {
             BlotterCase::where('case_number', 'like', "%{$q}%")
                 ->orWhere('complainant_name', 'like', "%{$q}%")
                 ->orWhere('respondent_name', 'like', "%{$q}%")
@@ -109,8 +108,8 @@ class SearchController extends Controller
                 });
         }
 
-        // Businesses — Admin + Secretary only
-        if ($canSearchRecords) {
+        // Businesses
+        if ($user->hasPermission('businesses.view')) {
             Business::where('business_name', 'like', "%{$q}%")
                 ->orWhere('permit_number', 'like', "%{$q}%")
                 ->orWhere('owner_name', 'like', "%{$q}%")
