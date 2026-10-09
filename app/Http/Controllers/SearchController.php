@@ -129,21 +129,23 @@ class SearchController extends Controller
         }
 
         // Officials
-        Official::where('full_name', 'like', "%{$q}%")
-            ->orWhere('position', 'like', "%{$q}%")
-            ->orWhere('committee', 'like', "%{$q}%")
-            ->limit(3)->get()->each(function ($o) use (&$results) {
-                $results[] = [
-                    'type' => 'Official',
-                    'icon' => 'fa-user-tie',
-                    'color' => '#7c3aed',
-                    'title' => $o->full_name,
-                    'subtitle' => $o->position.($o->committee ? ' · '.$o->committee : ''),
-                    'url' => route('officials.show', $o->id),
-                    'badge' => $o->is_active ? 'Active' : 'Inactive',
-                    'badge_class' => $o->is_active ? 'badge-green' : 'badge-gray',
-                ];
-            });
+        if ($user->hasPermission('officials.view')) {
+            Official::where('full_name', 'like', "%{$q}%")
+                ->orWhere('position', 'like', "%{$q}%")
+                ->orWhere('committee', 'like', "%{$q}%")
+                ->limit(3)->get()->each(function ($o) use (&$results) {
+                    $results[] = [
+                        'type' => 'Official',
+                        'icon' => 'fa-user-tie',
+                        'color' => '#7c3aed',
+                        'title' => $o->full_name,
+                        'subtitle' => $o->position.($o->committee ? ' · '.$o->committee : ''),
+                        'url' => route('officials.show', $o->id),
+                        'badge' => $o->is_active ? 'Active' : 'Inactive',
+                        'badge_class' => $o->is_active ? 'badge-green' : 'badge-gray',
+                    ];
+                });
+        }
 
         return response()->json([
             'results' => $results,
