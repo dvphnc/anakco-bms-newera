@@ -329,9 +329,9 @@
             <span>
                 <strong>{{ $pendingAppointments }} Pending Document Appointment{{ $pendingAppointments > 1 ? 's' : '' }}</strong> — waiting for staff confirmation.
             </span>
-            @if(in_array(auth()->user()->role, ['Admin','Secretary']))
+            @can('appointments.view')
             <a href="{{ route('appointments.index') }}?status=Pending" class="alert-link">Review</a>
-            @endif
+            @endcan
         </div>
         @endif
 
@@ -351,23 +351,32 @@
 @endif
 
 {{-- ═══════════ COMMAND BAR ═══════════ --}}
-@if(in_array(auth()->user()->role, ['Admin', 'Secretary']))
+@canany(['documents.create', 'residents.create', 'blotter.create', 'businesses.create', 'appointments.view'])
 <div class="cmd-bar no-print">
     <span class="cmd-bar-label">Actions</span>
 
+    @can('documents.create')
     <a href="{{ route('documents.create') }}" class="cmd-bar-btn cmd-bar-btn-gold">
         <i class="fas fa-file-circle-plus"></i> Issue Document
     </a>
+    @endcan
+    @can('residents.create')
     <a href="{{ route('residents.create') }}" class="cmd-bar-btn cmd-bar-btn-primary">
         <i class="fas fa-user-plus"></i> Add Resident
     </a>
+    @endcan
+    @can('blotter.create')
     <a href="{{ route('blotter.create') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
         <i class="fas fa-gavel"></i> Log Blotter
     </a>
+    @endcan
+    @can('businesses.create')
     <a href="{{ route('businesses.create') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
         <i class="fas fa-store"></i> New Permit
     </a>
+    @endcan
 
+    @can('appointments.view')
     <div class="cmd-bar-divider"></div>
 
     <a href="{{ route('appointments.index') }}" class="cmd-bar-btn cmd-bar-btn-ghost">
@@ -377,11 +386,12 @@
                      padding:1px 6px;border-radius:99px;margin-left:2px">{{ $pendingAppointments }}</span>
         @endif
     </a>
+    @endcan
     <a href="{{ route('portal.index') }}" target="_blank" class="cmd-bar-btn cmd-bar-btn-ghost">
         <i class="fas fa-globe"></i> Resident Portal
     </a>
 </div>
-@endif
+@endcanany
 
 {{-- DASHBOARD TABS --}}
 <div class="dash-tabs">
@@ -436,7 +446,7 @@
                 <div class="dash-stat-label">Active Businesses</div>
             </div>
         </a>
-        @if(in_array(auth()->user()->role, ['Admin','Secretary']))
+        @can('appointments.view')
         <a href="{{ route('appointments.index') }}" class="dash-stat-card">
             <div class="dash-stat-icon"><i class="fas fa-calendar-check"></i></div>
             <div>
@@ -452,7 +462,7 @@
                 @endif
             </div>
         </a>
-        @endif
+        @endcan
     </div>
 
     {{-- CHART + QUICK ACCESS --}}
