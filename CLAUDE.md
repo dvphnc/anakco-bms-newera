@@ -27,7 +27,7 @@ Built as a portfolio/capstone project for barangay staff to manage residents, do
 
 ## Credentials
 - **Admin:** admin@bms.gov.ph / Admin@12345
-- **Roles:** Admin, Secretary, Committee
+- **Roles:** Admin (locked, all permissions), Secretary, Committee, plus any role the Admin adds
 
 ## Punong Barangay
 - **Name:** Robert S. Romano
@@ -38,8 +38,11 @@ app/
   Http/
     Controllers/         # All controllers
     Middleware/
-      CheckRole.php      # Role-based access control
+      CheckPermission.php  # permission:key1,key2 route check (any of)
   Models/               # Eloquent models
+  Support/
+    Permissions.php     # The list of every permission key (single source of truth)
+    RecycleBin.php      # Archivable types shown in the Recycle Bin
   Traits/
     LogsActivity.php    # Activity logging trait
 
@@ -68,20 +71,23 @@ resources/
       resident-select.blade.php  # Reusable Select2 component
 
 routes/
-  web.php              # All routes with role middleware
+  web.php              # All routes with permission middleware
 ```
 
-## Roles & Permissions
-| Role | Access |
+## Roles & Permissions (dynamic, Part 3.2)
+Roles and permissions live in the database (`roles`, `permissions`, `permission_role`, `users.role_id`).
+The Admin changes them at **Roles & Permissions** (`/roles`) without touching code.
+
+| Built-in role | Starts with |
 |------|--------|
-| Admin | Everything |
-| Secretary | Residents, Households, Documents, Blotter, Businesses, Officials, Reports, Activity Log |
-| Committee | Dashboard, Committees only |
+| Admin | Everything. `is_system`, locked: cannot be edited, archived or lose a permission |
+| Secretary | Everything except religion data, reviving a deceased resident, users, roles, backup, Recycle Bin |
+| Committee | Committee pages only |
 
 ## Middleware
 - `auth` — must be logged in
 - `verified` — email must be verified
-- `role:Admin,Secretary` — role check via `CheckRole` middleware
+- `permission:residents.view,households.view` — passes if the role has ANY listed key (`CheckPermission`); redirects to the dashboard (403 JSON for AJAX)
 
 ## Completed Features
 - ✅ Resident CRUD with photo upload
@@ -110,6 +116,7 @@ routes/
 - ✅ Sprint 2 Part 1 — resident life statuses (Alive/Deceased/Moved Out + history), voters residing, automatic household grouping by address, transaction history with double-claim prevention, relief programs linked to BDRRM stock, duplicate resident warning
 - ✅ Sprint 2 Part 2 — religion list (INC flagged), Family of Ministers, Pabahay blocks/units, nested sidebar filter (INC / Non-INC → Family of Ministers → Pabahay unit). **Admin only.**
 - ✅ Sprint 2 Part 3.1 — archive instead of delete on every table (soft deletes + `deleted_by`), Admin-only Recycle Bin with Restore, "Archive" wording everywhere
+- ✅ Sprint 2 Part 3.2 — dynamic roles & permissions: Admin page to create roles and tick permissions in a matrix; every route, menu link and button follows it
 
 ## Key Conventions
 - All controllers use `LogsActivity` trait
@@ -119,8 +126,9 @@ routes/
 - Select2 resident search uses `/select2/residents` AJAX endpoint
 - PDF certificates use `->stream()` to open in browser tab
 - All dates formatted with Carbon
-- **Religion and minister data is Admin-only.** Always check the Gates `view-religion-data` / `manage-religion-data` (defined in `AppServiceProvider`, never test the role directly). `Resident::getHidden()` removes `religion_id`, `is_minister_family`, `pabahay_unit_id` from JSON/arrays for non-Admins, and `LogsActivity` never logs them (the activity log is readable by Secretaries). `tests/Feature/ReligionAccessTest.php` covers every leak path; keep it passing.
+- **Religion and minister data is Admin-only.** Always check the Gates `view-religion-data` / `manage-religion-data` (defined in `AppServiceProvider`; they read the `religion.view` / `religion.manage` permissions, which only the Admin role has by default). `Resident::getHidden()` removes `religion_id`, `is_minister_family`, `pabahay_unit_id` from JSON/arrays for non-Admins, and `LogsActivity` never logs them (the activity log is readable by Secretaries). `tests/Feature/ReligionAccessTest.php` covers every leak path; keep it passing.
 - **Nothing is hard deleted.** Every model uses `App\Models\Concerns\Archivable` (SoftDeletes + who archived it). `forceDelete()` throws unless wrapped in `PermanentDelete::allow(fn () => ...)` (maintenance scripts only). New models must use `Archivable`, new tables need `softDeletes()` + `deleted_by`, `belongsTo` relations end with `->withTrashed()`, and number generators must count `withTrashed()` rows. New archivable types go in `App\Support\RecycleBin::TYPES`. `tests/Feature/ArchiveTest.php` checks every model.
+- **Never check a role name for access.** Check a permission key: `permission:` route middleware, `@can('residents.edit')` in Blade, `$user->hasPermission()` / `->can()` in PHP. To add an action, add its key to `App\Support\Permissions::GROUPS` (it appears in the matrix automatically) and check it where it is used. `$user->role` is still the role's name (accessor over `role_id`); `$user->isAdmin()` means the locked system role. A non-Admin who manages roles can only give permissions they have and cannot edit their own role; only an Admin can assign the Admin role or touch Admin accounts. `tests/Feature/RolePermissionTest.php` covers this.
 - Tests run on MySQL `anakco_bms_testing` and refuse any other database (see `tests/TestCase.php`). Run `php artisan test`.
 
 ## Current Task
