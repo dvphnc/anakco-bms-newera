@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Business extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected $fillable = [
@@ -61,12 +64,12 @@ class Business extends Model
 
     public function ownerResident()
     {
-        return $this->belongsTo(Resident::class, 'owner_resident_id');
+        return $this->belongsTo(Resident::class, 'owner_resident_id')->withTrashed();
     }
 
     public function issuedBy()
     {
-        return $this->belongsTo(User::class, 'issued_by');
+        return $this->belongsTo(User::class, 'issued_by')->withTrashed();
     }
 
     public function statusLogs()
@@ -83,7 +86,7 @@ class Business extends Model
     {
         $year   = date('Y');
         $prefix = 'OR-'.$year.'-';
-        $max = self::where('or_number', 'like', $prefix.'%')
+        $max = self::withTrashed()->where('or_number', 'like', $prefix.'%')
             ->selectRaw('MAX(CAST(SUBSTRING(or_number, ?) AS UNSIGNED)) as max_seq', [strlen($prefix) + 1])
             ->value('max_seq');
         return $prefix.str_pad(($max ?? 0) + 1, 5, '0', STR_PAD_LEFT);
@@ -93,9 +96,13 @@ class Business extends Model
     public static function generatePermitNumber(): string
     {
         $year = date('Y');
-        $count = self::whereYear('created_at', $year)->count() + 1;
+        $prefix = 'BP-'.$year.'-';
+        // Highest number so far (archived records included), so a number is never reused
+        $max = self::withTrashed()->where('permit_number', 'like', $prefix.'%')
+            ->selectRaw('MAX(CAST(SUBSTRING(permit_number, ?) AS UNSIGNED)) as max_seq', [strlen($prefix) + 1])
+            ->value('max_seq');
 
-        return 'BP-'.$year.'-'.str_pad($count, 5, '0', STR_PAD_LEFT);
+        return $prefix.str_pad(($max ?? 0) + 1, 5, '0', STR_PAD_LEFT);
     }
 
     public function isExpired(): bool

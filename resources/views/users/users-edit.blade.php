@@ -137,7 +137,7 @@
     {{-- Delete button triggers separate form outside main form --}}
     <button type="button" class="btn btn-danger" style="margin-left:auto"
             onclick="document.getElementById('delete-user-form').submit()">
-        <i class="fas fa-trash"></i> Delete User
+        <i class="fas fa-box-archive"></i> Archive User
     </button>
     @endif
 </div>
@@ -147,9 +147,9 @@
 {{-- Delete form is OUTSIDE the edit form to prevent nesting --}}
 @if($user->id !== auth()->id())
 <form method="POST" action="{{ route('users.destroy', $user) }}" id="delete-user-form"
-      data-confirm="Permanently delete {{ $user->name }}? This cannot be undone."
-      data-confirm-title="Delete User"
-      data-confirm-ok="Delete Permanently">
+      data-confirm="Archive {{ $user->name }}? You can restore it from the Recycle Bin."
+      data-confirm-title="Archive User"
+      data-confirm-ok="Archive">
     @csrf @method('DELETE')
 </form>
 @endif

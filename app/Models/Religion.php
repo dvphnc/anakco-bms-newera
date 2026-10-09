@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use App\Enums\ResidencyStatus;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Religion extends Model
 {
+    use Archivable;
+
     protected $fillable = ['name', 'is_inc', 'is_active'];
 
     protected function casts(): array

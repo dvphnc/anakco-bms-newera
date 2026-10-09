@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use App\Enums\ResidencyStatus;
 use App\Services\HouseholdGroupingService;
 use App\Support\AddressNormalizer;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Gate;
 
 class Resident extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, Archivable;
 
     protected $fillable = [
         'last_name',
@@ -199,12 +199,12 @@ class Resident extends Model
 
     public function purok()
     {
-        return $this->belongsTo(Purok::class);
+        return $this->belongsTo(Purok::class)->withTrashed();
     }
 
     public function household()
     {
-        return $this->belongsTo(Household::class);
+        return $this->belongsTo(Household::class)->withTrashed();
     }
 
     public function documents()
@@ -229,12 +229,12 @@ class Resident extends Model
 
     public function religion()
     {
-        return $this->belongsTo(Religion::class);
+        return $this->belongsTo(Religion::class)->withTrashed();
     }
 
     public function pabahayUnit()
     {
-        return $this->belongsTo(PabahayUnit::class);
+        return $this->belongsTo(PabahayUnit::class)->withTrashed();
     }
 
     // -------------------------------------------------------

@@ -243,9 +243,9 @@ $(document).ready(function () {
         const url  = form.attr('action');
 
         bmsConfirm({
-            title:   'Delete Household',
-            message: 'Delete this household? This cannot be undone.',
-            ok:      'Delete',
+            title:   'Archive Household',
+            message: 'Archive this household? You can restore it from the Recycle Bin.',
+            ok:      'Archive',
         }, function () {
             const icon = btn.find('i');
             const orig = icon.attr('class');

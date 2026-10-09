@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AssistanceProgram extends Model
 {
-    use SoftDeletes;
+    use Archivable;
 
     public const TYPES = [
         'relief'     => 'Relief Goods',

@@ -1102,7 +1102,9 @@
         document.getElementById('bmsConfirmMsg').textContent       = options.message || '';
         document.getElementById('bmsConfirmOkText').textContent    = options.ok      || 'Confirm';
         var isDanger = options.type !== 'safe';
-        document.getElementById('bmsConfirmOkIcon').className      = 'fas ' + (isDanger ? 'fa-trash' : 'fa-check');
+        // Archive buttons get the archive box; a real delete (e.g. a backup file) keeps the trash can
+        var dangerIcon = /archive/i.test(options.ok || '') ? 'fa-box-archive' : 'fa-trash';
+        document.getElementById('bmsConfirmOkIcon').className      = 'fas ' + (isDanger ? dangerIcon : 'fa-check');
         document.getElementById('bmsConfirmOk').className          = isDanger ? 'btn btn-danger' : 'btn btn-primary';
         document.getElementById('bmsConfirmIcon').style.background = isDanger ? 'var(--crimson-pale)' : 'var(--navy-pale)';
         document.getElementById('bmsConfirmIconI').style.color     = isDanger ? 'var(--crimson)' : 'var(--navy)';
@@ -1119,7 +1121,7 @@
         const isDanger    = !e.target.dataset.confirmType || e.target.dataset.confirmType === 'danger';
         const btnLabel    = e.target.dataset.confirmOk   || 'Confirm';
         const titleLabel  = e.target.dataset.confirmTitle || 'Confirm Action';
-        const iconClass   = e.target.dataset.confirmIcon  || (isDanger ? 'fa-trash' : 'fa-check');
+        const iconClass   = e.target.dataset.confirmIcon  || (isDanger ? (/archive/i.test(btnLabel) ? 'fa-box-archive' : 'fa-trash') : 'fa-check');
         const iconColor   = isDanger ? 'var(--crimson)' : 'var(--navy)';
         const iconBg      = isDanger ? 'var(--crimson-pale)' : 'var(--navy-pale)';
         document.getElementById('bmsConfirmTitle').textContent      = titleLabel;

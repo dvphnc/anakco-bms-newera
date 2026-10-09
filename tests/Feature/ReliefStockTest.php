@@ -218,12 +218,12 @@ class ReliefStockTest extends TestCase
             ->deleteJson(route('committees.destroyRelief', ['bdrrm', $this->rice->id]))
             ->assertStatus(422)
             ->assertJsonPath('message', fn ($m) => str_contains($m, 'Relief Pack — Typhoon Kristine'));
-        $this->assertNotNull($this->rice->fresh());
+        $this->assertNotSoftDeleted($this->rice);
 
         $this->actingAs($admin)
             ->deleteJson(route('committees.destroyRelief', ['bdrrm', $spare->id]))
             ->assertOk();
-        $this->assertNull($spare->fresh());
+        $this->assertSoftDeleted($spare);
     }
 
     public function test_stock_added_or_corrected_by_hand_is_logged(): void

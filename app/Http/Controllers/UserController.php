@@ -28,6 +28,8 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        $this->rejectArchivedEmail($request);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -73,6 +75,8 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        $this->rejectArchivedEmail($request);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$user->id,
@@ -116,7 +120,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {
-            return redirect()->route('users.index')->with('error', 'You cannot delete your own account.');
+            return redirect()->route('users.index')->with('error', 'You cannot archive your own account.');
         }
 
         $this->logActivity('deleted', $user);
@@ -125,14 +129,14 @@ class UserController extends Controller
         if (request()->expectsJson()) {
             return response()->json([
                 'success'  => true,
-                'message'  => 'User account deleted successfully.',
+                'message'  => 'User account archived. The person can no longer sign in. You can restore it from the Recycle Bin.',
                 'total'    => User::count(),
                 'admins'   => User::where('role', 'Admin')->count(),
                 'verified' => User::whereNotNull('email_verified_at')->count(),
             ]);
         }
 
-        return redirect()->route('users.index')->with('success', 'User account deleted successfully.');
+        return redirect()->route('users.index')->with('success', 'User account archived. The person can no longer sign in. You can restore it from the Recycle Bin.');
     }
 
     public function verify(User $user)
@@ -191,5 +195,15 @@ class UserController extends Controller
         }
 
         return back()->with('success', $message);
+    }
+
+    /** An archived account keeps its email, so say where it is instead of "already taken" (Part 3.1) */
+    private function rejectArchivedEmail(Request $request): void
+    {
+        if ($request->filled('email') && User::onlyTrashed()->where('email', $request->email)->exists()) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'email' => 'This email belongs to an archived account. Restore it from the Recycle Bin instead.',
+            ]);
+        }
     }
 }

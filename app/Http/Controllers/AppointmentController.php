@@ -71,11 +71,11 @@ class AppointmentController extends Controller
                     $deleteBtn  = '<button class="btn btn-danger btn-sm btn-icon apt-delete-btn"
                                            style="height:30px;width:30px;padding:0;flex-shrink:0;
                                                   display:inline-flex;align-items:center;justify-content:center"
-                                           data-tippy-content="Delete Appointment"
+                                           data-tippy-content="Archive Appointment"
                                            data-num="'.e($a->appointment_number).'"
                                            data-name="'.e($a->resident_name).'"
                                            data-url="'.e($deleteUrl).'">
-                                       <i class="fas fa-trash" style="font-size:11px"></i>
+                                       <i class="fas fa-box-archive" style="font-size:11px"></i>
                                    </button>';
 
                     // ── Already released: show View Record link + delete ──
@@ -478,11 +478,11 @@ class AppointmentController extends Controller
                 $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon biz-delete-btn"
                                       style="height:30px;width:30px;padding:0;flex-shrink:0;
                                              display:inline-flex;align-items:center;justify-content:center"
-                                      data-tippy-content="Delete Application"
+                                      data-tippy-content="Archive Application"
                                       data-num="'.e($b->permit_number).'"
                                       data-name="'.e($b->owner_name).'"
                                       data-url="'.e($deleteUrl).'">
-                                  <i class="fas fa-trash" style="font-size:11px"></i>
+                                  <i class="fas fa-box-archive" style="font-size:11px"></i>
                               </button>';
 
                 if ($b->permit_date) {
@@ -680,11 +680,11 @@ class AppointmentController extends Controller
                 $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon blotter-delete-btn"
                                       style="height:30px;width:30px;padding:0;flex-shrink:0;
                                              display:inline-flex;align-items:center;justify-content:center"
-                                      data-tippy-content="Delete Report"
+                                      data-tippy-content="Archive Report"
                                       data-num="'.e($c->case_number).'"
                                       data-name="'.e($c->complainant_name).'"
                                       data-url="'.e($deleteUrl).'">
-                                  <i class="fas fa-trash" style="font-size:11px"></i>
+                                  <i class="fas fa-box-archive" style="font-size:11px"></i>
                               </button>';
 
                 if ($c->status === 'Pending') {
@@ -825,7 +825,7 @@ class AppointmentController extends Controller
         $num  = $appointment->appointment_number;
         $snap = $appointment->toArray();
 
-        // Also delete the issued document record so it doesn't linger in Document Issuance
+        // Also archive the issued document so it does not linger in Document Issuance
         if ($appointment->document) {
             $this->logActivity('deleted', $appointment->document);
             $appointment->document->delete();
@@ -843,7 +843,7 @@ class AppointmentController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Appointment {$num} deleted.",
+                'message' => "Appointment {$num} archived. You can restore it from the Recycle Bin.",
                 'counts'  => [
                     'Pending'  => (int) $counts->pending,
                     'Ready'    => (int) $counts->ready,
@@ -853,7 +853,7 @@ class AppointmentController extends Controller
             ]);
         }
 
-        return back()->with('success', "Appointment {$num} deleted.");
+        return back()->with('success', "Appointment {$num} archived. You can restore it from the Recycle Bin.");
     }
 
     public function destroyBiz(Request $request, Business $business)
@@ -869,12 +869,12 @@ class AppointmentController extends Controller
 
             return response()->json([
                 'success'     => true,
-                'message'     => "Business application {$num} deleted.",
+                'message'     => "Business application {$num} archived. You can restore it from the Recycle Bin.",
                 'biz_pending' => $bizPending,
             ]);
         }
 
-        return back()->with('success', "Business application {$num} deleted.");
+        return back()->with('success', "Business application {$num} archived. You can restore it from the Recycle Bin.");
     }
 
     public function destroyBlotter(Request $request, BlotterCase $blotterCase)
@@ -882,10 +882,7 @@ class AppointmentController extends Controller
         $num  = $blotterCase->case_number;
         $snap = $blotterCase->toArray();
 
-        // Delete any uploaded attachment file from storage
-        if ($blotterCase->file_path) {
-            \Storage::disk('public')->delete($blotterCase->file_path);
-        }
+        // The attachment file is kept, so a restored report still has it (Part 3.1)
 
         $blotterCase->delete();
         $this->logActivity('deleted', $blotterCase, $snap);
@@ -896,11 +893,11 @@ class AppointmentController extends Controller
 
             return response()->json([
                 'success'         => true,
-                'message'         => "Blotter report {$num} deleted.",
+                'message'         => "Blotter report {$num} archived. You can restore it from the Recycle Bin.",
                 'blotter_pending' => $blotterPending,
             ]);
         }
 
-        return back()->with('success', "Blotter report {$num} deleted.");
+        return back()->with('success', "Blotter report {$num} archived. You can restore it from the Recycle Bin.");
     }
 }

@@ -702,9 +702,9 @@ $(document).on('click', '#residentsTable form[data-confirm] button[type="submit"
     const url  = form.attr('action');
 
     bmsConfirm({
-        title:   form.data('confirm-title') || 'Delete Resident',
+        title:   form.data('confirm-title') || 'Archive Resident',
         message: form.data('confirm'),
-        ok:      form.data('confirm-ok')    || 'Delete',
+        ok:      form.data('confirm-ok')    || 'Archive',
     }, function () {
         const icon = btn.find('i');
         const orig = icon.attr('class');

@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Official extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected $fillable = [
@@ -36,7 +39,7 @@ class Official extends Model
 
     public function resident()
     {
-        return $this->belongsTo(Resident::class);
+        return $this->belongsTo(Resident::class)->withTrashed();
     }
 
     // -------------------------------------------------------

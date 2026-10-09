@@ -48,7 +48,7 @@ class HouseholdController extends Controller
                             <form method="POST" action="'.$delete.'">
                                 <input type="hidden" name="_token" value="'.csrf_token().'">
                                 <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                             </form>
                         </div>';
                 })
@@ -112,14 +112,17 @@ class HouseholdController extends Controller
     // One household per address per purok (also enforced by a unique index)
     private function ensureAddressIsFree(array $validated, ?Household $except = null): void
     {
-        $existing = Household::where('purok_id', $validated['purok_id'])
+        $existing = Household::withTrashed()
+            ->where('purok_id', $validated['purok_id'])
             ->where('address_key', AddressNormalizer::key($validated['address']))
             ->when($except, fn ($q) => $q->whereKeyNot($except->id))
             ->first();
 
         if ($existing) {
             throw ValidationException::withMessages([
-                'address' => "Household {$existing->household_number} is already registered at this address.",
+                'address' => $existing->trashed()
+                    ? "Household {$existing->household_number} at this address is archived. Restore it from the Recycle Bin instead."
+                    : "Household {$existing->household_number} is already registered at this address.",
             ]);
         }
     }
@@ -260,16 +263,26 @@ class HouseholdController extends Controller
         return view('households.households-show', compact('household'));
     }
 
+    // Archive (Part 3.1). A household people still live in cannot be archived.
     public function destroy(Request $request, Household $household)
     {
         $number = $household->household_number;
-        $this->logActivity('deleted', $household);
+        $living = $household->livingMembers()->count();
+        if ($living > 0) {
+            $message = "Household {$number} still has {$living} living ".str('member')->plural($living).'. Move or archive them first.';
+
+            return $request->wantsJson()
+                ? response()->json(['success' => false, 'message' => $message], 422)
+                : back()->with('error', $message);
+        }
+
+        $this->logActivity('deleted', $household);   // shown as "Archived" in the log
         $household->delete();
 
         if ($request->wantsJson()) {
-            return response()->json(['success' => true, 'message' => "Household {$number} has been removed."]);
+            return response()->json(['success' => true, 'message' => "Household {$number} archived. You can restore it from the Recycle Bin."]);
         }
 
-        return redirect()->route('households.index')->with('success', 'Household deleted successfully.');
+        return redirect()->route('households.index')->with('success', "Household {$number} archived. You can restore it from the Recycle Bin.");
     }
 }

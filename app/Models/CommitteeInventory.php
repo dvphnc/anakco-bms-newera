@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CommitteeInventory extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected $fillable = [
@@ -26,7 +29,7 @@ class CommitteeInventory extends Model
 
     public function recordedBy()
     {
-        return $this->belongsTo(User::class, 'recorded_by');
+        return $this->belongsTo(User::class, 'recorded_by')->withTrashed();
     }
 
     // -------------------------------------------------------

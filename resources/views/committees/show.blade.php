@@ -608,7 +608,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 <div class="photo-thumb-label">{{ $photo->title }}</div>
                 <div class="photo-thumb-actions">
                     <button type="button" onclick="openEditRecord(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                    <button type="button" onclick="deleteGeneric('records','{{ $photo->id }}','{{ addslashes($photo->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                    <button type="button" onclick="deleteGeneric('records','{{ $photo->id }}','{{ addslashes($photo->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                 </div>
             </div>
             @endforeach
@@ -641,7 +641,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditRecord(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteGeneric('records','{{ $rec->id }}','{{ addslashes($rec->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteGeneric('records','{{ $rec->id }}','{{ addslashes($rec->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -719,7 +719,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditActivity(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteGeneric('activities','{{ $act->id }}','{{ addslashes($act->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteGeneric('activities','{{ $act->id }}','{{ addslashes($act->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -794,7 +794,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
                         <span class="badge {{ match($acc->status) { 'Completed'=>'badge-green','Ongoing'=>'badge-yellow','Cancelled'=>'badge-red',default=>'badge-gray' } }}">{{ $acc->status }}</span>
                         <button type="button" onclick="openEditActivity(this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                        <button type="button" onclick="deleteGeneric('activities','{{ $acc->id }}','{{ addslashes($acc->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button type="button" onclick="deleteGeneric('activities','{{ $acc->id }}','{{ addslashes($acc->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                     </div>
                 </div>
             </div>
@@ -877,7 +877,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditAttendance(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteGeneric('attendance','{{ $att->id }}','{{ addslashes($att->event_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteGeneric('attendance','{{ $att->id }}','{{ addslashes($att->event_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -948,7 +948,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditInventory(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteGeneric('inventory','{{ $item->id }}','{{ addslashes($item->item_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteGeneric('inventory','{{ $item->id }}','{{ addslashes($item->item_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1030,8 +1030,8 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                             <button type="button" onclick="openEditPartnership(this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
                             <button type="button"
                                     onclick="deletePartnership({{ $p->id }}, '{{ addslashes($p->partner_name) }}', '{{ $committee['slug'] }}')"
-                                    class="btn btn-danger btn-sm btn-icon" title="Delete">
-                                <i class="fas fa-trash"></i>
+                                    class="btn btn-danger btn-sm btn-icon" title="Archive">
+                                <i class="fas fa-box-archive"></i>
                             </button>
                         </div>
                     </td>
@@ -1107,7 +1107,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('bpso', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('bpso','{{ $b->id }}','{{ addslashes($b->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('bpso','{{ $b->id }}','{{ addslashes($b->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1176,7 +1176,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('patrol', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('patrol','{{ $p->id }}','{{ addslashes($p->area_covered) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('patrol','{{ $p->id }}','{{ addslashes($p->area_covered) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1255,7 +1255,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('health', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('health','{{ $h->id }}','{{ addslashes($h->patient_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('health','{{ $h->id }}','{{ addslashes($h->patient_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1332,7 +1332,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('scholar', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('scholar','{{ $s->id }}','{{ addslashes($s->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('scholar','{{ $s->id }}','{{ addslashes($s->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1419,7 +1419,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('project', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('project','{{ $p->id }}','{{ addslashes($p->project_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('project','{{ $p->id }}','{{ addslashes($p->project_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1499,7 +1499,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('environment', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('environment','{{ $p->id }}','{{ addslashes($p->program_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('environment','{{ $p->id }}','{{ addslashes($p->program_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1575,7 +1575,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('beneficiary', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('beneficiary','{{ $b->id }}','{{ addslashes($b->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('beneficiary','{{ $b->id }}','{{ addslashes($b->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1652,7 +1652,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('toda', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('toda','{{ $t->id }}','{{ addslashes($t->operator_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('toda','{{ $t->id }}','{{ addslashes($t->operator_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1728,7 +1728,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('emergency', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('emergency','{{ $e->id }}','{{ addslashes($e->incident_type) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('emergency','{{ $e->id }}','{{ addslashes($e->incident_type) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1810,7 +1810,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                 @endif
                 <div style="display:flex;gap:6px;margin-top:10px;justify-content:flex-end">
                     <button type="button" onclick="openEditSpecific('evacuation', this.closest('[data-id]'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                    <button type="button" onclick="deleteSpecific('evacuation','{{ $ec->id }}','{{ addslashes($ec->center_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                    <button type="button" onclick="deleteSpecific('evacuation','{{ $ec->id }}','{{ addslashes($ec->center_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                 </div>
             </div>
             @endforeach
@@ -1893,8 +1893,8 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                             <button type="button" onclick="openEditSpecific('relief', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
                             <button type="button"
                                     onclick="deleteReliefSupply({{ $rs->id }}, '{{ addslashes($rs->item_name) }}', '{{ $committee['slug'] }}')"
-                                    class="btn btn-danger btn-sm btn-icon" title="Delete">
-                                <i class="fas fa-trash"></i>
+                                    class="btn btn-danger btn-sm btn-icon" title="Archive">
+                                <i class="fas fa-box-archive"></i>
                             </button>
                         </div>
                     </td>
@@ -1975,7 +1975,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('training', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('training','{{ $tr->id }}','{{ addslashes($tr->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('training','{{ $tr->id }}','{{ addslashes($tr->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -2049,7 +2049,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('clinic', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('clinic','{{ $cs->id }}','{{ addslashes($cs->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('clinic','{{ $cs->id }}','{{ addslashes($cs->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -2401,8 +2401,8 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                         </button>
                         <button type="button"
                                 onclick="deleteMedicine({{ $med->id }}, '{{ addslashes($med->medicine_name) }}', '{{ $committee['slug'] }}')"
-                                class="btn btn-danger btn-sm btn-icon" title="Delete">
-                            <i class="fas fa-trash"></i>
+                                class="btn btn-danger btn-sm btn-icon" title="Archive">
+                            <i class="fas fa-box-archive"></i>
                         </button>
                     </td>
                 </tr>
@@ -2514,7 +2514,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('sweeper', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('sweeper','{{ $sw->id }}','{{ addslashes($sw->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('sweeper','{{ $sw->id }}','{{ addslashes($sw->full_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -2595,7 +2595,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('contract', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('contract','{{ $ct->id }}','{{ addslashes($ct->contractor_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('contract','{{ $ct->id }}','{{ addslashes($ct->contractor_name) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -2687,7 +2687,7 @@ table tbody td { font-size: 13.5px; line-height: 1.55; }
                     <td>
                         <div style="display:flex;gap:4px;justify-content:flex-end">
                             <button type="button" onclick="openEditSpecific('financial', this.closest('tr'))" class="btn btn-primary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></button>
-                            <button type="button" onclick="deleteSpecific('financial','{{ $fin->id }}','{{ addslashes($fin->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="deleteSpecific('financial','{{ $fin->id }}','{{ addslashes($fin->title) }}')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -3206,9 +3206,9 @@ document.getElementById('stockAdjustForm')?.addEventListener('submit', function(
 
 function deleteMedicine(medId, medName, slug) {
     bmsConfirm({
-        title:   'Delete Medicine',
-        message: 'Delete ' + medName + '? This cannot be undone.',
-        ok:      'Delete',
+        title:   'Archive Medicine',
+        message: 'Archive ' + medName + '? You can restore it from the Recycle Bin.',
+        ok:      'Archive',
         type:    'danger',
     }, function() {
         axios.delete('/committees/' + slug + '/medicine/' + medId)
@@ -3287,9 +3287,9 @@ document.getElementById('medDetailsModal')?.addEventListener('click', function(e
 function deletePartnership(id, name, slug) {
     var rowEl = document.querySelector('tr[data-pid="' + id + '"]');
     bmsConfirm({
-        title:   'Delete Partnership',
-        message: 'Delete the partnership with ' + name + '? This cannot be undone.',
-        ok:      'Delete',
+        title:   'Archive Partnership',
+        message: 'Archive the partnership with ' + name + '? You can restore it from the Recycle Bin.',
+        ok:      'Archive',
         type:    'danger',
     }, function() {
         axios.delete('/committees/' + slug + '/partnerships/' + id)
@@ -3308,9 +3308,9 @@ function deletePartnership(id, name, slug) {
 function deleteReliefSupply(id, name, slug) {
     var rowEl = document.querySelector('tr[data-id="' + id + '"]');
     bmsConfirm({
-        title:   'Delete Relief Supply',
-        message: 'Delete ' + name + ' from the relief inventory? This cannot be undone.',
-        ok:      'Delete',
+        title:   'Archive Relief Supply',
+        message: 'Archive ' + name + ' from the relief inventory? You can restore it from the Recycle Bin.',
+        ok:      'Archive',
         type:    'danger',
     }, function() {
         axios.delete('/committees/' + slug + '/relief/' + id)
@@ -3333,19 +3333,19 @@ function deleteGeneric(type, id, name) {
         records: 'Record', activities: 'Activity', attendance: 'Attendance Record', inventory: 'Inventory Item'
     };
     bmsConfirm({
-        title:   'Delete ' + (labels[type] || 'Record'),
-        message: 'Delete ' + name + '? This cannot be undone.',
-        ok: 'Delete', type: 'danger',
+        title:   'Archive ' + (labels[type] || 'Record'),
+        message: 'Archive ' + name + '? You can restore it from the Recycle Bin.',
+        ok: 'Archive', type: 'danger',
     }, function() {
         axios.delete('/committees/{{ $committee['slug'] }}/' + type + '/' + id)
             .then(function(res) {
                 if (rowEl) rowEl.remove();
-                bmsToast(res.data.message || 'Deleted.', 'success');
+                bmsToast(res.data.message || 'Archived.', 'success');
                 if (type === 'records') checkRecordsEmpty();
             })
             .catch(function(err) {
                 var msg = err.response && err.response.data && err.response.data.message;
-                bmsToast(msg || 'Delete failed.', 'error');
+                bmsToast(msg || 'Could not archive.', 'error');
             });
     });
 }
@@ -3380,18 +3380,18 @@ function checkRecordsEmpty() {
 function deleteSpecific(type, id, name) {
     var rowEl = document.querySelector('[data-id="' + id + '"]');
     bmsConfirm({
-        title: 'Delete Record',
-        message: 'Delete ' + name + '? This cannot be undone.',
-        ok: 'Delete', type: 'danger',
+        title: 'Archive Record',
+        message: 'Archive ' + name + '? You can restore it from the Recycle Bin.',
+        ok: 'Archive', type: 'danger',
     }, function() {
         axios.delete('/committees/{{ $committee['slug'] }}/specific/' + type + '/' + id)
             .then(function(res) {
                 if (rowEl) rowEl.remove();
-                bmsToast(res.data.message || 'Deleted.', 'success');
+                bmsToast(res.data.message || 'Archived.', 'success');
             })
             .catch(function(err) {
                 var msg = err.response && err.response.data && err.response.data.message;
-                bmsToast(msg || 'Delete failed.', 'error');
+                bmsToast(msg || 'Could not archive.', 'error');
             });
     });
 }

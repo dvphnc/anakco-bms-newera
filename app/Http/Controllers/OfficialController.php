@@ -135,10 +135,10 @@ class OfficialController extends Controller
         $official->delete();
 
         if ($request->wantsJson()) {
-            return response()->json(['success' => true, 'message' => "{$name} has been removed."]);
+            return response()->json(['success' => true, 'message' => "{$name} archived. You can restore it from the Recycle Bin."]);
         }
 
-        return redirect()->route('officials.index')->with('success', 'Official removed successfully.');
+        return redirect()->route('officials.index')->with('success', "{$name} archived. You can restore it from the Recycle Bin.");
     }
 
     public function toggleStatus(Official $official)

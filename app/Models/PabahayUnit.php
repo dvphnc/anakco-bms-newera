@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use App\Enums\ResidencyStatus;
 use Illuminate\Database\Eloquent\Model;
 
 class PabahayUnit extends Model
 {
+    use Archivable;
+
     protected $fillable = ['pabahay_id', 'unit_no', 'notes', 'is_active'];
 
     protected function casts(): array
@@ -16,7 +19,7 @@ class PabahayUnit extends Model
 
     public function pabahay()
     {
-        return $this->belongsTo(Pabahay::class);
+        return $this->belongsTo(Pabahay::class)->withTrashed();
     }
 
     public function residents()

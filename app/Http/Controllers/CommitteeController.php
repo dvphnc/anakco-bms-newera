@@ -329,10 +329,10 @@ class CommitteeController extends Controller
         $record->delete();
 
         if (request()->expectsJson()) {
-            return response()->json(['success' => true, 'message' => "Partnership with {$name} deleted."]);
+            return response()->json(['success' => true, 'message' => "Partnership with {$name} archived."]);
         }
 
-        return back()->with('success', 'Partnership record deleted.')->withFragment('partnerships');
+        return back()->with('success', 'Partnership record archived.')->withFragment('partnerships');
     }
 
     public function destroyMedicine(string $slug, int $id)
@@ -343,10 +343,10 @@ class CommitteeController extends Controller
         $medicine->delete();
 
         if (request()->expectsJson()) {
-            return response()->json(['success' => true, 'message' => "{$name} removed from inventory."]);
+            return response()->json(['success' => true, 'message' => "{$name} archived from the inventory."]);
         }
 
-        return back()->with('success', 'Medicine record deleted.')->withFragment('medicine-inventory');
+        return back()->with('success', 'Medicine record archived.')->withFragment('medicine-inventory');
     }
 
     public function destroyRelief(string $slug, int $id)
@@ -371,10 +371,10 @@ class CommitteeController extends Controller
         $record->delete();
 
         if (request()->expectsJson()) {
-            return response()->json(['success' => true, 'message' => "{$name} removed from relief inventory."]);
+            return response()->json(['success' => true, 'message' => "{$name} archived from the relief inventory."]);
         }
 
-        return back()->with('success', 'Relief supply deleted.')->withFragment('relief-supplies');
+        return back()->with('success', 'Relief supply archived.')->withFragment('relief-supplies');
     }
 
     // -------------------------------------------------------
@@ -401,12 +401,11 @@ class CommitteeController extends Controller
     public function destroyRecord(string $slug, int $id)
     {
         $record = CommitteeRecord::where('committee_slug', $slug)->findOrFail($id);
-        if ($record->file_path) \Illuminate\Support\Facades\Storage::disk('public')->delete($record->file_path);
-        $record->delete();
+        $record->delete();   // the attached file is kept for a restore (Part 3.1)
         if (request()->expectsJson()) {
-            return response()->json(['success' => true, 'message' => 'Record deleted.']);
+            return response()->json(['success' => true, 'message' => 'Record archived.']);
         }
-        return back()->with('success', 'Record deleted.')->withFragment('records');
+        return back()->with('success', 'Record archived.')->withFragment('records');
     }
 
     public function destroyActivity(string $slug, int $id)
@@ -415,20 +414,19 @@ class CommitteeController extends Controller
         $tab = $activity->activity_type === 'Accomplishment' ? 'accomplishments' : 'activities';
         $activity->delete();
         if (request()->expectsJson()) {
-            return response()->json(['success' => true, 'message' => 'Deleted successfully.']);
+            return response()->json(['success' => true, 'message' => 'Archived.']);
         }
-        return back()->with('success', 'Deleted.')->withFragment($tab);
+        return back()->with('success', 'Archived.')->withFragment($tab);
     }
 
     public function destroyAttendance(string $slug, int $id)
     {
         $att = CommitteeAttendance::where('committee_slug', $slug)->findOrFail($id);
-        if ($att->file_path) \Illuminate\Support\Facades\Storage::disk('public')->delete($att->file_path);
-        $att->delete();
+        $att->delete();   // the attached file is kept for a restore (Part 3.1)
         if (request()->expectsJson()) {
-            return response()->json(['success' => true, 'message' => 'Attendance record deleted.']);
+            return response()->json(['success' => true, 'message' => 'Attendance record archived.']);
         }
-        return back()->with('success', 'Attendance record deleted.')->withFragment('attendance');
+        return back()->with('success', 'Attendance record archived.')->withFragment('attendance');
     }
 
     public function destroyInventory(string $slug, int $id)
@@ -436,9 +434,9 @@ class CommitteeController extends Controller
         $item = CommitteeInventory::where('committee_slug', $slug)->findOrFail($id);
         $item->delete();
         if (request()->expectsJson()) {
-            return response()->json(['success' => true, 'message' => 'Inventory item deleted.']);
+            return response()->json(['success' => true, 'message' => 'Inventory item archived.']);
         }
-        return back()->with('success', 'Item deleted.')->withFragment('inventory');
+        return back()->with('success', 'Item archived.')->withFragment('inventory');
     }
 
     public function destroySpecificItem(string $slug, string $type, int $id)
@@ -464,9 +462,9 @@ class CommitteeController extends Controller
         $record = $map[$type]::findOrFail($id);
         $record->delete();
         if (request()->expectsJson()) {
-            return response()->json(['success' => true, 'message' => 'Record deleted.']);
+            return response()->json(['success' => true, 'message' => 'Record archived.']);
         }
-        return back()->with('success', 'Record deleted.');
+        return back()->with('success', 'Record archived.');
     }
 
     // -------------------------------------------------------
@@ -692,7 +690,7 @@ class CommitteeController extends Controller
                 . '<td class="td-muted">' . e($p->contact_person ?? '—') . '</td>'
                 . '<td class="td-muted">' . e($p->contact_number ?? '—') . '</td>'
                 . '<td><span class="td-muted">—</span></td>'
-                . '<td><button type="button" onclick="deletePartnership(' . $p->id . ', \'' . addslashes($p->partner_name) . '\', \'' . $slug . '\')" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button></td>'
+                . '<td><button type="button" onclick="deletePartnership(' . $p->id . ', \'' . addslashes($p->partner_name) . '\', \'' . $slug . '\')" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button></td>'
                 . '</tr>';
             return response()->json([
                 'success'   => true,

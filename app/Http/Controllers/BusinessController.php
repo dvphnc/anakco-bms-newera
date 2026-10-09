@@ -130,11 +130,11 @@ class BusinessController extends Controller
                                    data-tippy-content="View Permit"><i class="fas fa-eye"></i></a>';
 
                     $deleteBtn = '<button class="btn btn-danger btn-sm btn-icon biz-delete-btn"
-                                          data-tippy-content="Delete Permit"
+                                          data-tippy-content="Archive Permit"
                                           data-url="'.e($delete).'"
                                           data-num="'.e($b->permit_number).'"
                                           data-name="'.e($b->business_name).'">
-                                     <i class="fas fa-trash"></i>
+                                     <i class="fas fa-box-archive"></i>
                                  </button>';
 
                     // Portal + unissued: show Issue Permit button (3rd action)
@@ -406,9 +406,9 @@ class BusinessController extends Controller
         $business->delete();
 
         if ($request->wantsJson()) {
-            return response()->json(['success' => true, 'message' => "Permit {$num} deleted."]);
+            return response()->json(['success' => true, 'message' => "Permit {$num} archived. You can restore it from the Recycle Bin."]);
         }
 
-        return redirect()->route('businesses.index')->with('success', 'Business permit deleted successfully.');
+        return redirect()->route('businesses.index')->with('success', "Permit {$num} archived. You can restore it from the Recycle Bin.");
     }
 }

@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Model;
 
 class BlotterStatusLog extends Model
 {
+    use Archivable;
+
     public $timestamps = false;
 
     protected $table    = 'blotter_status_logs';

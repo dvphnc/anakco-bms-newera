@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CommitteeActivity extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected $fillable = [
@@ -34,7 +37,7 @@ class CommitteeActivity extends Model
 
     public function loggedBy()
     {
-        return $this->belongsTo(User::class, 'logged_by');
+        return $this->belongsTo(User::class, 'logged_by')->withTrashed();
     }
 
     // -------------------------------------------------------

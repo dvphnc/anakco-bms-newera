@@ -23,6 +23,7 @@ class PabahayController extends Controller
         // Living people and occupied units per Pabahay, in one query
         $occupancy = Resident::active()
             ->join('pabahay_units', 'pabahay_units.id', '=', 'residents.pabahay_unit_id')
+            ->whereNull('pabahay_units.deleted_at')
             ->groupBy('pabahay_units.pabahay_id')
             ->selectRaw('pabahay_units.pabahay_id AS pabahay_id, COUNT(*) AS people, COUNT(DISTINCT residents.pabahay_unit_id) AS occupied')
             ->get()->keyBy('pabahay_id');

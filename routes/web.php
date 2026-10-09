@@ -22,6 +22,7 @@ use App\Http\Controllers\PabahayUnitController;
 use App\Http\Controllers\ReligionController;
 use App\Http\Controllers\ResidentPortalController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\RecycleBinController;
 use App\Http\Controllers\Select2Controller;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyController;
@@ -330,6 +331,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('backup/restore', [BackupController::class, 'restore'])->name('backup.restore')->middleware('role:Admin');
     Route::post('backup/upload', [BackupController::class, 'upload'])->name('backup.upload')->middleware('role:Admin');
     Route::delete('backup/{filename}', [BackupController::class, 'delete'])->name('backup.delete')->middleware('role:Admin');
+
+    // Recycle Bin (Part 3.1): archived records can be restored, never permanently deleted
+    Route::get('recycle-bin', [RecycleBinController::class, 'index'])->name('recycle-bin.index')->middleware('role:Admin');
+    Route::patch('recycle-bin/{type}/{id}', [RecycleBinController::class, 'restore'])->name('recycle-bin.restore')->whereNumber('id')->middleware('role:Admin');
 
     // Global Search — all authenticated users (results filtered by role in controller)
     Route::get('search', [SearchController::class, 'search'])->name('search');

@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CommitteeAttendance extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected $fillable = [
@@ -33,7 +36,7 @@ class CommitteeAttendance extends Model
 
     public function recordedBy()
     {
-        return $this->belongsTo(User::class, 'recorded_by');
+        return $this->belongsTo(User::class, 'recorded_by')->withTrashed();
     }
 
     // -------------------------------------------------------

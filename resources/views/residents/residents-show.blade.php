@@ -136,12 +136,12 @@
                     Edit Profile
                 </a>
                 <form method="POST" action="{{ route('residents.destroy', $resident) }}"
-                      data-confirm="Delete {{ $resident->full_name }}? This action cannot be undone."
-                      data-confirm-title="Delete Resident"
-                      data-confirm-ok="Delete Permanently">
+                      data-confirm="Archive {{ $resident->full_name }}? You can restore it from the Recycle Bin."
+                      data-confirm-title="Archive Resident"
+                      data-confirm-ok="Archive">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start">
-                        <i class="fas fa-trash"></i> Delete Record
+                        <i class="fas fa-box-archive"></i> Archive Record
                     </button>
                 </form>
             </div>

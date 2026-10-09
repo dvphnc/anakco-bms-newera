@@ -132,12 +132,12 @@
                 </form>
                 @endif
                 <form method="POST" action="{{ route('businesses.destroy', $business) }}"
-                      data-confirm="Delete permit for {{ $business->business_name }}? This cannot be undone."
-                      data-confirm-title="Delete Business Permit"
-                      data-confirm-ok="Delete">
+                      data-confirm="Archive permit for {{ $business->business_name }}? You can restore it from the Recycle Bin."
+                      data-confirm-title="Archive Business Permit"
+                      data-confirm-ok="Archive">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start">
-                        <i class="fas fa-trash"></i> Delete
+                        <i class="fas fa-box-archive"></i> Archive
                     </button>
                 </form>
             </div>

@@ -112,7 +112,7 @@ $moduleMap = [
         <div style="display:flex;gap:14px;font-size:13px;color:var(--text-muted)">
             <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#4a8c5c;display:inline-block"></span>Created</span>
             <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#C8861A;display:inline-block"></span>Updated</span>
-            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#b04444;display:inline-block"></span>Deleted</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:2px;background:#b04444;display:inline-block"></span>Archived</span>
         </div>
     </div>
     <div class="card-body">
@@ -128,7 +128,7 @@ $moduleMap = [
             <strong>{{ number_format($totalWeek) }}</strong> total actions this week —
             <span style="color:#2e6b47"><strong>{{ $createdWk }}</strong> created</span>,
             <span style="color:#7a5200"><strong>{{ $updatedWk }}</strong> updated</span>,
-            <span style="color:#8b2e2e"><strong>{{ $deletedWk }}</strong> deleted</span>.
+            <span style="color:#8b2e2e"><strong>{{ $deletedWk }}</strong> archived</span>.
         </div>
     </div>
 </div>
@@ -152,7 +152,8 @@ $moduleMap = [
                         <option value="">All Actions</option>
                         <option value="created" {{ request('action') === 'created' ? 'selected' : '' }}>Created</option>
                         <option value="updated" {{ request('action') === 'updated' ? 'selected' : '' }}>Updated</option>
-                        <option value="deleted" {{ request('action') === 'deleted' ? 'selected' : '' }}>Deleted</option>
+                        <option value="deleted" {{ request('action') === 'deleted' ? 'selected' : '' }}>Archived</option>
+                        <option value="restored" {{ request('action') === 'restored' ? 'selected' : '' }}>Restored</option>
                     </select>
                 </div>
                 <div class="form-group flex-1">
@@ -224,7 +225,7 @@ function initCharts() {
             datasets: [
                 { label: 'Created', data: weeklyData.map(d => d.created), backgroundColor: '#4a8c5c', borderRadius: 3 },
                 { label: 'Updated', data: weeklyData.map(d => d.updated), backgroundColor: '#C8861A', borderRadius: 3 },
-                { label: 'Deleted', data: weeklyData.map(d => d.deleted), backgroundColor: '#b04444', borderRadius: 3 },
+                { label: 'Archived', data: weeklyData.map(d => d.deleted), backgroundColor: '#b04444', borderRadius: 3 },
             ]
         },
         options: {

@@ -66,12 +66,12 @@
                     <i class="fas fa-pen" style="color:var(--navy)"></i> Edit Household
                 </a>
                 <form method="POST" action="{{ route('households.destroy', $household) }}"
-                      data-confirm="Delete household {{ $household->household_number }}? This cannot be undone."
-                      data-confirm-title="Delete Household"
-                      data-confirm-ok="Delete">
+                      data-confirm="Archive household {{ $household->household_number }}? You can restore it from the Recycle Bin."
+                      data-confirm-title="Archive Household"
+                      data-confirm-ok="Archive">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start">
-                        <i class="fas fa-trash"></i> Delete
+                        <i class="fas fa-box-archive"></i> Archive
                     </button>
                 </form>
             </div>

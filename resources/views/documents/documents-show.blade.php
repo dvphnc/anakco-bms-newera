@@ -109,12 +109,12 @@
                 </form>
                 @endif
                 <form method="POST" action="{{ route('documents.destroy', $document) }}"
-                      data-confirm="Delete document {{ $document->doc_number }}? This cannot be recovered."
-                      data-confirm-title="Delete Document"
-                      data-confirm-ok="Delete">
+                      data-confirm="Archive document {{ $document->doc_number }}? You can restore it from the Recycle Bin."
+                      data-confirm-title="Archive Document"
+                      data-confirm-ok="Archive">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="width:100%;justify-content:flex-start">
-                        <i class="fas fa-trash"></i> Delete
+                        <i class="fas fa-box-archive"></i> Archive
                     </button>
                 </form>
             </div>

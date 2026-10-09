@@ -129,12 +129,12 @@ class ResidentController extends Controller
                             <a href="'.$show.'" class="btn btn-secondary btn-sm btn-icon" title="View Profile"><i class="fas fa-eye"></i></a>
                             <a href="'.$edit.'" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i class="fas fa-pen"></i></a>
                             <form method="POST" action="'.$delete.'"
-                                  data-confirm="Permanently delete '.e($r->full_name).'? All linked records will remain but the resident profile will be removed."
-                                  data-confirm-title="Delete Resident"
-                                  data-confirm-ok="Delete">
+                                  data-confirm="Archive '.e($r->full_name).'? Linked records stay. You can restore it from the Recycle Bin."
+                                  data-confirm-title="Archive Resident"
+                                  data-confirm-ok="Archive">
                                 <input type="hidden" name="_token" value="'.csrf_token().'">
                                 <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Archive"><i class="fas fa-box-archive"></i></button>
                             </form>
                         </div>';
                 })
@@ -520,9 +520,9 @@ class ResidentController extends Controller
         $resident->delete();
 
         if ($request->wantsJson()) {
-            return response()->json(['success' => true, 'message' => "{$name} has been removed."]);
+            return response()->json(['success' => true, 'message' => "{$name} archived. You can restore it from the Recycle Bin."]);
         }
 
-        return redirect()->route('residents.index')->with('success', 'Resident removed successfully.');
+        return redirect()->route('residents.index')->with('success', "{$name} archived. You can restore it from the Recycle Bin.");
     }
 }

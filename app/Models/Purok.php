@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Purok extends Model
 {
+    use Archivable;
+
     use HasFactory;
 
     protected $fillable = [
@@ -21,7 +24,7 @@ class Purok extends Model
 
     public function leader()
     {
-        return $this->belongsTo(Resident::class, 'leader_id');
+        return $this->belongsTo(Resident::class, 'leader_id')->withTrashed();
     }
 
     public function households()
