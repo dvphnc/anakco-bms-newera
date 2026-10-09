@@ -16,7 +16,7 @@
 
 ## What is BMS?
 
-BMS is a full-stack Barangay Management System built to digitize and streamline how **Barangay New Era** serves its residents — from filing blotter cases to issuing clearances, tracking business permits, and letting residents request documents online.
+BMS is a full-stack Barangay Management System for Barangay New Era built to digitize and streamline how **Barangay New Era** serves its residents — from filing blotter cases to issuing clearances, tracking business permits, and letting residents request documents online.
 
 > Barangay offices still run on paper folders, physical logbooks, and manual signatures. This system replaces all of that — one place for resident records, case management, document issuance, and real-time status tracking. Built for the actual staff who use it every day.
 
