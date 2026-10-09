@@ -23,6 +23,7 @@ use App\Http\Controllers\ReligionController;
 use App\Http\Controllers\ResidentPortalController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\RecycleBinController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Select2Controller;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyController;
@@ -351,6 +352,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('backup/restore', [BackupController::class, 'restore'])->name('backup.restore')->middleware('permission:backup.manage');
     Route::post('backup/upload', [BackupController::class, 'upload'])->name('backup.upload')->middleware('permission:backup.manage');
     Route::delete('backup/{filename}', [BackupController::class, 'delete'])->name('backup.delete')->middleware('permission:backup.manage');
+
+    // Roles & Permissions (Part 3.2): roles and what each may do are set from this page, not the code
+    Route::middleware('permission:roles.manage')->group(function () {
+        Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
+        Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
+        Route::put('roles/permissions', [RoleController::class, 'permissions'])->name('roles.permissions');
+        Route::put('roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+        Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    });
 
     // Recycle Bin (Part 3.1): archived records can be restored, never permanently deleted
     Route::get('recycle-bin', [RecycleBinController::class, 'index'])->name('recycle-bin.index')->middleware('permission:recycle-bin.manage');
