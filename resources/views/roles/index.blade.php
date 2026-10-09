@@ -196,6 +196,9 @@
     .rp-role-actions { display:flex; gap:8px; }
     .rp-role-locked { font-size:12px; color:var(--text-subtle); line-height:1.5; }
 
+    /* the card clips its children, which would stop the save bar from sticking */
+    #matrixForm.card { overflow:visible; }
+    #matrixForm > .card-header { border-radius:var(--radius) var(--radius) 0 0; }
     .rp-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
     .rp-table { width:100%; border-collapse:separate; border-spacing:0; }
     .rp-table th, .rp-table td { border-bottom:1px solid var(--border); }
