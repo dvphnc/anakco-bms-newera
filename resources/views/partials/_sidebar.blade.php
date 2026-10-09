@@ -19,7 +19,6 @@
     {{-- Navigation --}}
     <nav class="sidebar-nav">
 
-        @php $role = auth()->user()?->role; @endphp
 
         <div class="nav-section-label">Main</div>
 
@@ -29,10 +28,11 @@
             <span>Dashboard</span>
         </a>
 
-        {{-- Records — Admin + Secretary only --}}
-        @if(in_array($role, ['Admin', 'Secretary']))
+        {{-- Records: each link needs its permission (Roles & Permissions, Part 3.2) --}}
+        @canany(['residents.view', 'households.view', 'puroks.view', 'programs.view', 'religion.manage', 'officials.view'])
         <div class="nav-section-label">Records</div>
 
+        @can('residents.view')
         <a href="{{ route('residents.index') }}"
            class="nav-item {{ request()->routeIs('residents.*') ? 'active' : '' }}">
             <i class="fas fa-users"></i>
@@ -88,24 +88,31 @@
             </div>
         </div>
         @endcan
+        @endcan
 
+        @can('households.view')
         <a href="{{ route('households.index') }}"
            class="nav-item {{ request()->routeIs('households.*') ? 'active' : '' }}">
             <i class="fas fa-house"></i>
             <span>Households</span>
         </a>
+        @endcan
 
+        @can('puroks.view')
         <a href="{{ route('puroks.index') }}"
            class="nav-item {{ request()->routeIs('puroks.*') ? 'active' : '' }}">
             <i class="fas fa-location-dot"></i>
             <span>Puroks</span>
         </a>
+        @endcan
 
+        @can('programs.view')
         <a href="{{ route('programs.index') }}"
            class="nav-item {{ request()->routeIs('programs.*') ? 'active' : '' }}">
             <i class="fas fa-hand-holding-heart"></i>
             <span>Assistance Programs</span>
         </a>
+        @endcan
 
         @can('manage-religion-data')
         <a href="{{ route('religions.index') }}"
@@ -121,23 +128,28 @@
         </a>
         @endcan
 
+        @can('officials.view')
         <a href="{{ route('officials.index') }}"
            class="nav-item {{ request()->routeIs('officials.*') ? 'active' : '' }}">
             <i class="fas fa-user-tie"></i>
             <span>Officials & Staff</span>
         </a>
-        @endif
+        @endcan
+        @endcanany
 
-        {{-- Services — Admin + Secretary only --}}
-        @if(in_array($role, ['Admin', 'Secretary']))
+        {{-- Services --}}
+        @canany(['documents.view', 'blotter.view', 'businesses.view', 'appointments.view'])
         <div class="nav-section-label">Services</div>
 
+        @can('documents.view')
         <a href="{{ route('documents.index') }}"
            class="nav-item {{ request()->routeIs('documents.*') ? 'active' : '' }}">
             <i class="fas fa-file-alt"></i>
             <span>Document Issuance</span>
         </a>
+        @endcan
 
+        @can('blotter.view')
         <a href="{{ route('blotter.index') }}"
            class="nav-item {{ request()->routeIs('blotter.*') ? 'active' : '' }}">
             <i class="fas fa-gavel"></i>
@@ -148,7 +160,9 @@
                          text-align:center;line-height:16px;margin-left:auto"
                   title="Active portal blotter cases"></span>
         </a>
+        @endcan
 
+        @can('businesses.view')
         <a href="{{ route('businesses.index') }}"
            class="nav-item {{ request()->routeIs('businesses.*') ? 'active' : '' }}">
             <i class="fas fa-store"></i>
@@ -159,7 +173,9 @@
                          text-align:center;line-height:16px;margin-left:auto"
                   title="Business applications under review"></span>
         </a>
+        @endcan
 
+        @can('appointments.view')
         <a href="{{ route('appointments.index') }}"
            class="nav-item {{ request()->routeIs('appointments.*') ? 'active' : '' }}">
             <i class="fas fa-calendar-check"></i>
@@ -170,6 +186,7 @@
                          text-align:center;line-height:16px;margin-left:auto"
                   title="Total portal submissions pending (documents + blotter + business)"></span>
         </a>
+        @endcan
 
         <a href="{{ route('portal.index') }}" target="_blank"
            class="nav-item">
@@ -177,9 +194,10 @@
             <span>Resident Portal</span>
             <i class="fas fa-arrow-up-right-from-square" style="font-size:9px;margin-left:auto;opacity:.5"></i>
         </a>
-        @endif
+        @endcanany
 
-        {{-- Committees — all roles --}}
+        {{-- Committees --}}
+        @can('committees.view')
         <div class="nav-section-label">Committees</div>
 
         <a href="{{ route('committees.show', 'peace-order') }}"
@@ -229,36 +247,51 @@
             <i class="fas fa-exclamation-triangle"></i>
             <span>BDRRM</span>
         </a>
+        @endcan
 
-        {{-- System — Admin + Secretary for Reports, Admin only for Users --}}
-        @if(in_array($role, ['Admin', 'Secretary']))
+        {{-- System --}}
+        @canany(['reports.view', 'activity-log.view', 'users.manage', 'roles.manage', 'recycle-bin.manage'])
         <div class="nav-section-label">System</div>
 
+        @can('reports.view')
         <a href="{{ route('reports.index') }}"
            class="nav-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
             <i class="fas fa-chart-bar"></i>
             <span>Reports & Analytics</span>
         </a>
+        @endcan
 
+        @can('activity-log.view')
         <a href="{{ route('activity-log.index') }}"
            class="nav-item {{ request()->routeIs('activity-log.*') ? 'active' : '' }}">
             <i class="fas fa-clock-rotate-left"></i>
             <span>Activity Log</span>
         </a>
+        @endcan
 
-        @if($role === 'Admin')
+        @can('users.manage')
         <a href="{{ route('users.index') }}"
            class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
             <i class="fas fa-user-shield"></i>
             <span>User Management</span>
         </a>
+        @endcan
+
+        @can('roles.manage')
+        <a href="{{ route('roles.index') }}"
+           class="nav-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
+            <i class="fas fa-key"></i>
+            <span>Roles & Permissions</span>
+        </a>
+        @endcan
+        @can('recycle-bin.manage')
         <a href="{{ route('recycle-bin.index') }}"
            class="nav-item {{ request()->routeIs('recycle-bin.*') ? 'active' : '' }}">
             <i class="fas fa-box-archive"></i>
             <span>Recycle Bin</span>
         </a>
-        @endif
-        @endif
+        @endcan
+        @endcanany
 
     </nav>
 
@@ -307,7 +340,7 @@
 {{-- Mobile overlay --}}
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-@if(in_array(auth()->user()?->role, ['Admin', 'Secretary']))
+@can('appointments.view')
 <script>
 /* ── Portal pending badges — SSE with polling fallback ─── */
 (function () {
@@ -410,7 +443,7 @@
 
 }());
 </script>
-@endif
+@endcan
 {{-- Part 2: behaviour of the nested religion filter (Admin only) --}}
 @can('view-religion-data')
 <script>
