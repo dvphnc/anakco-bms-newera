@@ -7,6 +7,7 @@ use App\Models\DocumentAppointment;
 use App\Models\PabahayUnit;
 use App\Models\User;
 use App\Observers\DocumentAppointmentObserver;
+use App\Support\Permissions;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -20,11 +21,16 @@ class AppServiceProvider extends ServiceProvider
         // Sync appointment status → linked Document record (1-to-1, no echo loop)
         DocumentAppointment::observe(DocumentAppointmentObserver::class);
 
-        // Part 2: religion and minister data is sensitive, so Admin only for now.
-        // Everything checks these two names (never the role directly), so when roles
-        // become editable (Part 3) this is the one place that changes.
-        Gate::define('view-religion-data', fn (User $user) => $user->role === 'Admin');
-        Gate::define('manage-religion-data', fn (User $user) => $user->role === 'Admin');
+        // Part 3.2: every permission key is a gate, so @can('residents.create') and
+        // Gate::allows() read the Roles & Permissions matrix
+        foreach (Permissions::keys() as $key) {
+            Gate::define($key, fn (User $user) => $user->hasPermission($key));
+        }
+
+        // Part 2: religion and minister data is sensitive (only the Admin role has it by default).
+        // Everything checks these two names, never a role.
+        Gate::define('view-religion-data', fn (User $user) => $user->hasPermission('religion.view'));
+        Gate::define('manage-religion-data', fn (User $user) => $user->hasPermission('religion.manage'));
 
         // The sidebar's Pabahay dropdown: active units, grouped by Pabahay, with living residents.
         // Only built for Admin (nobody else sees that part of the sidebar).
