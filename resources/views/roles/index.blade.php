@@ -88,10 +88,10 @@
                     <th class="rp-first" scope="rowgroup">{{ $group }}</th>
                     @foreach($roles as $role)
                     <td class="rp-col">
-                        @if(! $role->is_system && $role->id !== $myRoleId || $me->isAdmin() && ! $role->is_system)
+                        @unless($role->is_system)
                         <input type="checkbox" class="rp-check rp-all" data-role="{{ $role->id }}" data-group="{{ $loop->parent->index }}"
                                aria-label="All {{ $group }} actions for {{ $role->name }}" title="Tick all in {{ $group }}">
-                        @endif
+                        @endunless
                     </td>
                     @endforeach
                 </tr>
