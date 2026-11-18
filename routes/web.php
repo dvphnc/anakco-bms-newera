@@ -89,6 +89,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])
         ->name('dashboard');
 
+    // Live updates (26.2 dashboard numbers, 26.3 lists). Each list is only sent to roles that can view it.
+    Route::get('live/stream', [\App\Http\Controllers\LiveController::class, 'stream'])->name('live.stream');
+    Route::get('live/snapshot', [\App\Http\Controllers\LiveController::class, 'snapshot'])->name('live.snapshot');
+
     // ---------------------------------------------------
     // Residents — Admin + Secretary only
     // ---------------------------------------------------

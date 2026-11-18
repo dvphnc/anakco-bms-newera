@@ -25,3 +25,7 @@ Thumbs.db
 
 # Claude Code worktrees (local only)
 /.claude/worktrees/
+
+# Remotion skills and preview config for Claude (local only)
+/.claude/skills/remotion-*/
+/.claude/launch.json

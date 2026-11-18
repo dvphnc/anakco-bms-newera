@@ -416,14 +416,14 @@
         <a @can('residents.view') href="{{ route('residents.index') }}" @endcan class="dash-stat-card">
             <div class="dash-stat-icon"><i class="fas fa-users"></i></div>
             <div>
-                <div class="dash-stat-number">{{ number_format($totalResidents) }}</div>
+                <div class="dash-stat-number" data-live="totalResidents">{{ number_format($totalResidents) }}</div>
                 <div class="dash-stat-label">Total Residents</div>
             </div>
         </a>
         <a @can('documents.view') href="{{ route('documents.index') }}" @endcan class="dash-stat-card">
             <div class="dash-stat-icon"><i class="fas fa-file-alt"></i></div>
             <div>
-                <div class="dash-stat-number">{{ number_format($pendingDocuments) }}</div>
+                <div class="dash-stat-number" data-live="pendingDocuments">{{ number_format($pendingDocuments) }}</div>
                 <div class="dash-stat-label">Pending Documents</div>
             </div>
         </a>
@@ -440,14 +440,14 @@
             @endif
             <div class="dash-stat-icon"><i class="fas fa-gavel"></i></div>
             <div>
-                <div class="dash-stat-number">{{ number_format($activeBlotter) }}</div>
+                <div class="dash-stat-number" data-live="activeBlotter">{{ number_format($activeBlotter) }}</div>
                 <div class="dash-stat-label">Active Blotter Cases</div>
             </div>
         </a>
         <a @can('businesses.view') href="{{ route('businesses.index') }}" @endcan class="dash-stat-card">
             <div class="dash-stat-icon"><i class="fas fa-store"></i></div>
             <div>
-                <div class="dash-stat-number">{{ number_format($activeBusinesses) }}</div>
+                <div class="dash-stat-number" data-live="activeBusinesses">{{ number_format($activeBusinesses) }}</div>
                 <div class="dash-stat-label">Active Businesses</div>
             </div>
         </a>
@@ -455,7 +455,7 @@
         <a href="{{ route('appointments.index') }}" class="dash-stat-card">
             <div class="dash-stat-icon"><i class="fas fa-calendar-check"></i></div>
             <div>
-                <div class="dash-stat-number">{{ number_format($pendingAppointments) }}</div>
+                <div class="dash-stat-number" data-live="pendingAppointments">{{ number_format($pendingAppointments) }}</div>
                 <div class="dash-stat-label">Pending Appointments</div>
                 @if($pendingAppointments > 0)
                 <div style="font-size:12px;color:var(--gold);margin-top:4px;font-weight:600;
@@ -608,39 +608,39 @@
         <div class="card-body">
             <div class="demog-grid">
                 <div class="demog-item">
-                    <div class="demog-num">{{ number_format($totalActive) }}</div>
+                    <div class="demog-num" data-live="totalActive">{{ number_format($totalActive) }}</div>
                     <div class="demog-lbl">Alive</div>
                 </div>
                 <div class="demog-item">
-                    <div class="demog-num" style="color:var(--gold)">{{ number_format($totalSeniors) }}</div>
+                    <div class="demog-num" data-live="totalSeniors" style="color:var(--gold)">{{ number_format($totalSeniors) }}</div>
                     <div class="demog-lbl">Senior Citizens</div>
                 </div>
                 <div class="demog-item">
-                    <div class="demog-num">{{ number_format($totalVoters) }}</div>
+                    <div class="demog-num" data-live="totalVoters">{{ number_format($totalVoters) }}</div>
                     <div class="demog-lbl">Registered Voters</div>
                 </div>
                 <div class="demog-item">
-                    <div class="demog-num">{{ number_format($totalPwd) }}</div>
+                    <div class="demog-num" data-live="totalPwd">{{ number_format($totalPwd) }}</div>
                     <div class="demog-lbl">PWD</div>
                 </div>
                 <div class="demog-item">
-                    <div class="demog-num">{{ number_format($totalSoloParent) }}</div>
+                    <div class="demog-num" data-live="totalSoloParent">{{ number_format($totalSoloParent) }}</div>
                     <div class="demog-lbl">Solo Parents</div>
                 </div>
                 <div class="demog-item">
-                    <div class="demog-num">{{ number_format($total4ps) }}</div>
+                    <div class="demog-num" data-live="total4ps">{{ number_format($total4ps) }}</div>
                     <div class="demog-lbl">4Ps Beneficiaries</div>
                 </div>
                 <div class="demog-item">
-                    <div class="demog-num">{{ number_format($totalMale) }}</div>
+                    <div class="demog-num" data-live="totalMale">{{ number_format($totalMale) }}</div>
                     <div class="demog-lbl">Male</div>
                 </div>
                 <div class="demog-item">
-                    <div class="demog-num">{{ number_format($totalFemale) }}</div>
+                    <div class="demog-num" data-live="totalFemale">{{ number_format($totalFemale) }}</div>
                     <div class="demog-lbl">Female</div>
                 </div>
                 <div class="demog-item">
-                    <div class="demog-num">{{ number_format($totalHouseholds) }}</div>
+                    <div class="demog-num" data-live="totalHouseholds">{{ number_format($totalHouseholds) }}</div>
                     <div class="demog-lbl">Households</div>
                 </div>
             </div>

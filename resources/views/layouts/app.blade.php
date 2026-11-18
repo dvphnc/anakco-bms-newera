@@ -884,6 +884,90 @@
 
     @stack('scripts')
 
+    {{-- ── Live updates (tasks 26.2 and 26.3) ─────────────────────────────
+         Dashboard numbers marked data-live="..." and the list tables refresh by
+         themselves through one Server-Sent Events connection. A table only
+         reloads when its data really changed, keeps its page and search, and
+         waits while someone is typing or a dialog is open. If the stream drops,
+         the page asks every 15 s until it reconnects. --}}
+    <script>
+    (function () {
+        var TABLES = {
+            residentsTable: 'residents', householdsTable: 'households', documentsTable: 'documents',
+            blotterTable: 'blotter', businessesTable: 'businesses', bizTable: 'businesses', appointmentsTable: 'appointments'
+        };
+        var seen = {}, pending = {}, topics = [];
+
+        function tablesFor(list) {
+            if (!window.jQuery || !jQuery.fn.dataTable) return [];
+            return Object.keys(TABLES).filter(function (id) {
+                return TABLES[id] === list && document.getElementById(id) && jQuery.fn.dataTable.isDataTable('#' + id);
+            }).map(function (id) { return jQuery('#' + id).DataTable(); });
+        }
+
+        function busy() {
+            var a = document.activeElement;
+            var typing = a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.tagName === 'SELECT' || a.isContentEditable);
+            var dialogOpen = Array.prototype.some.call(document.querySelectorAll('[role="dialog"], .modal, .swal2-container'), function (m) {
+                return m.offsetParent !== null || getComputedStyle(m).position === 'fixed' && getComputedStyle(m).display !== 'none';
+            });
+            return typing || dialogOpen;
+        }
+
+        function reloadPending() {
+            Object.keys(pending).forEach(function (list) {
+                if (busy()) return;
+                tablesFor(list).forEach(function (t) { t.ajax.reload(null, false); });
+                delete pending[list];
+            });
+        }
+        setInterval(reloadPending, 2000);
+
+        function apply(data) {
+            if (data.dashboard) {
+                Object.keys(data.dashboard).forEach(function (k) {
+                    document.querySelectorAll('[data-live="' + k + '"]').forEach(function (el) {
+                        var v = Number(data.dashboard[k]).toLocaleString('en-US');
+                        if (el.textContent.trim() !== v) {
+                            el.textContent = v;
+                            el.animate && el.animate([{ color: 'var(--gold)' }, { color: '' }], { duration: 1200 });
+                        }
+                    });
+                });
+            }
+            if (data.lists) {
+                Object.keys(data.lists).forEach(function (list) {
+                    if (seen[list] !== undefined && seen[list] !== data.lists[list]) pending[list] = true;
+                    seen[list] = data.lists[list];
+                });
+                reloadPending();
+            }
+        }
+
+        var poll = null;
+        function snapshot() {
+            if (!window.axios) return;
+            axios.get('{{ route('live.snapshot') }}', { params: { topics: topics.join(',') } })
+                .then(function (r) { apply(r.data); }).catch(function () {});
+        }
+        function startPoll() { if (!poll) poll = setInterval(snapshot, 15000); }
+        function stopPoll() { if (poll) { clearInterval(poll); poll = null; } }
+
+        window.addEventListener('load', function () {
+            if (document.querySelector('[data-live]')) topics.push('dashboard');
+            Object.keys(TABLES).forEach(function (id) {
+                if (document.getElementById(id) && topics.indexOf(TABLES[id]) < 0) topics.push(TABLES[id]);
+            });
+            if (!topics.length) return;
+            if (!window.EventSource) { snapshot(); startPoll(); return; }
+            var es = new EventSource('{{ route('live.stream') }}?topics=' + encodeURIComponent(topics.join(',')));
+            es.onopen = stopPoll;
+            es.onmessage = function (e) { try { apply(JSON.parse(e.data)); } catch (_) {} };
+            es.onerror = startPoll; // EventSource reconnects by itself; poll meanwhile
+        });
+    })();
+    </script>
+
     {{-- ── Global Confirmation Modal ──────────────────────────────────── --}}
     <div id="bmsConfirmModal"
          style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9990;

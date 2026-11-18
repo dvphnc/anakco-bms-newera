@@ -16,30 +16,24 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Stats
-        $totalResidents = Resident::count();
-        $totalActive = Resident::where('residency_status', 'Active')->count();
+        // Stats (the numbers that update live come from LiveController, so both always agree)
+        [
+            'totalResidents' => $totalResidents, 'totalActive' => $totalActive,
+            'totalMale' => $totalMale, 'totalFemale' => $totalFemale, 'totalHouseholds' => $totalHouseholds,
+            'totalVoters' => $totalVoters, 'totalSeniors' => $totalSeniors, 'totalPwd' => $totalPwd,
+            'totalSoloParent' => $totalSoloParent, 'total4ps' => $total4ps,
+            'activeBusinesses' => $activeBusinesses, 'pendingDocuments' => $pendingDocuments,
+            'activeBlotter' => $activeBlotter, 'pendingAppointments' => $pendingAppointments,
+        ] = LiveController::dashboardNumbers();
         $totalDeceased = Resident::where('residency_status', 'Deceased')->count();
         $totalTransferred = Resident::where('residency_status', 'Transferred')->count();
-        $totalMale = Resident::active()->where('gender', 'Male')->count();
-        $totalFemale = Resident::active()->where('gender', 'Female')->count();
-        $totalHouseholds = Household::count();
-        $totalVoters = Resident::residentVoters()->count();
-        $totalSeniors = Resident::active()->seniors()->count();
-        $totalPwd = Resident::active()->where('is_pwd', true)->count();
-        $totalSoloParent = Resident::active()->where('is_solo_parent', true)->count();
-        $total4ps = Resident::active()->where('is_4ps', true)->count();
         $totalBusinesses = Business::count();
-        $activeBusinesses = Business::where('status', 'Active')->count();
         $expiredBusinesses = Business::where('status', 'Expired')->count();
-        $pendingDocuments = Document::where('status', 'Pending')->count();
         $releasedDocuments = Document::where('status', 'Released')->count();
         $totalDocuments = Document::count();
-        $activeBlotter   = BlotterCase::where('status', 'Active')->count();
         $overdueBlotter  = BlotterCase::whereIn('status', ['Active', 'Under Investigation'])
             ->where('incident_date', '<=', now()->subDays(30))
             ->count();
-        $pendingAppointments = DocumentAppointment::where('status', 'Pending')->count();
         $aptCounts = DocumentAppointment::selectRaw('status, count(*) as cnt')->groupBy('status')->pluck('cnt', 'status');
         $settledBlotter = BlotterCase::whereIn('status', ['Settled', 'Closed'])->count();
         $totalBlotter = BlotterCase::count();
